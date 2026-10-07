@@ -253,7 +253,7 @@ function creerCombattantPerso(e) {
   ajouterStats(r, n.stats);
   let i = pvMaxPerso(e);
   let arme = e.equipement.arme;
-  let o = arme ? m[arme.id] : undefined;
+  let o = arme ? EQUIPEMENTS[arme.id] : undefined;
   let s = arme?.rarete ? o?.tiers?.[arme.rarete]?.attaque : undefined;
   let armeSort =
     o && s
@@ -315,7 +315,7 @@ function creerCombattantPerso(e) {
   let p = compterPanoplies(e);
   let m = {};
   for (let t of Object.values(e.equipement)) {
-    let e = t && m[t.id];
+    let e = t && EQUIPEMENTS[t.id];
     if (e?.panoplie && e.esquiveParPiece) {
       m[e.panoplie] = Math.max(m[e.panoplie] ?? 0, e.esquiveParPiece);
     }

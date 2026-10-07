@@ -54,7 +54,7 @@ export function ecranEquipement(e, t) {
         .join(``);
       let l = SLOTS.map((e) => {
         let t = s.equipement[e];
-        let n = t ? m[t.id] : undefined;
+        let n = t ? EQUIPEMENTS[t.id] : undefined;
         return `<div class="equip-slot ${n ? `rempli` : `vide`}${classeRarete(t)}" data-slot="${e}" ${n ? `data-desequip="${e}" draggable="true"` : ``}>
           <span class="slot-nom">${NOMS_SLOTS[e]}</span>
           ${n && t ? `<img class="slot-img" src="${imgObjet(n.id)}" alt="" onerror="this.remove()" /><span class="slot-item">${htmlNomObjet(t)}<small>${htmlChipsObjet(t)}</small></span>` : `<span class="slot-vide-txt">— vide —</span>`}
@@ -63,7 +63,7 @@ export function ecranEquipement(e, t) {
       let d = t.length
         ? trierInventaire(t)
             .map(({ inst, i }) => {
-              let n = m[inst.id];
+              let n = EQUIPEMENTS[inst.id];
               let r = peutEquiper(s, inst.id);
               return `<button class="item-carte${classeRarete(inst)}${r ? `` : ` inequipable`}" data-index="${i}" draggable="true" ${r ? `` : `title="Équipable uniquement sur un personnage de la ligne avant"`}>
               <img src="${imgObjet(inst.id)}" alt="" loading="lazy" onerror="this.remove()" />
