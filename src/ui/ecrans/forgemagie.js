@@ -1,6 +1,6 @@
 import { CLASSES, EQUIPEMENTS } from "../../data/index.js";
 import { ECONOMIE, RARETES_INFO } from "../../jeu/config.js";
-import { instancierObjet } from "../../jeu/run.js";
+import { instancierObjet, pvMaxPerso } from "../../jeu/run.js";
 import { forgerObjet, prixForge, rareteSuivante } from "../../jeu/economie.js";
 import { enregistrerCollection } from "../../sauvegarde/meta.js";
 import {
@@ -71,6 +71,10 @@ export function ecranForgemagie(e, t) {
         }
         let c = forgerObjet(e, s, i, Math.random);
         if (c === `forge`) {
+          // un palier supérieur peut réduire la Vitalité : les PV actuels ne dépassent pas le nouveau max
+          for (const perso of e.persos) {
+            perso.pvActuels = Math.min(perso.pvActuels, pvMaxPerso(perso));
+          }
           r = `✨ ${echapperHtml(EQUIPEMENTS[s.id]?.nom ?? s.id)} forgé en <span class="inom-${s.rarete}">${RARETES_INFO[s.rarete].nom}</span> !`;
           if (t) {
             enregistrerCollection(t, [s]);

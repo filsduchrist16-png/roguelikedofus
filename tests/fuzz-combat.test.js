@@ -123,7 +123,9 @@ describe("moteur de combat (fuzz)", () => {
       }).catch((err) => {
         throw new Error(`${ctx}: ${err.stack}`);
       });
-      resume.push(`${i} ${resultat} ${actions} ${c.map((x) => `${x.ref}:${x.pvActuels}`).join(",")}`);
+      resume.push(
+        `${i} ${resultat} ${actions} ${c.map((x) => `${x.ref}:${x.pvActuels}`).join(",")}`,
+      );
       expect(typeof resultat, ctx).toBe("boolean");
       expect(actions, ctx).toBeLessThan(20000);
     }

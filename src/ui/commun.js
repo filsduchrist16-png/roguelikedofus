@@ -51,6 +51,43 @@ export function afficherEcran(e, t = ``) {
   masquerElements();
   racine.innerHTML = `<div class="ecran${t ? ` ${t}` : ``}">${e}</div>`;
 }
+// Boîte de confirmation (par-dessus l'écran courant). Résout true si le joueur confirme.
+export function demanderConfirmation(message, libelleOk = `Confirmer`) {
+  return new Promise((resolve) => {
+    const fond = document.createElement(`div`);
+    fond.className = `confirm-fond`;
+    fond.innerHTML = `<div class="confirm-boite" role="alertdialog" aria-modal="true" aria-labelledby="confirm-msg">
+        <p id="confirm-msg">${echapperHtml(message)}</p>
+        <div class="confirm-boutons">
+          <button class="secondaire" data-reponse="non">Annuler</button>
+          <button class="primaire danger-arme" data-reponse="oui">${echapperHtml(libelleOk)}</button>
+        </div>
+      </div>`;
+    const fermer = (ok) => {
+      document.removeEventListener(`keydown`, clavier, true);
+      fond.remove();
+      resolve(ok);
+    };
+    const clavier = (e) => {
+      if (e.key === `Escape`) {
+        e.preventDefault();
+        e.stopPropagation();
+        fermer(false);
+      }
+    };
+    fond.addEventListener(`click`, (e) => {
+      const r = e.target.closest?.(`[data-reponse]`)?.dataset.reponse;
+      if (r) {
+        fermer(r === `oui`);
+      } else if (e.target === fond) {
+        fermer(false);
+      }
+    });
+    document.addEventListener(`keydown`, clavier, true);
+    document.body.appendChild(fond);
+    fond.querySelector(`[data-reponse="non"]`)?.focus();
+  });
+}
 export function installerToucheEchap() {
   document.addEventListener(`keydown`, (e) => {
     if (e.key !== `Escape` || e.defaultPrevented) {
@@ -609,10 +646,10 @@ const PCT_DMG_CRIT_PAR_AGI = arrondiPct(
   }) - bonusDegatsCritiques(STATS_NULLES),
 );
 export const AIDE_STATS = {
-  force: `Dégâts dans l'élément <b>Terre</b>.<br>+1 Vitalité par 5 de Force (voir VITA_PAR_FORCE, progression.ts).`,
+  force: `Dégâts dans l'élément <b>Terre</b>.<br>+1 Vitalité par 5 de Force.`,
   intelligence: `Dégâts dans l'élément <b>Feu</b>.<br>Dégâts finaux : <b>+${PCT_INTEL_PAR_POINT} %</b> par point (max +${PCT_INTEL_MAX} %).`,
   agilite: `Dégâts dans l'élément <b>Air</b>.<br>Taux de coup critique : <b>+${PCT_CRIT_PAR_AGI} %</b> par point (plancher ${PCT_CRIT_BASE} % pour tous, jusqu'à ${PCT_CRIT_MAX} %).<br>Dégâts critiques : <b>+${PCT_DMG_CRIT_PAR_AGI} %</b> par point (base ${PCT_DMG_CRIT_BASE} %, sans plafond).`,
-  chance: `Dégâts dans l'élément <b>Eau</b>.<br>+1 Prospection par 3 de Chance (voir PROSP_PAR_CHANCE, progression.ts).`,
+  chance: `Dégâts dans l'élément <b>Eau</b>.<br>+1 Prospection par 3 de Chance.`,
   vitalite: `Points de vie maximum : <b>+1 PV</b> par point.`,
   soin: `Puissance des soins prodigués : <b>+0,5 %</b> par point (max 50 %).`,
   prospection: `Augmente les chances de butin d'équipement (cumulé sur toute l'équipe).`,

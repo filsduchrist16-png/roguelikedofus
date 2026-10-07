@@ -14,6 +14,8 @@ import {
 } from "../commun.js";
 export function ecranHdv(e, t, n) {
   return new Promise((resolve) => {
+    // vendre tout demande une confirmation (un seul appui vidait tout l'inventaire)
+    let confirmerVenteTotale = false;
     let i = () => {
       let a = t.length
         ? t
@@ -49,7 +51,7 @@ export function ecranHdv(e, t, n) {
           </div>
           <div class="equip-col">
             <h3>Ton inventaire (${e.inventaire.length})
-              ${e.inventaire.length ? `<button id="hdv-vendre-tout" class="secondaire hdv-tout" title="Vendre tout l'inventaire (l'équipement porté n'est pas concerné)">Vendre tout · ${htmlKamas(e.inventaire.reduce((acc, item) => acc + prixRevente(item), 0))}</button>` : ``}
+              ${e.inventaire.length ? `<button id="hdv-vendre-tout" class="secondaire hdv-tout${confirmerVenteTotale ? ` danger-arme` : ``}" title="Vendre tout l'inventaire (l'équipement porté n'est pas concerné)">${confirmerVenteTotale ? `Confirmer : tout vendre` : `Vendre tout`} · ${htmlKamas(e.inventaire.reduce((acc, item) => acc + prixRevente(item), 0))}</button>` : ``}
             </h3>
             <div class="equip-inv">${o}</div>
           </div>
@@ -71,14 +73,20 @@ export function ecranHdv(e, t, n) {
       racine.querySelectorAll(`[data-vente]`).forEach((t) =>
         t.addEventListener(`click`, () => {
           if (vendreObjet(e, Number(t.dataset.vente))) {
+            confirmerVenteTotale = false;
             i();
           }
         }),
       );
       document.getElementById(`hdv-vendre-tout`)?.addEventListener(`click`, () => {
-        if (vendreTout(e) > 0) {
+        if (!confirmerVenteTotale) {
+          confirmerVenteTotale = true;
           i();
+          return;
         }
+        confirmerVenteTotale = false;
+        vendreTout(e);
+        i();
       });
       document.getElementById(`hdv-retour`)?.addEventListener(`click`, () => resolve());
     };

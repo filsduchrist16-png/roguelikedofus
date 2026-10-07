@@ -15,6 +15,7 @@ import {
   IMG_RECOMMENCER,
   IMG_RECOMMENCER_AVEC_PERSO,
   cheminAsset,
+  demanderConfirmation,
   echapperHtml,
   etoilesDifficulte,
   htmlKamas,
@@ -74,7 +75,8 @@ const imageNoeud = (e) =>
 const CARTE_HAUTEUR = 440;
 const CARTE_PAS_X = 116;
 const CARTE_MARGE = 56;
-export function ecranCarte(e, t, n, r, i = [], a = 0, o = 0, s = 0) {
+// onModif : appelé après un changement fait depuis la carte (équipement, formation) pour sauvegarder la run
+export function ecranCarte(e, t, n, r, i = [], a = 0, o = 0, s = 0, onModif = () => {}) {
   return new Promise((resolve) => {
     let l = () => {
       let d = Math.max(...e.noeuds.map((e) => e.ligne));
@@ -218,10 +220,12 @@ Ennemis : ${o.desc}`)}"`
       });
       document.getElementById(`carte-formation`)?.addEventListener(`click`, async () => {
         await ecranFormation(t);
+        onModif();
         l();
       });
       document.getElementById(`carte-equip`)?.addEventListener(`click`, async () => {
         await ecranEquipement(t, i);
+        onModif();
         l();
       });
       document.getElementById(`carte-bestiaire`)?.addEventListener(`click`, async () => {
@@ -237,12 +241,26 @@ Ennemis : ${o.desc}`)}"`
         l();
       });
       document.getElementById(`carte-accueil`)?.addEventListener(`click`, () => resolve(`accueil`));
-      document
-        .getElementById(`carte-restart`)
-        ?.addEventListener(`click`, () => resolve(`recommencer-memes`));
-      document
-        .getElementById(`carte-restart-choix`)
-        ?.addEventListener(`click`, () => resolve(`recommencer-choix`));
+      document.getElementById(`carte-restart`)?.addEventListener(`click`, async () => {
+        if (
+          await demanderConfirmation(
+            `Abandonner la run en cours et recommencer avec les mêmes héros ?`,
+            `Recommencer`,
+          )
+        ) {
+          resolve(`recommencer-memes`);
+        }
+      });
+      document.getElementById(`carte-restart-choix`)?.addEventListener(`click`, async () => {
+        if (
+          await demanderConfirmation(
+            `Abandonner la run en cours et choisir d'autres héros ?`,
+            `Recommencer`,
+          )
+        ) {
+          resolve(`recommencer-choix`);
+        }
+      });
     };
     l();
   });

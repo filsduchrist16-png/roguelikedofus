@@ -28,6 +28,10 @@ export function ecranParametres(e) {
             <button id="set-auto" class="secondaire ${parametres.autoFinTour ? `on` : ``}">${parametres.autoFinTour ? `Activé` : `Désactivé`}</button>
           </div>
           <div class="setting-ligne">
+            <span class="setting-lbl">Tours des monstres rapides<br><small class="muet">les ennemis jouent sans temps mort</small></span>
+            <button id="set-rapide" class="secondaire ${parametres.combatRapide ? `on` : ``}">${parametres.combatRapide ? `Activé` : `Désactivé`}</button>
+          </div>
+          <div class="setting-ligne">
             <span class="setting-lbl">Sauvegarde<br><small class="muet">Dofus, succès, réglages et run en cours, pour changer de PC</small></span>
             <span class="setting-actions">
               <button id="set-export" class="secondaire">Exporter</button>
@@ -135,6 +139,11 @@ export function ecranParametres(e) {
           i();
         };
         document.addEventListener(`keydown`, e, true);
+      });
+      document.getElementById(`set-rapide`)?.addEventListener(`click`, () => {
+        parametres.combatRapide = !parametres.combatRapide;
+        sauverParametres(parametres);
+        i();
       });
       document.getElementById(`set-auto`)?.addEventListener(`click`, () => {
         parametres.autoFinTour = !parametres.autoFinTour;

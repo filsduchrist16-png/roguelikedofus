@@ -19,6 +19,7 @@ import {
   IMG_PARAMETRES,
   IMG_SUCCES,
   afficherEcran,
+  demanderConfirmation,
   echapperHtml,
   etoilesDifficulte,
   imgMonde,
@@ -239,13 +240,20 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
           trancheId: n.trancheId,
         }),
       );
-      document.getElementById(`btn-abandon`)?.addEventListener(`click`, () =>
-        resolve({
-          action: `abandonner`,
-          ascension: 0,
-          trancheId: n.trancheId,
-        }),
-      );
+      document.getElementById(`btn-abandon`)?.addEventListener(`click`, async () => {
+        if (
+          await demanderConfirmation(
+            `Abandonner la run en cours ? Elle sera comptée comme perdue.`,
+            `Abandonner`,
+          )
+        ) {
+          resolve({
+            action: `abandonner`,
+            ascension: 0,
+            trancheId: n.trancheId,
+          });
+        }
+      });
     };
     o();
   });

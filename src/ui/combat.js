@@ -113,8 +113,10 @@ export function installerInfobulleSorts() {
   });
 }
 function peutEncoreJouer(e, t) {
-  return e.sorts
-    .map((e) => SORTS[e])
+  // l'attaque d'arme compte aussi : sans elle, un héros à qui il ne reste que les PA
+  // de son arme voyait son tour passé automatiquement
+  return [e.armeSort, ...e.sorts.map((e) => SORTS[e])]
+    .filter(Boolean)
     .some((n) => e.paActuels >= coutPA(n, e) && ciblesValides(e, n, t).length > 0);
 }
 function htmlLigneJournal(e) {
@@ -263,6 +265,10 @@ function jouerAnimationsFx() {
   evenementsFx.clear();
   memoriserEtats(combattants);
 }
+// Écran tactile : pas de survol, donc pas d'infobulle. Un premier appui sur un sort l'affiche
+// (description + bouton « Lancer ») au lieu de le lancer directement.
+const ecranTactile = () => window.matchMedia?.(`(hover: none)`).matches ?? false;
+const sansCibleAChoisir = (sort) => sort.cible === `soi` || sort.cible === `allie_tous`;
 export function controleurJoueur(e, t) {
   combattants = t;
   combattantActif = e;
@@ -272,7 +278,13 @@ export function controleurJoueur(e, t) {
     if (parametres.autoFinTour && !peutEncoreJouer(e, t)) {
       journaliser(`${e.nom} n'a plus rien à jouer, tour passé.`);
       rendreCombat();
-      setTimeout(() => terminerAction(null), 350);
+      // ne termine que CE tour : si le joueur a déjà cliqué « Terminer » entre-temps,
+      // le délai ne doit pas écourter le tour du héros suivant
+      setTimeout(() => {
+        if (contexteCombat === resolve) {
+          terminerAction(null);
+        }
+      }, 350);
       return;
     }
     rendreCombat();
@@ -286,23 +298,46 @@ function terminerAction(e) {
   rendreCombat();
   t?.(e);
 }
+function sortJouable(lanceur, sort) {
+  return (
+    lanceur.paActuels >= coutPA(sort, lanceur) &&
+    ciblesValides(lanceur, sort, combattants).length > 0
+  );
+}
+function lancerSurSoi(sort) {
+  terminerAction({
+    sort,
+    cibleRef: combattantActif.ref,
+  });
+}
 function choisirSort(sort) {
   let t = combattantActif;
-  if (!(!t || !contexteCombat) && !(t.paActuels < coutPA(sort, t))) {
-    if (sort.cible === `soi` || sort.cible === `allie_tous`) {
-      if (ciblesValides(t, sort, combattants).length === 0) {
-        journaliser(`Ce sort n'a aucune cible valable.`);
-        return;
-      }
-      terminerAction({
-        sort,
-        cibleRef: t.ref,
-      });
+  if (!t || !contexteCombat || !sort) {
+    return;
+  }
+  // un second clic sur le sort sélectionné l'annule (ou le lance s'il n'a pas de cible à choisir)
+  if (sortChoisi?.id === sort.id) {
+    if (sansCibleAChoisir(sort)) {
+      lancerSurSoi(sort);
     } else {
-      sortChoisi = sort;
+      sortChoisi = null;
       rendreCombat();
     }
+    return;
   }
+  // les raccourcis clavier passent par ici : mêmes conditions que les boutons (PA, recharge, cibles)
+  if (!sortJouable(t, sort)) {
+    if (t.paActuels >= coutPA(sort, t)) {
+      journaliser(`${sort.nom} : aucune cible valable pour l'instant.`);
+    }
+    return;
+  }
+  if (sansCibleAChoisir(sort) && !ecranTactile()) {
+    lancerSurSoi(sort);
+    return;
+  }
+  sortChoisi = sort;
+  rendreCombat();
 }
 function badgeArchi(e) {
   if (e.camp !== `ennemi` || !e.archi || !e.archiNom) {
@@ -489,7 +524,7 @@ function rendreCombat() {
             <div id="cb-joueur" class="camp-host"></div>
           </div>
           <div class="colonne">
-            <h3>Ennemis <span class="hint">(seuls les 2 premiers, en rangée avant, sont à portée des sorts de ligne)</span></h3>
+            <h3>Ennemis <span class="hint">(les sorts de ligne visent la ligne avant tant qu'elle tient)</span></h3>
             <div id="cb-ennemi" class="camp-host"></div>
           </div>
         </div>
@@ -563,7 +598,7 @@ function htmlBarreSorts() {
   let e_armeSort = e.armeSort;
   let n =
     (e_armeSort
-      ? `<button class="sort ${sortChoisi?.id === e_armeSort.id ? `choisi` : ``}" data-arme="1" ${e.paActuels >= coutPA(e_armeSort, e) ? `` : `disabled`} title="${echapperHtml(e_armeSort.nom)}, attaque d'arme">
+      ? `<button class="sort ${sortChoisi?.id === e_armeSort.id ? `choisi` : ``}" data-arme="1" ${sortJouable(e, e_armeSort) ? `` : `disabled`} title="${echapperHtml(e_armeSort.nom)}, attaque d'arme">
         <span class="sort-touche">1</span>
         <span class="sort-pa-badge"><img src="${IMG_ETOILE}" alt="" onerror="this.remove()" /><b>${coutPA(e_armeSort, e)}</b></span>
         <span class="sort-icon-wrap"><img class="sort-icon" src="${e_armeSort.img ? cheminAsset(e_armeSort.img) : ``}" alt="" onerror="this.closest('.sort-icon-wrap')?.remove()" /></span>
@@ -597,10 +632,28 @@ function htmlBarreSorts() {
       }
     });
     document.getElementById(`fin-tour`)?.addEventListener(`click`, () => terminerAction(null));
+    document.getElementById(`sort-lancer`)?.addEventListener(`click`, () => {
+      if (sortChoisi) {
+        lancerSurSoi(sortChoisi);
+      }
+    });
+    document.getElementById(`sort-annuler`)?.addEventListener(`click`, () => {
+      sortChoisi = null;
+      rendreCombat();
+    });
   });
-  let r = sortChoisi
-    ? `<div class="aide">Choisis une cible pour <b>${echapperHtml(sortChoisi.nom)}</b>.</div>`
-    : `<div class="aide">Tour de <b>${echapperHtml(e.nom)}</b> : choisis un sort.</div>`;
+  let r;
+  if (sortChoisi) {
+    const consigne = sansCibleAChoisir(sortChoisi)
+      ? `<button id="sort-lancer" class="primaire">Lancer ${echapperHtml(sortChoisi.nom)}</button>`
+      : `<span class="aide-consigne">Choisis une cible pour <b>${echapperHtml(sortChoisi.nom)}</b>.</span>`;
+    r = `<div class="aide aide-sort">
+      <div class="aide-sort-tete">${consigne}<button id="sort-annuler" class="secondaire">Annuler</button></div>
+      <div class="aide-sort-detail">${infobulleSort(sortChoisi, e)}</div>
+    </div>`;
+  } else {
+    r = `<div class="aide">Tour de <b>${echapperHtml(e.nom)}</b> : choisis un sort.</div>`;
+  }
   return `
     <div class="sorts-rangee">
       <div class="sorts-zone"><div class="sorts-liste">${n}</div></div>

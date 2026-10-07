@@ -168,17 +168,11 @@ const statsVides = () => ({
   soin: 0,
   prospection: 0,
 });
-function ajouterStats(e, stats) {
-  if (stats) {
-    for (let n of Object.keys(stats)) {
-      e[n] = (e[n] ?? 0) + (stats[n] ?? 0);
-    }
-  }
-}
-function ajouterResistances(resistances, t) {
-  if (t) {
-    for (let n of Object.keys(t)) {
-      resistances[n] = (resistances[n] ?? 0) + (t[n] ?? 0);
+// additionne clé par clé les valeurs de `bonus` dans `cible` (stats, résistances…)
+function additionner(cible, bonus) {
+  if (bonus) {
+    for (let n of Object.keys(bonus)) {
+      cible[n] = (cible[n] ?? 0) + (bonus[n] ?? 0);
     }
   }
 }
@@ -217,7 +211,7 @@ export function bonusEquipement(e) {
     let o = e.equipement[a];
     let s = o ? EQUIPEMENTS[o.id] : undefined;
     if (!(!o || !s)) {
-      ajouterStats(t, o.stats);
+      additionner(t, o.stats);
       if (o.adaptatif) {
         for (let n of CLASSES[e.classeId].elements) {
           let e = STAT_PAR_ELEMENT[n];
@@ -226,8 +220,8 @@ export function bonusEquipement(e) {
       }
       pvBonus += s.pvBonus ?? 0;
       paBonus += o.pa ?? 0;
-      ajouterResistances(resistances, s.resistances);
-      ajouterResistances(resistances, o.resistances);
+      additionner(resistances, s.resistances);
+      additionner(resistances, o.resistances);
     }
   }
   if (Object.values(compterPanoplies(e)).some((e) => e >= 4)) {
@@ -250,7 +244,7 @@ function creerCombattantPerso(e) {
   let t = CLASSES[e.classeId];
   let n = bonusEquipement(e);
   let r = statsDeNiveau(t, e.progression);
-  ajouterStats(r, n.stats);
+  additionner(r, n.stats);
   let i = pvMaxPerso(e);
   let arme = e.equipement.arme;
   let o = arme ? EQUIPEMENTS[arme.id] : undefined;

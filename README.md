@@ -13,7 +13,10 @@ npm install
 npm run dev      # serveur de développement (http://localhost:5173)
 npm run build    # version de production dans dist/
 npm run preview  # sert dist/ en local
+npm test         # tests : cohérence des données + 600 combats simulés au hasard
 ```
+
+`FUZZ_N=5000 npm test` simule plus de combats (plus lent, plus exhaustif).
 
 ## Mettre en ligne (Cloudflare Pages)
 
@@ -29,7 +32,8 @@ index.html               page unique, charge src/main.js
 public/assets/           toutes les images (servies telles quelles sous /assets/...)
 src/
   main.js                point d'entrée : boucle du jeu, déroulé d'une run, d'une zone, d'un nœud
-  style.css              styles
+  style.css              styles d'origine
+  interface.css          mise en page mobile, boîte de confirmation, aide du sort choisi
   data/                  contenu du jeu (à modifier pour équilibrer / ajouter du contenu)
     sorts.json           sorts des classes et des monstres
     classes.json         classes jouables (stats, éléments, sorts)
@@ -62,6 +66,14 @@ src/
     collection.js        aides pour le bestiaire et l'armurerie
     ecrans/              un fichier par écran (accueil, carte, taverne, HDV, succès…)
 ```
+
+## Tests
+
+- `tests/donnees.test.js` : chaque sort, monstre, combat, objet, succès et image référencé existe.
+  À lancer après chaque modification des JSON.
+- `tests/fuzz-combat.test.js` : joue des centaines de combats complets avec des équipes, niveaux,
+  équipements, difficultés et Dofus tirés au hasard, et vérifie qu'aucun plantage, boucle infinie
+  ou état incohérent (PV négatifs, PA invalides…) ne se produit.
 
 ## Sauvegardes
 

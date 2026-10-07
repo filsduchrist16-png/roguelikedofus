@@ -1,0 +1,409 @@
+/* Améliorations d'interface : boîte de confirmation, aide du sort choisi,
+   et mise en page téléphone / tablette. Chargé après style.css. */
+
+/* ---------- boîte de confirmation ---------- */
+.confirm-fond {
+  z-index: 2000;
+  background: #1a120a99;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  display: flex;
+  position: fixed;
+  inset: 0;
+  animation: confirm-apparition 0.12s ease-out;
+}
+.confirm-boite {
+  background: linear-gradient(180deg, var(--panel-solide), var(--panel-2));
+  border: 1px solid var(--bord);
+  text-align: center;
+  border-radius: 16px;
+  width: min(420px, 100%);
+  padding: 20px 20px 16px;
+  box-shadow: 0 18px 50px #000b;
+}
+.confirm-boite p {
+  margin: 0 0 16px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.confirm-boutons {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  display: flex;
+}
+.confirm-boutons button {
+  min-width: 120px;
+}
+@keyframes confirm-apparition {
+  from {
+    opacity: 0;
+  }
+}
+
+/* bouton d'action destructrice en attente de confirmation */
+button.danger-arme,
+.danger-arme {
+  color: #fff;
+  background: linear-gradient(#c8432f, #9c2b1c);
+  border-color: #6e1d12;
+}
+
+/* ---------- aide du sort sélectionné (description + Lancer / Annuler) ---------- */
+.aide-sort {
+  text-align: left;
+  color: var(--txt);
+  background: #fffbf06b;
+  border: 1px solid var(--bord);
+  border-radius: 10px;
+  margin-top: 8px;
+  padding: 8px 10px;
+}
+.aide-sort-tete {
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  display: flex;
+}
+.aide-sort-tete .aide-consigne {
+  flex: auto;
+}
+.aide-sort-tete #sort-lancer {
+  flex: auto;
+}
+.aide-sort-tete button {
+  padding: 6px 12px;
+  font-size: 0.82rem;
+}
+.aide-sort-detail {
+  margin-top: 6px;
+  font-size: 0.8rem;
+}
+.aide-sort-detail .tip-nom {
+  display: none;
+}
+.aide-sort-detail .tip-stat {
+  align-items: baseline;
+  gap: 8px;
+  display: flex;
+}
+.aide-sort-detail .tip-stat,
+.aide-sort-detail .tip-effet,
+.aide-sort-detail .tip-cible {
+  margin-top: 4px;
+}
+
+/* ---------- écrans tactiles : pas de survol ni de clavier ---------- */
+@media (hover: none) {
+  .fin-tour kbd,
+  .sort-touche {
+    display: none;
+  }
+  /* l'infobulle flottante resterait affichée après un appui : l'aide du sort la remplace */
+  .sort-tip {
+    display: none !important;
+  }
+}
+
+/* ---------- tablette ---------- */
+@media (width<=900px) {
+  .combat {
+    padding: 0 12px;
+  }
+}
+
+/* ---------- téléphone ---------- */
+@media (width<=700px) {
+  #app {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .ecran {
+    --ecran-pad-x: 14px;
+  }
+
+  /* accueil : les boutons du haut passent dans le flux au lieu de se chevaucher */
+  .coin-gauche,
+  .coin-menu {
+    flex-wrap: wrap;
+    justify-content: center;
+    position: static;
+  }
+  .coin-gauche {
+    margin-bottom: 8px;
+  }
+  .coin-menu {
+    gap: 4px;
+  }
+  .coin-param {
+    width: 42px;
+    height: 42px;
+  }
+  .monde-carte {
+    width: 150px;
+  }
+
+  /* carte de la zone : titre puis barre d'icônes sur toute la largeur */
+  .map-topbar {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  .map-topbar .zone-titre {
+    text-align: center;
+    width: 100%;
+  }
+  .topbar-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+    margin-left: 0;
+    padding: 6px;
+  }
+  .aside-icone {
+    flex: none;
+  }
+  .aside-icone img {
+    width: 36px;
+    height: 36px;
+  }
+  .map-equipe-bar {
+    flex-wrap: wrap;
+  }
+
+  /* paramètres : le bouton passe sous le libellé au lieu de déborder */
+  .setting-ligne {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .setting-ligne > button,
+  .setting-ligne .setting-actions {
+    flex: 1 1 100%;
+  }
+  .setting-actions button {
+    flex: 1;
+  }
+  .presets {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+
+  /* encyclopédie et bestiaire : fiches sur une colonne */
+  .ency-tete {
+    flex-direction: column;
+    text-align: center;
+  }
+  .ency-tete > div {
+    min-width: 0;
+  }
+  .ency-sorts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ency-sort {
+    min-width: 0;
+  }
+  .best-boss {
+    grid-template-columns: 1fr;
+  }
+  .best-relique,
+  .best-boss-carte {
+    min-width: 0;
+  }
+
+  /* combat : une colonne, la barre de sorts reste visible en bas de l'écran */
+  .combat {
+    flex-direction: column;
+    padding: 0 6px;
+    display: flex;
+  }
+  .titre-combat {
+    margin: 4px 0 8px;
+    font-size: 1.15rem;
+  }
+  #cb-timeline {
+    order: 1;
+  }
+  .plateau {
+    order: 2;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+    overflow: visible;
+  }
+  .colonne {
+    padding: 8px;
+  }
+  /* les ennemis (qu'on vise le plus souvent) passent au-dessus de l'équipe */
+  .plateau .colonne:nth-child(2) {
+    order: -1;
+  }
+  .colonne h3 {
+    margin: 0 0 4px;
+  }
+  .colonne h3 .hint {
+    display: block;
+    margin-top: 2px;
+  }
+  .camp-lignes {
+    gap: 6px;
+  }
+  .ligne-col {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .ligne-col:has(.ligne-vide) {
+    flex: none;
+    max-width: 64px;
+  }
+  .ligne-cards {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  /* le séparateur ne doit pas imposer sa hauteur d'image au panneau */
+  .ligne-sep {
+    contain: size;
+  }
+  .carte {
+    flex: 1 1 130px;
+    width: auto;
+    min-width: 0;
+    max-width: 172px;
+    padding: 8px;
+  }
+  .carte .mini-stats,
+  .carte .pp-row {
+    display: none;
+  }
+  .zone-bas {
+    display: contents;
+  }
+  .zone-bas .journal {
+    order: 3;
+    height: 130px;
+    margin-bottom: 10px;
+  }
+  .zone-bas .barre-sorts {
+    z-index: 50;
+    order: 4;
+    max-height: 42vh;
+    padding: 8px;
+    position: sticky;
+    bottom: 0;
+    overflow-y: auto;
+    box-shadow: 0 -8px 20px #0006;
+  }
+  .sorts-rangee {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .sorts-rangee .barre-actions-fin {
+    flex: 1 1 100%;
+  }
+  .sorts-rangee .fin-tour {
+    width: 100%;
+  }
+  .sorts-liste {
+    justify-content: center;
+    gap: 6px;
+  }
+  .sort {
+    width: 46px;
+    height: 46px;
+  }
+
+  /* l'ordre de jeu n'est plus une pastille flottante qui couvrait les sorts */
+  .timeline {
+    max-width: 100%;
+    margin-bottom: 8px;
+    padding: 6px 8px;
+    position: static;
+  }
+}
+
+/* pas de zoom au double appui ni de délai de clic sur mobile */
+button,
+.map-node,
+.carte,
+.classe-carte {
+  touch-action: manipulation;
+}
+
+/* l'aide du sort reprend le style de l'infobulle */
+.aide-sort-detail .tip-nom {
+  color: var(--txt);
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 0.96rem;
+  font-weight: 900;
+  display: flex;
+}
+.aide-sort-detail .tip-pa {
+  background: var(--pa);
+  color: #fff;
+  border-radius: 999px;
+  flex: none;
+  padding: 1px 8px;
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+.aide-sort-detail .tip-stat {
+  align-items: center;
+  gap: 9px;
+  margin: 7px 0 5px;
+  display: flex;
+}
+.aide-sort-detail .tip-val {
+  font-variant-numeric: tabular-nums;
+  font-size: 1.12rem;
+  font-weight: 900;
+  line-height: 1;
+}
+.aide-sort-detail .tip-val.dgt {
+  color: var(--danger);
+}
+.aide-sort-detail .tip-val.soin {
+  color: var(--pv);
+}
+.aide-sort-detail .tip-unite {
+  color: var(--muet);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.68rem;
+}
+.aide-sort-detail .tip-el {
+  color: var(--txt);
+  background: #00000014;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+.aide-sort-detail .tip-el.el-terre {
+  background: var(--terre);
+  color: #fff;
+}
+.aide-sort-detail .tip-el.el-feu {
+  background: var(--feu);
+  color: #fff;
+}
+.aide-sort-detail .tip-el.el-air {
+  background: var(--air);
+  color: #fff;
+}
+.aide-sort-detail .tip-effet {
+  color: var(--txt);
+  font-size: 0.8rem;
+  line-height: 1.32;
+}
+.aide-sort-detail .tip-cible {
+  color: var(--muet);
+  border-top: 1px solid #00000016;
+  margin-top: 7px;
+  padding-top: 6px;
+  font-size: 0.72rem;
+}
+/* le nom du sort est déjà dans la consigne au-dessus */
+.aide-sort-detail .tip-nom {
+  display: none;
+}

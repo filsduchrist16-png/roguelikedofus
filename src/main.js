@@ -59,6 +59,7 @@ import {
   installerInfobulleAide,
   installerInfobulleDofus,
   installerToucheEchap,
+  parametres,
 } from "./ui/commun.js";
 import {
   controleurJoueur,
@@ -81,6 +82,7 @@ import { ecranRecap } from "./ui/ecrans/recap.js";
 import { ecranHdv } from "./ui/ecrans/hdv.js";
 import { ecranForgemagie } from "./ui/ecrans/forgemagie.js";
 import "./style.css";
+import "./interface.css";
 function initialiserInterface(elementApp) {
   definirRacine(elementApp);
   fondDuMonde(null);
@@ -143,7 +145,7 @@ function contexteRun(e, trancheId, victoire) {
 const quetesDeLaRun = (e) =>
   (e.stats.quetes ?? []).map((e) => trouverQuete(e)).filter((e) => e !== undefined);
 const controleurEnnemi = async (e, t) => {
-  await attendre(550);
+  await attendre(parametres.combatRapide ? 180 : 550);
   return choisirActionIA(e, t);
 };
 async function jouerCombat(e, combatId, n) {
@@ -189,7 +191,7 @@ async function jouerCombat(e, combatId, n) {
     },
     onUpdate: async () => {
       rafraichirCombat();
-      await attendre(60);
+      await attendre(parametres.combatRapide ? 20 : 60);
     },
     playerDamageBonus: s.damageMult,
     enemyDamageBonus: effetsDifficulte(e.ascension).degatsMult ?? 1,
@@ -396,6 +398,7 @@ async function jouerZone(e, t, n) {
       e.kamas,
       e.ascension,
       e.philtres,
+      () => sauverRun(n, e),
     );
     if (r === `accueil`) {
       return `accueil`;

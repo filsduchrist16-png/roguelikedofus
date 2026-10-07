@@ -17,6 +17,8 @@ export const rangOrdre = (e, t) => e[t] ?? 99;
 const PARAMETRES_DEFAUT = {
   toucheFinTour: ` `,
   autoFinTour: true,
+  // tours des monstres accélérés (délai entre deux actions ennemies)
+  combatRapide: false,
   formation: {
     iop: `avant`,
     feca: `avant`,
