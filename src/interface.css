@@ -1176,3 +1176,16 @@ button,
   line-height: 1.1;
   white-space: nowrap;
 }
+
+/* ---------- Succès : monde et niveau des Dofus ---------- */
+.succes-carte-monde {
+  color: var(--muet);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+.succes-niveau {
+  margin: 4px 0 0;
+  color: var(--or-texte);
+  font-size: 0.85rem;
+  font-weight: 800;
+}

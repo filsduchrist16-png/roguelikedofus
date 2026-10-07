@@ -155,10 +155,6 @@
     "dofusdb": 9391,
     "nom": "Fleur de Blop Multicolore Royal"
   },
-  "tofu_royal": {
-    "dofusdb": 8387,
-    "nom": "Plume Vibrante du Tofu Royal"
-  },
   "crocabulia": {
     "dofusdb": 8365,
     "nom": "Corne brisée de Crocabulia"
@@ -171,21 +167,25 @@
     "dofusdb": 8399,
     "nom": "Koinkoin de bain de Nagate"
   },
+  "haute_truche": {
+    "dofusdb": 15066,
+    "nom": "Œuf de Haute Truche"
+  },
   "shihan": {
     "dofusdb": 8400,
     "nom": "Piques à cheveux de Shihan"
   },
   "hanshi": {
-    "dofusdb": 26870,
-    "nom": "Fragment d'anomalie"
+    "dofusdb": 8401,
+    "nom": "Écharpe de Hanshi"
   },
   "tynril_ahuri": {
-    "dofusdb": 21171,
-    "nom": "Pollenectar"
+    "dofusdb": 8674,
+    "nom": "Relique du Tynril"
   },
   "tynril_deconcerte": {
-    "dofusdb": 20052,
-    "nom": "Minowang"
+    "dofusdb": 14685,
+    "nom": "Essence du Tynril"
   },
   "tynril_perfide": {
     "dofusdb": 8916,
@@ -215,6 +215,10 @@
     "dofusdb": 7393,
     "nom": "Moustache du Shogun Tofugawa"
   },
+  "koumiho": {
+    "dofusdb": 23577,
+    "nom": "Flamme du Kitsounebi de Koumiho"
+  },
   "tengu_givrefoux": {
     "dofusdb": 11342,
     "nom": "Cuir de Tengu Givrefoux"
@@ -223,9 +227,9 @@
     "dofusdb": 11883,
     "nom": "Condyle de Fuji Givrefoux"
   },
-  "xlii": {
-    "dofusdb": 15721,
-    "nom": "Corne de XLII"
+  "supervizoeuf": {
+    "dofusdb": 31752,
+    "nom": "Dard du Supervizœuf"
   },
   "korriandre": {
     "dofusdb": 11896,
@@ -264,8 +268,8 @@
     "nom": "Scalp de Klime"
   },
   "nileza": {
-    "dofusdb": 27965,
-    "nom": "Porte-signe de la Riktus Ensorceleuse"
+    "dofusdb": 13947,
+    "nom": "Broderie de Nileza"
   },
   "comte_harebourg": {
     "dofusdb": 13995,
@@ -287,13 +291,53 @@
     "dofusdb": 17982,
     "nom": "Dentier de Dantinéa"
   },
+  "roi_nidas": {
+    "dofusdb": 15176,
+    "nom": "Joyau de la couronne du roi Nidas"
+  },
+  "reine_des_voleurs": {
+    "dofusdb": 15445,
+    "nom": "Broderie de la Reine des Voleurs"
+  },
+  "vortex": {
+    "dofusdb": 15715,
+    "nom": "Aile de Vortex"
+  },
+  "chaloeil": {
+    "dofusdb": 17626,
+    "nom": "Dé du Chalœil"
+  },
+  "solar": {
+    "dofusdb": 19404,
+    "nom": "Cervelle de Solar"
+  },
+  "bethel_akarna": {
+    "dofusdb": 19411,
+    "nom": "Queue de Bethel Akarna"
+  },
+  "roi_imagami": {
+    "dofusdb": 23963,
+    "nom": "Diacritique du Roi Imagami"
+  },
+  "reine_amirukam": {
+    "dofusdb": 23971,
+    "nom": "Diacritique de la Reine Amirukam"
+  },
+  "venerable_endormi": {
+    "dofusdb": 31678,
+    "nom": "Corne du Vénérable Endormi"
+  },
+  "ilyzaelle": {
+    "dofusdb": 19237,
+    "nom": "Plume d'Ilyzaelle"
+  },
   "corruption": {
     "dofusdb": 22204,
     "nom": "Corne de Corruption"
   },
   "guerre": {
-    "dofusdb": 21147,
-    "nom": "Lagon-dinde"
+    "dofusdb": 22128,
+    "nom": "Essence de Guerre"
   },
   "servitude": {
     "dofusdb": 22219,
@@ -302,5 +346,9 @@
   "misere": {
     "dofusdb": 22046,
     "nom": "Plume de Misère"
+  },
+  "tynril_consterne": {
+    "dofusdb": 8777,
+    "nom": "Pistil du Tynril"
   }
 }

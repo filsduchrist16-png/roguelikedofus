@@ -5566,204 +5566,17 @@
       "morsure"
     ]
   },
-  "tofuzmo": {
-    "id": "tofuzmo",
-    "nom": "Tofuzmo",
-    "img": "/assets/monstres/tofuzmo.png",
-    "pv": 430,
-    "stats": {
-      "force": 39,
-      "intelligence": 39,
-      "chance": 39,
-      "agilite": 157,
-      "vitalite": 237
-    },
-    "initiative": 13,
-    "ia": "agressif",
-    "pa": 4,
-    "resistances": {
-      "terre": 0.15,
-      "feu": 0.0,
-      "eau": 0.05,
-      "air": 0.25
-    },
-    "sorts": [
-      "tir_courbe",
-      "entrave_t3",
-      "morsure"
-    ]
-  },
-  "vilain_petit_tofu": {
-    "id": "vilain_petit_tofu",
-    "nom": "Vilain Petit Tofu",
-    "img": "/assets/monstres/vilain_petit_tofu.png",
-    "pv": 430,
-    "stats": {
-      "force": 40,
-      "intelligence": 40,
-      "chance": 40,
-      "agilite": 161,
-      "vitalite": 237
-    },
-    "initiative": 11,
-    "ia": "agressif",
-    "pa": 4,
-    "resistances": {
-      "terre": 0.2,
-      "feu": 0.05,
-      "eau": 0.0,
-      "air": 0.25
-    },
-    "sorts": [
-      "affaiblissement_t3",
-      "morsure"
-    ]
-  },
-  "tofutoflamme": {
-    "id": "tofutoflamme",
-    "nom": "Tofutoflamme",
-    "img": "/assets/monstres/tofutoflamme.png",
-    "pv": 430,
-    "stats": {
-      "force": 37,
-      "intelligence": 149,
-      "chance": 37,
-      "agilite": 37,
-      "vitalite": 237
-    },
-    "initiative": 10,
-    "ia": "agressif",
-    "pa": 4,
-    "resistances": {
-      "terre": 0.15,
-      "feu": 0.25,
-      "eau": 0.0,
-      "air": 0.0
-    },
-    "sorts": [
-      "toxine_t3",
-      "morsure"
-    ]
-  },
-  "tofubine": {
-    "id": "tofubine",
-    "nom": "Tofubine",
-    "img": "/assets/monstres/tofubine.png",
-    "pv": 400,
-    "stats": {
-      "force": 39,
-      "intelligence": 156,
-      "chance": 39,
-      "agilite": 39,
-      "vitalite": 220
-    },
-    "initiative": 11,
-    "ia": "soutien",
-    "pa": 4,
-    "resistances": {
-      "terre": 0.1,
-      "feu": 0.2,
-      "eau": 0.25,
-      "air": 0.05
-    },
-    "sorts": [
-      "soin_t3",
-      "tir_courbe",
-      "morsure"
-    ]
-  },
-  "tofu_dodu": {
-    "id": "tofu_dodu",
-    "nom": "Tofu Dodu",
-    "img": "/assets/monstres/tofu_dodu.png",
-    "pv": 480,
-    "stats": {
-      "force": 156,
-      "intelligence": 39,
-      "chance": 39,
-      "agilite": 39,
-      "vitalite": 264
-    },
-    "initiative": 13,
-    "ia": "agressif",
-    "pa": 4,
-    "resistances": {
-      "terre": -0.05,
-      "feu": 0.15,
-      "eau": 0.2,
-      "air": 0.3
-    },
-    "sorts": [
-      "sape_t3",
-      "morsure"
-    ]
-  },
-  "vilain_petit_tofu_agressif": {
-    "id": "vilain_petit_tofu_agressif",
-    "nom": "Vilain Petit Tofu Agressif",
-    "img": "/assets/monstres/vilain_petit_tofu_agressif.png",
-    "pv": 430,
-    "stats": {
-      "force": 38,
-      "intelligence": 38,
-      "chance": 38,
-      "agilite": 154,
-      "vitalite": 237
-    },
-    "initiative": 14,
-    "ia": "agressif",
-    "pa": 4,
-    "resistances": {
-      "terre": 0.2,
-      "feu": 0.05,
-      "eau": 0.0,
-      "air": 0.25
-    },
-    "sorts": [
-      "affaiblissement_t3",
-      "morsure"
-    ]
-  },
-  "tofu_royal": {
-    "id": "tofu_royal",
-    "nom": "Tofu Royal",
-    "img": "/assets/monstres/tofu_royal.png",
-    "pv": 1190,
-    "stats": {
-      "force": 188,
-      "intelligence": 47,
-      "chance": 47,
-      "agilite": 113,
-      "vitalite": 654
-    },
-    "initiative": 11,
-    "ia": "agressif",
-    "boss": true,
-    "pa": 10,
-    "resistances": {
-      "terre": 0.2,
-      "feu": 0.2,
-      "eau": 0.2,
-      "air": 0.3
-    },
-    "sorts": [
-      "invocation_royale_de_tofu",
-      "ecrasement_royal",
-      "charge",
-      "morsure"
-    ]
-  },
   "dragnarok": {
     "id": "dragnarok",
     "nom": "Dragnarok",
     "img": "/assets/monstres/dragnarok.png",
-    "pv": 490,
+    "pv": 440,
     "stats": {
-      "force": 104,
-      "intelligence": 43,
-      "chance": 174,
-      "agilite": 43,
-      "vitalite": 270
+      "force": 99,
+      "intelligence": 41,
+      "chance": 166,
+      "agilite": 41,
+      "vitalite": 242
     },
     "initiative": 14,
     "ia": "agressif",
@@ -5785,13 +5598,13 @@
     "id": "dragueuse",
     "nom": "Dragueuse",
     "img": "/assets/monstres/dragueuse.png",
-    "pv": 450,
+    "pv": 410,
     "stats": {
-      "force": 40,
-      "intelligence": 161,
-      "chance": 40,
-      "agilite": 40,
-      "vitalite": 248
+      "force": 38,
+      "intelligence": 154,
+      "chance": 38,
+      "agilite": 38,
+      "vitalite": 226
     },
     "initiative": 14,
     "ia": "agressif",
@@ -5814,13 +5627,13 @@
     "id": "draguaindrop",
     "nom": "Draguaindrop",
     "img": "/assets/monstres/draguaindrop.png",
-    "pv": 450,
+    "pv": 410,
     "stats": {
-      "force": 41,
-      "intelligence": 41,
-      "chance": 41,
-      "agilite": 164,
-      "vitalite": 248
+      "force": 39,
+      "intelligence": 39,
+      "chance": 39,
+      "agilite": 156,
+      "vitalite": 226
     },
     "initiative": 12,
     "ia": "agressif",
@@ -5842,13 +5655,13 @@
     "id": "dragace",
     "nom": "Dragacé",
     "img": "/assets/monstres/dragace.png",
-    "pv": 450,
+    "pv": 410,
     "stats": {
-      "force": 42,
-      "intelligence": 42,
-      "chance": 42,
-      "agilite": 170,
-      "vitalite": 248
+      "force": 40,
+      "intelligence": 40,
+      "chance": 40,
+      "agilite": 162,
+      "vitalite": 226
     },
     "initiative": 15,
     "ia": "agressif",
@@ -5870,13 +5683,13 @@
     "id": "dragmatique",
     "nom": "Dragmatique",
     "img": "/assets/monstres/dragmatique.png",
-    "pv": 530,
+    "pv": 480,
     "stats": {
-      "force": 42,
-      "intelligence": 168,
-      "chance": 42,
-      "agilite": 42,
-      "vitalite": 292
+      "force": 40,
+      "intelligence": 160,
+      "chance": 40,
+      "agilite": 40,
+      "vitalite": 264
     },
     "initiative": 12,
     "ia": "agressif",
@@ -5898,13 +5711,13 @@
     "id": "crocabulia",
     "nom": "Crocabulia",
     "img": "/assets/monstres/crocabulia.png",
-    "pv": 1280,
+    "pv": 1190,
     "stats": {
-      "force": 115,
-      "intelligence": 191,
-      "chance": 48,
-      "agilite": 48,
-      "vitalite": 704
+      "force": 109,
+      "intelligence": 181,
+      "chance": 45,
+      "agilite": 45,
+      "vitalite": 654
     },
     "initiative": 12,
     "ia": "agressif",
@@ -5926,13 +5739,13 @@
     "id": "gamino",
     "nom": "Gamino",
     "img": "/assets/monstres/gamino.png",
-    "pv": 460,
+    "pv": 420,
     "stats": {
-      "force": 182,
-      "intelligence": 46,
-      "chance": 46,
-      "agilite": 46,
-      "vitalite": 253
+      "force": 174,
+      "intelligence": 44,
+      "chance": 44,
+      "agilite": 44,
+      "vitalite": 231
     },
     "initiative": 12,
     "ia": "agressif",
@@ -5953,13 +5766,13 @@
     "id": "serpiplume",
     "nom": "Serpiplume",
     "img": "/assets/monstres/serpiplume.png",
-    "pv": 460,
+    "pv": 420,
     "stats": {
-      "force": 40,
-      "intelligence": 40,
-      "chance": 160,
-      "agilite": 40,
-      "vitalite": 253
+      "force": 38,
+      "intelligence": 38,
+      "chance": 153,
+      "agilite": 38,
+      "vitalite": 231
     },
     "initiative": 11,
     "ia": "soutien",
@@ -5982,13 +5795,13 @@
     "id": "scaratos",
     "nom": "Scaratos",
     "img": "/assets/monstres/scaratos.png",
-    "pv": 430,
+    "pv": 390,
     "stats": {
-      "force": 106,
-      "intelligence": 44,
-      "chance": 44,
-      "agilite": 176,
-      "vitalite": 237
+      "force": 101,
+      "intelligence": 42,
+      "chance": 42,
+      "agilite": 168,
+      "vitalite": 215
     },
     "initiative": 14,
     "ia": "soutien",
@@ -6011,13 +5824,13 @@
     "id": "mominotor",
     "nom": "Mominotor",
     "img": "/assets/monstres/mominotor.png",
-    "pv": 610,
+    "pv": 560,
     "stats": {
-      "force": 42,
-      "intelligence": 169,
-      "chance": 42,
-      "agilite": 101,
-      "vitalite": 336
+      "force": 40,
+      "intelligence": 161,
+      "chance": 40,
+      "agilite": 97,
+      "vitalite": 308
     },
     "initiative": 13,
     "ia": "agressif",
@@ -6038,13 +5851,13 @@
     "id": "deminoboule",
     "nom": "Déminoboule",
     "img": "/assets/monstres/deminoboule.png",
-    "pv": 610,
+    "pv": 560,
     "stats": {
-      "force": 156,
-      "intelligence": 39,
-      "chance": 39,
-      "agilite": 39,
-      "vitalite": 336
+      "force": 150,
+      "intelligence": 37,
+      "chance": 37,
+      "agilite": 37,
+      "vitalite": 308
     },
     "initiative": 14,
     "ia": "agressif",
@@ -6064,13 +5877,13 @@
     "id": "minotoror",
     "nom": "Minotoror",
     "img": "/assets/monstres/minotoror.png",
-    "pv": 1370,
+    "pv": 1280,
     "stats": {
-      "force": 209,
-      "intelligence": 52,
-      "chance": 52,
-      "agilite": 52,
-      "vitalite": 754
+      "force": 199,
+      "intelligence": 50,
+      "chance": 50,
+      "agilite": 50,
+      "vitalite": 704
     },
     "initiative": 10,
     "ia": "agressif",
@@ -6092,13 +5905,13 @@
     "id": "sarkapwane",
     "nom": "Sarkapwane",
     "img": "/assets/monstres/sarkapwane.png",
-    "pv": 500,
+    "pv": 460,
     "stats": {
-      "force": 46,
-      "intelligence": 46,
-      "chance": 183,
-      "agilite": 110,
-      "vitalite": 275
+      "force": 44,
+      "intelligence": 44,
+      "chance": 175,
+      "agilite": 105,
+      "vitalite": 253
     },
     "initiative": 15,
     "ia": "agressif",
@@ -6120,13 +5933,13 @@
     "id": "kokom",
     "nom": "Kokom",
     "img": "/assets/monstres/kokom.png",
-    "pv": 530,
+    "pv": 490,
     "stats": {
-      "force": 41,
-      "intelligence": 41,
-      "chance": 99,
-      "agilite": 164,
-      "vitalite": 292
+      "force": 39,
+      "intelligence": 39,
+      "chance": 94,
+      "agilite": 157,
+      "vitalite": 270
     },
     "initiative": 11,
     "ia": "agressif",
@@ -6149,13 +5962,13 @@
     "id": "akakwa",
     "nom": "Akakwa",
     "img": "/assets/monstres/akakwa.png",
-    "pv": 580,
+    "pv": 530,
     "stats": {
-      "force": 45,
-      "intelligence": 179,
-      "chance": 107,
-      "agilite": 45,
-      "vitalite": 319
+      "force": 43,
+      "intelligence": 171,
+      "chance": 102,
+      "agilite": 43,
+      "vitalite": 292
     },
     "initiative": 13,
     "ia": "agressif",
@@ -6178,13 +5991,13 @@
     "id": "betto",
     "nom": "Betto",
     "img": "/assets/monstres/betto.png",
-    "pv": 620,
+    "pv": 570,
     "stats": {
-      "force": 185,
-      "intelligence": 46,
-      "chance": 46,
-      "agilite": 111,
-      "vitalite": 341
+      "force": 177,
+      "intelligence": 44,
+      "chance": 44,
+      "agilite": 106,
+      "vitalite": 314
     },
     "initiative": 10,
     "ia": "agressif",
@@ -6207,13 +6020,13 @@
     "id": "kwamourai",
     "nom": "Kwamouraï",
     "img": "/assets/monstres/kwamourai.png",
-    "pv": 580,
+    "pv": 530,
     "stats": {
-      "force": 192,
-      "intelligence": 115,
-      "chance": 48,
-      "agilite": 48,
-      "vitalite": 319
+      "force": 183,
+      "intelligence": 110,
+      "chance": 46,
+      "agilite": 46,
+      "vitalite": 292
     },
     "initiative": 15,
     "ia": "agressif",
@@ -6235,13 +6048,13 @@
     "id": "nagate",
     "nom": "Nagate",
     "img": "/assets/monstres/nagate.png",
-    "pv": 1470,
+    "pv": 1370,
     "stats": {
-      "force": 55,
-      "intelligence": 131,
-      "chance": 218,
-      "agilite": 55,
-      "vitalite": 809
+      "force": 52,
+      "intelligence": 124,
+      "chance": 207,
+      "agilite": 52,
+      "vitalite": 754
     },
     "initiative": 10,
     "ia": "agressif",
@@ -6255,6 +6068,171 @@
     },
     "sorts": [
       "hatsunamiku",
+      "charge",
+      "morsure"
+    ]
+  },
+  "gruche": {
+    "id": "gruche",
+    "nom": "Gruche",
+    "img": "/assets/monstres/gruche.png",
+    "pv": 570,
+    "stats": {
+      "force": 104,
+      "intelligence": 173,
+      "chance": 43,
+      "agilite": 43,
+      "vitalite": 314
+    },
+    "initiative": 14,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.05,
+      "eau": 0.05,
+      "air": 0.15
+    },
+    "sorts": [
+      "toxine_t3",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "truchmuche": {
+    "id": "truchmuche",
+    "nom": "Truchmuche",
+    "img": "/assets/monstres/truchmuche.png",
+    "pv": 560,
+    "stats": {
+      "force": 44,
+      "intelligence": 44,
+      "chance": 177,
+      "agilite": 44,
+      "vitalite": 308
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.0,
+      "feu": 0.2,
+      "eau": 0.2,
+      "air": 0.1
+    },
+    "sorts": [
+      "entrave_t3",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "truchideur": {
+    "id": "truchideur",
+    "nom": "Truchideur",
+    "img": "/assets/monstres/truchideur.png",
+    "pv": 560,
+    "stats": {
+      "force": 44,
+      "intelligence": 44,
+      "chance": 177,
+      "agilite": 44,
+      "vitalite": 308
+    },
+    "initiative": 11,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.0,
+      "eau": 0.2,
+      "air": 0.05
+    },
+    "sorts": [
+      "attraction_t3",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "truchtine": {
+    "id": "truchtine",
+    "nom": "Truchtine",
+    "img": "/assets/monstres/truchtine.png",
+    "pv": 560,
+    "stats": {
+      "force": 46,
+      "intelligence": 186,
+      "chance": 46,
+      "agilite": 46,
+      "vitalite": 308
+    },
+    "initiative": 13,
+    "ia": "soutien",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.0,
+      "feu": 0.2,
+      "eau": 0.05,
+      "air": 0.25
+    },
+    "sorts": [
+      "soin_t3",
+      "tir_courbe",
+      "coup_repoussant_t3",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "truchon": {
+    "id": "truchon",
+    "nom": "Truchon",
+    "img": "/assets/monstres/truchon.png",
+    "pv": 550,
+    "stats": {
+      "force": 47,
+      "intelligence": 47,
+      "chance": 47,
+      "agilite": 188,
+      "vitalite": 302
+    },
+    "initiative": 10,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.15,
+      "feu": 0.2,
+      "eau": 0.1,
+      "air": 0.05
+    },
+    "sorts": [
+      "sape_t3",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "haute_truche": {
+    "id": "haute_truche",
+    "nom": "Haute Truche",
+    "img": "/assets/monstres/haute_truche.png",
+    "pv": 1470,
+    "stats": {
+      "force": 125,
+      "intelligence": 52,
+      "chance": 52,
+      "agilite": 208,
+      "vitalite": 809
+    },
+    "initiative": 14,
+    "ia": "agressif",
+    "boss": true,
+    "pa": 10,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.2,
+      "eau": 0.25,
+      "air": 0.2
+    },
+    "sorts": [
+      "tete_dans_le_sable",
       "charge",
       "morsure"
     ]
@@ -7602,13 +7580,13 @@
     "id": "tsukinochi",
     "nom": "Tsukinochi",
     "img": "/assets/monstres/tsukinochi.png",
-    "pv": 450,
+    "pv": 420,
     "stats": {
       "force": 182,
       "intelligence": 45,
       "chance": 45,
       "agilite": 45,
-      "vitalite": 248
+      "vitalite": 231
     },
     "initiative": 14,
     "ia": "agressif",
@@ -7630,13 +7608,13 @@
     "id": "tambourai",
     "nom": "Tambouraï",
     "img": "/assets/monstres/tambourai.png",
-    "pv": 450,
+    "pv": 420,
     "stats": {
       "force": 46,
       "intelligence": 110,
       "chance": 46,
       "agilite": 183,
-      "vitalite": 248
+      "vitalite": 231
     },
     "initiative": 14,
     "ia": "agressif",
@@ -7659,13 +7637,13 @@
     "id": "onabu_geisha",
     "nom": "Onabu-Geisha",
     "img": "/assets/monstres/onabu_geisha.png",
-    "pv": 450,
+    "pv": 420,
     "stats": {
       "force": 48,
       "intelligence": 48,
       "chance": 192,
       "agilite": 115,
-      "vitalite": 248
+      "vitalite": 231
     },
     "initiative": 15,
     "ia": "agressif",
@@ -7687,13 +7665,13 @@
     "id": "jiangshi_nobi",
     "nom": "Jiangshi-Nobi",
     "img": "/assets/monstres/jiangshi_nobi.png",
-    "pv": 450,
+    "pv": 420,
     "stats": {
       "force": 169,
       "intelligence": 42,
       "chance": 101,
       "agilite": 42,
-      "vitalite": 248
+      "vitalite": 231
     },
     "initiative": 14,
     "ia": "agressif",
@@ -7711,32 +7689,118 @@
     ],
     "archiNom": "Jiankor le Radoteur"
   },
-  "kabushido": {
-    "id": "kabushido",
-    "nom": "Kabushido",
-    "img": "/assets/monstres/kabushido.png",
-    "pv": 450,
+  "madura": {
+    "id": "madura",
+    "nom": "Madura",
+    "img": "/assets/monstres/madura.png",
+    "pv": 480,
     "stats": {
-      "force": 41,
-      "intelligence": 166,
-      "chance": 41,
-      "agilite": 41,
-      "vitalite": 248
+      "force": 191,
+      "intelligence": 48,
+      "chance": 48,
+      "agilite": 48,
+      "vitalite": 264
+    },
+    "initiative": 16,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.05,
+      "feu": 0.15,
+      "eau": 0.05,
+      "air": 0.15
+    },
+    "sorts": [
+      "attraction_t4",
+      "morsure",
+      "grignotage"
+    ],
+    "archiNom": "Madgang le Docteur"
+  },
+  "bakazako": {
+    "id": "bakazako",
+    "nom": "Bakazako",
+    "img": "/assets/monstres/bakazako.png",
+    "pv": 460,
+    "stats": {
+      "force": 188,
+      "intelligence": 47,
+      "chance": 113,
+      "agilite": 47,
+      "vitalite": 253
+    },
+    "initiative": 16,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.15,
+      "feu": 0.15,
+      "eau": 0.2,
+      "air": 0.05
+    },
+    "sorts": [
+      "tir_courbe",
+      "sape_t4",
+      "morsure",
+      "grignotage"
+    ],
+    "archiNom": "Bakaglace le Congelé"
+  },
+  "kaonashi": {
+    "id": "kaonashi",
+    "nom": "Kaonashi",
+    "img": "/assets/monstres/kaonashi.png",
+    "pv": 520,
+    "stats": {
+      "force": 47,
+      "intelligence": 47,
+      "chance": 113,
+      "agilite": 189,
+      "vitalite": 286
     },
     "initiative": 17,
     "ia": "agressif",
-    "pa": 7,
+    "pa": 5,
     "resistances": {
-      "terre": 0.1,
-      "feu": 0.2,
-      "eau": 0.0,
-      "air": 0.1
+      "terre": 0.15,
+      "feu": 0.15,
+      "eau": 0.1,
+      "air": 0.05
     },
     "sorts": [
-      "toxine_t4",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Kaonucléair l'Instable"
+  },
+  "tsume_bozu": {
+    "id": "tsume_bozu",
+    "nom": "Tsume-bozu",
+    "img": "/assets/monstres/tsume_bozu.png",
+    "pv": 460,
+    "stats": {
+      "force": 115,
+      "intelligence": 48,
+      "chance": 192,
+      "agilite": 48,
+      "vitalite": 253
+    },
+    "initiative": 15,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.05,
+      "feu": 0.2,
+      "eau": 0.15,
+      "air": 0.05
+    },
+    "sorts": [
+      "tir_courbe",
+      "attraction_t4",
+      "morsure",
+      "grignotage"
+    ],
+    "archiNom": "Tsumani l'Inondeur"
   },
   "shogun_tofugawa": {
     "id": "shogun_tofugawa",
@@ -7744,10 +7808,10 @@
     "img": "/assets/monstres/shogun_tofugawa.png",
     "pv": 1440,
     "stats": {
-      "force": 56,
-      "intelligence": 56,
-      "chance": 135,
-      "agilite": 225,
+      "force": 51,
+      "intelligence": 51,
+      "chance": 122,
+      "agilite": 203,
       "vitalite": 792
     },
     "initiative": 15,
@@ -7762,6 +7826,34 @@
     },
     "sorts": [
       "hageshi_kaze",
+      "charge",
+      "morsure"
+    ]
+  },
+  "koumiho": {
+    "id": "koumiho",
+    "nom": "Koumiho",
+    "img": "/assets/monstres/koumiho.png",
+    "pv": 1440,
+    "stats": {
+      "force": 55,
+      "intelligence": 218,
+      "chance": 55,
+      "agilite": 131,
+      "vitalite": 792
+    },
+    "initiative": 14,
+    "ia": "agressif",
+    "boss": true,
+    "pa": 10,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.2,
+      "eau": 0.15,
+      "air": 0.2
+    },
+    "sorts": [
+      "koumiho_no_kaze",
       "charge",
       "morsure"
     ]
@@ -7960,26 +8052,26 @@
       "morsure"
     ]
   },
-  "trezz": {
-    "id": "trezz",
-    "nom": "Trezz",
-    "img": "/assets/monstres/trezz.png",
-    "pv": 540,
+  "balebz": {
+    "id": "balebz",
+    "nom": "Balebz",
+    "img": "/assets/monstres/balebz.png",
+    "pv": 590,
     "stats": {
-      "force": 125,
-      "intelligence": 208,
-      "chance": 52,
-      "agilite": 52,
-      "vitalite": 297
+      "force": 53,
+      "intelligence": 212,
+      "chance": 53,
+      "agilite": 53,
+      "vitalite": 324
     },
-    "initiative": 12,
+    "initiative": 16,
     "ia": "agressif",
-    "pa": 7,
+    "pa": 6,
     "resistances": {
-      "terre": 0.2,
-      "feu": 0.1,
+      "terre": 0.1,
+      "feu": 0.15,
       "eau": 0.05,
-      "air": 0.2
+      "air": 0.1
     },
     "sorts": [
       "drain_vital_t4",
@@ -7987,122 +8079,100 @@
       "grignotage"
     ]
   },
-  "vindeux": {
-    "id": "vindeux",
-    "nom": "Vindeux",
-    "img": "/assets/monstres/vindeux.png",
-    "pv": 540,
+  "toubibz": {
+    "id": "toubibz",
+    "nom": "Toubibz",
+    "img": "/assets/monstres/toubibz.png",
+    "pv": 510,
     "stats": {
-      "force": 48,
-      "intelligence": 48,
-      "chance": 115,
-      "agilite": 191,
-      "vitalite": 297
+      "force": 50,
+      "intelligence": 50,
+      "chance": 50,
+      "agilite": 199,
+      "vitalite": 280
     },
-    "initiative": 15,
-    "ia": "agressif",
-    "pa": 7,
+    "initiative": 12,
+    "ia": "soutien",
+    "pa": 6,
     "resistances": {
-      "terre": 0.1,
-      "feu": 0.05,
-      "eau": 0.2,
+      "terre": 0.05,
+      "feu": 0.1,
+      "eau": 0.1,
       "air": 0.15
     },
     "sorts": [
+      "soin_t4",
+      "tir_courbe",
+      "attraction_t4",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "kamikabz": {
+    "id": "kamikabz",
+    "nom": "Kamikabz",
+    "img": "/assets/monstres/kamikabz.png",
+    "pv": 520,
+    "stats": {
+      "force": 204,
+      "intelligence": 51,
+      "chance": 51,
+      "agilite": 51,
+      "vitalite": 286
+    },
+    "initiative": 16,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.15,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.05
+    },
+    "sorts": [
+      "drain_vital_t4",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "quadrabz": {
+    "id": "quadrabz",
+    "nom": "Quadrabz",
+    "img": "/assets/monstres/quadrabz.png",
+    "pv": 550,
+    "stats": {
+      "force": 47,
+      "intelligence": 47,
+      "chance": 188,
+      "agilite": 47,
+      "vitalite": 302
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 6,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.05,
+      "eau": 0.15,
+      "air": 0.1
+    },
+    "sorts": [
+      "tir_courbe",
       "sape_t4",
       "morsure",
       "grignotage"
     ]
   },
-  "trantroa": {
-    "id": "trantroa",
-    "nom": "Trantroa",
-    "img": "/assets/monstres/trantroa.png",
-    "pv": 540,
-    "stats": {
-      "force": 52,
-      "intelligence": 210,
-      "chance": 52,
-      "agilite": 52,
-      "vitalite": 297
-    },
-    "initiative": 13,
-    "ia": "agressif",
-    "pa": 7,
-    "resistances": {
-      "terre": 0.05,
-      "feu": 0.2,
-      "eau": 0.15,
-      "air": 0.2
-    },
-    "sorts": [
-      "morsure",
-      "grignotage"
-    ]
-  },
-  "seith": {
-    "id": "seith",
-    "nom": "Seith",
-    "img": "/assets/monstres/seith.png",
-    "pv": 540,
-    "stats": {
-      "force": 46,
-      "intelligence": 46,
-      "chance": 110,
-      "agilite": 183,
-      "vitalite": 297
-    },
-    "initiative": 12,
-    "ia": "agressif",
-    "pa": 7,
-    "resistances": {
-      "terre": 0.2,
-      "feu": 0.15,
-      "eau": 0.2,
-      "air": 0.1
-    },
-    "sorts": [
-      "morsure",
-      "grignotage"
-    ]
-  },
-  "soissanth": {
-    "id": "soissanth",
-    "nom": "Soissanth",
-    "img": "/assets/monstres/soissanth.png",
-    "pv": 540,
-    "stats": {
-      "force": 53,
-      "intelligence": 53,
-      "chance": 53,
-      "agilite": 212,
-      "vitalite": 297
-    },
-    "initiative": 15,
-    "ia": "agressif",
-    "pa": 7,
-    "resistances": {
-      "terre": 0.15,
-      "feu": 0.2,
-      "eau": 0.1,
-      "air": 0.05
-    },
-    "sorts": [
-      "toxine_t4",
-      "morsure",
-      "grignotage"
-    ]
-  },
-  "xlii": {
-    "id": "xlii",
-    "nom": "XLII",
-    "img": "/assets/monstres/xlii.png",
+  "supervizoeuf": {
+    "id": "supervizoeuf",
+    "nom": "Supervizœuf",
+    "img": "/assets/monstres/supervizoeuf.png",
     "pv": 1670,
     "stats": {
-      "force": 64,
-      "intelligence": 64,
-      "chance": 154,
-      "agilite": 257,
+      "force": 63,
+      "intelligence": 63,
+      "chance": 63,
+      "agilite": 250,
       "vitalite": 919
     },
     "initiative": 14,
@@ -8111,12 +8181,13 @@
     "pa": 10,
     "resistances": {
       "terre": 0.15,
-      "feu": 0.2,
-      "eau": 0.2,
-      "air": 0.25
+      "feu": 0.15,
+      "eau": 0.15,
+      "air": 0.15
     },
     "sorts": [
-      "dereglement",
+      "invokabombz",
+      "abzlation",
       "charge",
       "morsure"
     ]
@@ -9287,72 +9358,17 @@
       "grignotage"
     ]
   },
-  "frimar": {
-    "id": "frimar",
-    "nom": "Frimar",
-    "img": "/assets/monstres/frimar.png",
-    "pv": 330,
-    "stats": {
-      "force": 149,
-      "intelligence": 89,
-      "chance": 37,
-      "agilite": 37,
-      "vitalite": 182
-    },
-    "initiative": 19,
-    "ia": "agressif",
-    "pa": 7,
-    "resistances": {
-      "terre": 0.0,
-      "feu": 0.15,
-      "eau": 0.25,
-      "air": 0.2
-    },
-    "sorts": [
-      "drain_vital_t5",
-      "morsure",
-      "grignotage"
-    ]
-  },
-  "missiz_frizz": {
-    "id": "missiz_frizz",
-    "nom": "Missiz Frizz",
-    "img": "/assets/monstres/missiz_frizz.png",
-    "pv": 1160,
-    "stats": {
-      "force": 52,
-      "intelligence": 209,
-      "chance": 125,
-      "agilite": 52,
-      "vitalite": 638
-    },
-    "initiative": 18,
-    "ia": "agressif",
-    "boss": true,
-    "pa": 10,
-    "resistances": {
-      "terre": 0.25,
-      "feu": 0.2,
-      "eau": 0.2,
-      "air": 0.2
-    },
-    "sorts": [
-      "cristallisation",
-      "charge",
-      "morsure"
-    ]
-  },
   "kanimate": {
     "id": "kanimate",
     "nom": "Kanimate",
     "img": "/assets/monstres/kanimate.png",
-    "pv": 390,
+    "pv": 330,
     "stats": {
-      "force": 168,
-      "intelligence": 42,
-      "chance": 42,
-      "agilite": 101,
-      "vitalite": 215
+      "force": 144,
+      "intelligence": 36,
+      "chance": 36,
+      "agilite": 87,
+      "vitalite": 182
     },
     "initiative": 16,
     "ia": "agressif",
@@ -9374,13 +9390,13 @@
     "id": "brikoglours",
     "nom": "Brikoglours",
     "img": "/assets/monstres/brikoglours.png",
-    "pv": 390,
+    "pv": 330,
     "stats": {
-      "force": 102,
-      "intelligence": 170,
-      "chance": 43,
-      "agilite": 43,
-      "vitalite": 215
+      "force": 88,
+      "intelligence": 147,
+      "chance": 37,
+      "agilite": 37,
+      "vitalite": 182
     },
     "initiative": 18,
     "ia": "agressif",
@@ -9401,13 +9417,13 @@
     "id": "mansordide",
     "nom": "Mansordide",
     "img": "/assets/monstres/mansordide.png",
-    "pv": 390,
+    "pv": 330,
     "stats": {
-      "force": 43,
-      "intelligence": 170,
-      "chance": 102,
-      "agilite": 43,
-      "vitalite": 215
+      "force": 37,
+      "intelligence": 147,
+      "chance": 88,
+      "agilite": 37,
+      "vitalite": 182
     },
     "initiative": 19,
     "ia": "soutien",
@@ -9430,13 +9446,13 @@
     "id": "mecanofoux",
     "nom": "Mécanofoux",
     "img": "/assets/monstres/mecanofoux.png",
-    "pv": 390,
+    "pv": 330,
     "stats": {
-      "force": 45,
-      "intelligence": 45,
-      "chance": 178,
-      "agilite": 45,
-      "vitalite": 215
+      "force": 38,
+      "intelligence": 38,
+      "chance": 154,
+      "agilite": 38,
+      "vitalite": 182
     },
     "initiative": 16,
     "ia": "agressif",
@@ -9453,44 +9469,45 @@
       "grignotage"
     ]
   },
-  "merulor": {
-    "id": "merulor",
-    "nom": "Mérulor",
-    "img": "/assets/monstres/merulor.png",
-    "pv": 390,
+  "missiz_frizz": {
+    "id": "missiz_frizz",
+    "nom": "Missiz Frizz",
+    "img": "/assets/monstres/missiz_frizz.png",
+    "pv": 1160,
     "stats": {
-      "force": 46,
-      "intelligence": 183,
-      "chance": 46,
-      "agilite": 46,
-      "vitalite": 215
+      "force": 47,
+      "intelligence": 188,
+      "chance": 113,
+      "agilite": 47,
+      "vitalite": 638
     },
-    "initiative": 19,
+    "initiative": 18,
     "ia": "agressif",
-    "pa": 7,
+    "boss": true,
+    "pa": 10,
     "resistances": {
-      "terre": 0.15,
+      "terre": 0.25,
       "feu": 0.2,
-      "eau": 0.25,
-      "air": 0.15
+      "eau": 0.2,
+      "air": 0.2
     },
     "sorts": [
-      "coup_repoussant_t5",
-      "morsure",
-      "grignotage"
+      "cristallisation",
+      "charge",
+      "morsure"
     ]
   },
   "sylargh": {
     "id": "sylargh",
     "nom": "Sylargh",
     "img": "/assets/monstres/sylargh.png",
-    "pv": 1350,
+    "pv": 1160,
     "stats": {
-      "force": 145,
-      "intelligence": 60,
-      "chance": 60,
-      "agilite": 242,
-      "vitalite": 743
+      "force": 112,
+      "intelligence": 47,
+      "chance": 47,
+      "agilite": 187,
+      "vitalite": 638
     },
     "initiative": 14,
     "ia": "agressif",
@@ -9512,13 +9529,13 @@
     "id": "harrogant",
     "nom": "Harrogant",
     "img": "/assets/monstres/harrogant.png",
-    "pv": 440,
+    "pv": 390,
     "stats": {
-      "force": 51,
-      "intelligence": 51,
-      "chance": 51,
-      "agilite": 205,
-      "vitalite": 242
+      "force": 47,
+      "intelligence": 47,
+      "chance": 47,
+      "agilite": 187,
+      "vitalite": 215
     },
     "initiative": 15,
     "ia": "agressif",
@@ -9540,13 +9557,13 @@
     "id": "grodruche",
     "nom": "Grodruche",
     "img": "/assets/monstres/grodruche.png",
-    "pv": 440,
+    "pv": 390,
     "stats": {
-      "force": 195,
-      "intelligence": 49,
-      "chance": 117,
-      "agilite": 49,
-      "vitalite": 242
+      "force": 178,
+      "intelligence": 44,
+      "chance": 107,
+      "agilite": 44,
+      "vitalite": 215
     },
     "initiative": 18,
     "ia": "agressif",
@@ -9567,13 +9584,13 @@
     "id": "peunch",
     "nom": "Peunch",
     "img": "/assets/monstres/peunch.png",
-    "pv": 440,
+    "pv": 390,
     "stats": {
-      "force": 49,
-      "intelligence": 197,
-      "chance": 49,
-      "agilite": 49,
-      "vitalite": 242
+      "force": 45,
+      "intelligence": 180,
+      "chance": 45,
+      "agilite": 45,
+      "vitalite": 215
     },
     "initiative": 14,
     "ia": "agressif",
@@ -9594,13 +9611,13 @@
     "id": "empaille",
     "nom": "Empaillé",
     "img": "/assets/monstres/empaille.png",
-    "pv": 440,
+    "pv": 390,
     "stats": {
-      "force": 45,
-      "intelligence": 45,
-      "chance": 45,
-      "agilite": 182,
-      "vitalite": 242
+      "force": 41,
+      "intelligence": 41,
+      "chance": 41,
+      "agilite": 166,
+      "vitalite": 215
     },
     "initiative": 15,
     "ia": "agressif",
@@ -9617,74 +9634,17 @@
       "grignotage"
     ]
   },
-  "cuirboule": {
-    "id": "cuirboule",
-    "nom": "Cuirboule",
-    "img": "/assets/monstres/cuirboule.png",
-    "pv": 440,
-    "stats": {
-      "force": 179,
-      "intelligence": 45,
-      "chance": 107,
-      "agilite": 45,
-      "vitalite": 242
-    },
-    "initiative": 19,
-    "ia": "soutien",
-    "pa": 7,
-    "resistances": {
-      "terre": -0.05,
-      "feu": 0.1,
-      "eau": 0.15,
-      "air": 0.15
-    },
-    "sorts": [
-      "soin_t5",
-      "tir_courbe",
-      "coup_repoussant_t5",
-      "morsure",
-      "grignotage"
-    ]
-  },
-  "klime": {
-    "id": "klime",
-    "nom": "Klime",
-    "img": "/assets/monstres/klime.png",
-    "pv": 1510,
-    "stats": {
-      "force": 59,
-      "intelligence": 235,
-      "chance": 59,
-      "agilite": 141,
-      "vitalite": 831
-    },
-    "initiative": 15,
-    "ia": "agressif",
-    "boss": true,
-    "pa": 10,
-    "resistances": {
-      "terre": 0.25,
-      "feu": 0.2,
-      "eau": 0.2,
-      "air": 0.2
-    },
-    "sorts": [
-      "cuir_a_feu_doux",
-      "charge",
-      "morsure"
-    ]
-  },
   "nessil": {
     "id": "nessil",
     "nom": "Nessil",
     "img": "/assets/monstres/nessil.png",
-    "pv": 500,
+    "pv": 390,
     "stats": {
-      "force": 209,
-      "intelligence": 52,
-      "chance": 125,
-      "agilite": 52,
-      "vitalite": 275
+      "force": 174,
+      "intelligence": 44,
+      "chance": 105,
+      "agilite": 44,
+      "vitalite": 215
     },
     "initiative": 16,
     "ia": "agressif",
@@ -9705,13 +9665,13 @@
     "id": "krakal",
     "nom": "Krakal",
     "img": "/assets/monstres/krakal.png",
-    "pv": 500,
+    "pv": 390,
     "stats": {
-      "force": 217,
-      "intelligence": 54,
-      "chance": 54,
-      "agilite": 54,
-      "vitalite": 275
+      "force": 181,
+      "intelligence": 45,
+      "chance": 45,
+      "agilite": 45,
+      "vitalite": 215
     },
     "initiative": 15,
     "ia": "agressif",
@@ -9732,13 +9692,13 @@
     "id": "dodox",
     "nom": "Dodox",
     "img": "/assets/monstres/dodox.png",
-    "pv": 500,
+    "pv": 390,
     "stats": {
-      "force": 55,
-      "intelligence": 221,
-      "chance": 55,
-      "agilite": 55,
-      "vitalite": 275
+      "force": 46,
+      "intelligence": 184,
+      "chance": 46,
+      "agilite": 46,
+      "vitalite": 215
     },
     "initiative": 17,
     "ia": "agressif",
@@ -9759,13 +9719,13 @@
     "id": "termystique",
     "nom": "Termystique",
     "img": "/assets/monstres/termystique.png",
-    "pv": 500,
+    "pv": 390,
     "stats": {
-      "force": 55,
-      "intelligence": 55,
-      "chance": 55,
-      "agilite": 219,
-      "vitalite": 275
+      "force": 46,
+      "intelligence": 46,
+      "chance": 46,
+      "agilite": 182,
+      "vitalite": 215
     },
     "initiative": 16,
     "ia": "agressif",
@@ -9782,44 +9742,45 @@
       "grignotage"
     ]
   },
-  "droserale": {
-    "id": "droserale",
-    "nom": "Drosérâle",
-    "img": "/assets/monstres/droserale.png",
-    "pv": 500,
+  "klime": {
+    "id": "klime",
+    "nom": "Klime",
+    "img": "/assets/monstres/klime.png",
+    "pv": 1350,
     "stats": {
-      "force": 200,
-      "intelligence": 50,
-      "chance": 50,
-      "agilite": 50,
-      "vitalite": 275
+      "force": 48,
+      "intelligence": 192,
+      "chance": 48,
+      "agilite": 115,
+      "vitalite": 743
     },
-    "initiative": 19,
+    "initiative": 15,
     "ia": "agressif",
-    "pa": 7,
+    "boss": true,
+    "pa": 10,
     "resistances": {
-      "terre": 0.15,
-      "feu": 0.15,
+      "terre": 0.25,
+      "feu": 0.2,
       "eau": 0.2,
-      "air": -0.05
+      "air": 0.2
     },
     "sorts": [
-      "drain_vital_t5",
-      "morsure",
-      "grignotage"
+      "cuir_a_feu_doux",
+      "charge",
+      "morsure"
     ]
   },
   "nileza": {
     "id": "nileza",
     "nom": "Nileza",
     "img": "/assets/monstres/nileza.png",
-    "pv": 1690,
+    "pv": 1350,
     "stats": {
-      "force": 69,
-      "intelligence": 166,
-      "chance": 277,
-      "agilite": 69,
-      "vitalite": 930
+      "force": 52,
+      "intelligence": 124,
+      "chance": 207,
+      "agilite": 52,
+      "vitalite": 743
     },
     "initiative": 14,
     "ia": "agressif",
@@ -9841,13 +9802,13 @@
     "id": "granduk",
     "nom": "Granduk",
     "img": "/assets/monstres/granduk.png",
-    "pv": 550,
+    "pv": 440,
     "stats": {
-      "force": 51,
-      "intelligence": 205,
-      "chance": 51,
-      "agilite": 51,
-      "vitalite": 302
+      "force": 45,
+      "intelligence": 178,
+      "chance": 45,
+      "agilite": 45,
+      "vitalite": 242
     },
     "initiative": 14,
     "ia": "agressif",
@@ -9868,13 +9829,13 @@
     "id": "strigide",
     "nom": "Strigide",
     "img": "/assets/monstres/strigide.png",
-    "pv": 550,
+    "pv": 440,
     "stats": {
-      "force": 133,
-      "intelligence": 55,
-      "chance": 221,
-      "agilite": 55,
-      "vitalite": 302
+      "force": 115,
+      "intelligence": 48,
+      "chance": 192,
+      "agilite": 48,
+      "vitalite": 242
     },
     "initiative": 17,
     "ia": "agressif",
@@ -9896,13 +9857,13 @@
     "id": "cycloide",
     "nom": "Cycloïde",
     "img": "/assets/monstres/cycloide.png",
-    "pv": 550,
+    "pv": 440,
     "stats": {
-      "force": 51,
-      "intelligence": 123,
-      "chance": 51,
-      "agilite": 205,
-      "vitalite": 302
+      "force": 45,
+      "intelligence": 107,
+      "chance": 45,
+      "agilite": 179,
+      "vitalite": 242
     },
     "initiative": 18,
     "ia": "agressif",
@@ -9923,13 +9884,13 @@
     "id": "sinistrofu",
     "nom": "Sinistrofu",
     "img": "/assets/monstres/sinistrofu.png",
-    "pv": 550,
+    "pv": 440,
     "stats": {
-      "force": 59,
-      "intelligence": 59,
-      "chance": 237,
-      "agilite": 142,
-      "vitalite": 302
+      "force": 52,
+      "intelligence": 52,
+      "chance": 207,
+      "agilite": 124,
+      "vitalite": 242
     },
     "initiative": 19,
     "ia": "agressif",
@@ -9951,13 +9912,13 @@
     "id": "nocturlabe",
     "nom": "Nocturlabe",
     "img": "/assets/monstres/nocturlabe.png",
-    "pv": 550,
+    "pv": 440,
     "stats": {
-      "force": 128,
-      "intelligence": 213,
-      "chance": 53,
-      "agilite": 53,
-      "vitalite": 302
+      "force": 111,
+      "intelligence": 185,
+      "chance": 46,
+      "agilite": 46,
+      "vitalite": 242
     },
     "initiative": 19,
     "ia": "agressif",
@@ -9978,13 +9939,13 @@
     "id": "comte_harebourg",
     "nom": "Comte Harebourg",
     "img": "/assets/monstres/comte_harebourg.png",
-    "pv": 1840,
+    "pv": 1510,
     "stats": {
-      "force": 288,
-      "intelligence": 173,
-      "chance": 72,
-      "agilite": 72,
-      "vitalite": 1012
+      "force": 248,
+      "intelligence": 149,
+      "chance": 62,
+      "agilite": 62,
+      "vitalite": 831
     },
     "initiative": 18,
     "ia": "agressif",
@@ -10007,13 +9968,13 @@
     "id": "pikoleur",
     "nom": "Pikoleur",
     "img": "/assets/monstres/pikoleur.png",
-    "pv": 600,
+    "pv": 500,
     "stats": {
-      "force": 227,
-      "intelligence": 57,
-      "chance": 57,
-      "agilite": 57,
-      "vitalite": 330
+      "force": 209,
+      "intelligence": 52,
+      "chance": 52,
+      "agilite": 52,
+      "vitalite": 275
     },
     "initiative": 17,
     "ia": "agressif",
@@ -10034,13 +9995,13 @@
     "id": "harpo",
     "nom": "Harpo",
     "img": "/assets/monstres/harpo.png",
-    "pv": 600,
+    "pv": 500,
     "stats": {
-      "force": 138,
-      "intelligence": 57,
-      "chance": 229,
-      "agilite": 57,
-      "vitalite": 330
+      "force": 126,
+      "intelligence": 53,
+      "chance": 210,
+      "agilite": 53,
+      "vitalite": 275
     },
     "initiative": 15,
     "ia": "agressif",
@@ -10062,13 +10023,13 @@
     "id": "krabouilleur",
     "nom": "Krabouilleur",
     "img": "/assets/monstres/krabouilleur.png",
-    "pv": 600,
+    "pv": 500,
     "stats": {
-      "force": 227,
-      "intelligence": 136,
-      "chance": 57,
-      "agilite": 57,
-      "vitalite": 330
+      "force": 208,
+      "intelligence": 125,
+      "chance": 52,
+      "agilite": 52,
+      "vitalite": 275
     },
     "initiative": 14,
     "ia": "agressif",
@@ -10089,13 +10050,13 @@
     "id": "eskoglyphe",
     "nom": "Eskoglyphe",
     "img": "/assets/monstres/eskoglyphe.png",
-    "pv": 600,
+    "pv": 500,
     "stats": {
-      "force": 61,
-      "intelligence": 145,
-      "chance": 61,
-      "agilite": 242,
-      "vitalite": 330
+      "force": 56,
+      "intelligence": 133,
+      "chance": 56,
+      "agilite": 222,
+      "vitalite": 275
     },
     "initiative": 17,
     "ia": "agressif",
@@ -10113,72 +10074,17 @@
       "grignotage"
     ]
   },
-  "cyclophandre": {
-    "id": "cyclophandre",
-    "nom": "Cyclophandre",
-    "img": "/assets/monstres/cyclophandre.png",
-    "pv": 600,
-    "stats": {
-      "force": 61,
-      "intelligence": 61,
-      "chance": 245,
-      "agilite": 61,
-      "vitalite": 330
-    },
-    "initiative": 17,
-    "ia": "agressif",
-    "pa": 7,
-    "resistances": {
-      "terre": 0.0,
-      "feu": 0.15,
-      "eau": 0.15,
-      "air": 0.1
-    },
-    "sorts": [
-      "coup_repoussant_t5",
-      "morsure",
-      "grignotage"
-    ]
-  },
-  "merkator": {
-    "id": "merkator",
-    "nom": "Merkator",
-    "img": "/assets/monstres/merkator.png",
-    "pv": 1960,
-    "stats": {
-      "force": 170,
-      "intelligence": 71,
-      "chance": 283,
-      "agilite": 71,
-      "vitalite": 1078
-    },
-    "initiative": 16,
-    "ia": "agressif",
-    "boss": true,
-    "pa": 10,
-    "resistances": {
-      "terre": 0.25,
-      "feu": 0.2,
-      "eau": 0.2,
-      "air": 0.2
-    },
-    "sorts": [
-      "torpillage_de_glace",
-      "charge",
-      "morsure"
-    ]
-  },
   "mol_usk": {
     "id": "mol_usk",
     "nom": "Mol Usk",
     "img": "/assets/monstres/mol_usk.png",
-    "pv": 650,
+    "pv": 500,
     "stats": {
-      "force": 62,
-      "intelligence": 150,
-      "chance": 62,
-      "agilite": 249,
-      "vitalite": 358
+      "force": 55,
+      "intelligence": 133,
+      "chance": 55,
+      "agilite": 222,
+      "vitalite": 275
     },
     "initiative": 15,
     "ia": "agressif",
@@ -10200,13 +10106,13 @@
     "id": "crabe_yoloniste",
     "nom": "Crabe Yoloniste",
     "img": "/assets/monstres/crabe_yoloniste.png",
-    "pv": 650,
+    "pv": 500,
     "stats": {
-      "force": 62,
-      "intelligence": 62,
-      "chance": 250,
-      "agilite": 62,
-      "vitalite": 358
+      "force": 56,
+      "intelligence": 56,
+      "chance": 222,
+      "agilite": 56,
+      "vitalite": 275
     },
     "initiative": 16,
     "ia": "agressif",
@@ -10228,13 +10134,13 @@
     "id": "gambaf",
     "nom": "Gambaf",
     "img": "/assets/monstres/gambaf.png",
-    "pv": 650,
+    "pv": 500,
     "stats": {
-      "force": 223,
-      "intelligence": 56,
-      "chance": 134,
-      "agilite": 56,
-      "vitalite": 358
+      "force": 199,
+      "intelligence": 50,
+      "chance": 119,
+      "agilite": 50,
+      "vitalite": 275
     },
     "initiative": 18,
     "ia": "agressif",
@@ -10255,13 +10161,13 @@
     "id": "mantaze",
     "nom": "Mantaze",
     "img": "/assets/monstres/mantaze.png",
-    "pv": 650,
+    "pv": 500,
     "stats": {
-      "force": 56,
-      "intelligence": 223,
-      "chance": 56,
-      "agilite": 134,
-      "vitalite": 358
+      "force": 50,
+      "intelligence": 199,
+      "chance": 50,
+      "agilite": 119,
+      "vitalite": 275
     },
     "initiative": 18,
     "ia": "agressif",
@@ -10277,45 +10183,45 @@
       "grignotage"
     ]
   },
-  "tilamproie": {
-    "id": "tilamproie",
-    "nom": "Tilamproie",
-    "img": "/assets/monstres/tilamproie.png",
-    "pv": 650,
+  "merkator": {
+    "id": "merkator",
+    "nom": "Merkator",
+    "img": "/assets/monstres/merkator.png",
+    "pv": 1690,
     "stats": {
-      "force": 150,
-      "intelligence": 63,
-      "chance": 250,
-      "agilite": 63,
-      "vitalite": 358
+      "force": 139,
+      "intelligence": 58,
+      "chance": 232,
+      "agilite": 58,
+      "vitalite": 930
     },
     "initiative": 16,
     "ia": "agressif",
-    "pa": 7,
+    "boss": true,
+    "pa": 10,
     "resistances": {
-      "terre": 0.2,
-      "feu": 0.15,
+      "terre": 0.25,
+      "feu": 0.2,
       "eau": 0.2,
-      "air": 0.05
+      "air": 0.2
     },
     "sorts": [
-      "tir_courbe",
-      "toxine_t5",
-      "morsure",
-      "grignotage"
+      "torpillage_de_glace",
+      "charge",
+      "morsure"
     ]
   },
   "capitaine_meno": {
     "id": "capitaine_meno",
     "nom": "Capitaine Meno",
     "img": "/assets/monstres/capitaine_meno.png",
-    "pv": 2080,
+    "pv": 1690,
     "stats": {
-      "force": 75,
-      "intelligence": 75,
-      "chance": 301,
-      "agilite": 181,
-      "vitalite": 1144
+      "force": 60,
+      "intelligence": 60,
+      "chance": 238,
+      "agilite": 143,
+      "vitalite": 930
     },
     "initiative": 17,
     "ia": "agressif",
@@ -10337,13 +10243,13 @@
     "id": "grofond",
     "nom": "Grofond",
     "img": "/assets/monstres/grofond.png",
-    "pv": 700,
+    "pv": 550,
     "stats": {
-      "force": 158,
-      "intelligence": 66,
-      "chance": 263,
-      "agilite": 66,
-      "vitalite": 385
+      "force": 143,
+      "intelligence": 60,
+      "chance": 238,
+      "agilite": 60,
+      "vitalite": 302
     },
     "initiative": 18,
     "ia": "agressif",
@@ -10364,13 +10270,13 @@
     "id": "n_yalg",
     "nom": "N'yalg",
     "img": "/assets/monstres/n_yalg.png",
-    "pv": 700,
+    "pv": 550,
     "stats": {
-      "force": 59,
-      "intelligence": 59,
-      "chance": 236,
-      "agilite": 141,
-      "vitalite": 385
+      "force": 53,
+      "intelligence": 53,
+      "chance": 214,
+      "agilite": 128,
+      "vitalite": 302
     },
     "initiative": 15,
     "ia": "agressif",
@@ -10392,13 +10298,13 @@
     "id": "shokkoth",
     "nom": "Shokkoth",
     "img": "/assets/monstres/shokkoth.png",
-    "pv": 700,
+    "pv": 550,
     "stats": {
-      "force": 262,
-      "intelligence": 65,
-      "chance": 65,
-      "agilite": 65,
-      "vitalite": 385
+      "force": 237,
+      "intelligence": 59,
+      "chance": 59,
+      "agilite": 59,
+      "vitalite": 302
     },
     "initiative": 16,
     "ia": "agressif",
@@ -10419,13 +10325,13 @@
     "id": "li_fo",
     "nom": "Li-Fo",
     "img": "/assets/monstres/li_fo.png",
-    "pv": 700,
+    "pv": 550,
     "stats": {
-      "force": 249,
-      "intelligence": 62,
-      "chance": 62,
-      "agilite": 62,
-      "vitalite": 385
+      "force": 226,
+      "intelligence": 57,
+      "chance": 57,
+      "agilite": 57,
+      "vitalite": 302
     },
     "initiative": 17,
     "ia": "agressif",
@@ -10441,72 +10347,17 @@
       "grignotage"
     ]
   },
-  "klutiste": {
-    "id": "klutiste",
-    "nom": "Klûtiste",
-    "img": "/assets/monstres/klutiste.png",
-    "pv": 700,
-    "stats": {
-      "force": 66,
-      "intelligence": 157,
-      "chance": 262,
-      "agilite": 66,
-      "vitalite": 385
-    },
-    "initiative": 19,
-    "ia": "agressif",
-    "pa": 7,
-    "resistances": {
-      "terre": 0.05,
-      "feu": 0.15,
-      "eau": 0.15,
-      "air": 0.15
-    },
-    "sorts": [
-      "coup_repoussant_t5",
-      "morsure",
-      "grignotage"
-    ]
-  },
-  "larve_de_koutoulou": {
-    "id": "larve_de_koutoulou",
-    "nom": "Larve de Koutoulou",
-    "img": "/assets/monstres/larve_de_koutoulou.png",
-    "pv": 2210,
-    "stats": {
-      "force": 323,
-      "intelligence": 81,
-      "chance": 81,
-      "agilite": 81,
-      "vitalite": 1216
-    },
-    "initiative": 19,
-    "ia": "agressif",
-    "boss": true,
-    "pa": 10,
-    "resistances": {
-      "terre": 0.2,
-      "feu": 0.2,
-      "eau": 0.2,
-      "air": 0.25
-    },
-    "sorts": [
-      "permutation_inquietante",
-      "charge",
-      "morsure"
-    ]
-  },
   "tourthon": {
     "id": "tourthon",
     "nom": "Tourthon",
     "img": "/assets/monstres/tourthon.png",
-    "pv": 750,
+    "pv": 550,
     "stats": {
-      "force": 58,
-      "intelligence": 234,
-      "chance": 58,
-      "agilite": 58,
-      "vitalite": 413
+      "force": 52,
+      "intelligence": 207,
+      "chance": 52,
+      "agilite": 52,
+      "vitalite": 302
     },
     "initiative": 18,
     "ia": "agressif",
@@ -10527,13 +10378,13 @@
     "id": "poulpee",
     "nom": "Poulpée",
     "img": "/assets/monstres/poulpee.png",
-    "pv": 750,
+    "pv": 550,
     "stats": {
-      "force": 59,
-      "intelligence": 59,
-      "chance": 235,
-      "agilite": 59,
-      "vitalite": 413
+      "force": 52,
+      "intelligence": 52,
+      "chance": 208,
+      "agilite": 52,
+      "vitalite": 302
     },
     "initiative": 15,
     "ia": "agressif",
@@ -10555,13 +10406,13 @@
     "id": "tryde",
     "nom": "Tryde",
     "img": "/assets/monstres/tryde.png",
-    "pv": 750,
+    "pv": 550,
     "stats": {
-      "force": 67,
-      "intelligence": 67,
-      "chance": 67,
-      "agilite": 268,
-      "vitalite": 413
+      "force": 59,
+      "intelligence": 59,
+      "chance": 59,
+      "agilite": 237,
+      "vitalite": 302
     },
     "initiative": 14,
     "ia": "agressif",
@@ -10582,13 +10433,13 @@
     "id": "rilur",
     "nom": "Rilur",
     "img": "/assets/monstres/rilur.png",
-    "pv": 750,
+    "pv": 550,
     "stats": {
-      "force": 67,
-      "intelligence": 67,
-      "chance": 67,
-      "agilite": 268,
-      "vitalite": 413
+      "force": 59,
+      "intelligence": 59,
+      "chance": 59,
+      "agilite": 237,
+      "vitalite": 302
     },
     "initiative": 18,
     "ia": "agressif",
@@ -10605,44 +10456,45 @@
       "grignotage"
     ]
   },
-  "diondin": {
-    "id": "diondin",
-    "nom": "Diondin",
-    "img": "/assets/monstres/diondin.png",
-    "pv": 750,
+  "larve_de_koutoulou": {
+    "id": "larve_de_koutoulou",
+    "nom": "Larve de Koutoulou",
+    "img": "/assets/monstres/larve_de_koutoulou.png",
+    "pv": 1840,
     "stats": {
-      "force": 155,
+      "force": 260,
       "intelligence": 65,
-      "chance": 258,
+      "chance": 65,
       "agilite": 65,
-      "vitalite": 413
+      "vitalite": 1012
     },
-    "initiative": 16,
+    "initiative": 19,
     "ia": "agressif",
-    "pa": 7,
+    "boss": true,
+    "pa": 10,
     "resistances": {
       "terre": 0.2,
-      "feu": 0.25,
-      "eau": 0.05,
-      "air": 0.1
+      "feu": 0.2,
+      "eau": 0.2,
+      "air": 0.25
     },
     "sorts": [
-      "coup_repoussant_t5",
-      "morsure",
-      "grignotage"
+      "permutation_inquietante",
+      "charge",
+      "morsure"
     ]
   },
   "dantinea": {
     "id": "dantinea",
     "nom": "Dantinéa",
     "img": "/assets/monstres/dantinea.png",
-    "pv": 2320,
+    "pv": 1840,
     "stats": {
-      "force": 348,
-      "intelligence": 87,
-      "chance": 87,
-      "agilite": 87,
-      "vitalite": 1276
+      "force": 272,
+      "intelligence": 68,
+      "chance": 68,
+      "agilite": 68,
+      "vitalite": 1012
     },
     "initiative": 17,
     "ia": "agressif",
@@ -10660,17 +10512,1387 @@
       "morsure"
     ]
   },
+  "kamasterisk": {
+    "id": "kamasterisk",
+    "nom": "Kamasterisk",
+    "img": "/assets/monstres/kamasterisk.png",
+    "pv": 620,
+    "stats": {
+      "force": 144,
+      "intelligence": 60,
+      "chance": 60,
+      "agilite": 239,
+      "vitalite": 341
+    },
+    "initiative": 15,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.25,
+      "feu": 0.2,
+      "eau": 0.05,
+      "air": 0.15
+    },
+    "sorts": [
+      "drain_vital_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "barbetoal": {
+    "id": "barbetoal",
+    "nom": "Barbétoal",
+    "img": "/assets/monstres/barbetoal.png",
+    "pv": 620,
+    "stats": {
+      "force": 225,
+      "intelligence": 56,
+      "chance": 56,
+      "agilite": 56,
+      "vitalite": 341
+    },
+    "initiative": 19,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.05,
+      "eau": 0.15,
+      "air": 0.15
+    },
+    "sorts": [
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "levitrof": {
+    "id": "levitrof",
+    "nom": "Lévitrof",
+    "img": "/assets/monstres/levitrof.png",
+    "pv": 620,
+    "stats": {
+      "force": 59,
+      "intelligence": 236,
+      "chance": 59,
+      "agilite": 59,
+      "vitalite": 341
+    },
+    "initiative": 14,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.05,
+      "feu": 0.15,
+      "eau": 0.15,
+      "air": 0.25
+    },
+    "sorts": [
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "paspartou": {
+    "id": "paspartou",
+    "nom": "Paspartou",
+    "img": "/assets/monstres/paspartou.png",
+    "pv": 620,
+    "stats": {
+      "force": 138,
+      "intelligence": 57,
+      "chance": 229,
+      "agilite": 57,
+      "vitalite": 341
+    },
+    "initiative": 15,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.15,
+      "feu": 0.15,
+      "eau": 0.25,
+      "air": 0.2
+    },
+    "sorts": [
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "machassin": {
+    "id": "machassin",
+    "nom": "Mâchassin",
+    "img": "/assets/monstres/machassin.png",
+    "pv": 620,
+    "stats": {
+      "force": 61,
+      "intelligence": 246,
+      "chance": 148,
+      "agilite": 61,
+      "vitalite": 341
+    },
+    "initiative": 16,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.15,
+      "feu": 0.2,
+      "eau": 0.15,
+      "air": 0.0
+    },
+    "sorts": [
+      "sape_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "terristocrate": {
+    "id": "terristocrate",
+    "nom": "Terristocrate",
+    "img": "/assets/monstres/terristocrate.png",
+    "pv": 620,
+    "stats": {
+      "force": 59,
+      "intelligence": 59,
+      "chance": 59,
+      "agilite": 236,
+      "vitalite": 341
+    },
+    "initiative": 16,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.15,
+      "eau": 0.0,
+      "air": 0.2
+    },
+    "sorts": [
+      "tir_courbe",
+      "drain_vital_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "doublure": {
+    "id": "doublure",
+    "nom": "Doublure",
+    "img": "/assets/monstres/doublure.png",
+    "pv": 480,
+    "stats": {
+      "force": 59,
+      "intelligence": 236,
+      "chance": 59,
+      "agilite": 59,
+      "vitalite": 264
+    },
+    "initiative": 15,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.0,
+      "feu": 0.2,
+      "eau": 0.15,
+      "air": 0.2
+    },
+    "sorts": [
+      "toxine_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "bouroliste": {
+    "id": "bouroliste",
+    "nom": "Bourôliste",
+    "img": "/assets/monstres/bouroliste.png",
+    "pv": 620,
+    "stats": {
+      "force": 55,
+      "intelligence": 55,
+      "chance": 219,
+      "agilite": 55,
+      "vitalite": 341
+    },
+    "initiative": 16,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.15,
+      "feu": 0.0,
+      "eau": 0.2,
+      "air": 0.15
+    },
+    "sorts": [
+      "attraction_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "roi_nidas": {
+    "id": "roi_nidas",
+    "nom": "Roi Nidas",
+    "img": "/assets/monstres/roi_nidas.png",
+    "pv": 1960,
+    "stats": {
+      "force": 69,
+      "intelligence": 276,
+      "chance": 69,
+      "agilite": 165,
+      "vitalite": 1078
+    },
+    "initiative": 17,
+    "ia": "agressif",
+    "boss": true,
+    "pa": 10,
+    "resistances": {
+      "terre": 0.3,
+      "feu": 0.2,
+      "eau": 0.2,
+      "air": 0.2
+    },
+    "sorts": [
+      "liquidation",
+      "charge",
+      "morsure"
+    ]
+  },
+  "reine_des_voleurs": {
+    "id": "reine_des_voleurs",
+    "nom": "Reine des Voleurs",
+    "img": "/assets/monstres/reine_des_voleurs.png",
+    "pv": 1960,
+    "stats": {
+      "force": 70,
+      "intelligence": 168,
+      "chance": 280,
+      "agilite": 70,
+      "vitalite": 1078
+    },
+    "initiative": 18,
+    "ia": "agressif",
+    "boss": true,
+    "pa": 10,
+    "resistances": {
+      "terre": 0.25,
+      "feu": 0.3,
+      "eau": 0.2,
+      "air": 0.2
+    },
+    "sorts": [
+      "mort_en_sursis",
+      "charge",
+      "morsure"
+    ]
+  },
+  "ikargn": {
+    "id": "ikargn",
+    "nom": "Ikargn",
+    "img": "/assets/monstres/ikargn.png",
+    "pv": 650,
+    "stats": {
+      "force": 139,
+      "intelligence": 232,
+      "chance": 58,
+      "agilite": 58,
+      "vitalite": 358
+    },
+    "initiative": 15,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.15,
+      "feu": 0.05,
+      "eau": 0.2,
+      "air": 0.25
+    },
+    "sorts": [
+      "sape_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "mejaire": {
+    "id": "mejaire",
+    "nom": "Méjaire",
+    "img": "/assets/monstres/mejaire.png",
+    "pv": 650,
+    "stats": {
+      "force": 146,
+      "intelligence": 61,
+      "chance": 244,
+      "agilite": 61,
+      "vitalite": 358
+    },
+    "initiative": 16,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.05,
+      "feu": 0.2,
+      "eau": 0.25,
+      "air": 0.1
+    },
+    "sorts": [
+      "coup_repoussant_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "harpille": {
+    "id": "harpille",
+    "nom": "Harpille",
+    "img": "/assets/monstres/harpille.png",
+    "pv": 650,
+    "stats": {
+      "force": 60,
+      "intelligence": 239,
+      "chance": 144,
+      "agilite": 60,
+      "vitalite": 358
+    },
+    "initiative": 17,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.25,
+      "eau": 0.1,
+      "air": 0.15
+    },
+    "sorts": [
+      "toxine_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "buboxor": {
+    "id": "buboxor",
+    "nom": "Buboxor",
+    "img": "/assets/monstres/buboxor.png",
+    "pv": 650,
+    "stats": {
+      "force": 56,
+      "intelligence": 56,
+      "chance": 134,
+      "agilite": 224,
+      "vitalite": 358
+    },
+    "initiative": 19,
+    "ia": "soutien",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.25,
+      "feu": 0.1,
+      "eau": 0.15,
+      "air": 0.05
+    },
+    "sorts": [
+      "soin_t5",
+      "tir_courbe",
+      "drain_vital_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "soldat_de_fortune": {
+    "id": "soldat_de_fortune",
+    "nom": "Soldat de Fortune",
+    "img": "/assets/monstres/soldat_de_fortune.png",
+    "pv": 640,
+    "stats": {
+      "force": 63,
+      "intelligence": 254,
+      "chance": 152,
+      "agilite": 63,
+      "vitalite": 352
+    },
+    "initiative": 18,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.05,
+      "eau": 0.15,
+      "air": 0.25
+    },
+    "sorts": [
+      "sape_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "cavalier_chanceux": {
+    "id": "cavalier_chanceux",
+    "nom": "Cavalier Chanceux",
+    "img": "/assets/monstres/cavalier_chanceux.png",
+    "pv": 640,
+    "stats": {
+      "force": 56,
+      "intelligence": 225,
+      "chance": 56,
+      "agilite": 56,
+      "vitalite": 352
+    },
+    "initiative": 16,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.05,
+      "feu": 0.15,
+      "eau": 0.25,
+      "air": 0.2
+    },
+    "sorts": [
+      "coup_repoussant_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "valet_veinard": {
+    "id": "valet_veinard",
+    "nom": "Valet Veinard",
+    "img": "/assets/monstres/valet_veinard.png",
+    "pv": 640,
+    "stats": {
+      "force": 150,
+      "intelligence": 62,
+      "chance": 62,
+      "agilite": 249,
+      "vitalite": 352
+    },
+    "initiative": 14,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.15,
+      "feu": 0.25,
+      "eau": 0.2,
+      "air": 0.1
+    },
+    "sorts": [
+      "attraction_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "dame_du_hasard": {
+    "id": "dame_du_hasard",
+    "nom": "Dame du Hasard",
+    "img": "/assets/monstres/dame_du_hasard.png",
+    "pv": 640,
+    "stats": {
+      "force": 145,
+      "intelligence": 61,
+      "chance": 242,
+      "agilite": 61,
+      "vitalite": 352
+    },
+    "initiative": 19,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.25,
+      "feu": 0.2,
+      "eau": 0.1,
+      "air": 0.05
+    },
+    "sorts": [
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "vortex": {
+    "id": "vortex",
+    "nom": "Vortex",
+    "img": "/assets/monstres/vortex.png",
+    "pv": 2080,
+    "stats": {
+      "force": 76,
+      "intelligence": 183,
+      "chance": 76,
+      "agilite": 306,
+      "vitalite": 1144
+    },
+    "initiative": 17,
+    "ia": "agressif",
+    "boss": true,
+    "pa": 10,
+    "resistances": {
+      "terre": 0.25,
+      "feu": 0.2,
+      "eau": 0.2,
+      "air": 0.25
+    },
+    "sorts": [
+      "en_temps_et_en_heure",
+      "charge",
+      "morsure"
+    ]
+  },
+  "chaloeil": {
+    "id": "chaloeil",
+    "nom": "Chalœil",
+    "img": "/assets/monstres/chaloeil.png",
+    "pv": 2080,
+    "stats": {
+      "force": 175,
+      "intelligence": 73,
+      "chance": 292,
+      "agilite": 73,
+      "vitalite": 1144
+    },
+    "initiative": 14,
+    "ia": "agressif",
+    "boss": true,
+    "pa": 10,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.2,
+      "eau": 0.25,
+      "air": 0.2
+    },
+    "sorts": [
+      "farce_et_attrape",
+      "charge",
+      "morsure"
+    ]
+  },
+  "klemort": {
+    "id": "klemort",
+    "nom": "Klémort",
+    "img": "/assets/monstres/klemort.png",
+    "pv": 700,
+    "stats": {
+      "force": 244,
+      "intelligence": 146,
+      "chance": 61,
+      "agilite": 61,
+      "vitalite": 385
+    },
+    "initiative": 14,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.15,
+      "eau": 0.2,
+      "air": 0.15
+    },
+    "sorts": [
+      "attraction_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "trepavois": {
+    "id": "trepavois",
+    "nom": "Trépavois",
+    "img": "/assets/monstres/trepavois.png",
+    "pv": 700,
+    "stats": {
+      "force": 157,
+      "intelligence": 66,
+      "chance": 262,
+      "agilite": 66,
+      "vitalite": 385
+    },
+    "initiative": 17,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.15,
+      "feu": 0.05,
+      "eau": 0.25,
+      "air": 0.15
+    },
+    "sorts": [
+      "attraction_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "hacharne": {
+    "id": "hacharne",
+    "nom": "Hacharné",
+    "img": "/assets/monstres/hacharne.png",
+    "pv": 700,
+    "stats": {
+      "force": 57,
+      "intelligence": 136,
+      "chance": 57,
+      "agilite": 226,
+      "vitalite": 385
+    },
+    "initiative": 14,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.05,
+      "feu": 0.2,
+      "eau": 0.15,
+      "air": 0.25
+    },
+    "sorts": [
+      "tir_courbe",
+      "affaiblissement_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "moribombe": {
+    "id": "moribombe",
+    "nom": "Moribombe",
+    "img": "/assets/monstres/moribombe.png",
+    "pv": 700,
+    "stats": {
+      "force": 66,
+      "intelligence": 66,
+      "chance": 158,
+      "agilite": 263,
+      "vitalite": 385
+    },
+    "initiative": 16,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.15,
+      "feu": 0.25,
+      "eau": 0.0,
+      "air": 0.2
+    },
+    "sorts": [
+      "coup_repoussant_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "zombruth": {
+    "id": "zombruth",
+    "nom": "Zombruth",
+    "img": "/assets/monstres/zombruth.png",
+    "pv": 700,
+    "stats": {
+      "force": 244,
+      "intelligence": 61,
+      "chance": 61,
+      "agilite": 146,
+      "vitalite": 385
+    },
+    "initiative": 19,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.05,
+      "feu": 0.15,
+      "eau": 0.15,
+      "air": 0.25
+    },
+    "sorts": [
+      "tir_courbe",
+      "drain_vital_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "tournoye": {
+    "id": "tournoye",
+    "nom": "Tournoyé",
+    "img": "/assets/monstres/tournoye.png",
+    "pv": 700,
+    "stats": {
+      "force": 62,
+      "intelligence": 248,
+      "chance": 149,
+      "agilite": 62,
+      "vitalite": 385
+    },
+    "initiative": 17,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.15,
+      "eau": 0.05,
+      "air": 0.15
+    },
+    "sorts": [
+      "coup_repoussant_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "funespadon": {
+    "id": "funespadon",
+    "nom": "Funespadon",
+    "img": "/assets/monstres/funespadon.png",
+    "pv": 700,
+    "stats": {
+      "force": 249,
+      "intelligence": 62,
+      "chance": 150,
+      "agilite": 62,
+      "vitalite": 385
+    },
+    "initiative": 17,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.15,
+      "eau": 0.2,
+      "air": 0.05
+    },
+    "sorts": [
+      "tir_courbe",
+      "entrave_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "cranonier": {
+    "id": "cranonier",
+    "nom": "Crânonier",
+    "img": "/assets/monstres/cranonier.png",
+    "pv": 700,
+    "stats": {
+      "force": 62,
+      "intelligence": 62,
+      "chance": 149,
+      "agilite": 248,
+      "vitalite": 385
+    },
+    "initiative": 19,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.25,
+      "feu": 0.05,
+      "eau": 0.15,
+      "air": 0.15
+    },
+    "sorts": [
+      "toxine_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "solar": {
+    "id": "solar",
+    "nom": "Solar",
+    "img": "/assets/monstres/solar.png",
+    "pv": 2210,
+    "stats": {
+      "force": 189,
+      "intelligence": 315,
+      "chance": 79,
+      "agilite": 79,
+      "vitalite": 1216
+    },
+    "initiative": 19,
+    "ia": "agressif",
+    "boss": true,
+    "pa": 10,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.15,
+      "eau": 0.2,
+      "air": 0.15
+    },
+    "sorts": [
+      "eruption_solaire",
+      "charge",
+      "morsure"
+    ]
+  },
+  "bethel_akarna": {
+    "id": "bethel_akarna",
+    "nom": "Bethel Akarna",
+    "img": "/assets/monstres/bethel_akarna.png",
+    "pv": 2210,
+    "stats": {
+      "force": 76,
+      "intelligence": 76,
+      "chance": 183,
+      "agilite": 305,
+      "vitalite": 1216
+    },
+    "initiative": 19,
+    "ia": "agressif",
+    "boss": true,
+    "pa": 10,
+    "resistances": {
+      "terre": 0.15,
+      "feu": 0.15,
+      "eau": 0.15,
+      "air": 0.15
+    },
+    "sorts": [
+      "vindicte",
+      "charge",
+      "morsure"
+    ]
+  },
+  "imushin": {
+    "id": "imushin",
+    "nom": "Imushin",
+    "img": "/assets/monstres/imushin.png",
+    "pv": 750,
+    "stats": {
+      "force": 61,
+      "intelligence": 61,
+      "chance": 61,
+      "agilite": 243,
+      "vitalite": 413
+    },
+    "initiative": 14,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.05,
+      "feu": 0.05,
+      "eau": 0.2,
+      "air": 0.2
+    },
+    "sorts": [
+      "attraction_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "imorok": {
+    "id": "imorok",
+    "nom": "Imorok",
+    "img": "/assets/monstres/imorok.png",
+    "pv": 750,
+    "stats": {
+      "force": 233,
+      "intelligence": 58,
+      "chance": 58,
+      "agilite": 58,
+      "vitalite": 413
+    },
+    "initiative": 19,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.05,
+      "eau": 0.05,
+      "air": 0.05
+    },
+    "sorts": [
+      "attraction_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "imiyama": {
+    "id": "imiyama",
+    "nom": "Imiyama",
+    "img": "/assets/monstres/imiyama.png",
+    "pv": 750,
+    "stats": {
+      "force": 64,
+      "intelligence": 64,
+      "chance": 258,
+      "agilite": 155,
+      "vitalite": 413
+    },
+    "initiative": 17,
+    "ia": "soutien",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "soin_t5",
+      "tir_courbe",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "imetsu": {
+    "id": "imetsu",
+    "nom": "Imetsu",
+    "img": "/assets/monstres/imetsu.png",
+    "pv": 750,
+    "stats": {
+      "force": 63,
+      "intelligence": 63,
+      "chance": 254,
+      "agilite": 63,
+      "vitalite": 413
+    },
+    "initiative": 17,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.0,
+      "feu": 0.15,
+      "eau": 0.2,
+      "air": 0.0
+    },
+    "sorts": [
+      "sape_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "shinlam": {
+    "id": "shinlam",
+    "nom": "Shinlam",
+    "img": "/assets/monstres/shinlam.png",
+    "pv": 750,
+    "stats": {
+      "force": 61,
+      "intelligence": 61,
+      "chance": 61,
+      "agilite": 243,
+      "vitalite": 413
+    },
+    "initiative": 15,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.05,
+      "feu": 0.05,
+      "eau": 0.2,
+      "air": 0.2
+    },
+    "sorts": [
+      "coup_repoussant_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "rokoram": {
+    "id": "rokoram",
+    "nom": "Rokoram",
+    "img": "/assets/monstres/rokoram.png",
+    "pv": 750,
+    "stats": {
+      "force": 248,
+      "intelligence": 62,
+      "chance": 62,
+      "agilite": 62,
+      "vitalite": 413
+    },
+    "initiative": 19,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.05,
+      "eau": 0.05,
+      "air": 0.05
+    },
+    "sorts": [
+      "tir_courbe",
+      "coup_repoussant_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "mabram": {
+    "id": "mabram",
+    "nom": "Mabram",
+    "img": "/assets/monstres/mabram.png",
+    "pv": 750,
+    "stats": {
+      "force": 63,
+      "intelligence": 63,
+      "chance": 150,
+      "agilite": 250,
+      "vitalite": 413
+    },
+    "initiative": 16,
+    "ia": "soutien",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "soin_t5",
+      "tir_courbe",
+      "coup_repoussant_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "tsunam": {
+    "id": "tsunam",
+    "nom": "Tsunam",
+    "img": "/assets/monstres/tsunam.png",
+    "pv": 750,
+    "stats": {
+      "force": 62,
+      "intelligence": 62,
+      "chance": 250,
+      "agilite": 62,
+      "vitalite": 413
+    },
+    "initiative": 19,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.0,
+      "feu": 0.15,
+      "eau": 0.2,
+      "air": 0.0
+    },
+    "sorts": [
+      "tir_courbe",
+      "coup_repoussant_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "roi_imagami": {
+    "id": "roi_imagami",
+    "nom": "Roi Imagami",
+    "img": "/assets/monstres/roi_imagami.png",
+    "pv": 2320,
+    "stats": {
+      "force": 310,
+      "intelligence": 78,
+      "chance": 78,
+      "agilite": 78,
+      "vitalite": 1276
+    },
+    "initiative": 15,
+    "ia": "agressif",
+    "boss": true,
+    "pa": 10,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.1,
+      "eau": 0.15,
+      "air": 0.1
+    },
+    "sorts": [
+      "kami_no_jishin",
+      "charge",
+      "morsure"
+    ]
+  },
+  "reine_amirukam": {
+    "id": "reine_amirukam",
+    "nom": "Reine Amirukam",
+    "img": "/assets/monstres/reine_amirukam.png",
+    "pv": 2320,
+    "stats": {
+      "force": 73,
+      "intelligence": 176,
+      "chance": 294,
+      "agilite": 73,
+      "vitalite": 1276
+    },
+    "initiative": 19,
+    "ia": "agressif",
+    "boss": true,
+    "pa": 10,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.1,
+      "eau": 0.15,
+      "air": 0.1
+    },
+    "sorts": [
+      "brouillard_d_encre",
+      "charge",
+      "morsure"
+    ]
+  },
+  "gyrafor": {
+    "id": "gyrafor",
+    "nom": "Gyrafor",
+    "img": "/assets/monstres/gyrafor.png",
+    "pv": 960,
+    "stats": {
+      "force": 60,
+      "intelligence": 60,
+      "chance": 145,
+      "agilite": 241,
+      "vitalite": 528
+    },
+    "initiative": 18,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.05,
+      "feu": 0.15,
+      "eau": 0.05,
+      "air": 0.15
+    },
+    "sorts": [
+      "tir_courbe",
+      "drain_vital_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "lapilope": {
+    "id": "lapilope",
+    "nom": "Lapilope",
+    "img": "/assets/monstres/lapilope.png",
+    "pv": 890,
+    "stats": {
+      "force": 156,
+      "intelligence": 260,
+      "chance": 65,
+      "agilite": 65,
+      "vitalite": 490
+    },
+    "initiative": 17,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.15,
+      "feu": 0.15,
+      "eau": 0.05,
+      "air": 0.05
+    },
+    "sorts": [
+      "drain_vital_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "brutapir": {
+    "id": "brutapir",
+    "nom": "Brutapir",
+    "img": "/assets/monstres/brutapir.png",
+    "pv": 930,
+    "stats": {
+      "force": 64,
+      "intelligence": 64,
+      "chance": 154,
+      "agilite": 257,
+      "vitalite": 512
+    },
+    "initiative": 16,
+    "ia": "soutien",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.05,
+      "feu": 0.15,
+      "eau": 0.15,
+      "air": 0.15
+    },
+    "sorts": [
+      "soin_t5",
+      "tir_courbe",
+      "drain_vital_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "gropotam": {
+    "id": "gropotam",
+    "nom": "Gropotam",
+    "img": "/assets/monstres/gropotam.png",
+    "pv": 960,
+    "stats": {
+      "force": 61,
+      "intelligence": 61,
+      "chance": 245,
+      "agilite": 147,
+      "vitalite": 528
+    },
+    "initiative": 14,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.15,
+      "feu": 0.15,
+      "eau": 0.15,
+      "air": 0.05
+    },
+    "sorts": [
+      "toxine_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "chause": {
+    "id": "chause",
+    "nom": "Chause",
+    "img": "/assets/monstres/chause.png",
+    "pv": 670,
+    "stats": {
+      "force": 65,
+      "intelligence": 65,
+      "chance": 260,
+      "agilite": 65,
+      "vitalite": 369
+    },
+    "initiative": 16,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.15,
+      "feu": 0.05,
+      "eau": 0.25,
+      "air": 0.15
+    },
+    "sorts": [
+      "sape_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "ectorche": {
+    "id": "ectorche",
+    "nom": "Ectorche",
+    "img": "/assets/monstres/ectorche.png",
+    "pv": 670,
+    "stats": {
+      "force": 67,
+      "intelligence": 67,
+      "chance": 67,
+      "agilite": 267,
+      "vitalite": 369
+    },
+    "initiative": 16,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.15,
+      "eau": 0.05,
+      "air": 0.25
+    },
+    "sorts": [
+      "entrave_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "esprigne": {
+    "id": "esprigne",
+    "nom": "Esprigné",
+    "img": "/assets/monstres/esprigne.png",
+    "pv": 670,
+    "stats": {
+      "force": 145,
+      "intelligence": 60,
+      "chance": 241,
+      "agilite": 60,
+      "vitalite": 369
+    },
+    "initiative": 15,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.15,
+      "feu": 0.2,
+      "eau": 0.15,
+      "air": 0.05
+    },
+    "sorts": [
+      "affaiblissement_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "feutome": {
+    "id": "feutome",
+    "nom": "Feutôme",
+    "img": "/assets/monstres/feutome.png",
+    "pv": 670,
+    "stats": {
+      "force": 68,
+      "intelligence": 271,
+      "chance": 68,
+      "agilite": 68,
+      "vitalite": 369
+    },
+    "initiative": 14,
+    "ia": "agressif",
+    "pa": 7,
+    "resistances": {
+      "terre": 0.25,
+      "feu": 0.15,
+      "eau": 0.2,
+      "air": 0.15
+    },
+    "sorts": [
+      "attraction_t5",
+      "morsure",
+      "grignotage"
+    ]
+  },
+  "venerable_endormi": {
+    "id": "venerable_endormi",
+    "nom": "Vénérable Endormi",
+    "img": "/assets/monstres/venerable_endormi.png",
+    "pv": 2470,
+    "stats": {
+      "force": 298,
+      "intelligence": 179,
+      "chance": 74,
+      "agilite": 74,
+      "vitalite": 1358
+    },
+    "initiative": 16,
+    "ia": "agressif",
+    "boss": true,
+    "pa": 10,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.2,
+      "eau": 0.2,
+      "air": 0.2
+    },
+    "sorts": [
+      "cri_venerable",
+      "charge",
+      "morsure"
+    ]
+  },
+  "ilyzaelle": {
+    "id": "ilyzaelle",
+    "nom": "Ilyzaelle",
+    "img": "/assets/monstres/ilyzaelle.png",
+    "pv": 2470,
+    "stats": {
+      "force": 81,
+      "intelligence": 323,
+      "chance": 81,
+      "agilite": 81,
+      "vitalite": 1358
+    },
+    "initiative": 18,
+    "ia": "agressif",
+    "boss": true,
+    "pa": 10,
+    "resistances": {
+      "terre": 0.25,
+      "feu": 0.25,
+      "eau": 0.2,
+      "air": 0.2
+    },
+    "sorts": [
+      "lance_de_l_effroi",
+      "charge",
+      "morsure"
+    ]
+  },
   "pistilangue": {
     "id": "pistilangue",
     "nom": "Pistilangue",
     "img": "/assets/monstres/pistilangue.png",
-    "pv": 860,
+    "pv": 950,
     "stats": {
-      "force": 247,
-      "intelligence": 148,
-      "chance": 62,
-      "agilite": 62,
-      "vitalite": 473
+      "force": 254,
+      "intelligence": 153,
+      "chance": 64,
+      "agilite": 64,
+      "vitalite": 522
     },
     "initiative": 14,
     "ia": "agressif",
@@ -10690,13 +11912,13 @@
     "id": "dolid",
     "nom": "Dolid",
     "img": "/assets/monstres/dolid.png",
-    "pv": 770,
+    "pv": 850,
     "stats": {
-      "force": 65,
-      "intelligence": 65,
-      "chance": 156,
-      "agilite": 260,
-      "vitalite": 424
+      "force": 67,
+      "intelligence": 67,
+      "chance": 161,
+      "agilite": 268,
+      "vitalite": 468
     },
     "initiative": 18,
     "ia": "agressif",
@@ -10712,72 +11934,17 @@
       "grignotage"
     ]
   },
-  "nheur_gueule": {
-    "id": "nheur_gueule",
-    "nom": "Nheur'Gueule",
-    "img": "/assets/monstres/nheur_gueule.png",
-    "pv": 920,
-    "stats": {
-      "force": 271,
-      "intelligence": 163,
-      "chance": 68,
-      "agilite": 68,
-      "vitalite": 506
-    },
-    "initiative": 18,
-    "ia": "agressif",
-    "pa": 7,
-    "resistances": {
-      "terre": 0.15,
-      "feu": 0.15,
-      "eau": 0.05,
-      "air": 0.2
-    },
-    "sorts": [
-      "tir_courbe",
-      "drain_vital_t5",
-      "morsure",
-      "grignotage"
-    ]
-  },
-  "tentaclaque": {
-    "id": "tentaclaque",
-    "nom": "Tentaclaque",
-    "img": "/assets/monstres/tentaclaque.png",
-    "pv": 900,
-    "stats": {
-      "force": 152,
-      "intelligence": 63,
-      "chance": 63,
-      "agilite": 253,
-      "vitalite": 495
-    },
-    "initiative": 19,
-    "ia": "agressif",
-    "pa": 7,
-    "resistances": {
-      "terre": 0.05,
-      "feu": 0.15,
-      "eau": 0.2,
-      "air": 0.05
-    },
-    "sorts": [
-      "drain_vital_t5",
-      "morsure",
-      "grignotage"
-    ]
-  },
   "ravalame": {
     "id": "ravalame",
     "nom": "Ravalame",
     "img": "/assets/monstres/ravalame.png",
-    "pv": 760,
+    "pv": 840,
     "stats": {
-      "force": 63,
-      "intelligence": 63,
-      "chance": 152,
-      "agilite": 253,
-      "vitalite": 418
+      "force": 65,
+      "intelligence": 65,
+      "chance": 157,
+      "agilite": 261,
+      "vitalite": 462
     },
     "initiative": 14,
     "ia": "agressif",
@@ -10799,13 +11966,13 @@
     "id": "fleaunide",
     "nom": "Fléaunide",
     "img": "/assets/monstres/fleaunide.png",
-    "pv": 760,
+    "pv": 840,
     "stats": {
-      "force": 64,
-      "intelligence": 154,
-      "chance": 64,
-      "agilite": 256,
-      "vitalite": 418
+      "force": 66,
+      "intelligence": 158,
+      "chance": 66,
+      "agilite": 264,
+      "vitalite": 462
     },
     "initiative": 19,
     "ia": "agressif",
@@ -10822,127 +11989,17 @@
       "grignotage"
     ]
   },
-  "olgoth": {
-    "id": "olgoth",
-    "nom": "Olgoth",
-    "img": "/assets/monstres/olgoth.png",
-    "pv": 760,
-    "stats": {
-      "force": 148,
-      "intelligence": 246,
-      "chance": 61,
-      "agilite": 61,
-      "vitalite": 418
-    },
-    "initiative": 19,
-    "ia": "agressif",
-    "pa": 7,
-    "resistances": {
-      "terre": 0.15,
-      "feu": 0.1,
-      "eau": 0.2,
-      "air": 0.15
-    },
-    "sorts": [
-      "entrave_t5",
-      "morsure",
-      "grignotage"
-    ]
-  },
-  "macabrateur": {
-    "id": "macabrateur",
-    "nom": "Macabrateur",
-    "img": "/assets/monstres/macabrateur.png",
-    "pv": 760,
-    "stats": {
-      "force": 67,
-      "intelligence": 160,
-      "chance": 67,
-      "agilite": 266,
-      "vitalite": 418
-    },
-    "initiative": 16,
-    "ia": "agressif",
-    "pa": 5,
-    "resistances": {
-      "terre": 0.15,
-      "feu": 0.1,
-      "eau": 0.2,
-      "air": 0.15
-    },
-    "sorts": [
-      "coup_repoussant_t5",
-      "morsure",
-      "grignotage"
-    ]
-  },
-  "corruption": {
-    "id": "corruption",
-    "nom": "Corruption",
-    "img": "/assets/monstres/corruption.png",
-    "pv": 2470,
-    "stats": {
-      "force": 74,
-      "intelligence": 297,
-      "chance": 178,
-      "agilite": 74,
-      "vitalite": 1358
-    },
-    "initiative": 14,
-    "ia": "agressif",
-    "boss": true,
-    "pa": 10,
-    "resistances": {
-      "terre": 0.2,
-      "feu": 0.15,
-      "eau": 0.2,
-      "air": 0.2
-    },
-    "sorts": [
-      "putrefaction",
-      "charge",
-      "morsure"
-    ]
-  },
-  "guerre": {
-    "id": "guerre",
-    "nom": "Guerre",
-    "img": "/assets/monstres/guerre.png",
-    "pv": 2470,
-    "stats": {
-      "force": 179,
-      "intelligence": 299,
-      "chance": 75,
-      "agilite": 75,
-      "vitalite": 1358
-    },
-    "initiative": 15,
-    "ia": "agressif",
-    "boss": true,
-    "pa": 10,
-    "resistances": {
-      "terre": 0.25,
-      "feu": 0.25,
-      "eau": 0.2,
-      "air": 0.2
-    },
-    "sorts": [
-      "magmalefice",
-      "charge",
-      "morsure"
-    ]
-  },
   "tambourreau": {
     "id": "tambourreau",
     "nom": "Tambourreau",
     "img": "/assets/monstres/tambourreau.png",
-    "pv": 920,
+    "pv": 950,
     "stats": {
       "force": 171,
       "intelligence": 71,
       "chance": 71,
       "agilite": 285,
-      "vitalite": 506
+      "vitalite": 522
     },
     "initiative": 18,
     "ia": "agressif",
@@ -10964,13 +12021,13 @@
     "id": "armecreante",
     "nom": "Armécréante",
     "img": "/assets/monstres/armecreante.png",
-    "pv": 810,
+    "pv": 840,
     "stats": {
       "force": 262,
       "intelligence": 157,
       "chance": 66,
       "agilite": 66,
-      "vitalite": 446
+      "vitalite": 462
     },
     "initiative": 18,
     "ia": "agressif",
@@ -10987,71 +12044,17 @@
       "grignotage"
     ]
   },
-  "gentyran": {
-    "id": "gentyran",
-    "nom": "Gentyran",
-    "img": "/assets/monstres/gentyran.png",
-    "pv": 880,
-    "stats": {
-      "force": 64,
-      "intelligence": 257,
-      "chance": 64,
-      "agilite": 64,
-      "vitalite": 484
-    },
-    "initiative": 19,
-    "ia": "soutien",
-    "pa": 6,
-    "resistances": {
-      "terre": 0.2,
-      "feu": 0.2,
-      "eau": 0.2,
-      "air": 0.2
-    },
-    "sorts": [
-      "soin_t5",
-      "tir_courbe",
-      "morsure",
-      "grignotage"
-    ]
-  },
-  "boularbin": {
-    "id": "boularbin",
-    "nom": "Boularbin",
-    "img": "/assets/monstres/boularbin.png",
-    "pv": 1020,
-    "stats": {
-      "force": 290,
-      "intelligence": 174,
-      "chance": 72,
-      "agilite": 72,
-      "vitalite": 561
-    },
-    "initiative": 18,
-    "ia": "agressif",
-    "pa": 5,
-    "resistances": {
-      "terre": 0.2,
-      "feu": 0.2,
-      "eau": 0.2,
-      "air": 0.2
-    },
-    "sorts": [
-      "morsure",
-      "grignotage"
-    ]
-  },
   "ferrailleur": {
     "id": "ferrailleur",
     "nom": "Ferrailleur",
     "img": "/assets/monstres/ferrailleur.png",
-    "pv": 840,
+    "pv": 870,
     "stats": {
       "force": 267,
       "intelligence": 67,
       "chance": 67,
       "agilite": 67,
-      "vitalite": 462
+      "vitalite": 479
     },
     "initiative": 17,
     "ia": "agressif",
@@ -11072,13 +12075,13 @@
     "id": "krevladal",
     "nom": "Krèvladal",
     "img": "/assets/monstres/krevladal.png",
-    "pv": 840,
+    "pv": 870,
     "stats": {
       "force": 64,
       "intelligence": 257,
       "chance": 154,
       "agilite": 64,
-      "vitalite": 462
+      "vitalite": 479
     },
     "initiative": 14,
     "ia": "agressif",
@@ -11095,59 +12098,60 @@
       "grignotage"
     ]
   },
-  "desosseur": {
-    "id": "desosseur",
-    "nom": "Désosseur",
-    "img": "/assets/monstres/desosseur.png",
-    "pv": 840,
+  "corruption": {
+    "id": "corruption",
+    "nom": "Corruption",
+    "img": "/assets/monstres/corruption.png",
+    "pv": 2610,
     "stats": {
-      "force": 72,
-      "intelligence": 72,
-      "chance": 287,
-      "agilite": 172,
-      "vitalite": 462
+      "force": 77,
+      "intelligence": 308,
+      "chance": 185,
+      "agilite": 77,
+      "vitalite": 1436
     },
-    "initiative": 17,
+    "initiative": 14,
     "ia": "agressif",
-    "pa": 7,
+    "boss": true,
+    "pa": 10,
     "resistances": {
       "terre": 0.2,
-      "feu": 0.05,
+      "feu": 0.15,
       "eau": 0.2,
-      "air": 0.25
-    },
-    "sorts": [
-      "drain_vital_t5",
-      "morsure",
-      "grignotage"
-    ]
-  },
-  "skentu": {
-    "id": "skentu",
-    "nom": "Skentu",
-    "img": "/assets/monstres/skentu.png",
-    "pv": 840,
-    "stats": {
-      "force": 72,
-      "intelligence": 174,
-      "chance": 72,
-      "agilite": 289,
-      "vitalite": 462
-    },
-    "initiative": 17,
-    "ia": "agressif",
-    "pa": 7,
-    "resistances": {
-      "terre": 0.15,
-      "feu": 0.25,
-      "eau": 0.15,
       "air": 0.2
     },
     "sorts": [
-      "tir_courbe",
-      "drain_vital_t5",
-      "morsure",
-      "grignotage"
+      "putrefaction",
+      "charge",
+      "morsure"
+    ]
+  },
+  "guerre": {
+    "id": "guerre",
+    "nom": "Guerre",
+    "img": "/assets/monstres/guerre.png",
+    "pv": 2610,
+    "stats": {
+      "force": 186,
+      "intelligence": 310,
+      "chance": 77,
+      "agilite": 77,
+      "vitalite": 1436
+    },
+    "initiative": 15,
+    "ia": "agressif",
+    "boss": true,
+    "pa": 10,
+    "resistances": {
+      "terre": 0.25,
+      "feu": 0.25,
+      "eau": 0.2,
+      "air": 0.2
+    },
+    "sorts": [
+      "magmalefice",
+      "charge",
+      "morsure"
     ]
   },
   "servitude": {
@@ -11260,10 +12264,10 @@
       "grignotage"
     ]
   },
-  "olgoth_2": {
-    "id": "olgoth_2",
+  "olgoth": {
+    "id": "olgoth",
     "nom": "Olgoth",
-    "img": "/assets/monstres/olgoth_2.png",
+    "img": "/assets/monstres/olgoth.png",
     "pv": 910,
     "stats": {
       "force": 159,

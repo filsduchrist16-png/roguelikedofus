@@ -166,7 +166,9 @@ export function verifierQuetesMeta(e, t, n = SUCCES) {
               ? (n = new Set(t.dofus).size >= e.seuil)
               : e.type === `runs_jouees`
                 ? (n = t.runs >= e.seuil)
-                : e.type === `relique_obtenue` && (n = t.reliques.includes(e.boss));
+                : e.type === `relique_obtenue`
+                  ? (n = t.reliques.includes(e.boss))
+                  : e.type === `dofus_possede` && (n = t.dofus.includes(e.dofus));
     if (n) {
       a.push(o);
     }

@@ -2579,37 +2579,6 @@
     "cooldownTours": 2,
     "desc": "Le Blop Multicolore Royal éclabousse toute la rangée ; une couleur au hasard : brûlure, encre (−15 % de dégâts) ou pomme (soins bloqués)."
   },
-  "invocation_royale_de_tofu": {
-    "id": "invocation_royale_de_tofu",
-    "nom": "Invocation Royale de Tofu",
-    "coutPA": 6,
-    "cible": "soi",
-    "type": "invocation",
-    "baseMin": 0,
-    "baseMax": 0,
-    "invoqueMonstre": {
-      "max": 2,
-      "pool": [
-        "tofuzmo",
-        "vilain_petit_tofu",
-        "tofutoflamme"
-      ]
-    },
-    "cooldownTours": 3,
-    "desc": "Le Tofu Royal fait éclore un Tofu de sa basse-cour (2 au plus)."
-  },
-  "ecrasement_royal": {
-    "id": "ecrasement_royal",
-    "nom": "Écrasement Royal",
-    "coutPA": 6,
-    "cible": "ennemi_ligne",
-    "type": "degats",
-    "baseMin": 34,
-    "baseMax": 46,
-    "zoneLigne": true,
-    "cooldownTours": 2,
-    "desc": "Le Tofu Royal plonge sur toute la ligne avant."
-  },
   "souffle_de_crocabulia": {
     "id": "souffle_de_crocabulia",
     "nom": "Souffle",
@@ -2651,6 +2620,22 @@
     "zoneLigne": true,
     "cooldownTours": 2,
     "desc": "Nagate déchaîne une vague sur toute la rangée ciblée : ses héros infligent −15 % de dégâts (2 tours)."
+  },
+  "tete_dans_le_sable": {
+    "id": "tete_dans_le_sable",
+    "nom": "Tête dans le sable",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "effetLanceur": {
+      "stat": "resAll",
+      "valeur": 0.3,
+      "duree": 1
+    },
+    "cooldownTours": 2,
+    "desc": "La Haute Truche frappe puis se cache la tête : +30 % de résistances (1 tour)."
   },
   "grande_lame_du_vent": {
     "id": "grande_lame_du_vent",
@@ -2963,6 +2948,18 @@
     "cooldownTours": 2,
     "desc": "Le Shogun Tofugawa invoque un vent violent : la cible bascule dans l'autre rangée."
   },
+  "koumiho_no_kaze": {
+    "id": "koumiho_no_kaze",
+    "nom": "Koumiho no kaze",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "deplaceCible": "toggle",
+    "cooldownTours": 2,
+    "desc": "Koumiho souffle un vent d'esprits sur n'importe quel héros, qui change de rangée."
+  },
   "torgnole_givree": {
     "id": "torgnole_givree",
     "nom": "Torgnole givrée",
@@ -3005,9 +3002,28 @@
     "baseMax": 98,
     "desc": "Fuji soigne le Givrefoux le plus blessé."
   },
-  "dereglement": {
-    "id": "dereglement",
-    "nom": "Dérèglement",
+  "invokabombz": {
+    "id": "invokabombz",
+    "nom": "Invokabombz",
+    "coutPA": 6,
+    "cible": "soi",
+    "type": "invocation",
+    "baseMin": 0,
+    "baseMax": 0,
+    "invoqueMonstre": {
+      "max": 2,
+      "pool": [
+        "balebz",
+        "toubibz",
+        "kamikabz"
+      ]
+    },
+    "cooldownTours": 3,
+    "desc": "Le Supervizœuf appelle une Bombz de la ruche (2 au plus)."
+  },
+  "abzlation": {
+    "id": "abzlation",
+    "nom": "Abzlation",
     "coutPA": 6,
     "cible": "ennemi_ligne",
     "type": "degats",
@@ -3017,7 +3033,7 @@
     "retraitPAChance": 1,
     "zoneLigne": true,
     "cooldownTours": 2,
-    "desc": "XLII dérègle le temps de toute la rangée : −1 PA au prochain tour."
+    "desc": "Le Supervizœuf pique toute la ligne avant : −1 PA au prochain tour."
   },
   "hairpay": {
     "id": "hairpay",
@@ -3392,6 +3408,164 @@
     "vampirismeRatio": 0.6,
     "cooldownTours": 2,
     "desc": "Dantinéa aspire l'âme de sa cible et récupère 60 % des dégâts en PV."
+  },
+  "liquidation": {
+    "id": "liquidation",
+    "nom": "Liquidation",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "procAleatoire": [
+      {
+        "dissipePositifs": true
+      }
+    ],
+    "cooldownTours": 2,
+    "desc": "Le roi Nidas liquide les avoirs de sa cible : il lui retire boucliers et bonus."
+  },
+  "mort_en_sursis": {
+    "id": "mort_en_sursis",
+    "nom": "Mort en Sursis",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "poison": {
+      "degats": 36,
+      "duree": 3
+    },
+    "cooldownTours": 2,
+    "desc": "La Reine des Voleurs marque sa cible : poison (36 par tour, 3 tours)."
+  },
+  "en_temps_et_en_heure": {
+    "id": "en_temps_et_en_heure",
+    "nom": "En temps et en heure",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "retraitPA": 1,
+    "retraitPAChance": 1,
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Vortex dérègle le temps de toute la rangée : −1 PA au prochain tour."
+  },
+  "farce_et_attrape": {
+    "id": "farce_et_attrape",
+    "nom": "Farce et Attrape",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "procAleatoire": [
+      {
+        "effet": {
+          "stat": "degatsInfliges",
+          "valeur": -0.15,
+          "duree": 1
+        }
+      },
+      {
+        "effet": {
+          "stat": "friction",
+          "valeur": 1,
+          "duree": 1
+        }
+      }
+    ],
+    "cooldownTours": 2,
+    "desc": "Le Chalœil joue un tour au hasard : sa cible perd ses bonus, ne peut plus être soignée, ou inflige −15 % de dégâts."
+  },
+  "eruption_solaire": {
+    "id": "eruption_solaire",
+    "nom": "Éruption Solaire",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Solar embrase toute une rangée, même en ligne arrière."
+  },
+  "vindicte": {
+    "id": "vindicte",
+    "nom": "Vindicte",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "effetLanceur": {
+      "stat": "armure",
+      "valeur": 45,
+      "duree": 2
+    },
+    "cooldownTours": 2,
+    "desc": "Bethel Akarna frappe et se fortifie : +armure pendant 2 tours."
+  },
+  "kami_no_jishin": {
+    "id": "kami_no_jishin",
+    "nom": "Kami no Jishin",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "effet": {
+      "stat": "degatsInfliges",
+      "valeur": -0.2,
+      "duree": 1
+    },
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Le roi Imagami fait trembler la ligne avant : −20 % de dégâts (1 tour)."
+  },
+  "brouillard_d_encre": {
+    "id": "brouillard_d_encre",
+    "nom": "Brouillard d'encre",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "effet": {
+      "stat": "tetanise",
+      "valeur": 1,
+      "duree": 1
+    },
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "La reine Amirukam noie la rangée d'encre : plus d'accès à la ligne arrière (1 tour)."
+  },
+  "cri_venerable": {
+    "id": "cri_venerable",
+    "nom": "Cri Vénérable",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Le Vénérable s'éveille d'un cri : dégâts sur toute la ligne avant."
+  },
+  "lance_de_l_effroi": {
+    "id": "lance_de_l_effroi",
+    "nom": "Lance de l'effroi",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "vampirismeRatio": 0.5,
+    "cooldownTours": 2,
+    "desc": "Ilyzaelle transperce sa cible et récupère la moitié des dégâts en PV."
   },
   "putrefaction": {
     "id": "putrefaction",

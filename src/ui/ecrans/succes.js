@@ -7,7 +7,7 @@ import {
   progressionSucces,
   trouverQuete,
 } from "../../jeu/quetes.js";
-import { indiceQuete } from "../../jeu/obtention.js";
+import { indiceQuete, mondeDuDofus } from "../../jeu/obtention.js";
 import {
   afficherEcran,
   barreContinuer,
@@ -72,6 +72,7 @@ export function ecranSucces(e) {
         <span class="succes-carte-nom">${echapperHtml(DOFUS[e].nom)}</span>
         ${r ? p(r.faites, r.total) : ``}
         <span class="succes-carte-progres">${r ? (r.complet ? `✓ Obtenu` : `${r.faites} / ${r.total} quêtes`) : `Bientôt`}</span>
+        ${mondeDuDofus(e) ? `<span class="succes-carte-monde">${echapperHtml(mondeDuDofus(e).nom)} · niv. ${DOFUS[e].niveau}</span>` : ``}
       </button>`;
     };
     let h = (e) => {
@@ -108,7 +109,8 @@ export function ecranSucces(e) {
         let a = r ? SUCCES[r] : undefined;
         let o = `<div class="succes-panneau-tete">
           ${t.img ? `<img class="${a ? `` : `a-venir`}" src="${cheminAsset(t.img)}" alt="" onerror="this.remove()" />` : ``}
-          <div><h2>${echapperHtml(t.nom)}</h2><p class="succes-effet">${echapperHtml(t.desc)}</p></div>
+          <div><h2>${echapperHtml(t.nom)}</h2><p class="succes-effet">${echapperHtml(t.desc)}</p>
+          ${mondeDuDofus(e) ? `<p class="succes-niveau">Niveau ${t.niveau} dans Dofus · s'obtient dans le ${echapperHtml(mondeDuDofus(e).nom)}${a ? ` · succès « ${echapperHtml(a.nom)} »` : ``}</p>` : ``}</div>
         </div>`;
         if (!a) {
           return `${o}<p class="succes-a-venir">Ce Dofus n'a pas encore de groupe de quêtes.</p>`;

@@ -1,393 +1,4 @@
 {
-  "dofus_argente": {
-    "categorie": {
-      "dofus": "dofus_argente"
-    },
-    "nom": "Reliques du Monde 1",
-    "quetes": [
-      {
-        "critere": {
-          "boss": "kardorim",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_kardorim",
-        "nom": "Obtenir la relique « Crâne de Kardorim »."
-      },
-      {
-        "critere": {
-          "boss": "tournesol_affame",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_tournesol_affame",
-        "nom": "Obtenir la relique « Pétale Magique du Tournesol Affamé »."
-      },
-      {
-        "critere": {
-          "boss": "bouftou_royal",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_bouftou_royal",
-        "nom": "Obtenir la relique « Laine de Bouftou Royal »."
-      },
-      {
-        "critere": {
-          "boss": "batofu",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_batofu",
-        "nom": "Obtenir la relique « Plume de Batofu »."
-      },
-      {
-        "critere": {
-          "boss": "directeur_grunob",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_directeur_grunob",
-        "nom": "Obtenir la relique « Manuel du Directeur Grunob »."
-      },
-      {
-        "critere": {
-          "boss": "kankreblath",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_kankreblath",
-        "nom": "Obtenir la relique « Patte de Kankreblath »."
-      },
-      {
-        "critere": {
-          "boss": "boostache",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_boostache",
-        "nom": "Obtenir la relique « Moustache de Boostache »."
-      },
-      {
-        "critere": {
-          "boss": "scarabosse_dore",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_scarabosse_dore",
-        "nom": "Obtenir la relique « Ailes du Scarabosse Doré »."
-      },
-      {
-        "critere": {
-          "boss": "coffre_forgerons",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_coffre_forgerons",
-        "nom": "Obtenir la relique « Serrure du Coffre des Forgerons »."
-      },
-      {
-        "critere": {
-          "boss": "shin_larve",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_shin_larve",
-        "nom": "Obtenir la relique « Dent de Shin Larve »."
-      },
-      {
-        "critere": {
-          "boss": "corailleur_magistral",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_corailleur_magistral",
-        "nom": "Obtenir la relique « Corail Magistral »."
-      },
-      {
-        "critere": {
-          "boss": "kwakwa",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_kwakwa",
-        "nom": "Obtenir la relique « Bec du Kwakwa »."
-      }
-    ]
-  },
-  "dofus_du_cauchemar": {
-    "categorie": {
-      "dofus": "dofus_du_cauchemar"
-    },
-    "nom": "Dofus du Cauchemar",
-    "quetes": [
-      {
-        "critere": {
-          "min": 3,
-          "tranche": "t1",
-          "type": "record_ascension"
-        },
-        "id": "cauchemar_t1",
-        "nom": "Gagner le monde 1 en Cauchemar."
-      },
-      {
-        "critere": {
-          "min": 3,
-          "tranche": "t2",
-          "type": "record_ascension"
-        },
-        "id": "cauchemar_t2",
-        "nom": "Gagner le monde 2 en Cauchemar."
-      },
-      {
-        "critere": {
-          "min": 3,
-          "tranche": "t3",
-          "type": "record_ascension"
-        },
-        "id": "cauchemar_t3",
-        "nom": "Gagner le monde 3 en Cauchemar."
-      },
-      {
-        "critere": {
-          "min": 3,
-          "tranche": "t4",
-          "type": "record_ascension"
-        },
-        "id": "cauchemar_t4",
-        "nom": "Gagner le monde 4 en Cauchemar."
-      },
-      {
-        "critere": {
-          "min": 3,
-          "tranche": "t5",
-          "type": "record_ascension"
-        },
-        "id": "cauchemar_t5",
-        "nom": "Gagner le monde 5 en Cauchemar."
-      }
-    ]
-  },
-  "dofus_emeraude": {
-    "categorie": {
-      "dofus": "dofus_emeraude"
-    },
-    "nom": "Reliques du Monde 2",
-    "quetes": [
-      {
-        "critere": {
-          "boss": "blop_griotte_royal",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_blop_griotte_royal",
-        "nom": "Obtenir la relique « Fleur de Blop Griotte Royal »."
-      },
-      {
-        "critere": {
-          "boss": "blop_indigo_royal",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_blop_indigo_royal",
-        "nom": "Obtenir la relique « Fleur de Blop Indigo Royal »."
-      },
-      {
-        "critere": {
-          "boss": "blop_reinette_royal",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_blop_reinette_royal",
-        "nom": "Obtenir la relique « Fleur de Blop Reinette Royal »."
-      },
-      {
-        "critere": {
-          "boss": "blop_coco_royal",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_blop_coco_royal",
-        "nom": "Obtenir la relique « Fleur de Blop Coco Royal »."
-      },
-      {
-        "critere": {
-          "boss": "gourlo_le_terrible",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_gourlo_le_terrible",
-        "nom": "Obtenir la relique « Étoffe de Gourlo le Terrible »."
-      },
-      {
-        "critere": {
-          "boss": "gelee_royale_fraise",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_gelee_royale_fraise",
-        "nom": "Obtenir la relique « Gelée Fraise Royale »."
-      },
-      {
-        "critere": {
-          "boss": "gelee_royale_bleuet",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_gelee_royale_bleuet",
-        "nom": "Obtenir la relique « Gelée Bleuet Royale »."
-      },
-      {
-        "critere": {
-          "boss": "gelee_royale_menthe",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_gelee_royale_menthe",
-        "nom": "Obtenir la relique « Gelée Menthe Royale »."
-      },
-      {
-        "critere": {
-          "boss": "gelee_royale_citron",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_gelee_royale_citron",
-        "nom": "Obtenir la relique « Gelée Citron Royale »."
-      },
-      {
-        "critere": {
-          "boss": "nelween",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_nelween",
-        "nom": "Obtenir la relique « Fiole de fumée de Nelween »."
-      },
-      {
-        "critere": {
-          "boss": "wa_wobot",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_wa_wobot",
-        "nom": "Obtenir la relique « Barbe du Wa Wobot »."
-      },
-      {
-        "critere": {
-          "boss": "wa_wabbit",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_wa_wabbit",
-        "nom": "Obtenir la relique « Étoffe du Wa Wabbit »."
-      },
-      {
-        "critere": {
-          "boss": "craqueleur_legendaire",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_craqueleur_legendaire",
-        "nom": "Obtenir la relique « Méga Pierre du Craqueleur Légendaire »."
-      },
-      {
-        "critere": {
-          "boss": "le_chouque",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_le_chouque",
-        "nom": "Obtenir la relique « Barbe du Chouque »."
-      },
-      {
-        "critere": {
-          "boss": "kanniboul_ebil",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_kanniboul_ebil",
-        "nom": "Obtenir la relique « Cagoule du Kanniboul Ebil »."
-      },
-      {
-        "critere": {
-          "boss": "dragon_cochon",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_dragon_cochon",
-        "nom": "Obtenir la relique « Groin de Dragon Cochon »."
-      },
-      {
-        "critere": {
-          "boss": "kharnozor",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_kharnozor",
-        "nom": "Obtenir la relique « Œil du Kharnozor »."
-      },
-      {
-        "critere": {
-          "boss": "draegnerys",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_draegnerys",
-        "nom": "Obtenir la relique « Cheveux de Draegnerys »."
-      },
-      {
-        "critere": {
-          "boss": "meulou",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_meulou",
-        "nom": "Obtenir la relique « Scalp du Meulou »."
-      },
-      {
-        "critere": {
-          "boss": "reine_nyee",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_reine_nyee",
-        "nom": "Obtenir la relique « Globule de Nyée »."
-      },
-      {
-        "critere": {
-          "boss": "abraknyde_ancestral",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_abraknyde_ancestral",
-        "nom": "Obtenir la relique « Bourgeon d'Abraknyde Ancestral »."
-      },
-      {
-        "critere": {
-          "boss": "moon",
-          "type": "relique_obtenue"
-        },
-        "id": "relique_moon",
-        "nom": "Obtenir la relique « Étoffe Magique de Moon »."
-      }
-    ]
-  },
-  "dofus_ocre": {
-    "categorie": {
-      "dofus": "dofus_ocre"
-    },
-    "nom": "Dofus Ocre",
-    "quetes": [
-      {
-        "critere": {
-          "tranche": "t1",
-          "type": "archi_capture"
-        },
-        "id": "ocre_t1",
-        "nom": "Capturer tous les archimonstres du monde 1."
-      },
-      {
-        "critere": {
-          "tranche": "t2",
-          "type": "archi_capture"
-        },
-        "id": "ocre_t2",
-        "nom": "Capturer tous les archimonstres du monde 2."
-      },
-      {
-        "critere": {
-          "tranche": "t3",
-          "type": "archi_capture"
-        },
-        "id": "ocre_t3",
-        "nom": "Capturer tous les archimonstres du monde 3."
-      },
-      {
-        "critere": {
-          "tranche": "t4",
-          "type": "archi_capture"
-        },
-        "id": "ocre_t4",
-        "nom": "Capturer tous les archimonstres du monde 4."
-      },
-      {
-        "critere": {
-          "tranche": "t5",
-          "type": "archi_capture"
-        },
-        "id": "ocre_t5",
-        "nom": "Capturer tous les archimonstres du monde 5."
-      }
-    ]
-  },
   "general_archimonstres": {
     "categorie": {
       "general": true
@@ -516,730 +127,1066 @@
       }
     ]
   },
-  "dofawa": {
+  "t1_1_donjons": {
     "categorie": {
-      "dofus": "dofawa"
+      "general": true,
+      "rubrique": "Monde 1 · Donjons niveaux 1 à 50"
     },
-    "nom": "Premiers pas",
+    "nom": "Donjons (niveaux 1 à 50)",
     "quetes": [
       {
-        "critere": {
-          "type": "runs_jouees",
-          "seuil": 3
-        },
-        "id": "d_dofawa_1",
-        "nom": "Jouer 3 runs."
-      },
-      {
-        "critere": {
-          "type": "zone_terminee",
-          "zone": "astrub"
-        },
-        "id": "d_dofawa_2",
-        "nom": "Terminer les Champs d'Astrub."
-      }
-    ]
-  },
-  "dofus_pourpre": {
-    "categorie": {
-      "dofus": "dofus_pourpre"
-    },
-    "nom": "Coloriste",
-    "quetes": [
-      {
-        "critere": {
-          "type": "compteur",
-          "evenement": "degats_element",
-          "seuil": 2000,
-          "element": "terre"
-        },
-        "id": "d_dofus_pourpre_1",
-        "nom": "Infliger 2 000 dégâts Terre au total."
-      },
-      {
-        "critere": {
-          "type": "compteur",
-          "evenement": "degats_element",
-          "seuil": 2000,
-          "element": "feu"
-        },
-        "id": "d_dofus_pourpre_2",
-        "nom": "Infliger 2 000 dégâts Feu au total."
-      },
-      {
-        "critere": {
-          "type": "compteur",
-          "evenement": "degats_element",
-          "seuil": 2000,
-          "element": "eau"
-        },
-        "id": "d_dofus_pourpre_3",
-        "nom": "Infliger 2 000 dégâts Eau au total."
-      },
-      {
-        "critere": {
-          "type": "compteur",
-          "evenement": "degats_element",
-          "seuil": 2000,
-          "element": "air"
-        },
-        "id": "d_dofus_pourpre_4",
-        "nom": "Infliger 2 000 dégâts Air au total."
-      }
-    ]
-  },
-  "dolmanax": {
-    "categorie": {
-      "dofus": "dolmanax"
-    },
-    "nom": "Maître des éléments",
-    "quetes": [
-      {
-        "critere": {
-          "type": "compteur",
-          "evenement": "degats_element",
-          "seuil": 10000,
-          "element": "terre"
-        },
-        "id": "d_dolmanax_1",
-        "nom": "Infliger 10 000 dégâts Terre au total."
-      },
-      {
-        "critere": {
-          "type": "compteur",
-          "evenement": "degats_element",
-          "seuil": 10000,
-          "element": "feu"
-        },
-        "id": "d_dolmanax_2",
-        "nom": "Infliger 10 000 dégâts Feu au total."
-      },
-      {
-        "critere": {
-          "type": "compteur",
-          "evenement": "degats_element",
-          "seuil": 10000,
-          "element": "eau"
-        },
-        "id": "d_dolmanax_3",
-        "nom": "Infliger 10 000 dégâts Eau au total."
-      },
-      {
-        "critere": {
-          "type": "compteur",
-          "evenement": "degats_element",
-          "seuil": 10000,
-          "element": "air"
-        },
-        "id": "d_dolmanax_4",
-        "nom": "Infliger 10 000 dégâts Air au total."
-      }
-    ]
-  },
-  "dofus_turquoise": {
-    "categorie": {
-      "dofus": "dofus_turquoise"
-    },
-    "nom": "Sans une égratignure",
-    "quetes": [
-      {
+        "id": "t1_donjon_kardorim",
+        "nom": "Vaincre Kardorim dans son donjon.",
         "critere": {
           "type": "vaincre",
-          "boss": "bouftou_royal",
-          "sansKO": true
-        },
-        "id": "d_dofus_turquoise_1",
-        "nom": "Vaincre le Bouftou Royal sans perdre de héros."
+          "boss": "kardorim"
+        }
       },
       {
+        "id": "t1_donjon_tournesol_affame",
+        "nom": "Vaincre le Tournesol Affamé dans son donjon.",
         "critere": {
           "type": "vaincre",
-          "boss": "batofu",
-          "sansKO": true
-        },
-        "id": "d_dofus_turquoise_2",
-        "nom": "Vaincre le Batofu sans perdre de héros."
+          "boss": "tournesol_affame"
+        }
       },
       {
+        "id": "t1_donjon_bouftou_royal",
+        "nom": "Vaincre le Bouftou Royal dans son donjon.",
         "critere": {
           "type": "vaincre",
-          "boss": "scarabosse_dore",
-          "sansKO": true
-        },
-        "id": "d_dofus_turquoise_3",
-        "nom": "Vaincre le Scarabosse Doré sans perdre de héros."
-      }
-    ]
-  },
-  "dofus_ivoire": {
-    "categorie": {
-      "dofus": "dofus_ivoire"
-    },
-    "nom": "À la dure",
-    "quetes": [
-      {
-        "critere": {
-          "type": "run_gagnee",
-          "tranche": "t1",
-          "sansTaverne": true
-        },
-        "id": "d_dofus_ivoire_1",
-        "nom": "Gagner le monde 1 sans jamais entrer dans une taverne."
-      }
-    ]
-  },
-  "dofus_ebene": {
-    "categorie": {
-      "dofus": "dofus_ebene"
-    },
-    "nom": "Exterminateur",
-    "quetes": [
-      {
-        "critere": {
-          "type": "compteur",
-          "evenement": "monstre_vaincu",
-          "seuil": 150
-        },
-        "id": "d_dofus_ebene_1",
-        "nom": "Vaincre 150 monstres."
+          "boss": "bouftou_royal"
+        }
       },
       {
+        "id": "t1_donjon_batofu",
+        "nom": "Vaincre Batofu dans son donjon.",
         "critere": {
-          "type": "compteur",
-          "evenement": "monstre_vaincu",
-          "seuil": 400
-        },
-        "id": "d_dofus_ebene_2",
-        "nom": "Vaincre 400 monstres."
-      }
-    ]
-  },
-  "dofus_des_glaces": {
-    "categorie": {
-      "dofus": "dofus_des_glaces"
-    },
-    "nom": "Grand froid",
-    "quetes": [
-      {
-        "critere": {
-          "type": "zone_terminee",
-          "zone": "gelaxieme_dimension"
-        },
-        "id": "d_dofus_des_glaces_1",
-        "nom": "Terminer la Gelaxième Dimension."
+          "type": "vaincre",
+          "boss": "batofu"
+        }
       },
       {
-        "critere": {
-          "type": "zone_terminee",
-          "zone": "cale_de_l_arche"
-        },
-        "id": "d_dofus_des_glaces_2",
-        "nom": "Terminer la Cale de l'Arche d'Otomaï."
-      }
-    ]
-  },
-  "dofus_kaliptus": {
-    "categorie": {
-      "dofus": "dofus_kaliptus"
-    },
-    "nom": "Explorateur",
-    "quetes": [
-      {
-        "critere": {
-          "type": "zone_terminee",
-          "zone": "tainela"
-        },
-        "id": "d_dofus_kaliptus_1",
-        "nom": "Terminer Tainéla."
-      },
-      {
-        "critere": {
-          "type": "zone_terminee",
-          "zone": "tofus"
-        },
-        "id": "d_dofus_kaliptus_2",
-        "nom": "Terminer le Donjon des Tofus."
-      },
-      {
-        "critere": {
-          "type": "zone_terminee",
-          "zone": "akademie"
-        },
-        "id": "d_dofus_kaliptus_3",
-        "nom": "Terminer l'Akadémie des Gobs."
-      },
-      {
-        "critere": {
-          "type": "zone_terminee",
-          "zone": "larves"
-        },
-        "id": "d_dofus_kaliptus_4",
-        "nom": "Terminer le Donjon des Larves."
-      }
-    ]
-  },
-  "dofus_argente_scintillant": {
-    "categorie": {
-      "dofus": "dofus_argente_scintillant"
-    },
-    "nom": "Argent pur",
-    "quetes": [
-      {
-        "critere": {
-          "type": "run_gagnee",
-          "tranche": "t1",
-          "ascensionMin": 2
-        },
-        "id": "d_dofus_argente_scintillant_1",
-        "nom": "Gagner le monde 1 en Extrême (★★★)."
-      },
-      {
-        "critere": {
-          "type": "archis_total",
-          "seuil": 15
-        },
-        "id": "d_dofus_argente_scintillant_2",
-        "nom": "Capturer 15 âmes d'Archimonstres."
-      }
-    ]
-  },
-  "dokoko": {
-    "categorie": {
-      "dofus": "dokoko"
-    },
-    "nom": "Médecin de campagne",
-    "quetes": [
-      {
-        "critere": {
-          "type": "compteur",
-          "evenement": "soins",
-          "seuil": 2500
-        },
-        "id": "d_dokoko_1",
-        "nom": "Soigner 2 500 PV au total."
-      }
-    ]
-  },
-  "dofus_nebuleux": {
-    "categorie": {
-      "dofus": "dofus_nebuleux"
-    },
-    "nom": "Au-delà des nuages",
-    "quetes": [
-      {
-        "critere": {
-          "type": "run_gagnee",
-          "tranche": "t2"
-        },
-        "id": "d_dofus_nebuleux_1",
-        "nom": "Gagner le monde 2."
-      }
-    ]
-  },
-  "dofus_des_veilleurs": {
-    "categorie": {
-      "dofus": "dofus_des_veilleurs"
-    },
-    "nom": "Garde rapprochée",
-    "quetes": [
-      {
-        "critere": {
-          "type": "run_gagnee",
-          "quatreHerosEquipes": true
-        },
-        "id": "d_dofus_des_veilleurs_1",
-        "nom": "Gagner un monde avec 4 héros portant chacun une arme, une coiffe, une cape et un anneau."
-      }
-    ]
-  },
-  "dorigami": {
-    "categorie": {
-      "dofus": "dorigami"
-    },
-    "nom": "Grand chasseur",
-    "quetes": [
-      {
-        "critere": {
-          "type": "compteur",
-          "evenement": "monstre_vaincu",
-          "seuil": 800
-        },
-        "id": "d_dorigami_1",
-        "nom": "Vaincre 800 monstres."
-      }
-    ]
-  },
-  "dofus_tachete": {
-    "categorie": {
-      "dofus": "dofus_tachete"
-    },
-    "nom": "Duo de choc",
-    "quetes": [
-      {
-        "critere": {
-          "type": "run_gagnee",
-          "tranche": "t1",
-          "sansRecrutement": true
-        },
-        "id": "d_dofus_tachete_1",
-        "nom": "Gagner le monde 1 sans recruter personne en taverne."
-      }
-    ]
-  },
-  "domakuro": {
-    "categorie": {
-      "dofus": "domakuro"
-    },
-    "nom": "Éclair",
-    "quetes": [
-      {
-        "critere": {
-          "type": "vaincre",
-          "noeud": "combat_dur",
-          "toursMax": 2
-        },
-        "id": "d_domakuro_1",
-        "nom": "Gagner un combat dur en 2 rondes ou moins."
-      }
-    ]
-  },
-  "dofus_vulbis": {
-    "categorie": {
-      "dofus": "dofus_vulbis"
-    },
-    "nom": "Collectionneur légendaire",
-    "quetes": [
-      {
-        "critere": {
-          "type": "dofus_possedes",
-          "seuil": 20
-        },
-        "id": "d_dofus_vulbis_1",
-        "nom": "Posséder 20 Dofus différents."
-      }
-    ]
-  },
-  "dofus_abyssal": {
-    "categorie": {
-      "dofus": "dofus_abyssal"
-    },
-    "nom": "Fonds marins",
-    "quetes": [
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "gourlo_le_terrible"
-        },
-        "id": "d_dofus_abyssal_1",
-        "nom": "Vaincre Gourlo le Terrible."
-      },
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "le_chouque"
-        },
-        "id": "d_dofus_abyssal_2",
-        "nom": "Vaincre le Chouque."
-      },
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "corailleur_magistral"
-        },
-        "id": "d_dofus_abyssal_3",
-        "nom": "Vaincre le Corailleur Magistral."
-      }
-    ]
-  },
-  "dofus_cawotte": {
-    "categorie": {
-      "dofus": "dofus_cawotte"
-    },
-    "nom": "Terrier",
-    "quetes": [
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "wa_wabbit"
-        },
-        "id": "d_dofus_cawotte_1",
-        "nom": "Vaincre le Wa Wabbit."
-      },
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "wa_wobot"
-        },
-        "id": "d_dofus_cawotte_2",
-        "nom": "Vaincre le Wa Wobot."
-      }
-    ]
-  },
-  "dofus_sylvestre": {
-    "categorie": {
-      "dofus": "dofus_sylvestre"
-    },
-    "nom": "Esprit de la forêt",
-    "quetes": [
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "moon"
-        },
-        "id": "d_dofus_sylvestre_1",
-        "nom": "Vaincre Moon."
-      },
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "abraknyde_ancestral"
-        },
-        "id": "d_dofus_sylvestre_2",
-        "nom": "Vaincre l'Abraknyde Ancestral."
-      },
-      {
-        "critere": {
-          "type": "run_gagnee",
-          "classe": "sadida"
-        },
-        "id": "d_dofus_sylvestre_3",
-        "nom": "Gagner un monde avec un Sadida dans l'équipe."
-      }
-    ]
-  },
-  "dofus_verdoyant": {
-    "categorie": {
-      "dofus": "dofus_verdoyant"
-    },
-    "nom": "Poison lent",
-    "quetes": [
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "shin_larve"
-        },
-        "id": "d_dofus_verdoyant_1",
-        "nom": "Vaincre Shin Larve."
-      },
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "kwakwa"
-        },
-        "id": "d_dofus_verdoyant_2",
-        "nom": "Vaincre le Kwakwa."
-      },
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "reine_nyee"
-        },
-        "id": "d_dofus_verdoyant_3",
-        "nom": "Vaincre la Reine Nyée."
-      }
-    ]
-  },
-  "dofus_cacao": {
-    "categorie": {
-      "dofus": "dofus_cacao"
-    },
-    "nom": "Gourmandise",
-    "quetes": [
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "blop_coco_royal"
-        },
-        "id": "d_dofus_cacao_1",
-        "nom": "Vaincre le Blop Coco Royal."
-      },
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "blop_griotte_royal"
-        },
-        "id": "d_dofus_cacao_2",
-        "nom": "Vaincre le Blop Griotte Royal."
-      },
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "blop_indigo_royal"
-        },
-        "id": "d_dofus_cacao_3",
-        "nom": "Vaincre le Blop Indigo Royal."
-      },
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "blop_reinette_royal"
-        },
-        "id": "d_dofus_cacao_4",
-        "nom": "Vaincre le Blop Reinette Royal."
-      }
-    ]
-  },
-  "dofus_forgelave": {
-    "categorie": {
-      "dofus": "dofus_forgelave"
-    },
-    "nom": "Cœur de lave",
-    "quetes": [
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "craqueleur_legendaire"
-        },
-        "id": "d_dofus_forgelave_1",
-        "nom": "Vaincre le Craqueleur Légendaire."
-      },
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "dragon_cochon"
-        },
-        "id": "d_dofus_forgelave_2",
-        "nom": "Vaincre le Dragon Cochon."
-      },
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "coffre_forgerons"
-        },
-        "id": "d_dofus_forgelave_3",
-        "nom": "Vaincre le Coffre des Forgerons."
-      }
-    ]
-  },
-  "dofoozbz": {
-    "categorie": {
-      "dofus": "dofoozbz"
-    },
-    "nom": "Arène",
-    "quetes": [
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "kharnozor"
-        },
-        "id": "d_dofoozbz_1",
-        "nom": "Vaincre Kharnozor."
-      },
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "draegnerys"
-        },
-        "id": "d_dofoozbz_2",
-        "nom": "Vaincre Draegnerys."
-      }
-    ]
-  },
-  "dokille": {
-    "categorie": {
-      "dofus": "dokille"
-    },
-    "nom": "Revenant",
-    "quetes": [
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "boostache",
-          "sansKO": true
-        },
-        "id": "d_dokille_1",
-        "nom": "Vaincre Boostache sans perdre de héros."
-      },
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "kankreblath"
-        },
-        "id": "d_dokille_2",
-        "nom": "Vaincre Kankreblath."
-      }
-    ]
-  },
-  "dom_de_pin": {
-    "categorie": {
-      "dofus": "dom_de_pin"
-    },
-    "nom": "Hiver rigoureux",
-    "quetes": [
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "meulou"
-        },
-        "id": "d_dom_de_pin_1",
-        "nom": "Vaincre le Meulou."
-      },
-      {
-        "critere": {
-          "type": "run_gagnee",
-          "tranche": "t2",
-          "ascensionMin": 1
-        },
-        "id": "d_dom_de_pin_2",
-        "nom": "Gagner le monde 2 en Difficile (★★)."
-      }
-    ]
-  },
-  "dotruche": {
-    "categorie": {
-      "dofus": "dotruche"
-    },
-    "nom": "Course folle",
-    "quetes": [
-      {
-        "critere": {
-          "type": "vaincre",
-          "boss": "nelween"
-        },
-        "id": "d_dotruche_1",
-        "nom": "Vaincre Nelween."
-      },
-      {
+        "id": "t1_donjon_directeur_grunob",
+        "nom": "Vaincre le Directeur Grunob dans son donjon.",
         "critere": {
           "type": "vaincre",
           "boss": "directeur_grunob"
-        },
-        "id": "d_dotruche_2",
-        "nom": "Vaincre le Directeur Grunob."
+        }
       },
       {
+        "id": "t1_donjon_kankreblath",
+        "nom": "Vaincre Kankreblath dans son donjon.",
         "critere": {
           "type": "vaincre",
-          "boss": "tournesol_affame",
-          "toursMax": 3
-        },
-        "id": "d_dotruche_3",
-        "nom": "Vaincre le Tournesol Affamé en 3 rondes ou moins."
+          "boss": "kankreblath"
+        }
+      },
+      {
+        "id": "t1_donjon_boostache",
+        "nom": "Vaincre Boostache dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "boostache"
+        }
+      },
+      {
+        "id": "t1_donjon_scarabosse_dore",
+        "nom": "Vaincre le Scarabosse Doré dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "scarabosse_dore"
+        }
+      },
+      {
+        "id": "t1_donjon_coffre_forgerons",
+        "nom": "Vaincre le Coffre des Forgerons dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "coffre_forgerons"
+        }
+      },
+      {
+        "id": "t1_donjon_shin_larve",
+        "nom": "Vaincre la Shin Larve dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "shin_larve"
+        }
+      },
+      {
+        "id": "t1_donjon_corailleur_magistral",
+        "nom": "Vaincre le Corailleur Magistral dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "corailleur_magistral"
+        }
+      },
+      {
+        "id": "t1_donjon_kwakwa",
+        "nom": "Vaincre le Kwakwa dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kwakwa"
+        }
       }
     ]
   },
-  "jyfus": {
+  "t1_2_duo": {
     "categorie": {
-      "dofus": "jyfus"
+      "general": true,
+      "rubrique": "Monde 1 · Donjons niveaux 1 à 50"
     },
-    "nom": "Main de Jiva",
+    "nom": "Défis en duo (niveaux 1 à 50)",
     "quetes": [
       {
+        "id": "t1_duo_kardorim",
+        "nom": "Kardorim (Duo) : vaincre Kardorim avec 2 héros au plus.",
         "critere": {
-          "type": "compteur",
-          "evenement": "soins",
-          "seuil": 6000
-        },
-        "id": "d_jyfus_1",
-        "nom": "Soigner 6 000 PV au total."
+          "type": "vaincre",
+          "boss": "kardorim",
+          "equipeMax": 2
+        }
       },
       {
+        "id": "t1_duo_tournesol_affame",
+        "nom": "Tournesol Affamé (Duo) : vaincre le Tournesol Affamé avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "tournesol_affame",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t1_duo_bouftou_royal",
+        "nom": "Bouftou Royal (Duo) : vaincre le Bouftou Royal avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "bouftou_royal",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t1_duo_batofu",
+        "nom": "Batofu (Duo) : vaincre Batofu avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "batofu",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t1_duo_directeur_grunob",
+        "nom": "Directeur Grunob (Duo) : vaincre le Directeur Grunob avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "directeur_grunob",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t1_duo_kankreblath",
+        "nom": "Kankreblath (Duo) : vaincre Kankreblath avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kankreblath",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t1_duo_boostache",
+        "nom": "Boostache (Duo) : vaincre Boostache avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "boostache",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t1_duo_scarabosse_dore",
+        "nom": "Scarabosse Doré (Duo) : vaincre le Scarabosse Doré avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "scarabosse_dore",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t1_duo_coffre_forgerons",
+        "nom": "Coffre des Forgerons (Duo) : vaincre le Coffre des Forgerons avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "coffre_forgerons",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t1_duo_shin_larve",
+        "nom": "Shin Larve (Duo) : vaincre la Shin Larve avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "shin_larve",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t1_duo_corailleur_magistral",
+        "nom": "Corailleur Magistral (Duo) : vaincre le Corailleur Magistral avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "corailleur_magistral",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t1_duo_kwakwa",
+        "nom": "Kwakwa (Duo) : vaincre le Kwakwa avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kwakwa",
+          "equipeMax": 2
+        }
+      }
+    ]
+  },
+  "t1_3_exploits": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 1 · Donjons niveaux 1 à 50"
+    },
+    "nom": "Exploits (niveaux 1 à 50)",
+    "quetes": [
+      {
+        "id": "t1_premier_kardorim",
+        "nom": "Kardorim (Premier) : vaincre Kardorim en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kardorim",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t1_premier_tournesol_affame",
+        "nom": "Tournesol Affamé (Premier) : vaincre le Tournesol Affamé en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "tournesol_affame",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t1_blitzkrieg_bouftou_royal",
+        "nom": "Bouftou Royal (Blitzkrieg) : vaincre le Bouftou Royal en 4 rondes au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "bouftou_royal",
+          "toursMax": 4
+        }
+      },
+      {
+        "id": "t1_premier_directeur_grunob",
+        "nom": "Directeur Grunob (Premier) : vaincre le Directeur Grunob en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "directeur_grunob",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t1_dernier_kankreblath",
+        "nom": "Kankreblath (Dernier) : vaincre Kankreblath en l'achevant après tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kankreblath",
+          "bossDernier": true
+        }
+      },
+      {
+        "id": "t1_dernier_boostache",
+        "nom": "Boostache (Dernier) : vaincre Boostache en l'achevant après tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "boostache",
+          "bossDernier": true
+        }
+      },
+      {
+        "id": "t1_premier_coffre_forgerons",
+        "nom": "Coffre des Forgerons (Premier) : vaincre le Coffre des Forgerons en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "coffre_forgerons",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t1_blitzkrieg_corailleur_magistral",
+        "nom": "Corailleur Magistral (Blitzkrieg) : vaincre le Corailleur Magistral en 4 rondes au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "corailleur_magistral",
+          "toursMax": 4
+        }
+      }
+    ]
+  },
+  "t1_4_reliques": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 1 · Donjons niveaux 1 à 50"
+    },
+    "nom": "Reliques du Monde 1",
+    "quetes": [
+      {
+        "id": "relique_kardorim",
+        "nom": "Obtenir la relique « Crâne de Kardorim ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "kardorim"
+        }
+      },
+      {
+        "id": "relique_tournesol_affame",
+        "nom": "Obtenir la relique « Pétale Magique du Tournesol Affamé ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "tournesol_affame"
+        }
+      },
+      {
+        "id": "relique_bouftou_royal",
+        "nom": "Obtenir la relique « Laine de Bouftou Royal ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "bouftou_royal"
+        }
+      },
+      {
+        "id": "relique_batofu",
+        "nom": "Obtenir la relique « Plume de Batofu ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "batofu"
+        }
+      },
+      {
+        "id": "relique_directeur_grunob",
+        "nom": "Obtenir la relique « Manuel du Directeur Grunob ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "directeur_grunob"
+        }
+      },
+      {
+        "id": "relique_kankreblath",
+        "nom": "Obtenir la relique « Patte de Kankreblath ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "kankreblath"
+        }
+      },
+      {
+        "id": "relique_boostache",
+        "nom": "Obtenir la relique « Moustache de Boostache ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "boostache"
+        }
+      },
+      {
+        "id": "relique_scarabosse_dore",
+        "nom": "Obtenir la relique « Ailes du Scarabosse Doré ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "scarabosse_dore"
+        }
+      },
+      {
+        "id": "relique_coffre_forgerons",
+        "nom": "Obtenir la relique « Serrure du Coffre des Forgerons ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "coffre_forgerons"
+        }
+      },
+      {
+        "id": "relique_shin_larve",
+        "nom": "Obtenir la relique « Dent de Shin Larve ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "shin_larve"
+        }
+      },
+      {
+        "id": "relique_corailleur_magistral",
+        "nom": "Obtenir la relique « Corail Magistral ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "corailleur_magistral"
+        }
+      },
+      {
+        "id": "relique_kwakwa",
+        "nom": "Obtenir la relique « Bec du Kwakwa ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "kwakwa"
+        }
+      }
+    ]
+  },
+  "t1_6_conquete": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 1 · Donjons niveaux 1 à 50"
+    },
+    "nom": "Conquête du Monde 1",
+    "quetes": [
+      {
+        "id": "t1_gagne",
+        "nom": "Gagner le monde 1.",
         "critere": {
           "type": "run_gagnee",
-          "classe": "eniripsa"
-        },
-        "id": "d_jyfus_2",
-        "nom": "Gagner un monde avec une Eniripsa dans l'équipe."
+          "tranche": "t1"
+        }
+      },
+      {
+        "id": "t1_difficile",
+        "nom": "Gagner le monde 1 en Difficile (★★).",
+        "critere": {
+          "type": "record_ascension",
+          "tranche": "t1",
+          "min": 1
+        }
+      },
+      {
+        "id": "t1_extreme",
+        "nom": "Gagner le monde 1 en Extrême (★★★).",
+        "critere": {
+          "type": "record_ascension",
+          "tranche": "t1",
+          "min": 2
+        }
+      },
+      {
+        "id": "cauchemar_t1",
+        "nom": "Gagner le monde 1 en Cauchemar (★★★★).",
+        "critere": {
+          "type": "record_ascension",
+          "tranche": "t1",
+          "min": 3
+        }
+      }
+    ]
+  },
+  "t2_1_donjons": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 2 · Donjons niveaux 51 à 100"
+    },
+    "nom": "Donjons (niveaux 51 à 100)",
+    "quetes": [
+      {
+        "id": "t2_donjon_clos_des_blops",
+        "nom": "Vaincre les Blops Royaux dans leur donjon.",
+        "critere": {
+          "type": "vaincre",
+          "zone": "clos_des_blops",
+          "noeud": "donjon"
+        }
+      },
+      {
+        "id": "t2_donjon_gourlo_le_terrible",
+        "nom": "Vaincre Gourlo le Terrible dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "gourlo_le_terrible"
+        }
+      },
+      {
+        "id": "t2_donjon_gelaxieme_dimension",
+        "nom": "Vaincre les Gelées Royales dans leur donjon.",
+        "critere": {
+          "type": "vaincre",
+          "zone": "gelaxieme_dimension",
+          "noeud": "donjon"
+        }
+      },
+      {
+        "id": "t2_donjon_nelween",
+        "nom": "Vaincre Nelween dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "nelween"
+        }
+      },
+      {
+        "id": "t2_donjon_wa_wobot",
+        "nom": "Vaincre le Wa Wobot dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "wa_wobot"
+        }
+      },
+      {
+        "id": "t2_donjon_wa_wabbit",
+        "nom": "Vaincre le Wa Wabbit dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "wa_wabbit"
+        }
+      },
+      {
+        "id": "t2_donjon_craqueleur_legendaire",
+        "nom": "Vaincre le Craqueleur Légendaire dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "craqueleur_legendaire"
+        }
+      },
+      {
+        "id": "t2_donjon_le_chouque",
+        "nom": "Vaincre le Chouque dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "le_chouque"
+        }
+      },
+      {
+        "id": "t2_donjon_kanniboul_ebil",
+        "nom": "Vaincre le Kanniboul Ebil dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kanniboul_ebil"
+        }
+      },
+      {
+        "id": "t2_donjon_dragon_cochon",
+        "nom": "Vaincre le Dragon Cochon dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "dragon_cochon"
+        }
+      },
+      {
+        "id": "t2_donjon_kharnozor",
+        "nom": "Vaincre le Kharnozor dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kharnozor"
+        }
+      },
+      {
+        "id": "t2_donjon_draegnerys",
+        "nom": "Vaincre Draegnerys dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "draegnerys"
+        }
+      },
+      {
+        "id": "t2_donjon_meulou",
+        "nom": "Vaincre le Meulou dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "meulou"
+        }
+      },
+      {
+        "id": "t2_donjon_reine_nyee",
+        "nom": "Vaincre la Reine Nyée dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "reine_nyee"
+        }
+      },
+      {
+        "id": "t2_donjon_abraknyde_ancestral",
+        "nom": "Vaincre l'Abraknyde Ancestral dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "abraknyde_ancestral"
+        }
+      },
+      {
+        "id": "t2_donjon_moon",
+        "nom": "Vaincre le Moon dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "moon"
+        }
+      }
+    ]
+  },
+  "t2_2_duo": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 2 · Donjons niveaux 51 à 100"
+    },
+    "nom": "Défis en duo (niveaux 51 à 100)",
+    "quetes": [
+      {
+        "id": "t2_duo_gourlo_le_terrible",
+        "nom": "Gourlo le Terrible (Duo) : vaincre Gourlo le Terrible avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "gourlo_le_terrible",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t2_duo_nelween",
+        "nom": "Nelween (Duo) : vaincre Nelween avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "nelween",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t2_duo_wa_wobot",
+        "nom": "Wa Wobot (Duo) : vaincre le Wa Wobot avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "wa_wobot",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t2_duo_wa_wabbit",
+        "nom": "Wa Wabbit (Duo) : vaincre le Wa Wabbit avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "wa_wabbit",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t2_duo_craqueleur_legendaire",
+        "nom": "Craqueleur Légendaire (Duo) : vaincre le Craqueleur Légendaire avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "craqueleur_legendaire",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t2_duo_le_chouque",
+        "nom": "Le Chouque (Duo) : vaincre le Chouque avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "le_chouque",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t2_duo_kanniboul_ebil",
+        "nom": "Kanniboul Ebil (Duo) : vaincre le Kanniboul Ebil avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kanniboul_ebil",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t2_duo_dragon_cochon",
+        "nom": "Dragon Cochon (Duo) : vaincre le Dragon Cochon avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "dragon_cochon",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t2_duo_kharnozor",
+        "nom": "Kharnozor (Duo) : vaincre le Kharnozor avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kharnozor",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t2_duo_draegnerys",
+        "nom": "Draegnerys (Duo) : vaincre Draegnerys avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "draegnerys",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t2_duo_meulou",
+        "nom": "Meulou (Duo) : vaincre le Meulou avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "meulou",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t2_duo_reine_nyee",
+        "nom": "Reine Nyée (Duo) : vaincre la Reine Nyée avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "reine_nyee",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t2_duo_abraknyde_ancestral",
+        "nom": "Abraknyde Ancestral (Duo) : vaincre l'Abraknyde Ancestral avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "abraknyde_ancestral",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t2_duo_moon",
+        "nom": "Moon (Duo) : vaincre le Moon avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "moon",
+          "equipeMax": 2
+        }
+      }
+    ]
+  },
+  "t2_3_exploits": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 2 · Donjons niveaux 51 à 100"
+    },
+    "nom": "Exploits (niveaux 51 à 100)",
+    "quetes": [
+      {
+        "id": "t2_premier_gourlo_le_terrible",
+        "nom": "Gourlo le Terrible (Premier) : vaincre Gourlo le Terrible en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "gourlo_le_terrible",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t2_dernier_nelween",
+        "nom": "Nelween (Dernier) : vaincre Nelween en l'achevant après tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "nelween",
+          "bossDernier": true
+        }
+      },
+      {
+        "id": "t2_blitzkrieg_wa_wobot",
+        "nom": "Wa Wobot (Blitzkrieg) : vaincre le Wa Wobot en 4 rondes au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "wa_wobot",
+          "toursMax": 4
+        }
+      },
+      {
+        "id": "t2_blitzkrieg_wa_wabbit",
+        "nom": "Wa Wabbit (Blitzkrieg) : vaincre le Wa Wabbit en 4 rondes au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "wa_wabbit",
+          "toursMax": 4
+        }
+      },
+      {
+        "id": "t2_premier_craqueleur_legendaire",
+        "nom": "Craqueleur Légendaire (Premier) : vaincre le Craqueleur Légendaire en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "craqueleur_legendaire",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t2_dernier_le_chouque",
+        "nom": "Le Chouque (Dernier) : vaincre le Chouque en l'achevant après tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "le_chouque",
+          "bossDernier": true
+        }
+      },
+      {
+        "id": "t2_premier_kanniboul_ebil",
+        "nom": "Kanniboul Ebil (Premier) : vaincre le Kanniboul Ebil en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kanniboul_ebil",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t2_dernier_kharnozor",
+        "nom": "Kharnozor (Dernier) : vaincre le Kharnozor en l'achevant après tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kharnozor",
+          "bossDernier": true
+        }
+      },
+      {
+        "id": "t2_premier_meulou",
+        "nom": "Meulou (Premier) : vaincre le Meulou en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "meulou",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t2_premier_reine_nyee",
+        "nom": "Reine Nyée (Premier) : vaincre la Reine Nyée en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "reine_nyee",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t2_premier_abraknyde_ancestral",
+        "nom": "Abraknyde Ancestral (Premier) : vaincre l'Abraknyde Ancestral en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "abraknyde_ancestral",
+          "bossPremier": true
+        }
+      }
+    ]
+  },
+  "t2_4_reliques": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 2 · Donjons niveaux 51 à 100"
+    },
+    "nom": "Reliques du Monde 2",
+    "quetes": [
+      {
+        "id": "relique_blop_griotte_royal",
+        "nom": "Obtenir la relique « Fleur de Blop Griotte Royal ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "blop_griotte_royal"
+        }
+      },
+      {
+        "id": "relique_blop_indigo_royal",
+        "nom": "Obtenir la relique « Fleur de Blop Indigo Royal ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "blop_indigo_royal"
+        }
+      },
+      {
+        "id": "relique_blop_reinette_royal",
+        "nom": "Obtenir la relique « Fleur de Blop Reinette Royal ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "blop_reinette_royal"
+        }
+      },
+      {
+        "id": "relique_blop_coco_royal",
+        "nom": "Obtenir la relique « Fleur de Blop Coco Royal ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "blop_coco_royal"
+        }
+      },
+      {
+        "id": "relique_gourlo_le_terrible",
+        "nom": "Obtenir la relique « Étoffe de Gourlo le Terrible ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "gourlo_le_terrible"
+        }
+      },
+      {
+        "id": "relique_gelee_royale_fraise",
+        "nom": "Obtenir la relique « Gelée Fraise Royale ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "gelee_royale_fraise"
+        }
+      },
+      {
+        "id": "relique_gelee_royale_bleuet",
+        "nom": "Obtenir la relique « Gelée Bleuet Royale ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "gelee_royale_bleuet"
+        }
+      },
+      {
+        "id": "relique_gelee_royale_menthe",
+        "nom": "Obtenir la relique « Gelée Menthe Royale ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "gelee_royale_menthe"
+        }
+      },
+      {
+        "id": "relique_gelee_royale_citron",
+        "nom": "Obtenir la relique « Gelée Citron Royale ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "gelee_royale_citron"
+        }
+      },
+      {
+        "id": "relique_nelween",
+        "nom": "Obtenir la relique « Fiole de fumée de Nelween ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "nelween"
+        }
+      },
+      {
+        "id": "relique_wa_wobot",
+        "nom": "Obtenir la relique « Barbe du Wa Wobot ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "wa_wobot"
+        }
+      },
+      {
+        "id": "relique_wa_wabbit",
+        "nom": "Obtenir la relique « Étoffe du Wa Wabbit ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "wa_wabbit"
+        }
+      },
+      {
+        "id": "relique_craqueleur_legendaire",
+        "nom": "Obtenir la relique « Méga Pierre du Craqueleur Légendaire ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "craqueleur_legendaire"
+        }
+      },
+      {
+        "id": "relique_le_chouque",
+        "nom": "Obtenir la relique « Barbe du Chouque ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "le_chouque"
+        }
+      },
+      {
+        "id": "relique_kanniboul_ebil",
+        "nom": "Obtenir la relique « Cagoule du Kanniboul Ebil ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "kanniboul_ebil"
+        }
+      },
+      {
+        "id": "relique_dragon_cochon",
+        "nom": "Obtenir la relique « Groin de Dragon Cochon ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "dragon_cochon"
+        }
+      },
+      {
+        "id": "relique_kharnozor",
+        "nom": "Obtenir la relique « Œil du Kharnozor ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "kharnozor"
+        }
+      },
+      {
+        "id": "relique_draegnerys",
+        "nom": "Obtenir la relique « Cheveux de Draegnerys ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "draegnerys"
+        }
+      },
+      {
+        "id": "relique_meulou",
+        "nom": "Obtenir la relique « Scalp du Meulou ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "meulou"
+        }
+      },
+      {
+        "id": "relique_reine_nyee",
+        "nom": "Obtenir la relique « Globule de Nyée ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "reine_nyee"
+        }
+      },
+      {
+        "id": "relique_abraknyde_ancestral",
+        "nom": "Obtenir la relique « Bourgeon d'Abraknyde Ancestral ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "abraknyde_ancestral"
+        }
+      },
+      {
+        "id": "relique_moon",
+        "nom": "Obtenir la relique « Étoffe Magique de Moon ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "moon"
+        }
+      }
+    ]
+  },
+  "t2_6_conquete": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 2 · Donjons niveaux 51 à 100"
+    },
+    "nom": "Conquête du Monde 2",
+    "quetes": [
+      {
+        "id": "t2_gagne",
+        "nom": "Gagner le monde 2.",
+        "critere": {
+          "type": "run_gagnee",
+          "tranche": "t2"
+        }
+      },
+      {
+        "id": "t2_difficile",
+        "nom": "Gagner le monde 2 en Difficile (★★).",
+        "critere": {
+          "type": "record_ascension",
+          "tranche": "t2",
+          "min": 1
+        }
+      },
+      {
+        "id": "t2_extreme",
+        "nom": "Gagner le monde 2 en Extrême (★★★).",
+        "critere": {
+          "type": "record_ascension",
+          "tranche": "t2",
+          "min": 2
+        }
+      },
+      {
+        "id": "cauchemar_t2",
+        "nom": "Gagner le monde 2 en Cauchemar (★★★★).",
+        "critere": {
+          "type": "record_ascension",
+          "tranche": "t2",
+          "min": 3
+        }
       }
     ]
   },
@@ -1291,14 +1238,6 @@
         }
       },
       {
-        "id": "t3_donjon_tofu_royal",
-        "nom": "Vaincre le Tofu Royal dans son donjon.",
-        "critere": {
-          "type": "vaincre",
-          "boss": "tofu_royal"
-        }
-      },
-      {
         "id": "t3_donjon_crocabulia",
         "nom": "Vaincre Crocabulia dans son donjon.",
         "critere": {
@@ -1316,10 +1255,18 @@
       },
       {
         "id": "t3_donjon_nagate",
-        "nom": "Vaincre Nagate la Dame des eaux dans son donjon.",
+        "nom": "Vaincre Nagate dans son donjon.",
         "critere": {
           "type": "vaincre",
           "boss": "nagate"
+        }
+      },
+      {
+        "id": "t3_donjon_haute_truche",
+        "nom": "Vaincre la Haute Truche dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "haute_truche"
         }
       },
       {
@@ -1350,7 +1297,7 @@
       },
       {
         "id": "t3_donjon_ben_le_ripate",
-        "nom": "Vaincre  Ben le Ripate dans son donjon.",
+        "nom": "Vaincre Ben le Ripate dans son donjon.",
         "critere": {
           "type": "vaincre",
           "boss": "ben_le_ripate"
@@ -1411,15 +1358,6 @@
         }
       },
       {
-        "id": "t3_duo_tofu_royal",
-        "nom": "Tofu Royal (Duo) : vaincre le Tofu Royal avec 2 héros au plus.",
-        "critere": {
-          "type": "vaincre",
-          "boss": "tofu_royal",
-          "equipeMax": 2
-        }
-      },
-      {
         "id": "t3_duo_crocabulia",
         "nom": "Crocabulia (Duo) : vaincre Crocabulia avec 2 héros au plus.",
         "critere": {
@@ -1434,6 +1372,15 @@
         "critere": {
           "type": "vaincre",
           "boss": "minotoror",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t3_duo_haute_truche",
+        "nom": "Haute Truche (Duo) : vaincre la Haute Truche avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "haute_truche",
           "equipeMax": 2
         }
       },
@@ -1501,12 +1448,12 @@
         }
       },
       {
-        "id": "t3_dernier_tofu_royal",
-        "nom": "Tofu Royal (Dernier) : vaincre le Tofu Royal en l'achevant après tous ses alliés.",
+        "id": "t3_premier_haute_truche",
+        "nom": "Haute Truche (Premier) : vaincre la Haute Truche en l'achevant avant tous ses alliés.",
         "critere": {
           "type": "vaincre",
-          "boss": "tofu_royal",
-          "bossDernier": true
+          "boss": "haute_truche",
+          "bossPremier": true
         }
       },
       {
@@ -1568,14 +1515,6 @@
         }
       },
       {
-        "id": "t3_relique_tofu_royal",
-        "nom": "Obtenir la relique « Plume Vibrante du Tofu Royal ».",
-        "critere": {
-          "type": "relique_obtenue",
-          "boss": "tofu_royal"
-        }
-      },
-      {
         "id": "t3_relique_crocabulia",
         "nom": "Obtenir la relique « Corne brisée de Crocabulia ».",
         "critere": {
@@ -1600,6 +1539,14 @@
         }
       },
       {
+        "id": "t3_relique_haute_truche",
+        "nom": "Obtenir la relique « Œuf de Haute Truche ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "haute_truche"
+        }
+      },
+      {
         "id": "t3_relique_shihan",
         "nom": "Obtenir la relique « Piques à cheveux de Shihan ».",
         "critere": {
@@ -1609,7 +1556,7 @@
       },
       {
         "id": "t3_relique_hanshi",
-        "nom": "Obtenir la relique « Fragment d'anomalie ».",
+        "nom": "Obtenir la relique « Écharpe de Hanshi ».",
         "critere": {
           "type": "relique_obtenue",
           "boss": "hanshi"
@@ -1617,15 +1564,23 @@
       },
       {
         "id": "t3_relique_tynril_ahuri",
-        "nom": "Obtenir la relique « Pollenectar ».",
+        "nom": "Obtenir la relique « Relique du Tynril ».",
         "critere": {
           "type": "relique_obtenue",
           "boss": "tynril_ahuri"
         }
       },
       {
+        "id": "t3_relique_tynril_consterne",
+        "nom": "Obtenir la relique « Pistil du Tynril ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "tynril_consterne"
+        }
+      },
+      {
         "id": "t3_relique_tynril_deconcerte",
-        "nom": "Obtenir la relique « Minowang ».",
+        "nom": "Obtenir la relique « Essence du Tynril ».",
         "critere": {
           "type": "relique_obtenue",
           "boss": "tynril_deconcerte"
@@ -1653,23 +1608,6 @@
         "critere": {
           "type": "relique_obtenue",
           "boss": "ben_le_ripate"
-        }
-      }
-    ]
-  },
-  "t3_5_archis": {
-    "categorie": {
-      "general": true,
-      "rubrique": "Monde 3 · Donjons niveaux 101 à 150"
-    },
-    "nom": "Archimonstres du Monde 3",
-    "quetes": [
-      {
-        "id": "t3_archis",
-        "nom": "Capturer tous les archimonstres du monde 3.",
-        "critere": {
-          "type": "archi_capture",
-          "tranche": "t3"
         }
       }
     ]
@@ -1708,7 +1646,7 @@
         }
       },
       {
-        "id": "t3_cauchemar",
+        "id": "cauchemar_t3",
         "nom": "Gagner le monde 3 en Cauchemar (★★★★).",
         "critere": {
           "type": "record_ascension",
@@ -1758,6 +1696,14 @@
         }
       },
       {
+        "id": "t4_donjon_koumiho",
+        "nom": "Vaincre Koumiho dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "koumiho"
+        }
+      },
+      {
         "id": "t4_donjon_tengu_givrefoux",
         "nom": "Vaincre Tengu Givrefoux dans son donjon.",
         "critere": {
@@ -1774,11 +1720,11 @@
         }
       },
       {
-        "id": "t4_donjon_xlii",
-        "nom": "Vaincre XLII dans son donjon.",
+        "id": "t4_donjon_supervizoeuf",
+        "nom": "Vaincre le Supervizœuf dans son donjon.",
         "critere": {
           "type": "vaincre",
-          "boss": "xlii"
+          "boss": "supervizoeuf"
         }
       },
       {
@@ -1875,6 +1821,15 @@
         }
       },
       {
+        "id": "t4_duo_koumiho",
+        "nom": "Koumiho (Duo) : vaincre Koumiho avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "koumiho",
+          "equipeMax": 2
+        }
+      },
+      {
         "id": "t4_duo_tengu_givrefoux",
         "nom": "Tengu Givrefoux (Duo) : vaincre Tengu Givrefoux avec 2 héros au plus.",
         "critere": {
@@ -1893,11 +1848,11 @@
         }
       },
       {
-        "id": "t4_duo_xlii",
-        "nom": "XLII (Duo) : vaincre XLII avec 2 héros au plus.",
+        "id": "t4_duo_supervizoeuf",
+        "nom": "Supervizœuf (Duo) : vaincre le Supervizœuf avec 2 héros au plus.",
         "critere": {
           "type": "vaincre",
-          "boss": "xlii",
+          "boss": "supervizoeuf",
           "equipeMax": 2
         }
       },
@@ -2001,6 +1956,15 @@
         }
       },
       {
+        "id": "t4_premier_koumiho",
+        "nom": "Koumiho (Premier) : vaincre Koumiho en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "koumiho",
+          "bossPremier": true
+        }
+      },
+      {
         "id": "t4_premier_tengu_givrefoux",
         "nom": "Tengu Givrefoux (Premier) : vaincre Tengu Givrefoux en l'achevant avant tous ses alliés.",
         "critere": {
@@ -2065,136 +2029,6 @@
       }
     ]
   },
-  "t4_4_reliques": {
-    "categorie": {
-      "general": true,
-      "rubrique": "Monde 4 · Donjons niveaux 151 à 190"
-    },
-    "nom": "Reliques du Monde 4",
-    "quetes": [
-      {
-        "id": "t4_relique_kimbo",
-        "nom": "Obtenir la relique « Sphénoïde du Kimbo ».",
-        "critere": {
-          "type": "relique_obtenue",
-          "boss": "kimbo"
-        }
-      },
-      {
-        "id": "t4_relique_obsidiantre",
-        "nom": "Obtenir la relique « Vertèbre d'Obsidiantre ».",
-        "critere": {
-          "type": "relique_obtenue",
-          "boss": "obsidiantre"
-        }
-      },
-      {
-        "id": "t4_relique_minotot",
-        "nom": "Obtenir la relique « Sabot du Minotot ».",
-        "critere": {
-          "type": "relique_obtenue",
-          "boss": "minotot"
-        }
-      },
-      {
-        "id": "t4_relique_shogun_tofugawa",
-        "nom": "Obtenir la relique « Moustache du Shogun Tofugawa ».",
-        "critere": {
-          "type": "relique_obtenue",
-          "boss": "shogun_tofugawa"
-        }
-      },
-      {
-        "id": "t4_relique_tengu_givrefoux",
-        "nom": "Obtenir la relique « Cuir de Tengu Givrefoux ».",
-        "critere": {
-          "type": "relique_obtenue",
-          "boss": "tengu_givrefoux"
-        }
-      },
-      {
-        "id": "t4_relique_fuji_givrefoux_nourriciere",
-        "nom": "Obtenir la relique « Condyle de Fuji Givrefoux ».",
-        "critere": {
-          "type": "relique_obtenue",
-          "boss": "fuji_givrefoux_nourriciere"
-        }
-      },
-      {
-        "id": "t4_relique_xlii",
-        "nom": "Obtenir la relique « Corne de XLII ».",
-        "critere": {
-          "type": "relique_obtenue",
-          "boss": "xlii"
-        }
-      },
-      {
-        "id": "t4_relique_korriandre",
-        "nom": "Obtenir la relique « Œil de Korriandre ».",
-        "critere": {
-          "type": "relique_obtenue",
-          "boss": "korriandre"
-        }
-      },
-      {
-        "id": "t4_relique_kralamoure_geant",
-        "nom": "Obtenir la relique « Encre du Kralamoure géant ».",
-        "critere": {
-          "type": "relique_obtenue",
-          "boss": "kralamoure_geant"
-        }
-      },
-      {
-        "id": "t4_relique_bworker",
-        "nom": "Obtenir la relique « Peau du Bworker ».",
-        "critere": {
-          "type": "relique_obtenue",
-          "boss": "bworker"
-        }
-      },
-      {
-        "id": "t4_relique_ougah",
-        "nom": "Obtenir la relique « Épine d'Ougah ».",
-        "critere": {
-          "type": "relique_obtenue",
-          "boss": "ougah"
-        }
-      },
-      {
-        "id": "t4_relique_glourseleste",
-        "nom": "Obtenir la relique « Hamatum de Glourséleste ».",
-        "critere": {
-          "type": "relique_obtenue",
-          "boss": "glourseleste"
-        }
-      },
-      {
-        "id": "t4_relique_ombre",
-        "nom": "Obtenir la relique « Corne d'Ombre ».",
-        "critere": {
-          "type": "relique_obtenue",
-          "boss": "ombre"
-        }
-      }
-    ]
-  },
-  "t4_5_archis": {
-    "categorie": {
-      "general": true,
-      "rubrique": "Monde 4 · Donjons niveaux 151 à 190"
-    },
-    "nom": "Archimonstres du Monde 4",
-    "quetes": [
-      {
-        "id": "t4_archis",
-        "nom": "Capturer tous les archimonstres du monde 4.",
-        "critere": {
-          "type": "archi_capture",
-          "tranche": "t4"
-        }
-      }
-    ]
-  },
   "t4_6_conquete": {
     "categorie": {
       "general": true,
@@ -2229,7 +2063,7 @@
         }
       },
       {
-        "id": "t4_cauchemar",
+        "id": "cauchemar_t4",
         "nom": "Gagner le monde 4 en Cauchemar (★★★★).",
         "critere": {
           "type": "record_ascension",
@@ -2316,6 +2150,86 @@
         "critere": {
           "type": "vaincre",
           "boss": "dantinea"
+        }
+      },
+      {
+        "id": "t5_donjon_roi_nidas",
+        "nom": "Vaincre le roi Nidas dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "roi_nidas"
+        }
+      },
+      {
+        "id": "t5_donjon_reine_des_voleurs",
+        "nom": "Vaincre la Reine des Voleurs dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "reine_des_voleurs"
+        }
+      },
+      {
+        "id": "t5_donjon_vortex",
+        "nom": "Vaincre Vortex dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "vortex"
+        }
+      },
+      {
+        "id": "t5_donjon_chaloeil",
+        "nom": "Vaincre le Chalœil dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "chaloeil"
+        }
+      },
+      {
+        "id": "t5_donjon_solar",
+        "nom": "Vaincre Solar dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "solar"
+        }
+      },
+      {
+        "id": "t5_donjon_bethel_akarna",
+        "nom": "Vaincre Bethel Akarna dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "bethel_akarna"
+        }
+      },
+      {
+        "id": "t5_donjon_roi_imagami",
+        "nom": "Vaincre le Roi Imagami dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "roi_imagami"
+        }
+      },
+      {
+        "id": "t5_donjon_reine_amirukam",
+        "nom": "Vaincre la Reine Amirukam dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "reine_amirukam"
+        }
+      },
+      {
+        "id": "t5_donjon_venerable_endormi",
+        "nom": "Vaincre Le Vénérable Endormi dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "venerable_endormi"
+        }
+      },
+      {
+        "id": "t5_donjon_ilyzaelle",
+        "nom": "Vaincre Ilyzaelle dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "ilyzaelle"
         }
       },
       {
@@ -2450,6 +2364,33 @@
         }
       },
       {
+        "id": "t5_duo_solar",
+        "nom": "Solar (Duo) : vaincre Solar avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "solar",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t5_duo_bethel_akarna",
+        "nom": "Bethel Akarna (Duo) : vaincre Bethel Akarna avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "bethel_akarna",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t5_duo_ilyzaelle",
+        "nom": "Ilyzaelle (Duo) : vaincre Ilyzaelle avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "ilyzaelle",
+          "equipeMax": 2
+        }
+      },
+      {
         "id": "t5_duo_corruption",
         "nom": "Corruption (Duo) : vaincre Corruption avec 2 héros au plus.",
         "critere": {
@@ -2529,6 +2470,24 @@
           "boss": "dantinea",
           "bossDernier": true
         }
+      },
+      {
+        "id": "t5_premier_roi_nidas",
+        "nom": "Roi Nidas (Premier) : vaincre le roi Nidas en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "roi_nidas",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t5_premier_reine_des_voleurs",
+        "nom": "Reine des Voleurs (Premier) : vaincre la Reine des Voleurs en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "reine_des_voleurs",
+          "bossPremier": true
+        }
       }
     ]
   },
@@ -2565,7 +2524,7 @@
       },
       {
         "id": "t5_relique_nileza",
-        "nom": "Obtenir la relique « Porte-signe de la Riktus Ensorceleuse ».",
+        "nom": "Obtenir la relique « Broderie de Nileza ».",
         "critere": {
           "type": "relique_obtenue",
           "boss": "nileza"
@@ -2612,6 +2571,86 @@
         }
       },
       {
+        "id": "t5_relique_roi_nidas",
+        "nom": "Obtenir la relique « Joyau de la couronne du roi Nidas ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "roi_nidas"
+        }
+      },
+      {
+        "id": "t5_relique_reine_des_voleurs",
+        "nom": "Obtenir la relique « Broderie de la Reine des Voleurs ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "reine_des_voleurs"
+        }
+      },
+      {
+        "id": "t5_relique_vortex",
+        "nom": "Obtenir la relique « Aile de Vortex ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "vortex"
+        }
+      },
+      {
+        "id": "t5_relique_chaloeil",
+        "nom": "Obtenir la relique « Dé du Chalœil ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "chaloeil"
+        }
+      },
+      {
+        "id": "t5_relique_solar",
+        "nom": "Obtenir la relique « Cervelle de Solar ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "solar"
+        }
+      },
+      {
+        "id": "t5_relique_bethel_akarna",
+        "nom": "Obtenir la relique « Queue de Bethel Akarna ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "bethel_akarna"
+        }
+      },
+      {
+        "id": "t5_relique_roi_imagami",
+        "nom": "Obtenir la relique « Diacritique du Roi Imagami ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "roi_imagami"
+        }
+      },
+      {
+        "id": "t5_relique_reine_amirukam",
+        "nom": "Obtenir la relique « Diacritique de la Reine Amirukam ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "reine_amirukam"
+        }
+      },
+      {
+        "id": "t5_relique_venerable_endormi",
+        "nom": "Obtenir la relique « Corne du Vénérable Endormi ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "venerable_endormi"
+        }
+      },
+      {
+        "id": "t5_relique_ilyzaelle",
+        "nom": "Obtenir la relique « Plume d'Ilyzaelle ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "ilyzaelle"
+        }
+      },
+      {
         "id": "t5_relique_corruption",
         "nom": "Obtenir la relique « Corne de Corruption ».",
         "critere": {
@@ -2621,7 +2660,7 @@
       },
       {
         "id": "t5_relique_guerre",
-        "nom": "Obtenir la relique « Lagon-dinde ».",
+        "nom": "Obtenir la relique « Essence de Guerre ».",
         "critere": {
           "type": "relique_obtenue",
           "boss": "guerre"
@@ -2677,14 +2716,1125 @@
           "tranche": "t5",
           "min": 2
         }
+      }
+    ]
+  },
+  "dofawa": {
+    "categorie": {
+      "dofus": "dofawa",
+      "monde": "t1"
+    },
+    "nom": "Dragodinde sauvage",
+    "quetes": [
+      {
+        "id": "dl_dofawa_1",
+        "nom": "Vaincre Kardorim.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kardorim"
+        }
       },
       {
-        "id": "t5_cauchemar",
-        "nom": "Gagner le monde 5 en Cauchemar (★★★★).",
+        "id": "dl_dofawa_2",
+        "nom": "Vaincre 25 monstres.",
+        "critere": {
+          "type": "compteur",
+          "evenement": "monstre_vaincu",
+          "seuil": 25
+        }
+      }
+    ]
+  },
+  "dofus_argente": {
+    "categorie": {
+      "dofus": "dofus_argente",
+      "monde": "t1"
+    },
+    "nom": "D'Incarnam à Astrub",
+    "quetes": [
+      {
+        "id": "dl_dofus_argente_1",
+        "nom": "« En route pour l'aventure » : terminer Incarnam.",
+        "critere": {
+          "type": "zone_terminee",
+          "zone": "incarnam"
+        }
+      },
+      {
+        "id": "dl_dofus_argente_2",
+        "nom": "« Périple astrubien » : terminer les Champs d'Astrub.",
+        "critere": {
+          "type": "zone_terminee",
+          "zone": "astrub"
+        }
+      },
+      {
+        "id": "dl_dofus_argente_3",
+        "nom": "« Un citoyen modèle » : vaincre le Bouftou Royal.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "bouftou_royal"
+        }
+      }
+    ]
+  },
+  "jyfus": {
+    "categorie": {
+      "dofus": "jyfus",
+      "monde": "t1"
+    },
+    "nom": "J'y étais",
+    "quetes": [
+      {
+        "id": "dl_jyfus_1",
+        "nom": "Jouer 3 runs.",
+        "critere": {
+          "type": "runs_jouees",
+          "seuil": 3
+        }
+      },
+      {
+        "id": "dl_jyfus_2",
+        "nom": "Terminer l'Akadémie des Gobs.",
+        "critere": {
+          "type": "zone_terminee",
+          "zone": "akademie"
+        }
+      }
+    ]
+  },
+  "dofus_cacao": {
+    "categorie": {
+      "dofus": "dofus_cacao",
+      "monde": "t1"
+    },
+    "nom": "Chasse aux œufs",
+    "quetes": [
+      {
+        "id": "dl_dofus_cacao_1",
+        "nom": "« Dénicher le nid » : vaincre le Kwakwa.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kwakwa"
+        }
+      },
+      {
+        "id": "dl_dofus_cacao_2",
+        "nom": "Gagner le monde 1.",
+        "critere": {
+          "type": "run_gagnee",
+          "tranche": "t1"
+        }
+      }
+    ]
+  },
+  "dofus_cawotte": {
+    "categorie": {
+      "dofus": "dofus_cawotte",
+      "monde": "t2"
+    },
+    "nom": "Poil de Cawotte",
+    "quetes": [
+      {
+        "id": "dl_dofus_cawotte_1",
+        "nom": "Vaincre le Wa Wabbit.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "wa_wabbit"
+        }
+      },
+      {
+        "id": "dl_dofus_cawotte_2",
+        "nom": "Vaincre le Wa Wobot.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "wa_wobot"
+        }
+      },
+      {
+        "id": "dl_dofus_cawotte_3",
+        "nom": "« Revêtir les atours du Wa Wabbit » : obtenir la Couronne du Wa Wabbit.",
+        "critere": {
+          "type": "objet_obtenu",
+          "objet": "couronne_du_wa_wabbit",
+          "rareteMin": "commun"
+        }
+      }
+    ]
+  },
+  "dokoko": {
+    "categorie": {
+      "dofus": "dokoko",
+      "monde": "t2"
+    },
+    "nom": "Koko Boy",
+    "quetes": [
+      {
+        "id": "dl_dokoko_1",
+        "nom": "« Un indigeste chez les indigènes » : vaincre le Kanniboul Ebil.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kanniboul_ebil"
+        }
+      },
+      {
+        "id": "dl_dokoko_2",
+        "nom": "« Partir un jour sans retour » : vaincre le Chouque.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "le_chouque"
+        }
+      },
+      {
+        "id": "dl_dokoko_3",
+        "nom": "« Rendez-vous avec la lune » : vaincre le Moon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "moon"
+        }
+      }
+    ]
+  },
+  "dofus_kaliptus": {
+    "categorie": {
+      "dofus": "dofus_kaliptus",
+      "monde": "t2"
+    },
+    "nom": "Feuilles de Kaliptus",
+    "quetes": [
+      {
+        "id": "dl_dofus_kaliptus_1",
+        "nom": "Vaincre l'Abraknyde Ancestral.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "abraknyde_ancestral"
+        }
+      },
+      {
+        "id": "dl_dofus_kaliptus_2",
+        "nom": "Vaincre la Reine Nyée.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "reine_nyee"
+        }
+      }
+    ]
+  },
+  "dolmanax": {
+    "categorie": {
+      "dofus": "dolmanax",
+      "monde": "t2"
+    },
+    "nom": "Le repos du dragon",
+    "quetes": [
+      {
+        "id": "dl_dolmanax_1",
+        "nom": "« L'année du dragon » : vaincre le Dragon Cochon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "dragon_cochon"
+        }
+      },
+      {
+        "id": "dl_dolmanax_2",
+        "nom": "Vaincre Draegnerys.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "draegnerys"
+        }
+      },
+      {
+        "id": "dl_dolmanax_3",
+        "nom": "Faire 10 offrandes : jouer 10 runs.",
+        "critere": {
+          "type": "runs_jouees",
+          "seuil": 10
+        }
+      }
+    ]
+  },
+  "dofus_emeraude": {
+    "categorie": {
+      "dofus": "dofus_emeraude",
+      "monde": "t3"
+    },
+    "nom": "Vert émeraude",
+    "quetes": [
+      {
+        "id": "dl_dofus_emeraude_1",
+        "nom": "« Les bandits de Cania » : vaincre le Maître Corbac.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "maitre_corbac"
+        }
+      },
+      {
+        "id": "dl_dofus_emeraude_2",
+        "nom": "Vaincre le Blop Multicolore Royal.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "blop_multicolore_royal"
+        }
+      },
+      {
+        "id": "dl_dofus_emeraude_3",
+        "nom": "« Draconanthropie » : vaincre Crocabulia.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "crocabulia"
+        }
+      }
+    ]
+  },
+  "dokille": {
+    "categorie": {
+      "dofus": "dokille",
+      "monde": "t3"
+    },
+    "nom": "Trophée de chasse",
+    "quetes": [
+      {
+        "id": "dl_dokille_1",
+        "nom": "« Le Safari des âmes » : capturer 40 âmes d'archimonstres.",
+        "critere": {
+          "type": "archis_total",
+          "seuil": 40
+        }
+      },
+      {
+        "id": "dl_dokille_2",
+        "nom": "Capturer tous les archimonstres du monde 3.",
+        "critere": {
+          "type": "archi_capture",
+          "tranche": "t3"
+        }
+      }
+    ]
+  },
+  "dofus_pourpre": {
+    "categorie": {
+      "dofus": "dofus_pourpre",
+      "monde": "t3"
+    },
+    "nom": "Pourpre profond",
+    "quetes": [
+      {
+        "id": "dl_dofus_pourpre_1",
+        "nom": "« Le pouvoir derrière le trône » : vaincre le Rat Blanc.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "rat_blanc"
+        }
+      },
+      {
+        "id": "dl_dofus_pourpre_2",
+        "nom": "« Une âme en peine » : vaincre le Rat Noir.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "rat_noir"
+        }
+      },
+      {
+        "id": "dl_dofus_pourpre_3",
+        "nom": "« Le livre des Taures » : vaincre le Minotoror.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "minotoror"
+        }
+      }
+    ]
+  },
+  "dotruche": {
+    "categorie": {
+      "dofus": "dotruche",
+      "monde": "t3"
+    },
+    "nom": "Course folle",
+    "quetes": [
+      {
+        "id": "dl_dotruche_1",
+        "nom": "Vaincre Silf le Rasboul Majeur.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "silf_le_rasboul_majeur"
+        }
+      },
+      {
+        "id": "dl_dotruche_2",
+        "nom": "Vaincre la Haute Truche.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "haute_truche"
+        }
+      },
+      {
+        "id": "dl_dotruche_3",
+        "nom": "Vaincre le Mansot Royal.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "mansot_royal"
+        }
+      }
+    ]
+  },
+  "domakuro": {
+    "categorie": {
+      "dofus": "domakuro",
+      "monde": "t3"
+    },
+    "nom": "Les grands esprits se rencontrent",
+    "quetes": [
+      {
+        "id": "dl_domakuro_1",
+        "nom": "« Sous le bois de sa colère » : vaincre Nagate.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "nagate"
+        }
+      },
+      {
+        "id": "dl_domakuro_2",
+        "nom": "« L'équilibre des forces » : vaincre Hanshi et Shihan ensemble dans leur donjon.",
+        "critere": {
+          "type": "vaincre",
+          "zone": "dojo_du_vent",
+          "noeud": "donjon"
+        }
+      }
+    ]
+  },
+  "dorigami": {
+    "categorie": {
+      "dofus": "dorigami",
+      "monde": "t4"
+    },
+    "nom": "Le gardien de l'immaculé",
+    "quetes": [
+      {
+        "id": "dl_dorigami_1",
+        "nom": "« Maudite disparition » : vaincre le Shogun Tofugawa.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "shogun_tofugawa"
+        }
+      },
+      {
+        "id": "dl_dorigami_2",
+        "nom": "« Requiem pour un Yokai » : vaincre Koumiho.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "koumiho"
+        }
+      },
+      {
+        "id": "dl_dorigami_3",
+        "nom": "« Jusqu'à leur dernier soupir » : vaincre Tengu Givrefoux.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "tengu_givrefoux"
+        }
+      }
+    ]
+  },
+  "dofus_turquoise": {
+    "categorie": {
+      "dofus": "dofus_turquoise",
+      "monde": "t4"
+    },
+    "nom": "Bleu turquoise",
+    "quetes": [
+      {
+        "id": "dl_dofus_turquoise_1",
+        "nom": "« Plongeon et dragon » : vaincre le Kralamoure Géant.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kralamoure_geant"
+        }
+      },
+      {
+        "id": "dl_dofus_turquoise_2",
+        "nom": "« On dirait le Sud » : vaincre Ougah.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "ougah"
+        }
+      },
+      {
+        "id": "dl_dofus_turquoise_3",
+        "nom": "« Autel du Nord » : vaincre le Glourséleste.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "glourseleste"
+        }
+      }
+    ]
+  },
+  "dofus_ocre": {
+    "categorie": {
+      "dofus": "dofus_ocre",
+      "monde": "t4"
+    },
+    "nom": "L'âme des Archimonstres",
+    "quetes": [
+      {
+        "critere": {
+          "tranche": "t1",
+          "type": "archi_capture"
+        },
+        "id": "ocre_t1",
+        "nom": "Capturer tous les archimonstres du monde 1."
+      },
+      {
+        "critere": {
+          "tranche": "t2",
+          "type": "archi_capture"
+        },
+        "id": "ocre_t2",
+        "nom": "Capturer tous les archimonstres du monde 2."
+      },
+      {
+        "critere": {
+          "tranche": "t3",
+          "type": "archi_capture"
+        },
+        "id": "ocre_t3",
+        "nom": "Capturer tous les archimonstres du monde 3."
+      },
+      {
+        "critere": {
+          "tranche": "t4",
+          "type": "archi_capture"
+        },
+        "id": "ocre_t4",
+        "nom": "Capturer tous les archimonstres du monde 4."
+      }
+    ]
+  },
+  "dofoozbz": {
+    "categorie": {
+      "dofus": "dofoozbz",
+      "monde": "t4"
+    },
+    "nom": "Question d'équilibre",
+    "quetes": [
+      {
+        "id": "dl_dofoozbz_1",
+        "nom": "« Le vol des bourdons » : vaincre le Supervizœuf.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "supervizoeuf"
+        }
+      },
+      {
+        "id": "dl_dofoozbz_2",
+        "nom": "« Trois cœurs, un roi » : vaincre le Kimbo.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kimbo"
+        }
+      }
+    ]
+  },
+  "dom_de_pin": {
+    "categorie": {
+      "dofus": "dom_de_pin",
+      "monde": "t4"
+    },
+    "nom": "Pomme de pin",
+    "quetes": [
+      {
+        "id": "dl_dom_de_pin_1",
+        "nom": "Vaincre le Korriandre.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "korriandre"
+        }
+      },
+      {
+        "id": "dl_dom_de_pin_2",
+        "nom": "Vaincre le Bworker.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "bworker"
+        }
+      }
+    ]
+  },
+  "dofus_des_glaces": {
+    "categorie": {
+      "dofus": "dofus_des_glaces",
+      "monde": "t5"
+    },
+    "nom": "Œuf à la neige",
+    "quetes": [
+      {
+        "id": "dl_dofus_des_glaces_1",
+        "nom": "Vaincre Missiz Frizz.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "missiz_frizz"
+        }
+      },
+      {
+        "id": "dl_dofus_des_glaces_2",
+        "nom": "Vaincre Sylargh.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "sylargh"
+        }
+      },
+      {
+        "id": "dl_dofus_des_glaces_3",
+        "nom": "Vaincre Klime.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "klime"
+        }
+      },
+      {
+        "id": "dl_dofus_des_glaces_4",
+        "nom": "Vaincre Nileza.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "nileza"
+        }
+      },
+      {
+        "id": "dl_dofus_des_glaces_5",
+        "nom": "Vaincre le Comte Harebourg.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "comte_harebourg"
+        }
+      }
+    ]
+  },
+  "dofus_abyssal": {
+    "categorie": {
+      "dofus": "dofus_abyssal",
+      "monde": "t5"
+    },
+    "nom": "Abysses",
+    "quetes": [
+      {
+        "id": "dl_dofus_abyssal_1",
+        "nom": "Vaincre Merkator.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "merkator"
+        }
+      },
+      {
+        "id": "dl_dofus_abyssal_2",
+        "nom": "Vaincre le Capitaine Meno.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "capitaine_meno"
+        }
+      },
+      {
+        "id": "dl_dofus_abyssal_3",
+        "nom": "Vaincre la Larve de Koutoulou.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "larve_de_koutoulou"
+        }
+      },
+      {
+        "id": "dl_dofus_abyssal_4",
+        "nom": "Vaincre Dantinéa.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "dantinea"
+        }
+      }
+    ]
+  },
+  "dofus_des_veilleurs": {
+    "categorie": {
+      "dofus": "dofus_des_veilleurs",
+      "monde": "t5"
+    },
+    "nom": "Odyssée en trois dimensions",
+    "quetes": [
+      {
+        "id": "dl_dofus_des_veilleurs_1",
+        "nom": "Vaincre le roi Nidas.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "roi_nidas"
+        }
+      },
+      {
+        "id": "dl_dofus_des_veilleurs_2",
+        "nom": "Vaincre la Reine des Voleurs.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "reine_des_voleurs"
+        }
+      },
+      {
+        "id": "dl_dofus_des_veilleurs_3",
+        "nom": "Vaincre Vortex.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "vortex"
+        }
+      },
+      {
+        "id": "dl_dofus_des_veilleurs_4",
+        "nom": "Vaincre le Chalœil.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "chaloeil"
+        }
+      }
+    ]
+  },
+  "dofus_ivoire": {
+    "categorie": {
+      "dofus": "dofus_ivoire",
+      "monde": "t5"
+    },
+    "nom": "Blanc ivoire",
+    "quetes": [
+      {
+        "id": "dl_dofus_ivoire_1",
+        "nom": "« Casse en Enutrosor » : vaincre le roi Nidas.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "roi_nidas"
+        }
+      },
+      {
+        "id": "dl_dofus_ivoire_2",
+        "nom": "« Nordalie » : vaincre le Comte Harebourg.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "comte_harebourg"
+        }
+      },
+      {
+        "id": "dl_dofus_ivoire_3",
+        "nom": "« Une voix de crystal » : vaincre le Capitaine Meno.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "capitaine_meno"
+        }
+      }
+    ]
+  },
+  "dofus_ebene": {
+    "categorie": {
+      "dofus": "dofus_ebene",
+      "monde": "t5"
+    },
+    "nom": "Noir d'ébène",
+    "quetes": [
+      {
+        "id": "dl_dofus_ebene_1",
+        "nom": "« L'œuf de Crocabulia » : vaincre Crocabulia.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "crocabulia"
+        }
+      },
+      {
+        "id": "dl_dofus_ebene_2",
+        "nom": "« Le dragon noir » : vaincre Ombre.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "ombre"
+        }
+      },
+      {
+        "id": "dl_dofus_ebene_3",
+        "nom": "« La vengeance du dernier empereur » : vaincre le Roi Imagami.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "roi_imagami"
+        }
+      }
+    ]
+  },
+  "dofus_tachete": {
+    "categorie": {
+      "dofus": "dofus_tachete",
+      "monde": "t5"
+    },
+    "nom": "Un rêve en clair-obscur",
+    "quetes": [
+      {
+        "id": "dl_dofus_tachete_1",
+        "nom": "« Main dans la main » : vaincre le Roi Imagami avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "roi_imagami",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "dl_dofus_tachete_2",
+        "nom": "« Deux souffles, une inspiration » : vaincre la Reine Amirukam avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "reine_amirukam",
+          "equipeMax": 2
+        }
+      }
+    ]
+  },
+  "dofus_forgelave": {
+    "categorie": {
+      "dofus": "dofus_forgelave",
+      "monde": "t5"
+    },
+    "nom": "Entre le marteau et l'enclume",
+    "quetes": [
+      {
+        "id": "dl_dofus_forgelave_1",
+        "nom": "« Tour par tour » : vaincre l'Obsidiantre.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "obsidiantre"
+        }
+      },
+      {
+        "id": "dl_dofus_forgelave_2",
+        "nom": "« La Fratrie des Oubliés » : vaincre Solar.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "solar"
+        }
+      },
+      {
+        "id": "dl_dofus_forgelave_3",
+        "nom": "« La Fratrie des Oubliés » : vaincre Bethel Akarna.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "bethel_akarna"
+        }
+      }
+    ]
+  },
+  "dofus_nebuleux": {
+    "categorie": {
+      "dofus": "dofus_nebuleux",
+      "monde": "t5"
+    },
+    "nom": "Je rêvais d'un autre monde",
+    "quetes": [
+      {
+        "id": "dl_dofus_nebuleux_1",
+        "nom": "« Le royaume des ombres » : vaincre Ombre.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "ombre"
+        }
+      },
+      {
+        "id": "dl_dofus_nebuleux_2",
+        "nom": "« Le domaine des possibles » : vaincre Ilyzaelle.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "ilyzaelle"
+        }
+      },
+      {
+        "id": "dl_dofus_nebuleux_3",
+        "nom": "« La quête de l'oiseau du temps » : vaincre Vortex.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "vortex"
+        }
+      },
+      {
+        "id": "dl_dofus_nebuleux_4",
+        "nom": "« Odyssée en trois dimensions » : posséder le Dofus des Veilleurs.",
+        "critere": {
+          "type": "dofus_possede",
+          "dofus": "dofus_des_veilleurs"
+        }
+      }
+    ]
+  },
+  "dofus_vulbis": {
+    "categorie": {
+      "dofus": "dofus_vulbis",
+      "monde": "t5"
+    },
+    "nom": "Rêves de dragons",
+    "quetes": [
+      {
+        "id": "dl_dofus_vulbis_1",
+        "nom": "« Les raisons de la colère » : vaincre le Dragon Cochon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "dragon_cochon"
+        }
+      },
+      {
+        "id": "dl_dofus_vulbis_2",
+        "nom": "« La mère des Dragoeufs » : vaincre Crocabulia.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "crocabulia"
+        }
+      },
+      {
+        "id": "dl_dofus_vulbis_3",
+        "nom": "« Le temps des secrets » : posséder 20 Dofus différents.",
+        "critere": {
+          "type": "dofus_possedes",
+          "seuil": 20
+        }
+      },
+      {
+        "id": "dl_dofus_vulbis_4",
+        "nom": "« Cauchemar infini » : gagner le monde 5.",
+        "critere": {
+          "type": "run_gagnee",
+          "tranche": "t5"
+        }
+      }
+    ]
+  },
+  "dofus_sylvestre": {
+    "categorie": {
+      "dofus": "dofus_sylvestre",
+      "monde": "t5"
+    },
+    "nom": "En attendant le printemps",
+    "quetes": [
+      {
+        "id": "dl_dofus_sylvestre_1",
+        "nom": "« Flovoraison » : vaincre Le Vénérable Endormi.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "venerable_endormi"
+        }
+      },
+      {
+        "id": "dl_dofus_sylvestre_2",
+        "nom": "« L'arbre qui cache la forêt » : vaincre Corruption.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "corruption"
+        }
+      },
+      {
+        "id": "dl_dofus_sylvestre_3",
+        "nom": "Posséder le Dom de Pin.",
+        "critere": {
+          "type": "dofus_possede",
+          "dofus": "dom_de_pin"
+        }
+      }
+    ]
+  },
+  "dofus_verdoyant": {
+    "categorie": {
+      "dofus": "dofus_verdoyant",
+      "monde": "t5"
+    },
+    "nom": "Guérir la corruption",
+    "quetes": [
+      {
+        "id": "dl_dofus_verdoyant_1",
+        "nom": "Vaincre Corruption sans perdre de héros.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "corruption",
+          "sansKO": true
+        }
+      },
+      {
+        "id": "dl_dofus_verdoyant_2",
+        "nom": "Soigner 20 000 PV au total.",
+        "critere": {
+          "type": "compteur",
+          "evenement": "soins",
+          "seuil": 20000
+        }
+      }
+    ]
+  },
+  "dofus_du_cauchemar": {
+    "categorie": {
+      "dofus": "dofus_du_cauchemar",
+      "monde": "t5"
+    },
+    "nom": "Eliocalypse : Réminiscence",
+    "quetes": [
+      {
+        "id": "dl_dofus_du_cauchemar_1",
+        "nom": "« Un héritage tourmenté » : vaincre Corruption.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "corruption"
+        }
+      },
+      {
+        "id": "dl_dofus_du_cauchemar_2",
+        "nom": "« La danse de la dissonance » : vaincre Guerre.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "guerre"
+        }
+      },
+      {
+        "id": "dl_dofus_du_cauchemar_3",
+        "nom": "« Descendre aux cendres » : vaincre Servitude.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "servitude"
+        }
+      },
+      {
+        "id": "dl_dofus_du_cauchemar_4",
+        "nom": "« Les totems de Maïmane » : vaincre Misère.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "misere"
+        }
+      },
+      {
+        "id": "dl_dofus_du_cauchemar_5",
+        "nom": "Vaincre les Cavaliers de l'Eliocalypse ensemble dans leur donjon.",
+        "critere": {
+          "type": "vaincre",
+          "zone": "tempete_eliocalypse",
+          "noeud": "donjon"
+        }
+      },
+      {
+        "id": "cauchemar_t5",
+        "nom": "Gagner le monde 5 en Cauchemar.",
         "critere": {
           "type": "record_ascension",
           "tranche": "t5",
           "min": 3
+        }
+      }
+    ]
+  },
+  "dofus_argente_scintillant": {
+    "categorie": {
+      "dofus": "dofus_argente_scintillant",
+      "monde": "t4"
+    },
+    "nom": "Les trophées de Rathrosk",
+    "quetes": [
+      {
+        "id": "t4_relique_kimbo",
+        "nom": "Obtenir la relique « Sphénoïde du Kimbo ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "kimbo"
+        }
+      },
+      {
+        "id": "t4_relique_obsidiantre",
+        "nom": "Obtenir la relique « Vertèbre d'Obsidiantre ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "obsidiantre"
+        }
+      },
+      {
+        "id": "t4_relique_minotot",
+        "nom": "Obtenir la relique « Sabot du Minotot ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "minotot"
+        }
+      },
+      {
+        "id": "t4_relique_shogun_tofugawa",
+        "nom": "Obtenir la relique « Moustache du Shogun Tofugawa ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "shogun_tofugawa"
+        }
+      },
+      {
+        "id": "t4_relique_koumiho",
+        "nom": "Obtenir la relique « Flamme du Kitsounebi de Koumiho ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "koumiho"
+        }
+      },
+      {
+        "id": "t4_relique_tengu_givrefoux",
+        "nom": "Obtenir la relique « Cuir de Tengu Givrefoux ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "tengu_givrefoux"
+        }
+      },
+      {
+        "id": "t4_relique_fuji_givrefoux_nourriciere",
+        "nom": "Obtenir la relique « Condyle de Fuji Givrefoux ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "fuji_givrefoux_nourriciere"
+        }
+      },
+      {
+        "id": "t4_relique_supervizoeuf",
+        "nom": "Obtenir la relique « Dard du Supervizœuf ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "supervizoeuf"
+        }
+      },
+      {
+        "id": "t4_relique_korriandre",
+        "nom": "Obtenir la relique « Œil de Korriandre ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "korriandre"
+        }
+      },
+      {
+        "id": "t4_relique_kralamoure_geant",
+        "nom": "Obtenir la relique « Encre du Kralamoure géant ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "kralamoure_geant"
+        }
+      },
+      {
+        "id": "t4_relique_bworker",
+        "nom": "Obtenir la relique « Peau du Bworker ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "bworker"
+        }
+      },
+      {
+        "id": "t4_relique_ougah",
+        "nom": "Obtenir la relique « Épine d'Ougah ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "ougah"
+        }
+      },
+      {
+        "id": "t4_relique_glourseleste",
+        "nom": "Obtenir la relique « Hamatum de Glourséleste ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "glourseleste"
+        }
+      },
+      {
+        "id": "t4_relique_ombre",
+        "nom": "Obtenir la relique « Corne d'Ombre ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "ombre"
         }
       }
     ]

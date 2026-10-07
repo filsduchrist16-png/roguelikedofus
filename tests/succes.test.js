@@ -1,7 +1,12 @@
 // Les quêtes qui débloquent les Dofus.
 import { describe, expect, it } from "vitest";
-import { DOFUS, SUCCES } from "../src/data/index.js";
-import { nouvelEtatQuetes, verifierQuetesCombat, verifierQuetesZone } from "../src/jeu/quetes.js";
+import { COMBATS, DOFUS, MONDES, SUCCES, ZONES } from "../src/data/index.js";
+import {
+  nouvelEtatQuetes,
+  verifierQuetesCombat,
+  verifierQuetesMeta,
+  verifierQuetesZone,
+} from "../src/jeu/quetes.js";
 
 const resume = (r) => ({
   zoneId: undefined,
@@ -30,30 +35,64 @@ describe("succès et Dofus", () => {
 
   it("vaincre un boss sans perdre de héros valide la quête", () => {
     const etat = nouvelEtatQuetes();
-    const r = verifierQuetesCombat(etat, resume({ vaincus: ["bouftou_royal"], herosKO: true }));
-    expect(r.quetes.map((q) => q.id)).not.toContain("d_dofus_turquoise_1");
-    const r2 = verifierQuetesCombat(etat, resume({ vaincus: ["bouftou_royal"] }));
-    expect(r2.quetes.map((q) => q.id)).toContain("d_dofus_turquoise_1");
+    const r = verifierQuetesCombat(etat, resume({ vaincus: ["corruption"], herosKO: true }));
+    expect(r.quetes.map((q) => q.id)).not.toContain("dl_dofus_verdoyant_1");
+    const r2 = verifierQuetesCombat(etat, resume({ vaincus: ["corruption"] }));
+    expect(r2.quetes.map((q) => q.id)).toContain("dl_dofus_verdoyant_1");
   });
 
   it("les compteurs s'additionnent d'un combat à l'autre", () => {
     const etat = nouvelEtatQuetes();
-    verifierQuetesCombat(etat, resume({ degatsParElement: { terre: 1200 } }));
-    expect(etat.faites).not.toContain("d_dofus_pourpre_1");
-    verifierQuetesCombat(etat, resume({ degatsParElement: { terre: 900 } }));
-    expect(etat.faites).toContain("d_dofus_pourpre_1");
+    const monstres = (n) => Array.from({ length: n }, (_, i) => `m${i}`);
+    verifierQuetesCombat(etat, resume({ vaincus: monstres(15) }));
+    expect(etat.faites).not.toContain("dl_dofawa_2");
+    verifierQuetesCombat(etat, resume({ vaincus: monstres(12) }));
+    expect(etat.faites).toContain("dl_dofawa_2");
   });
 
   it("terminer toutes les quêtes d'un succès le complète (et donne son Dofus)", () => {
     const etat = nouvelEtatQuetes();
-    verifierQuetesCombat(etat, resume({ vaincus: ["wa_wabbit"] }));
-    const r = verifierQuetesCombat(etat, resume({ vaincus: ["wa_wobot"] }));
-    expect(r.succes.map((s) => s.def.categorie.dofus)).toContain("dofus_cawotte");
+    verifierQuetesCombat(etat, resume({ vaincus: ["abraknyde_ancestral"] }));
+    const r = verifierQuetesCombat(etat, resume({ vaincus: ["reine_nyee"] }));
+    expect(r.succes.map((s) => s.def.categorie.dofus)).toContain("dofus_kaliptus");
   });
 
   it("terminer une zone valide les quêtes de zone", () => {
     const etat = nouvelEtatQuetes();
-    const r = verifierQuetesZone(etat, { zoneId: "astrub", ascension: 0 });
-    expect(r.quetes.map((q) => q.id)).toContain("d_dofawa_2");
+    const r = verifierQuetesZone(etat, { zoneId: "incarnam", ascension: 0 });
+    expect(r.quetes.map((q) => q.id)).toContain("dl_dofus_argente_1");
+  });
+
+  it("posséder un Dofus précis valide la quête qui le demande", () => {
+    const ctx = { archis: [], collection: {}, dofus: [], runs: 0, ascension: {}, reliques: [] };
+    expect(verifierQuetesMeta(nouvelEtatQuetes(), ctx).quetes.map((q) => q.id)).not.toContain(
+      "dl_dofus_sylvestre_3",
+    );
+    const r = verifierQuetesMeta(nouvelEtatQuetes(), { ...ctx, dofus: ["dom_de_pin"] });
+    expect(r.quetes.map((q) => q.id)).toContain("dl_dofus_sylvestre_3");
+  });
+
+  it("progression linéaire : un Dofus ne demande rien d'un monde plus avancé que le sien", () => {
+    const rang = (w) => MONDES.findIndex((m) => m.id === w);
+    const mondeZone = (z) => MONDES.find((m) => m.zones.includes(z))?.id;
+    const zoneDuBoss = {};
+    for (const z of ZONES) {
+      for (const c of z.pools?.boss ?? []) {
+        for (const e of COMBATS[c].ennemis) zoneDuBoss[e.monstre] ??= z.id;
+      }
+    }
+    let precedent = 0;
+    for (const id of Object.keys(DOFUS)) {
+      const s = Object.values(SUCCES).find((x) => x.categorie.dofus === id);
+      const w = rang(s.categorie.monde);
+      expect(w, `${id} rangé dans l'ordre des mondes`).toBeGreaterThanOrEqual(precedent);
+      precedent = w;
+      for (const q of s.quetes) {
+        const c = q.critere;
+        const z = c.zone ?? zoneDuBoss[c.boss];
+        const besoin = z ? rang(mondeZone(z)) : c.tranche ? rang(c.tranche) : -1;
+        expect(besoin, `${id} / ${q.id}`).toBeLessThanOrEqual(w);
+      }
+    }
   });
 });

@@ -1,5 +1,33 @@
 # Journal des modifications
 
+## Progression linéaire des Dofus (lore de Dofus 3)
+
+Les 31 Dofus se gagnent maintenant au fil des mondes, selon leur niveau d'obtention réel dans Dofus 3
+(le niveau du succès qui les donne), et leurs quêtes suivent le lore :
+
+- **Monde 1** : Dofawa, Dofus Argenté (« D'Incarnam à Astrub »), Jyfus, Dofus Cacao (le nid du Kwakwa).
+- **Monde 2** : Dofus Cawotte (« Poil de Cawotte » : Wa Wabbit, Wa Wobot et sa couronne), Dokoko
+  (« Koko Boy » : Kanniboul Ebil, Chouque, Moon), Dofus Kaliptus, Dolmanax (« L'année du dragon »).
+- **Monde 3** : Dofus Émeraude (« Vert émeraude », Draconanthropie avec Crocabulia), Dokille (« Trophée de
+  chasse » : le safari des âmes), Dofus Pourpre (Rats, « Le livre des Taures » avec le Minotoror),
+  Dotruche (la Haute Truche), Domakuro (Pandala).
+- **Monde 4** : Dorigami (Yokai de Grobe), Dofus Turquoise, Dofus Ocre (les âmes des archimonstres),
+  Dofoozbz (le Supervizœuf), Dom de Pin, Dofus Argenté Scintillant (les trophées de Rathrosk).
+- **Monde 5** : Dofus des Glaces (« Œuf à la neige » : Frigost III jusqu'au Comte Harebourg), Abyssal
+  (Sufokia), Veilleurs (Dimensions Divines), Ivoire, Ébène, Tacheté, Forgelave (Tours de la Fratrie),
+  Nébuleux, Vulbis, Sylvestre, Verdoyant et Cauchemar (« Eliocalypse : Réminiscence »).
+
+Pour que ce lore existe en jeu, quelques zones changent : la Volière de la Haute Truche (Monde 3), le
+Poste de contrôle du Supervizœuf et la Demeure des esprits de Koumiho (Monde 4) ; le Monde 5 est
+réorganisé autour de Frigost III, Sufokia, les Dimensions Divines, les Tours de la Fratrie, Wukin et
+Wukang, Osavora et l'Eliocalypse.
+
+- Chaque monde a aussi ses succès de donjons, défis Duo / Premier / Dernier / Blitzkrieg, reliques et
+  conquête.
+- L'écran Succès range les Dofus dans l'ordre où on les obtient, avec leur monde et leur niveau.
+- La progression déjà faite est conservée pour les quêtes reprises (reliques des mondes 1 et 2,
+  archimonstres du Dofus Ocre) ; les Dofus déjà obtenus restent acquis.
+
 ## Mondes 3, 4 et 5
 
 Les trois derniers mondes sont jouables. Leurs boss sont répartis comme les succès « Donjons » de

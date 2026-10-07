@@ -3,6 +3,7 @@ import {
   BUTIN_ZONES,
   CLASSES,
   COMBATS,
+  DOFUS,
   EQUIPEMENTS,
   MONDES,
   MONSTRES,
@@ -76,12 +77,18 @@ export function succesDuDofus(dofusId) {
   return Object.values(SUCCES).find((s) => s.categorie?.dofus === dofusId);
 }
 
+export function mondeDuDofus(dofusId) {
+  const succes = succesDuDofus(dofusId);
+  return MONDES.find((m) => m.id === succes?.categorie?.monde);
+}
+
 export function texteObtentionDofus(dofusId) {
   const succes = succesDuDofus(dofusId);
   if (!succes) {
     return `Pas encore obtenable.`;
   }
-  return `Succès « ${succes.nom} » : ${succes.quetes.map((q) => q.nom.replace(/\.$/, ``)).join(` ; `)}.`;
+  const monde = mondeDuDofus(dofusId);
+  return `${monde ? `${monde.nom} — ` : ``}succès « ${succes.nom} » : ${succes.quetes.map((q) => q.nom.replace(/\.$/, ``)).join(` ; `)}.`;
 }
 
 // Règles d'obtention, avec les chiffres réels du jeu.
@@ -93,8 +100,9 @@ export const AIDE_OBTENTION = `
     combats durs et les donjons donnent aussi les objets d'élite et de boss. Survole un objet pour voir où il tombe.</p>
   <p><b>Hôtel de vente.</b> Il vend les objets de la zone en cours (épiques et plus) et de la zone suivante (rares et plus),
     et rachète ton inventaire à moitié prix. Le <b>Forgemage</b> monte la rareté d'un objet, même équipé.</p>
-  <p><b>Dofus.</b> Chaque Dofus récompense un succès (menu Succès sur l'accueil) : vaincre certains boss, terminer des zones,
-    gagner un monde sous condition, cumuler des dégâts ou des soins… Ils restent acquis pour toutes les runs.</p>
+  <p><b>Dofus.</b> Chaque Dofus récompense un succès (menu Succès sur l'accueil), repris des succès de Dofus 3. Ils
+    s'obtiennent dans l'ordre de leur niveau réel : Dofawa, Argenté, Jyfus et Cacao dans le Monde 1… jusqu'aux Dofus de
+    niveau 200 (Glaces, Abyssal, Ivoire, Ébène, Cauchemar…) dans le Monde 5. Ils restent acquis pour toutes les runs.</p>
   <p><b>Archimonstres.</b> Un monstre a ${pct(CONFIG_ARCHI.chance)} de chance d'apparaître sous sa forme d'archimonstre,
     plus ${pct(CONFIG_ARCHI.philtre)} par philtre d'Otomai bu pendant la run (${CONFIG_ARCHI.philtresMax} au maximum).
     Bats-le pour capturer son âme.</p>
@@ -239,6 +247,8 @@ export function indiceQuete(quete) {
       return `Total d'âmes capturées, toutes runs confondues.`;
     case `objet_obtenu`:
       return `Objet à trouver : ${texteObtentionObjet(c.objet).split(`\n`)[0]}`;
+    case `dofus_possede`:
+      return `Obtiens d'abord le ${DOFUS[c.dofus]?.nom ?? c.dofus} : ${texteObtentionDofus(c.dofus)}`;
     case `dofus_possedes`:
       return `Termine d'autres succès de Dofus.`;
     case `runs_jouees`:
