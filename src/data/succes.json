@@ -1,0 +1,519 @@
+{
+  "dofus_argente": {
+    "categorie": {
+      "dofus": "dofus_argente"
+    },
+    "nom": "Reliques du Monde 1",
+    "quetes": [
+      {
+        "critere": {
+          "boss": "kardorim",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_kardorim",
+        "nom": "Obtenir la relique « Crâne de Kardorim »."
+      },
+      {
+        "critere": {
+          "boss": "tournesol_affame",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_tournesol_affame",
+        "nom": "Obtenir la relique « Pétale Magique du Tournesol Affamé »."
+      },
+      {
+        "critere": {
+          "boss": "bouftou_royal",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_bouftou_royal",
+        "nom": "Obtenir la relique « Laine de Bouftou Royal »."
+      },
+      {
+        "critere": {
+          "boss": "batofu",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_batofu",
+        "nom": "Obtenir la relique « Plume de Batofu »."
+      },
+      {
+        "critere": {
+          "boss": "directeur_grunob",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_directeur_grunob",
+        "nom": "Obtenir la relique « Manuel du Directeur Grunob »."
+      },
+      {
+        "critere": {
+          "boss": "kankreblath",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_kankreblath",
+        "nom": "Obtenir la relique « Patte de Kankreblath »."
+      },
+      {
+        "critere": {
+          "boss": "boostache",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_boostache",
+        "nom": "Obtenir la relique « Moustache de Boostache »."
+      },
+      {
+        "critere": {
+          "boss": "scarabosse_dore",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_scarabosse_dore",
+        "nom": "Obtenir la relique « Ailes du Scarabosse Doré »."
+      },
+      {
+        "critere": {
+          "boss": "coffre_forgerons",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_coffre_forgerons",
+        "nom": "Obtenir la relique « Serrure du Coffre des Forgerons »."
+      },
+      {
+        "critere": {
+          "boss": "shin_larve",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_shin_larve",
+        "nom": "Obtenir la relique « Dent de Shin Larve »."
+      },
+      {
+        "critere": {
+          "boss": "corailleur_magistral",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_corailleur_magistral",
+        "nom": "Obtenir la relique « Corail Magistral »."
+      },
+      {
+        "critere": {
+          "boss": "kwakwa",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_kwakwa",
+        "nom": "Obtenir la relique « Bec du Kwakwa »."
+      }
+    ]
+  },
+  "dofus_du_cauchemar": {
+    "categorie": {
+      "dofus": "dofus_du_cauchemar"
+    },
+    "nom": "Dofus du Cauchemar",
+    "quetes": [
+      {
+        "critere": {
+          "min": 3,
+          "tranche": "t1",
+          "type": "record_ascension"
+        },
+        "id": "cauchemar_t1",
+        "nom": "Gagner le monde 1 en Cauchemar."
+      },
+      {
+        "critere": {
+          "min": 3,
+          "tranche": "t2",
+          "type": "record_ascension"
+        },
+        "id": "cauchemar_t2",
+        "nom": "Gagner le monde 2 en Cauchemar."
+      },
+      {
+        "critere": {
+          "min": 3,
+          "tranche": "t3",
+          "type": "record_ascension"
+        },
+        "id": "cauchemar_t3",
+        "nom": "Gagner le monde 3 en Cauchemar."
+      },
+      {
+        "critere": {
+          "min": 3,
+          "tranche": "t4",
+          "type": "record_ascension"
+        },
+        "id": "cauchemar_t4",
+        "nom": "Gagner le monde 4 en Cauchemar."
+      },
+      {
+        "critere": {
+          "min": 3,
+          "tranche": "t5",
+          "type": "record_ascension"
+        },
+        "id": "cauchemar_t5",
+        "nom": "Gagner le monde 5 en Cauchemar."
+      }
+    ]
+  },
+  "dofus_emeraude": {
+    "categorie": {
+      "dofus": "dofus_emeraude"
+    },
+    "nom": "Reliques du Monde 2",
+    "quetes": [
+      {
+        "critere": {
+          "boss": "blop_griotte_royal",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_blop_griotte_royal",
+        "nom": "Obtenir la relique « Fleur de Blop Griotte Royal »."
+      },
+      {
+        "critere": {
+          "boss": "blop_indigo_royal",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_blop_indigo_royal",
+        "nom": "Obtenir la relique « Fleur de Blop Indigo Royal »."
+      },
+      {
+        "critere": {
+          "boss": "blop_reinette_royal",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_blop_reinette_royal",
+        "nom": "Obtenir la relique « Fleur de Blop Reinette Royal »."
+      },
+      {
+        "critere": {
+          "boss": "blop_coco_royal",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_blop_coco_royal",
+        "nom": "Obtenir la relique « Fleur de Blop Coco Royal »."
+      },
+      {
+        "critere": {
+          "boss": "gourlo_le_terrible",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_gourlo_le_terrible",
+        "nom": "Obtenir la relique « Étoffe de Gourlo le Terrible »."
+      },
+      {
+        "critere": {
+          "boss": "gelee_royale_fraise",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_gelee_royale_fraise",
+        "nom": "Obtenir la relique « Gelée Fraise Royale »."
+      },
+      {
+        "critere": {
+          "boss": "gelee_royale_bleuet",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_gelee_royale_bleuet",
+        "nom": "Obtenir la relique « Gelée Bleuet Royale »."
+      },
+      {
+        "critere": {
+          "boss": "gelee_royale_menthe",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_gelee_royale_menthe",
+        "nom": "Obtenir la relique « Gelée Menthe Royale »."
+      },
+      {
+        "critere": {
+          "boss": "gelee_royale_citron",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_gelee_royale_citron",
+        "nom": "Obtenir la relique « Gelée Citron Royale »."
+      },
+      {
+        "critere": {
+          "boss": "nelween",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_nelween",
+        "nom": "Obtenir la relique « Fiole de fumée de Nelween »."
+      },
+      {
+        "critere": {
+          "boss": "wa_wobot",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_wa_wobot",
+        "nom": "Obtenir la relique « Barbe du Wa Wobot »."
+      },
+      {
+        "critere": {
+          "boss": "wa_wabbit",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_wa_wabbit",
+        "nom": "Obtenir la relique « Étoffe du Wa Wabbit »."
+      },
+      {
+        "critere": {
+          "boss": "craqueleur_legendaire",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_craqueleur_legendaire",
+        "nom": "Obtenir la relique « Méga Pierre du Craqueleur Légendaire »."
+      },
+      {
+        "critere": {
+          "boss": "le_chouque",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_le_chouque",
+        "nom": "Obtenir la relique « Barbe du Chouque »."
+      },
+      {
+        "critere": {
+          "boss": "kanniboul_ebil",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_kanniboul_ebil",
+        "nom": "Obtenir la relique « Cagoule du Kanniboul Ebil »."
+      },
+      {
+        "critere": {
+          "boss": "dragon_cochon",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_dragon_cochon",
+        "nom": "Obtenir la relique « Groin de Dragon Cochon »."
+      },
+      {
+        "critere": {
+          "boss": "kharnozor",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_kharnozor",
+        "nom": "Obtenir la relique « Œil du Kharnozor »."
+      },
+      {
+        "critere": {
+          "boss": "draegnerys",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_draegnerys",
+        "nom": "Obtenir la relique « Cheveux de Draegnerys »."
+      },
+      {
+        "critere": {
+          "boss": "meulou",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_meulou",
+        "nom": "Obtenir la relique « Scalp du Meulou »."
+      },
+      {
+        "critere": {
+          "boss": "reine_nyee",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_reine_nyee",
+        "nom": "Obtenir la relique « Globule de Nyée »."
+      },
+      {
+        "critere": {
+          "boss": "abraknyde_ancestral",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_abraknyde_ancestral",
+        "nom": "Obtenir la relique « Bourgeon d'Abraknyde Ancestral »."
+      },
+      {
+        "critere": {
+          "boss": "moon",
+          "type": "relique_obtenue"
+        },
+        "id": "relique_moon",
+        "nom": "Obtenir la relique « Étoffe Magique de Moon »."
+      }
+    ]
+  },
+  "dofus_ocre": {
+    "categorie": {
+      "dofus": "dofus_ocre"
+    },
+    "nom": "Dofus Ocre",
+    "quetes": [
+      {
+        "critere": {
+          "tranche": "t1",
+          "type": "archi_capture"
+        },
+        "id": "ocre_t1",
+        "nom": "Capturer tous les archimonstres du monde 1."
+      },
+      {
+        "critere": {
+          "tranche": "t2",
+          "type": "archi_capture"
+        },
+        "id": "ocre_t2",
+        "nom": "Capturer tous les archimonstres du monde 2."
+      },
+      {
+        "critere": {
+          "tranche": "t3",
+          "type": "archi_capture"
+        },
+        "id": "ocre_t3",
+        "nom": "Capturer tous les archimonstres du monde 3."
+      },
+      {
+        "critere": {
+          "tranche": "t4",
+          "type": "archi_capture"
+        },
+        "id": "ocre_t4",
+        "nom": "Capturer tous les archimonstres du monde 4."
+      },
+      {
+        "critere": {
+          "tranche": "t5",
+          "type": "archi_capture"
+        },
+        "id": "ocre_t5",
+        "nom": "Capturer tous les archimonstres du monde 5."
+      }
+    ]
+  },
+  "general_archimonstres": {
+    "categorie": {
+      "general": true
+    },
+    "nom": "Chasseur d'âmes",
+    "quetes": [
+      {
+        "critere": {
+          "seuil": 10,
+          "type": "archis_total"
+        },
+        "id": "g_archis_10",
+        "nom": "Capturer 10 âmes d'Archimonstres."
+      },
+      {
+        "critere": {
+          "seuil": 25,
+          "type": "archis_total"
+        },
+        "id": "g_archis_25",
+        "nom": "Capturer 25 âmes d'Archimonstres."
+      },
+      {
+        "critere": {
+          "type": "archi_capture",
+          "uneZoneComplete": true
+        },
+        "id": "g_zone_archis",
+        "nom": "Capturer tous les Archimonstres d'une zone."
+      }
+    ]
+  },
+  "general_ascension": {
+    "categorie": {
+      "general": true
+    },
+    "nom": "Ascension",
+    "quetes": [
+      {
+        "critere": {
+          "ascensionMin": 1,
+          "type": "run_gagnee"
+        },
+        "id": "g_asc_difficile",
+        "nom": "Gagne un monde en Difficile (★★)."
+      },
+      {
+        "critere": {
+          "ascensionMin": 2,
+          "type": "run_gagnee"
+        },
+        "id": "g_asc_extreme",
+        "nom": "Gagne un monde en Extrême (★★★)."
+      },
+      {
+        "critere": {
+          "ascensionMin": 3,
+          "type": "run_gagnee"
+        },
+        "id": "g_asc_cauchemar",
+        "nom": "Gagne un monde en Cauchemar (★★★★)."
+      },
+      {
+        "critere": {
+          "ascensionMin": 4,
+          "type": "run_gagnee"
+        },
+        "id": "g_asc_ultime",
+        "nom": "Gagne un monde en Ultime (★★★★★)."
+      }
+    ]
+  },
+  "general_aventurier": {
+    "categorie": {
+      "general": true
+    },
+    "nom": "Aventurier",
+    "quetes": [
+      {
+        "critere": {
+          "seuil": 1,
+          "type": "runs_jouees"
+        },
+        "id": "g_premiere_run",
+        "nom": "Terminer sa première run (même dans la douleur)."
+      },
+      {
+        "critere": {
+          "seuil": 10,
+          "type": "runs_jouees"
+        },
+        "id": "g_dix_runs",
+        "nom": "Jouer 10 runs."
+      },
+      {
+        "critere": {
+          "tranche": "t1",
+          "type": "run_gagnee"
+        },
+        "id": "g_tranche1",
+        "nom": "Traverser tout le Monde 1."
+      },
+      {
+        "critere": {
+          "quatreHerosEquipes": true,
+          "type": "run_gagnee"
+        },
+        "id": "g_quatre_equipes",
+        "nom": "Finir une run avec 4 héros entièrement équipés."
+      }
+    ]
+  },
+  "general_reliques": {
+    "categorie": {
+      "general": true
+    },
+    "nom": "Reliques",
+    "quetes": [
+      {
+        "critere": {
+          "seuil": 1,
+          "type": "dofus_possedes"
+        },
+        "id": "g_premier_dofus",
+        "nom": "Posséder un Dofus."
+      }
+    ]
+  }
+}

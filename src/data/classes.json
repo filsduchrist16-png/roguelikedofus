@@ -1,0 +1,340 @@
+{
+  "cra": {
+    "archetype": "distance",
+    "elements": [
+      "feu",
+      "air"
+    ],
+    "id": "cra",
+    "img": "/assets/classes/cra.png",
+    "initiative": 12,
+    "nom": "Cra",
+    "pa": 6,
+    "pvBase": 50,
+    "sorts": [
+      "fleche_punitive",
+      "fleche_enflammee",
+      "oeil_de_taupe",
+      "fleche_de_recul",
+      "tir_puissant",
+      "acuite_absolue"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "vitalite": 0
+    }
+  },
+  "ecaflip": {
+    "archetype": "melee",
+    "elements": [
+      "air",
+      "eau"
+    ],
+    "id": "ecaflip",
+    "img": "/assets/classes/ecaflip.png",
+    "initiative": 10,
+    "nom": "Ecaflip",
+    "pa": 6,
+    "pvBase": 50,
+    "sorts": [
+      "pile_ou_face",
+      "bluff",
+      "langue_rapeuse",
+      "griffe_joueuse",
+      "roulette",
+      "chateau_de_cartes"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "vitalite": 0
+    }
+  },
+  "eliotrope": {
+    "archetype": "distance",
+    "elements": [
+      "feu",
+      "terre"
+    ],
+    "id": "eliotrope",
+    "img": "/assets/classes/eliotrope.png",
+    "initiative": 12,
+    "nom": "Éliotrope",
+    "pa": 6,
+    "pvBase": 50,
+    "sorts": [
+      "rayon_de_wakfu",
+      "sarcasme",
+      "parasite",
+      "portail",
+      "coalition",
+      "conjuration"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "vitalite": 0
+    }
+  },
+  "eniripsa": {
+    "archetype": "distance",
+    "elements": [
+      "feu",
+      "eau"
+    ],
+    "id": "eniripsa",
+    "img": "/assets/classes/eniripsa.png",
+    "initiative": 11,
+    "nom": "Eniripsa",
+    "pa": 6,
+    "pvBase": 50,
+    "sorts": [
+      "mot_vampirique",
+      "mot_rituel",
+      "mot_reconstitution",
+      "mot_de_solidarite",
+      "mot_galvanisant",
+      "mot_stimulant"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "soin": 20,
+      "vitalite": 0
+    }
+  },
+  "feca": {
+    "archetype": "melee",
+    "elements": [
+      "terre",
+      "eau"
+    ],
+    "id": "feca",
+    "img": "/assets/classes/feca.png",
+    "initiative": 7,
+    "nom": "Feca",
+    "pa": 6,
+    "pvBase": 50,
+    "sorts": [
+      "vigie",
+      "paturage",
+      "bulle",
+      "tetanie",
+      "egide",
+      "fortification"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "vitalite": 0
+    }
+  },
+  "forgelance": {
+    "archetype": "melee",
+    "elements": [
+      "terre",
+      "feu"
+    ],
+    "id": "forgelance",
+    "img": "/assets/classes/forgelance.png",
+    "initiative": 11,
+    "nom": "Forgelance",
+    "pa": 6,
+    "pvBase": 50,
+    "sorts": [
+      "muspel",
+      "hydra",
+      "jormun",
+      "lance",
+      "vajra",
+      "etreinte_de_valkyr"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "vitalite": 0
+    }
+  },
+  "iop": {
+    "archetype": "melee",
+    "elements": [
+      "air",
+      "eau"
+    ],
+    "id": "iop",
+    "img": "/assets/classes/iop.png",
+    "initiative": 8,
+    "nom": "Iop",
+    "pa": 6,
+    "pvBase": 50,
+    "sorts": [
+      "zenith",
+      "pugilat",
+      "endurance",
+      "colere_de_iop",
+      "precipitation",
+      "vertu"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "vitalite": 0
+    }
+  },
+  "ouginak": {
+    "archetype": "melee",
+    "elements": [
+      "terre",
+      "air"
+    ],
+    "id": "ouginak",
+    "img": "/assets/classes/ouginak.png",
+    "initiative": 9,
+    "nom": "Ouginak",
+    "pa": 6,
+    "pvBase": 50,
+    "sorts": [
+      "proie",
+      "molosse",
+      "depouille",
+      "tetanisation",
+      "tibias",
+      "apaisement"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "vitalite": 0
+    }
+  },
+  "roublard": {
+    "archetype": "distance",
+    "elements": [
+      "feu",
+      "eau"
+    ],
+    "id": "roublard",
+    "img": "/assets/classes/roublard.png",
+    "initiative": 12,
+    "nom": "Roublard",
+    "pa": 6,
+    "pvBase": 50,
+    "sorts": [
+      "bombe_collante",
+      "kaboom",
+      "dagues_boomerang",
+      "roublabot",
+      "roublardise",
+      "resquille"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "vitalite": 0
+    }
+  },
+  "sadida": {
+    "archetype": "melee",
+    "elements": [
+      "terre",
+      "eau"
+    ],
+    "id": "sadida",
+    "img": "/assets/classes/sadida.png",
+    "initiative": 9,
+    "nom": "Sadida",
+    "pa": 6,
+    "pvBase": 50,
+    "sorts": [
+      "crachat_de_seve",
+      "deferlante",
+      "lame_liquide",
+      "etreinte_ronces",
+      "poupee_garde",
+      "rosee_regenerante",
+      "vigueur_bois"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "vitalite": 0
+    }
+  },
+  "sram": {
+    "archetype": "melee",
+    "elements": [
+      "air",
+      "feu"
+    ],
+    "id": "sram",
+    "img": "/assets/classes/sram.png",
+    "initiative": 13,
+    "nom": "Sram",
+    "pa": 6,
+    "pvBase": 50,
+    "sorts": [
+      "attaque_mortelle",
+      "sournoiserie",
+      "piege_funeste",
+      "piege_a_fragmentation",
+      "concentration_de_chakra",
+      "brume"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "vitalite": 0
+    }
+  },
+  "xelor": {
+    "archetype": "distance",
+    "elements": [
+      "eau",
+      "terre"
+    ],
+    "id": "xelor",
+    "img": "/assets/classes/xelor.png",
+    "initiative": 14,
+    "nom": "Xélor",
+    "pa": 6,
+    "pvBase": 50,
+    "sorts": [
+      "aiguille",
+      "sablier_de_xelor",
+      "pendule",
+      "rayon_obscur",
+      "cadran_de_xelor",
+      "premonition"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "vitalite": 0
+    }
+  }
+}

@@ -1,0 +1,2328 @@
+{
+  "abr_1": {
+    "ennemis": [
+      {
+        "monstre": "abraknyde_venerable",
+        "position": 0
+      },
+      {
+        "monstre": "nefileuse",
+        "position": 4
+      }
+    ],
+    "nom": "Lisière du Domaine"
+  },
+  "abr_2": {
+    "ennemis": [
+      {
+        "monstre": "abraknyde_sombre",
+        "position": 0
+      },
+      {
+        "monstre": "arapex",
+        "position": 1
+      },
+      {
+        "monstre": "nefileuse",
+        "position": 4
+      }
+    ],
+    "nom": "Le fil tendu"
+  },
+  "abr_3": {
+    "ennemis": [
+      {
+        "monstre": "araknotron",
+        "position": 0
+      },
+      {
+        "monstre": "abrakne_sombre",
+        "position": 1
+      },
+      {
+        "monstre": "abraknyde_venerable",
+        "position": 2
+      },
+      {
+        "monstre": "nefileuse",
+        "position": 4
+      }
+    ],
+    "nom": "Sous la canopée"
+  },
+  "abr_boss": {
+    "ennemis": [
+      {
+        "monstre": "reine_nyee",
+        "position": 0
+      },
+      {
+        "monstre": "arapex",
+        "position": 1
+      },
+      {
+        "monstre": "abraknyde_ancestral",
+        "position": 4
+      }
+    ],
+    "nom": "Donjon : Reine Nyée & Abraknyde Ancestral"
+  },
+  "abr_elite": {
+    "ennemis": [
+      {
+        "monstre": "abraknyde_sombre",
+        "position": 0
+      },
+      {
+        "monstre": "arapex",
+        "position": 1
+      },
+      {
+        "monstre": "araknotron",
+        "position": 2
+      },
+      {
+        "monstre": "abrakne_sombre",
+        "position": 4
+      },
+      {
+        "monstre": "nefileuse",
+        "position": 5
+      }
+    ],
+    "nom": "La nurserie"
+  },
+  "arc_1": {
+    "ennemis": [
+      {
+        "monstre": "le_flib",
+        "position": 0
+      },
+      {
+        "monstre": "sparo",
+        "position": 4
+      }
+    ],
+    "nom": "Quart de nuit"
+  },
+  "arc_2": {
+    "ennemis": [
+      {
+        "monstre": "barbroussa",
+        "position": 0
+      },
+      {
+        "monstre": "le_flib",
+        "position": 1
+      },
+      {
+        "monstre": "canondorf",
+        "position": 4
+      }
+    ],
+    "nom": "L'équipage sur le pont"
+  },
+  "arc_3": {
+    "ennemis": [
+      {
+        "monstre": "barbroussa",
+        "position": 0
+      },
+      {
+        "monstre": "nakunbra",
+        "position": 1
+      },
+      {
+        "monstre": "boomba",
+        "position": 2
+      },
+      {
+        "monstre": "sparo",
+        "position": 4
+      }
+    ],
+    "nom": "Renfort de la cale"
+  },
+  "arc_boss": {
+    "ennemis": [
+      {
+        "monstre": "gourlo_le_terrible",
+        "position": 0
+      },
+      {
+        "monstre": "boomba",
+        "position": 1
+      },
+      {
+        "monstre": "canondorf",
+        "position": 4
+      }
+    ],
+    "nom": "Donjon : Gourlo le Terrible"
+  },
+  "arc_elite": {
+    "ennemis": [
+      {
+        "monstre": "boomba",
+        "position": 0
+      },
+      {
+        "monstre": "nakunbra",
+        "position": 1
+      },
+      {
+        "monstre": "canondorf",
+        "position": 4
+      }
+    ],
+    "nom": "Les gardes de la cale"
+  },
+  "blp_1": {
+    "ennemis": [
+      {
+        "monstre": "blop_griotte",
+        "position": 0
+      },
+      {
+        "monstre": "blop_indigo",
+        "position": 1
+      }
+    ],
+    "nom": "Deux couleurs qui s'ignorent"
+  },
+  "blp_2": {
+    "ennemis": [
+      {
+        "monstre": "biblop_coco",
+        "position": 0
+      },
+      {
+        "monstre": "biblop_reinette",
+        "position": 1
+      },
+      {
+        "monstre": "blop_coco",
+        "position": 4
+      }
+    ],
+    "nom": "Nichée de Blops"
+  },
+  "blp_3": {
+    "ennemis": [
+      {
+        "monstre": "biblop_griotte",
+        "position": 0
+      },
+      {
+        "monstre": "biblop_indigo",
+        "position": 1
+      },
+      {
+        "monstre": "biblop_reinette",
+        "position": 2
+      },
+      {
+        "monstre": "blop_reinette",
+        "position": 4
+      },
+      {
+        "monstre": "blop_griotte",
+        "position": 5
+      }
+    ],
+    "nom": "La marmaille en avant"
+  },
+  "blp_boss_griotte_coco": {
+    "ennemis": [
+      {
+        "monstre": "blop_griotte_royal",
+        "position": 0
+      },
+      {
+        "monstre": "blop_coco_royal",
+        "position": 1
+      },
+      {
+        "monstre": "gloutoblop",
+        "position": 4
+      },
+      {
+        "monstre": "blopignon",
+        "position": 5
+      }
+    ],
+    "nom": "Donjon : Blops Royaux Griotte & Coco"
+  },
+  "blp_boss_griotte_indigo": {
+    "ennemis": [
+      {
+        "monstre": "blop_griotte_royal",
+        "position": 0
+      },
+      {
+        "monstre": "blop_indigo_royal",
+        "position": 1
+      },
+      {
+        "monstre": "gloutoblop",
+        "position": 4
+      },
+      {
+        "monstre": "blopignon",
+        "position": 5
+      }
+    ],
+    "nom": "Donjon : Blops Royaux Griotte & Indigo"
+  },
+  "blp_boss_griotte_reinette": {
+    "ennemis": [
+      {
+        "monstre": "blop_griotte_royal",
+        "position": 0
+      },
+      {
+        "monstre": "blop_reinette_royal",
+        "position": 1
+      },
+      {
+        "monstre": "gloutoblop",
+        "position": 4
+      },
+      {
+        "monstre": "blopignon",
+        "position": 5
+      }
+    ],
+    "nom": "Donjon : Blops Royaux Griotte & Reinette"
+  },
+  "blp_boss_indigo_coco": {
+    "ennemis": [
+      {
+        "monstre": "blop_indigo_royal",
+        "position": 0
+      },
+      {
+        "monstre": "blop_coco_royal",
+        "position": 1
+      },
+      {
+        "monstre": "gloutoblop",
+        "position": 4
+      },
+      {
+        "monstre": "blopignon",
+        "position": 5
+      }
+    ],
+    "nom": "Donjon : Blops Royaux Indigo & Coco"
+  },
+  "blp_boss_indigo_reinette": {
+    "ennemis": [
+      {
+        "monstre": "blop_indigo_royal",
+        "position": 0
+      },
+      {
+        "monstre": "blop_reinette_royal",
+        "position": 1
+      },
+      {
+        "monstre": "gloutoblop",
+        "position": 4
+      },
+      {
+        "monstre": "blopignon",
+        "position": 5
+      }
+    ],
+    "nom": "Donjon : Blops Royaux Indigo & Reinette"
+  },
+  "blp_boss_reinette_coco": {
+    "ennemis": [
+      {
+        "monstre": "blop_reinette_royal",
+        "position": 0
+      },
+      {
+        "monstre": "blop_coco_royal",
+        "position": 1
+      },
+      {
+        "monstre": "gloutoblop",
+        "position": 4
+      },
+      {
+        "monstre": "blopignon",
+        "position": 5
+      }
+    ],
+    "nom": "Donjon : Blops Royaux Reinette & Coco"
+  },
+  "blp_elite": {
+    "ennemis": [
+      {
+        "monstre": "tronkoblop",
+        "position": 0
+      },
+      {
+        "monstre": "gloutoblop",
+        "position": 1
+      },
+      {
+        "monstre": "blopignon",
+        "position": 4
+      }
+    ],
+    "nom": "Les gros bras du Clos"
+  },
+  "boss": {
+    "ennemis": [
+      {
+        "monstre": "tournesol_affame",
+        "position": 0
+      },
+      {
+        "monstre": "gardienne_champetre",
+        "position": 1
+      },
+      {
+        "monstre": "pissenlit_diabolique",
+        "position": 2
+      }
+    ],
+    "nom": "Donjon : Tournesol Affamé"
+  },
+  "cho_1": {
+    "ennemis": [
+      {
+        "monstre": "kanniboul_ark",
+        "position": 0
+      },
+      {
+        "monstre": "kanniboul_sarbak",
+        "position": 4
+      }
+    ],
+    "nom": "Sentinelles du village"
+  },
+  "cho_2": {
+    "ennemis": [
+      {
+        "monstre": "kanniboul_eth",
+        "position": 0
+      },
+      {
+        "monstre": "kanniboul_jav",
+        "position": 1
+      },
+      {
+        "monstre": "kanniboul_sarbak",
+        "position": 4
+      }
+    ],
+    "nom": "Chasse au long cochon"
+  },
+  "cho_3": {
+    "ennemis": [
+      {
+        "monstre": "kanniboul_tam",
+        "position": 0
+      },
+      {
+        "monstre": "ricanif",
+        "position": 1
+      },
+      {
+        "monstre": "ivremor",
+        "position": 2
+      },
+      {
+        "monstre": "kanniboul_sarbak",
+        "position": 4
+      }
+    ],
+    "nom": "Passerelle du Bateau"
+  },
+  "cho_boss": {
+    "ennemis": [
+      {
+        "monstre": "le_chouque",
+        "position": 0
+      },
+      {
+        "monstre": "kanniboul_ebil",
+        "position": 1
+      },
+      {
+        "monstre": "ivremor",
+        "position": 4
+      }
+    ],
+    "nom": "Donjon : Le Chouque & Kanniboul Ebil"
+  },
+  "cho_elite": {
+    "ennemis": [
+      {
+        "monstre": "kanniboul_ark",
+        "position": 0
+      },
+      {
+        "monstre": "kanniboul_eth",
+        "position": 1
+      },
+      {
+        "monstre": "kanniboul_jav",
+        "position": 2
+      },
+      {
+        "monstre": "kanniboul_tam",
+        "position": 4
+      },
+      {
+        "monstre": "kanniboul_sarbak",
+        "position": 5
+      }
+    ],
+    "nom": "Le grand tam-tam"
+  },
+  "combat_1": {
+    "ennemis": [
+      {
+        "monstre": "tournesol_sauvage",
+        "position": 0
+      },
+      {
+        "monstre": "pissenlit_diabolique",
+        "position": 1
+      }
+    ],
+    "nom": "Parterre hostile"
+  },
+  "combat_2": {
+    "ennemis": [
+      {
+        "monstre": "rose_demoniaque",
+        "position": 0
+      },
+      {
+        "monstre": "tournesol_sauvage",
+        "position": 1
+      },
+      {
+        "monstre": "pissenlit_diabolique",
+        "position": 4
+      }
+    ],
+    "nom": "Roseraie maudite"
+  },
+  "combat_3": {
+    "ennemis": [
+      {
+        "monstre": "epouvanteur",
+        "position": 0
+      },
+      {
+        "monstre": "pissenlit_diabolique",
+        "position": 1
+      },
+      {
+        "monstre": "rose_demoniaque",
+        "position": 2
+      }
+    ],
+    "nom": "Épouvante"
+  },
+  "combat_elite": {
+    "ennemis": [
+      {
+        "monstre": "epouvanteur",
+        "position": 0
+      },
+      {
+        "monstre": "rose_demoniaque",
+        "position": 1
+      },
+      {
+        "monstre": "tournesol_sauvage",
+        "position": 2
+      },
+      {
+        "monstre": "pissenlit_diabolique",
+        "position": 3
+      }
+    ],
+    "nom": "Jardin déchaîné (dur)"
+  },
+  "fan_1": {
+    "ennemis": [
+      {
+        "monstre": "gargrouille",
+        "position": 0
+      },
+      {
+        "monstre": "kwoan",
+        "position": 1
+      }
+    ],
+    "nom": "Couloir qui grince"
+  },
+  "fan_2": {
+    "ennemis": [
+      {
+        "monstre": "vampire",
+        "position": 0
+      },
+      {
+        "monstre": "gargrouille",
+        "position": 1
+      },
+      {
+        "monstre": "kwoan",
+        "position": 4
+      }
+    ],
+    "nom": "Chandelles bleues"
+  },
+  "fan_3": {
+    "ennemis": [
+      {
+        "monstre": "tofu_malefique",
+        "position": 0
+      },
+      {
+        "monstre": "vampire",
+        "position": 1
+      },
+      {
+        "monstre": "kwoan",
+        "position": 2
+      }
+    ],
+    "nom": "Sarabande spectrale"
+  },
+  "fan_boss": {
+    "ennemis": [
+      {
+        "monstre": "boostache",
+        "position": 0
+      },
+      {
+        "monstre": "boostache_prepubere",
+        "position": 1
+      },
+      {
+        "monstre": "gargrouille",
+        "position": 2
+      }
+    ],
+    "nom": "Donjon : Boostache"
+  },
+  "fan_elite": {
+    "ennemis": [
+      {
+        "monstre": "boostache_prepubere",
+        "position": 0
+      },
+      {
+        "monstre": "vampire",
+        "position": 1
+      },
+      {
+        "monstre": "gargrouille",
+        "position": 2
+      },
+      {
+        "monstre": "kwoan",
+        "position": 4
+      }
+    ],
+    "nom": "Nuit de poltergeists (dur)"
+  },
+  "frg_1": {
+    "ennemis": [
+      {
+        "monstre": "forgeron_sombre",
+        "position": 0
+      },
+      {
+        "monstre": "mineur_sombre",
+        "position": 1
+      }
+    ],
+    "nom": "Atelier maudit"
+  },
+  "frg_2": {
+    "ennemis": [
+      {
+        "monstre": "boulanger_sombre",
+        "position": 0
+      },
+      {
+        "monstre": "mineur_sombre",
+        "position": 1
+      },
+      {
+        "monstre": "bandit_roublard",
+        "position": 4
+      }
+    ],
+    "nom": "Fournée sombre"
+  },
+  "frg_3": {
+    "ennemis": [
+      {
+        "monstre": "bandit_roublard",
+        "position": 0
+      },
+      {
+        "monstre": "forgeron_sombre",
+        "position": 1
+      },
+      {
+        "monstre": "boulanger_sombre",
+        "position": 2
+      }
+    ],
+    "nom": "Embuscade de roublards"
+  },
+  "frg_boss": {
+    "ennemis": [
+      {
+        "monstre": "coffre_forgerons",
+        "position": 0
+      },
+      {
+        "monstre": "forgeron_sombre",
+        "position": 1
+      },
+      {
+        "monstre": "bandit_roublard",
+        "position": 2
+      },
+      {
+        "monstre": "boulanger_sombre",
+        "position": 4
+      }
+    ],
+    "nom": "Donjon : Coffre des Forgerons"
+  },
+  "frg_elite": {
+    "ennemis": [
+      {
+        "monstre": "forgeron_sombre",
+        "position": 0
+      },
+      {
+        "monstre": "bandit_roublard",
+        "position": 1
+      },
+      {
+        "monstre": "boulanger_sombre",
+        "position": 2
+      },
+      {
+        "monstre": "mineur_sombre",
+        "position": 3
+      }
+    ],
+    "nom": "Forge en fusion (dur)"
+  },
+  "gel_1": {
+    "ennemis": [
+      {
+        "monstre": "gelee_fraise",
+        "position": 0
+      },
+      {
+        "monstre": "gelee_bleuet",
+        "position": 1
+      }
+    ],
+    "nom": "Deux saveurs"
+  },
+  "gel_2": {
+    "ennemis": [
+      {
+        "monstre": "gelee_menthe",
+        "position": 0
+      },
+      {
+        "monstre": "gelee_citron",
+        "position": 1
+      },
+      {
+        "monstre": "gelee_fraise",
+        "position": 4
+      }
+    ],
+    "nom": "Le buffet"
+  },
+  "gel_3": {
+    "ennemis": [
+      {
+        "monstre": "gelee_bleuet",
+        "position": 0
+      },
+      {
+        "monstre": "gelee_menthe",
+        "position": 1
+      },
+      {
+        "monstre": "gelee_citron",
+        "position": 2
+      }
+    ],
+    "nom": "Dégustation forcée"
+  },
+  "gel_boss_bleuet_citron": {
+    "ennemis": [
+      {
+        "monstre": "gelee_royale_bleuet",
+        "position": 0
+      },
+      {
+        "monstre": "gelee_royale_citron",
+        "position": 1
+      },
+      {
+        "monstre": "gelee_fraise",
+        "position": 4
+      },
+      {
+        "monstre": "gelee_menthe",
+        "position": 5
+      }
+    ],
+    "nom": "Donjon : Gelées Royales Bleuet & Citron"
+  },
+  "gel_boss_bleuet_menthe": {
+    "ennemis": [
+      {
+        "monstre": "gelee_royale_bleuet",
+        "position": 0
+      },
+      {
+        "monstre": "gelee_royale_menthe",
+        "position": 1
+      },
+      {
+        "monstre": "gelee_fraise",
+        "position": 4
+      },
+      {
+        "monstre": "gelee_citron",
+        "position": 5
+      }
+    ],
+    "nom": "Donjon : Gelées Royales Bleuet & Menthe"
+  },
+  "gel_boss_fraise_bleuet": {
+    "ennemis": [
+      {
+        "monstre": "gelee_royale_fraise",
+        "position": 0
+      },
+      {
+        "monstre": "gelee_royale_bleuet",
+        "position": 1
+      },
+      {
+        "monstre": "gelee_menthe",
+        "position": 4
+      },
+      {
+        "monstre": "gelee_citron",
+        "position": 5
+      }
+    ],
+    "nom": "Donjon : Gelées Royales Fraise & Bleuet"
+  },
+  "gel_boss_fraise_citron": {
+    "ennemis": [
+      {
+        "monstre": "gelee_royale_fraise",
+        "position": 0
+      },
+      {
+        "monstre": "gelee_royale_citron",
+        "position": 1
+      },
+      {
+        "monstre": "gelee_bleuet",
+        "position": 4
+      },
+      {
+        "monstre": "gelee_menthe",
+        "position": 5
+      }
+    ],
+    "nom": "Donjon : Gelées Royales Fraise & Citron"
+  },
+  "gel_boss_fraise_menthe": {
+    "ennemis": [
+      {
+        "monstre": "gelee_royale_fraise",
+        "position": 0
+      },
+      {
+        "monstre": "gelee_royale_menthe",
+        "position": 1
+      },
+      {
+        "monstre": "gelee_bleuet",
+        "position": 4
+      },
+      {
+        "monstre": "gelee_citron",
+        "position": 5
+      }
+    ],
+    "nom": "Donjon : Gelées Royales Fraise & Menthe"
+  },
+  "gel_boss_menthe_citron": {
+    "ennemis": [
+      {
+        "monstre": "gelee_royale_menthe",
+        "position": 0
+      },
+      {
+        "monstre": "gelee_royale_citron",
+        "position": 1
+      },
+      {
+        "monstre": "gelee_fraise",
+        "position": 4
+      },
+      {
+        "monstre": "gelee_bleuet",
+        "position": 5
+      }
+    ],
+    "nom": "Donjon : Gelées Royales Menthe & Citron"
+  },
+  "gel_elite": {
+    "ennemis": [
+      {
+        "monstre": "gelee_fraise",
+        "position": 0
+      },
+      {
+        "monstre": "gelee_bleuet",
+        "position": 1
+      },
+      {
+        "monstre": "gelee_menthe",
+        "position": 2
+      },
+      {
+        "monstre": "gelee_citron",
+        "position": 4
+      }
+    ],
+    "nom": "Toutes les saveurs"
+  },
+  "gob_1": {
+    "ennemis": [
+      {
+        "monstre": "gobichon",
+        "position": 0
+      },
+      {
+        "monstre": "gobet",
+        "position": 1
+      }
+    ],
+    "nom": "Cour de récré"
+  },
+  "gob_2": {
+    "ennemis": [
+      {
+        "monstre": "gobichon",
+        "position": 0
+      },
+      {
+        "monstre": "gobet",
+        "position": 1
+      },
+      {
+        "monstre": "gobaliste",
+        "position": 4
+      }
+    ],
+    "nom": "Leçon de bagarre"
+  },
+  "gob_3": {
+    "ennemis": [
+      {
+        "monstre": "gob_trotteur",
+        "position": 0
+      },
+      {
+        "monstre": "gobichon",
+        "position": 1
+      },
+      {
+        "monstre": "gobet",
+        "position": 2
+      }
+    ],
+    "nom": "Sprint des trotteurs"
+  },
+  "gob_boss": {
+    "ennemis": [
+      {
+        "monstre": "directeur_grunob",
+        "position": 0
+      },
+      {
+        "monstre": "gobaladee",
+        "position": 1
+      },
+      {
+        "monstre": "gobichon",
+        "position": 2
+      }
+    ],
+    "nom": "Donjon : Directeur Grunob"
+  },
+  "gob_elite": {
+    "ennemis": [
+      {
+        "monstre": "gobaladee",
+        "position": 0
+      },
+      {
+        "monstre": "gobichon",
+        "position": 1
+      },
+      {
+        "monstre": "gob_trotteur",
+        "position": 2
+      },
+      {
+        "monstre": "gobaliste",
+        "position": 4
+      }
+    ],
+    "nom": "Examen d'arène (dur)"
+  },
+  "hsk_1": {
+    "ennemis": [
+      {
+        "monstre": "corailleur",
+        "position": 0
+      },
+      {
+        "monstre": "crustorail_kouracao",
+        "position": 1
+      }
+    ],
+    "nom": "Marée montante"
+  },
+  "hsk_2": {
+    "ennemis": [
+      {
+        "monstre": "crustorail_morito",
+        "position": 0
+      },
+      {
+        "monstre": "palmifleur_passaoh",
+        "position": 1
+      },
+      {
+        "monstre": "crustorail_passaoh",
+        "position": 4
+      }
+    ],
+    "nom": "Pinces au récif"
+  },
+  "hsk_3": {
+    "ennemis": [
+      {
+        "monstre": "palmifleur_malibout",
+        "position": 0
+      },
+      {
+        "monstre": "crustorail_malibout",
+        "position": 1
+      },
+      {
+        "monstre": "palmifleur_kouracao",
+        "position": 4
+      }
+    ],
+    "nom": "Banc de coraux"
+  },
+  "hsk_boss": {
+    "ennemis": [
+      {
+        "monstre": "corailleur_magistral",
+        "position": 0
+      },
+      {
+        "monstre": "palmifleur_morito",
+        "position": 1
+      },
+      {
+        "monstre": "corailleur",
+        "position": 4
+      }
+    ],
+    "nom": "Donjon : Corailleur Magistral"
+  },
+  "hsk_elite": {
+    "ennemis": [
+      {
+        "monstre": "palmifleur_morito",
+        "position": 0
+      },
+      {
+        "monstre": "crustorail_morito",
+        "position": 1
+      },
+      {
+        "monstre": "palmifleur_malibout",
+        "position": 2
+      },
+      {
+        "monstre": "corailleur",
+        "position": 4
+      }
+    ],
+    "nom": "Fond de la grotte (dur)"
+  },
+  "inc_1": {
+    "ennemis": [
+      {
+        "monstre": "chafer_debutant",
+        "position": 0
+      },
+      {
+        "monstre": "chafer_eclaireur",
+        "position": 4
+      }
+    ],
+    "nom": "Chafers égarés"
+  },
+  "inc_2": {
+    "ennemis": [
+      {
+        "monstre": "chafer_furtif",
+        "position": 0
+      },
+      {
+        "monstre": "chafer_debutant",
+        "position": 1
+      },
+      {
+        "monstre": "chafer_eclaireur",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille de la crypte"
+  },
+  "inc_3": {
+    "ennemis": [
+      {
+        "monstre": "chafer_piquier",
+        "position": 0
+      },
+      {
+        "monstre": "chafer_furtif",
+        "position": 1
+      },
+      {
+        "monstre": "chafer_debutant",
+        "position": 2
+      }
+    ],
+    "nom": "Embuscade morte-vivante"
+  },
+  "inc_boss": {
+    "ennemis": [
+      {
+        "monstre": "kardorim",
+        "position": 0
+      },
+      {
+        "monstre": "sergent_chafer",
+        "position": 1
+      }
+    ],
+    "nom": "Donjon : Kardorim"
+  },
+  "inc_elite": {
+    "ennemis": [
+      {
+        "monstre": "chafer_piquier",
+        "position": 0
+      },
+      {
+        "monstre": "chafer_furtif",
+        "position": 1
+      },
+      {
+        "monstre": "chafer_eclaireur",
+        "position": 2
+      },
+      {
+        "monstre": "sergent_chafer",
+        "position": 4
+      }
+    ],
+    "nom": "Garde de la crypte (dur)"
+  },
+  "kan_1": {
+    "ennemis": [
+      {
+        "monstre": "pyrasite",
+        "position": 0
+      },
+      {
+        "monstre": "mirgrillon",
+        "position": 1
+      }
+    ],
+    "nom": "Grenier infesté"
+  },
+  "kan_2": {
+    "ennemis": [
+      {
+        "monstre": "ceglumen",
+        "position": 0
+      },
+      {
+        "monstre": "mirgrillon",
+        "position": 1
+      },
+      {
+        "monstre": "cafarcher",
+        "position": 4
+      }
+    ],
+    "nom": "Lueurs malsaines"
+  },
+  "kan_3": {
+    "ennemis": [
+      {
+        "monstre": "pyrasite",
+        "position": 0
+      },
+      {
+        "monstre": "ceglumen",
+        "position": 1
+      },
+      {
+        "monstre": "cafarcher",
+        "position": 4
+      }
+    ],
+    "nom": "Vermine en embuscade"
+  },
+  "kan_boss": {
+    "ennemis": [
+      {
+        "monstre": "kankreblath",
+        "position": 0
+      },
+      {
+        "monstre": "sakarien",
+        "position": 1
+      },
+      {
+        "monstre": "cafarcher",
+        "position": 4
+      }
+    ],
+    "nom": "Donjon : Kankreblath"
+  },
+  "kan_elite": {
+    "ennemis": [
+      {
+        "monstre": "sakarien",
+        "position": 0
+      },
+      {
+        "monstre": "pyrasite",
+        "position": 1
+      },
+      {
+        "monstre": "ceglumen",
+        "position": 2
+      },
+      {
+        "monstre": "cafarcher",
+        "position": 4
+      }
+    ],
+    "nom": "Nid de la vermine (dur)"
+  },
+  "khz_1": {
+    "ennemis": [
+      {
+        "monstre": "dragoeuf_calcaire",
+        "position": 0
+      },
+      {
+        "monstre": "dragoss_proteiforme",
+        "position": 4
+      }
+    ],
+    "nom": "Couvée surveillée"
+  },
+  "khz_2": {
+    "ennemis": [
+      {
+        "monstre": "dragoss_ardoise",
+        "position": 0
+      },
+      {
+        "monstre": "dragoeuf_ardoise",
+        "position": 1
+      },
+      {
+        "monstre": "dragoss_proteiforme",
+        "position": 4
+      }
+    ],
+    "nom": "L'adulte et l'œuf"
+  },
+  "khz_3": {
+    "ennemis": [
+      {
+        "monstre": "dragoss_charbon",
+        "position": 0
+      },
+      {
+        "monstre": "dragoeuf_charbon",
+        "position": 1
+      },
+      {
+        "monstre": "dragoeuf_argile",
+        "position": 2
+      },
+      {
+        "monstre": "dragoss_proteiforme",
+        "position": 4
+      }
+    ],
+    "nom": "Le nid de charbon"
+  },
+  "khz_boss": {
+    "ennemis": [
+      {
+        "monstre": "kharnozor",
+        "position": 0
+      },
+      {
+        "monstre": "draegnerys",
+        "position": 1
+      },
+      {
+        "monstre": "dragoss_proteiforme",
+        "position": 4
+      }
+    ],
+    "nom": "Donjon : Kharnozor & Draegnerys"
+  },
+  "khz_elite": {
+    "ennemis": [
+      {
+        "monstre": "dragoss_ardoise",
+        "position": 0
+      },
+      {
+        "monstre": "dragoss_charbon",
+        "position": 1
+      },
+      {
+        "monstre": "dragoeuf_calcaire",
+        "position": 2
+      },
+      {
+        "monstre": "dragoeuf_argile",
+        "position": 4
+      },
+      {
+        "monstre": "dragoss_proteiforme",
+        "position": 5
+      }
+    ],
+    "nom": "La ponte gardée"
+  },
+  "kwa_1": {
+    "ennemis": [
+      {
+        "monstre": "kwakere_de_vent",
+        "position": 0
+      },
+      {
+        "monstre": "kwak_de_feu",
+        "position": 1
+      }
+    ],
+    "nom": "Plumes élémentaires"
+  },
+  "kwa_2": {
+    "ennemis": [
+      {
+        "monstre": "kwak_d_eau",
+        "position": 0
+      },
+      {
+        "monstre": "kwak_de_vent",
+        "position": 1
+      },
+      {
+        "monstre": "kwakere_de_flamme",
+        "position": 4
+      }
+    ],
+    "nom": "Duo des extrêmes"
+  },
+  "kwa_3": {
+    "ennemis": [
+      {
+        "monstre": "kwak_de_vent",
+        "position": 0
+      },
+      {
+        "monstre": "kwak_de_terre",
+        "position": 1
+      },
+      {
+        "monstre": "kwakere_de_glace",
+        "position": 2
+      }
+    ],
+    "nom": "Tempête au nid"
+  },
+  "kwa_boss": {
+    "ennemis": [
+      {
+        "monstre": "kwakwa",
+        "position": 0
+      },
+      {
+        "monstre": "kwakere_de_terre",
+        "position": 1
+      },
+      {
+        "monstre": "kwak_d_eau",
+        "position": 4
+      }
+    ],
+    "nom": "Donjon : Kwakwa"
+  },
+  "kwa_elite": {
+    "ennemis": [
+      {
+        "monstre": "kwakere_de_terre",
+        "position": 0
+      },
+      {
+        "monstre": "kwak_de_terre",
+        "position": 1
+      },
+      {
+        "monstre": "kwak_de_feu",
+        "position": 2
+      },
+      {
+        "monstre": "kwak_d_eau",
+        "position": 4
+      }
+    ],
+    "nom": "Les quatre vents (dur)"
+  },
+  "lab_1": {
+    "ennemis": [
+      {
+        "monstre": "scorbute",
+        "position": 0
+      },
+      {
+        "monstre": "croc_gland",
+        "position": 1
+      }
+    ],
+    "nom": "Cobayes échappés"
+  },
+  "lab_2": {
+    "ennemis": [
+      {
+        "monstre": "macien",
+        "position": 0
+      },
+      {
+        "monstre": "crowneille",
+        "position": 1
+      },
+      {
+        "monstre": "scorbute",
+        "position": 4
+      }
+    ],
+    "nom": "Paillasse renversée"
+  },
+  "lab_3": {
+    "ennemis": [
+      {
+        "monstre": "macien",
+        "position": 0
+      },
+      {
+        "monstre": "kolerat",
+        "position": 1
+      },
+      {
+        "monstre": "croc_gland",
+        "position": 2
+      },
+      {
+        "monstre": "crowneille",
+        "position": 4
+      }
+    ],
+    "nom": "Fuite de cultures"
+  },
+  "lab_boss": {
+    "ennemis": [
+      {
+        "monstre": "nelween",
+        "position": 0
+      },
+      {
+        "monstre": "kolerat",
+        "position": 1
+      },
+      {
+        "monstre": "croc_gland",
+        "position": 4
+      }
+    ],
+    "nom": "Donjon : Nelween"
+  },
+  "lab_elite": {
+    "ennemis": [
+      {
+        "monstre": "kolerat",
+        "position": 0
+      },
+      {
+        "monstre": "scorbute",
+        "position": 1
+      },
+      {
+        "monstre": "crowneille",
+        "position": 4
+      }
+    ],
+    "nom": "Le vecteur"
+  },
+  "lrv_1": {
+    "ennemis": [
+      {
+        "monstre": "larve_bleue",
+        "position": 0
+      },
+      {
+        "monstre": "larve_orange",
+        "position": 1
+      }
+    ],
+    "nom": "Reptation gluante"
+  },
+  "lrv_2": {
+    "ennemis": [
+      {
+        "monstre": "larve_verte",
+        "position": 0
+      },
+      {
+        "monstre": "larve_saphir",
+        "position": 1
+      },
+      {
+        "monstre": "larve_rubis",
+        "position": 2
+      }
+    ],
+    "nom": "Couvée multicolore"
+  },
+  "lrv_3": {
+    "ennemis": [
+      {
+        "monstre": "larve_champetre",
+        "position": 0
+      },
+      {
+        "monstre": "larve_emeraude",
+        "position": 1
+      },
+      {
+        "monstre": "larve_jaune",
+        "position": 2
+      }
+    ],
+    "nom": "Marée rampante"
+  },
+  "lrv_boss": {
+    "ennemis": [
+      {
+        "monstre": "shin_larve",
+        "position": 0
+      },
+      {
+        "monstre": "larve_doree",
+        "position": 1
+      },
+      {
+        "monstre": "larve_emeraude",
+        "position": 2
+      }
+    ],
+    "nom": "Donjon : Shin Larve"
+  },
+  "lrv_elite": {
+    "ennemis": [
+      {
+        "monstre": "larve_doree",
+        "position": 0
+      },
+      {
+        "monstre": "larve_emeraude",
+        "position": 1
+      },
+      {
+        "monstre": "larve_saphir",
+        "position": 2
+      },
+      {
+        "monstre": "larve_rubis",
+        "position": 3
+      }
+    ],
+    "nom": "Couvain doré (dur)"
+  },
+  "mlo_1": {
+    "ennemis": [
+      {
+        "monstre": "mulou",
+        "position": 0
+      },
+      {
+        "monstre": "mulounoke",
+        "position": 4
+      }
+    ],
+    "nom": "Odeur de sang"
+  },
+  "mlo_2": {
+    "ennemis": [
+      {
+        "monstre": "muloubard",
+        "position": 0
+      },
+      {
+        "monstre": "cocholou",
+        "position": 1
+      },
+      {
+        "monstre": "mulounoke",
+        "position": 4
+      }
+    ],
+    "nom": "Les rabatteurs"
+  },
+  "mlo_3": {
+    "ennemis": [
+      {
+        "monstre": "mergranlou",
+        "position": 0
+      },
+      {
+        "monstre": "mulou",
+        "position": 1
+      },
+      {
+        "monstre": "cocholou",
+        "position": 2
+      },
+      {
+        "monstre": "mulounoke",
+        "position": 4
+      }
+    ],
+    "nom": "La battue"
+  },
+  "mlo_boss": {
+    "ennemis": [
+      {
+        "monstre": "meulou",
+        "position": 0
+      },
+      {
+        "monstre": "muloubard",
+        "position": 1
+      },
+      {
+        "monstre": "mergranlou",
+        "position": 4
+      }
+    ],
+    "nom": "Donjon : Meulou"
+  },
+  "mlo_elite": {
+    "ennemis": [
+      {
+        "monstre": "muloubard",
+        "position": 0
+      },
+      {
+        "monstre": "cocholou",
+        "position": 1
+      },
+      {
+        "monstre": "mergranlou",
+        "position": 2
+      },
+      {
+        "monstre": "mulou",
+        "position": 4
+      },
+      {
+        "monstre": "mulounoke",
+        "position": 5
+      }
+    ],
+    "nom": "La meute au complet"
+  },
+  "moo_1": {
+    "ennemis": [
+      {
+        "monstre": "trukikol",
+        "position": 0
+      },
+      {
+        "monstre": "dostrogo",
+        "position": 4
+      }
+    ],
+    "nom": "Racines de l'Arbre"
+  },
+  "moo_2": {
+    "ennemis": [
+      {
+        "monstre": "gloutovore",
+        "position": 0
+      },
+      {
+        "monstre": "domoizelle",
+        "position": 1
+      },
+      {
+        "monstre": "dostrogo",
+        "position": 4
+      }
+    ],
+    "nom": "Sève montante"
+  },
+  "moo_3": {
+    "ennemis": [
+      {
+        "monstre": "fourbasse",
+        "position": 0
+      },
+      {
+        "monstre": "trukikol",
+        "position": 1
+      },
+      {
+        "monstre": "gloutovore",
+        "position": 2
+      },
+      {
+        "monstre": "dostrogo",
+        "position": 4
+      }
+    ],
+    "nom": "La haute branche"
+  },
+  "moo_boss": {
+    "ennemis": [
+      {
+        "monstre": "moon",
+        "position": 0
+      },
+      {
+        "monstre": "gloutovore",
+        "position": 1
+      },
+      {
+        "monstre": "fourbasse",
+        "position": 4
+      }
+    ],
+    "nom": "Donjon : Moon"
+  },
+  "moo_elite": {
+    "ennemis": [
+      {
+        "monstre": "gloutovore",
+        "position": 0
+      },
+      {
+        "monstre": "fourbasse",
+        "position": 1
+      },
+      {
+        "monstre": "domoizelle",
+        "position": 2
+      },
+      {
+        "monstre": "trukikol",
+        "position": 4
+      },
+      {
+        "monstre": "dostrogo",
+        "position": 5
+      }
+    ],
+    "nom": "La canopée"
+  },
+  "por_1": {
+    "ennemis": [
+      {
+        "monstre": "porsalu",
+        "position": 0
+      },
+      {
+        "monstre": "gorgouille",
+        "position": 4
+      }
+    ],
+    "nom": "Souille de l'entrée"
+  },
+  "por_2": {
+    "ennemis": [
+      {
+        "monstre": "berger_porkass",
+        "position": 0
+      },
+      {
+        "monstre": "cavalier_porkass",
+        "position": 1
+      },
+      {
+        "monstre": "gorgouille",
+        "position": 4
+      }
+    ],
+    "nom": "Le troupeau"
+  },
+  "por_3": {
+    "ennemis": [
+      {
+        "monstre": "cochon_de_farle",
+        "position": 0
+      },
+      {
+        "monstre": "don_dorgan",
+        "position": 1
+      },
+      {
+        "monstre": "don_duss_ang",
+        "position": 2
+      },
+      {
+        "monstre": "gorgouille",
+        "position": 4
+      }
+    ],
+    "nom": "Les deux Don"
+  },
+  "por_boss": {
+    "ennemis": [
+      {
+        "monstre": "dragon_cochon",
+        "position": 0
+      },
+      {
+        "monstre": "cochon_de_farle",
+        "position": 1
+      },
+      {
+        "monstre": "don_dorgan",
+        "position": 4
+      }
+    ],
+    "nom": "Donjon : Dragon Cochon"
+  },
+  "por_elite": {
+    "ennemis": [
+      {
+        "monstre": "cochon_de_farle",
+        "position": 0
+      },
+      {
+        "monstre": "cavalier_porkass",
+        "position": 1
+      },
+      {
+        "monstre": "don_duss_ang",
+        "position": 2
+      },
+      {
+        "monstre": "gorgouille",
+        "position": 4
+      },
+      {
+        "monstre": "porsalu",
+        "position": 5
+      }
+    ],
+    "nom": "La grande auge"
+  },
+  "roc_1": {
+    "ennemis": [
+      {
+        "monstre": "craqueleur",
+        "position": 0
+      },
+      {
+        "monstre": "craqueboule",
+        "position": 1
+      }
+    ],
+    "nom": "Éboulis"
+  },
+  "roc_2": {
+    "ennemis": [
+      {
+        "monstre": "craqueleur_des_plaines",
+        "position": 0
+      },
+      {
+        "monstre": "craqueboule",
+        "position": 1
+      },
+      {
+        "monstre": "craqueleur",
+        "position": 4
+      }
+    ],
+    "nom": "Plateau venteux"
+  },
+  "roc_3": {
+    "ennemis": [
+      {
+        "monstre": "craquelourd",
+        "position": 0
+      },
+      {
+        "monstre": "craqueleur",
+        "position": 1
+      },
+      {
+        "monstre": "craqueboule",
+        "position": 4
+      }
+    ],
+    "nom": "Le surplomb"
+  },
+  "roc_boss": {
+    "ennemis": [
+      {
+        "monstre": "craqueleur_legendaire",
+        "position": 0
+      },
+      {
+        "monstre": "craquelourd",
+        "position": 1
+      },
+      {
+        "monstre": "craqueleur_des_plaines",
+        "position": 4
+      }
+    ],
+    "nom": "Donjon : Craqueleur Légendaire"
+  },
+  "roc_elite": {
+    "ennemis": [
+      {
+        "monstre": "craquelourd",
+        "position": 0
+      },
+      {
+        "monstre": "craqueleur",
+        "position": 1
+      },
+      {
+        "monstre": "craqueleur_des_plaines",
+        "position": 2
+      },
+      {
+        "monstre": "craqueboule",
+        "position": 4
+      }
+    ],
+    "nom": "Le piton"
+  },
+  "scr_1": {
+    "ennemis": [
+      {
+        "monstre": "scarafeuille_rouge",
+        "position": 0
+      },
+      {
+        "monstre": "scarafeuille_bleu",
+        "position": 1
+      }
+    ],
+    "nom": "Duo prismatique"
+  },
+  "scr_2": {
+    "ennemis": [
+      {
+        "monstre": "scarafeuille_vert",
+        "position": 0
+      },
+      {
+        "monstre": "scarafeuille_blanc",
+        "position": 1
+      },
+      {
+        "monstre": "scarafeuille_immature",
+        "position": 4
+      }
+    ],
+    "nom": "Carapaces terreuses"
+  },
+  "scr_3": {
+    "ennemis": [
+      {
+        "monstre": "scarafeuille_rouge",
+        "position": 0
+      },
+      {
+        "monstre": "scarafeuille_vert",
+        "position": 1
+      },
+      {
+        "monstre": "scarafeuille_bleu",
+        "position": 2
+      }
+    ],
+    "nom": "Arc-en-ciel hostile"
+  },
+  "scr_boss": {
+    "ennemis": [
+      {
+        "monstre": "scarabosse_dore",
+        "position": 0
+      },
+      {
+        "monstre": "scarafeuille_noir",
+        "position": 1
+      },
+      {
+        "monstre": "scarafeuille_rouge",
+        "position": 2
+      },
+      {
+        "monstre": "scarafeuille_blanc",
+        "position": 4
+      }
+    ],
+    "nom": "Donjon : Scarabosse Doré"
+  },
+  "scr_elite": {
+    "ennemis": [
+      {
+        "monstre": "scarafeuille_noir",
+        "position": 0
+      },
+      {
+        "monstre": "scarafeuille_rouge",
+        "position": 1
+      },
+      {
+        "monstre": "scarafeuille_blanc",
+        "position": 2
+      },
+      {
+        "monstre": "scarafeuille_bleu",
+        "position": 3
+      }
+    ],
+    "nom": "Essaim chromatique (dur)"
+  },
+  "tai_1": {
+    "ennemis": [
+      {
+        "monstre": "bouftou",
+        "position": 0
+      },
+      {
+        "monstre": "boufton_blanc",
+        "position": 1
+      }
+    ],
+    "nom": "Troupeau de Bouftous"
+  },
+  "tai_2": {
+    "ennemis": [
+      {
+        "monstre": "bouftou_noir",
+        "position": 0
+      },
+      {
+        "monstre": "boufton_noir",
+        "position": 1
+      },
+      {
+        "monstre": "bouftou",
+        "position": 4
+      }
+    ],
+    "nom": "Harde noire"
+  },
+  "tai_3": {
+    "ennemis": [
+      {
+        "monstre": "bouftou",
+        "position": 0
+      },
+      {
+        "monstre": "bouftou_noir",
+        "position": 1
+      },
+      {
+        "monstre": "boufton_blanc",
+        "position": 2
+      }
+    ],
+    "nom": "Charge sauvage"
+  },
+  "tai_boss": {
+    "ennemis": [
+      {
+        "monstre": "bouftou_royal",
+        "position": 0
+      },
+      {
+        "monstre": "chef_de_guerre_bouftou",
+        "position": 1
+      },
+      {
+        "monstre": "bouftou",
+        "position": 2
+      }
+    ],
+    "nom": "Donjon : Bouftou Royal"
+  },
+  "tai_elite": {
+    "ennemis": [
+      {
+        "monstre": "chef_de_guerre_bouftou",
+        "position": 0
+      },
+      {
+        "monstre": "bouftou",
+        "position": 1
+      },
+      {
+        "monstre": "boufton_noir",
+        "position": 2
+      },
+      {
+        "monstre": "boufton_blanc",
+        "position": 3
+      }
+    ],
+    "nom": "Furie ovine (dur)"
+  },
+  "tof_1": {
+    "ennemis": [
+      {
+        "monstre": "tofu",
+        "position": 0
+      },
+      {
+        "monstre": "tofu_noir",
+        "position": 1
+      }
+    ],
+    "nom": "Volée de Tofus"
+  },
+  "tof_2": {
+    "ennemis": [
+      {
+        "monstre": "tofu_noir",
+        "position": 0
+      },
+      {
+        "monstre": "tofukaz",
+        "position": 1
+      },
+      {
+        "monstre": "tofoune",
+        "position": 4
+      }
+    ],
+    "nom": "Nuée noire"
+  },
+  "tof_3": {
+    "ennemis": [
+      {
+        "monstre": "tofukaz",
+        "position": 0
+      },
+      {
+        "monstre": "tofu",
+        "position": 1
+      },
+      {
+        "monstre": "tofu_noir",
+        "position": 2
+      }
+    ],
+    "nom": "Tourbillon de plumes"
+  },
+  "tof_boss": {
+    "ennemis": [
+      {
+        "monstre": "batofu",
+        "position": 0
+      },
+      {
+        "monstre": "tofu_ventripotent",
+        "position": 1
+      },
+      {
+        "monstre": "tofu_noir",
+        "position": 2
+      },
+      {
+        "monstre": "tofukaz",
+        "position": 4
+      }
+    ],
+    "nom": "Donjon : Batofu"
+  },
+  "tof_elite": {
+    "ennemis": [
+      {
+        "monstre": "tofu_mutant",
+        "position": 0
+      },
+      {
+        "monstre": "tofukaz",
+        "position": 1
+      },
+      {
+        "monstre": "tofu_noir",
+        "position": 2
+      },
+      {
+        "monstre": "tofu",
+        "position": 3
+      }
+    ],
+    "nom": "Essaim maudit (dur)"
+  },
+  "wab_1": {
+    "ennemis": [
+      {
+        "monstre": "wabbit",
+        "position": 0
+      },
+      {
+        "monstre": "tiwabbit",
+        "position": 1
+      },
+      {
+        "monstre": "tiwobot",
+        "position": 4
+      }
+    ],
+    "nom": "Terriers creusés"
+  },
+  "wab_2": {
+    "ennemis": [
+      {
+        "monstre": "black_wabbit",
+        "position": 0
+      },
+      {
+        "monstre": "tiwobot",
+        "position": 1
+      },
+      {
+        "monstre": "tiwabbit_kiafin",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille d'usine"
+  },
+  "wab_3": {
+    "ennemis": [
+      {
+        "monstre": "grand_pa_wabbit",
+        "position": 0
+      },
+      {
+        "monstre": "wo_wabbit",
+        "position": 1
+      },
+      {
+        "monstre": "tiwobot",
+        "position": 2
+      },
+      {
+        "monstre": "wabbit",
+        "position": 4
+      }
+    ],
+    "nom": "La garde du Grand Pa"
+  },
+  "wab_boss": {
+    "ennemis": [
+      {
+        "monstre": "wa_wobot",
+        "position": 0
+      },
+      {
+        "monstre": "wa_wabbit",
+        "position": 1
+      },
+      {
+        "monstre": "grand_pa_wabbit",
+        "position": 4
+      }
+    ],
+    "nom": "Donjon : Wa Wabbit & Wa Wobot"
+  },
+  "wab_elite": {
+    "ennemis": [
+      {
+        "monstre": "wobot",
+        "position": 0
+      },
+      {
+        "monstre": "grand_pa_wabbit",
+        "position": 1
+      },
+      {
+        "monstre": "wo_wabbit",
+        "position": 2
+      },
+      {
+        "monstre": "black_wabbit",
+        "position": 4
+      }
+    ],
+    "nom": "Chaîne de montage"
+  }
+}

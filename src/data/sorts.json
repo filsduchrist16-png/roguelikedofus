@@ -1,0 +1,1728 @@
+{
+  "acuite_absolue": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "cooldownTours": 3,
+    "coutPA": 2,
+    "desc": "Le Cra ouvre sa ligne de vue pendant 2 tours : ses tirs de rangée atteignent la rangée arrière même si la rangée avant adverse tient encore.",
+    "effet": {
+      "duree": 2,
+      "stat": "ignoreLigne",
+      "valeur": 1
+    },
+    "id": "acuite_absolue",
+    "nom": "Acuité absolue",
+    "type": "buff"
+  },
+  "aiguille": {
+    "baseMax": 10,
+    "baseMin": 7,
+    "cible": "ennemi_ligne",
+    "coutPA": 2,
+    "desc": "Blesse la cible et l'aiguille pendant 1 tour : chaque Téléfrag qu'elle reçoit la blesse à nouveau. Une fois par cible, deux lancers par tour.",
+    "effet": {
+      "duree": 1,
+      "stat": "aiguille",
+      "valeur": 1
+    },
+    "etatAiguille": true,
+    "id": "aiguille",
+    "maxParCibleParTour": 1,
+    "maxParTour": 2,
+    "nom": "Aiguille",
+    "type": "degats"
+  },
+  "apaisement": {
+    "baseMax": 12,
+    "baseMin": 8,
+    "cible": "soi",
+    "consommeRage": true,
+    "coutPA": 2,
+    "desc": "Consomme toute la Rage accumulée et rend 8 à 12 PV par charge dépensée. Nécessite au moins 1 Rage.",
+    "id": "apaisement",
+    "nom": "Apaisement",
+    "type": "soin"
+  },
+  "attaque_mortelle": {
+    "baseMax": 13,
+    "baseMin": 9,
+    "bonusParChausseTrappe": 0.15,
+    "cible": "ennemi_ligne",
+    "consommeChausseTrappe": true,
+    "coutPA": 4,
+    "desc": "Le plus gros coup du Sram, d'autant plus fort qu'il a déjà fait mouche : +15 % de dégâts par Chausse-Trappe accumulé, puis le compteur repart de zéro.",
+    "id": "attaque_mortelle",
+    "nom": "Attaque Mortelle",
+    "type": "degats"
+  },
+  "bluff": {
+    "baseMax": 11,
+    "baseMin": 7,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "L'Ecaflip frappe dans le pire élément contre la cible ; sur un critique, il enchaîne aussitôt un second coup dans le meilleur. Un seul lancer par tour.",
+    "elementPire": true,
+    "id": "bluff",
+    "maxParTour": 1,
+    "nom": "Bluff",
+    "secondCoupSiCrit": true,
+    "type": "degats"
+  },
+  "bombe_collante": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "ennemi_tous",
+    "coutPA": 2,
+    "desc": "Colle une bombe sur n'importe quel ennemi sans lui infliger de dégâts : jusqu'à 5 par cible, et 2 poses par tour. Elles n'explosent qu'au Kaboom.",
+    "id": "bombe_collante",
+    "maxParTour": 2,
+    "nom": "Bombe collante",
+    "poseBombe": true,
+    "type": "degats"
+  },
+  "bordee": {
+    "baseMax": 22,
+    "baseMin": 16,
+    "cible": "ennemi_tous",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Gourlo le Terrible lâche une bordée de canon : frappe toute la rangée de la cible, même la rangée arrière.",
+    "id": "bordee",
+    "nom": "Bordée",
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "bourrasque_de_pollen": {
+    "baseMax": 19,
+    "baseMin": 14,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "deplaceCible": "arriere",
+    "desc": "Blop Coco Royal souffle une bourrasque de pollen : dégâts et repousse la cible en rangée arrière.",
+    "id": "bourrasque_de_pollen",
+    "nom": "Bourrasque de pollen",
+    "type": "degats"
+  },
+  "brume": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "allie",
+    "cooldownTours": 5,
+    "coutPA": 3,
+    "desc": "Pendant 2 tours, toute la rangée de l'allié ciblé profite de l'esquive du Sram, bonus de position exclu.",
+    "esquivePartageeRangee": {
+      "duree": 2
+    },
+    "id": "brume",
+    "nom": "Brume",
+    "type": "buff"
+  },
+  "bulle": {
+    "baseMax": 11,
+    "baseMin": 8,
+    "cible": "ennemi_tous",
+    "coutPA": 3,
+    "desc": "Atteint n'importe quel ennemi, rangée arrière comprise : dégâts modérés, et la cible ne peut plus viser la rangée arrière pendant 1 tour.",
+    "effet": {
+      "duree": 1,
+      "stat": "tetanise",
+      "valeur": 1
+    },
+    "id": "bulle",
+    "nom": "Bulle",
+    "type": "degats"
+  },
+  "cadran_de_xelor": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "cooldownTours": 4,
+    "coutPA": 4,
+    "desc": "Pendant 2 tours, la rangée du Xélor gagne 2 PA au début de chacun de ses tours.",
+    "id": "cadran_de_xelor",
+    "nom": "Cadran de Xélor",
+    "paParTourLigne": {
+      "duree": 2,
+      "valeur": 2
+    },
+    "type": "buff"
+  },
+  "caprice_royal": {
+    "baseMax": 26,
+    "baseMin": 18,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Wa Wabbit exige le silence : frappe toute la rangée ciblée et lui retire 2 PA.",
+    "id": "caprice_royal",
+    "nom": "Caprice royal",
+    "retraitPA": 2,
+    "retraitPAChance": 1,
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "carapace_doree": {
+    "baseMax": 22,
+    "baseMin": 16,
+    "bouclierRatioDegats": 0.4,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 3,
+    "coutPA": 6,
+    "desc": "Scarabosse Doré, charge cornée : gagne un bouclier de 40 % des dégâts infligés.",
+    "id": "carapace_doree",
+    "nom": "Carapace dorée",
+    "type": "degats"
+  },
+  "changer_ligne": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "changeLigne": true,
+    "cible": "soi",
+    "coutPA": 1,
+    "desc": "Se déplace dans la rangée opposée (avant ↔ arrière), même colonne si possible. Conféré par les Dagues Eurfolles.",
+    "id": "changer_ligne",
+    "nom": "Changer de ligne",
+    "type": "buff"
+  },
+  "charge": {
+    "baseMax": 36,
+    "baseMin": 26,
+    "cible": "ennemi_ligne",
+    "coutPA": 6,
+    "desc": "Attaque dévastatrice du boss.",
+    "id": "charge",
+    "nom": "Charge",
+    "type": "degats"
+  },
+  "chateau_de_cartes": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "bouclierPct": 0.2,
+    "bouclierPctSiCrit": 0.4,
+    "bouclierTours": 2,
+    "cible": "allie",
+    "cooldownTours": 4,
+    "coutPA": 2,
+    "desc": "Couvre un allié d'un bouclier valant 20 % de ses PV max, porté à 40 % si le sort critique. Le bouclier expire au bout de 2 tours.",
+    "id": "chateau_de_cartes",
+    "nom": "Château de cartes",
+    "type": "buff"
+  },
+  "coalition": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "cooldownTours": 3,
+    "coutPA": 2,
+    "desc": "L'Éliotrope et sa rangée gagnent 2 PA au prochain tour, et 3 à partir de 3 portails ouverts.",
+    "id": "coalition",
+    "nom": "Coalition",
+    "paProchainTourLigne": {
+      "seuil": 3,
+      "valeur": 2,
+      "valeurSeuil": 3
+    },
+    "type": "buff"
+  },
+  "colere_de_iop": {
+    "baseMax": 22,
+    "baseMin": 16,
+    "bonusParLancerCombat": 0.5,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 5,
+    "desc": "Très gros dégâts ; +50 % par lancer précédent de ce sort depuis le début du combat.",
+    "id": "colere_de_iop",
+    "nom": "Colère de Iop",
+    "type": "degats"
+  },
+  "colere_royale": {
+    "baseMax": 20,
+    "baseMin": 14,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Bouftou Royal frappe et entre en rage : +15 Force cumulable jusqu'à la fin du combat.",
+    "effetLanceur": {
+      "duree": 99,
+      "stat": "force",
+      "valeur": 15
+    },
+    "id": "colere_royale",
+    "nom": "Colère royale",
+    "type": "degats"
+  },
+  "concentration_de_chakra": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "bonusPieges": 0.5,
+    "bonusPiegesDuree": 1,
+    "cible": "soi",
+    "cooldownTours": 2,
+    "coutPA": 2,
+    "desc": "Pendant 1 tour, les pièges du Sram infligent 50 % de dégâts en plus, y compris ceux qu'un allié fait partir en déplaçant un ennemi.",
+    "id": "concentration_de_chakra",
+    "nom": "Concentration de Chakra",
+    "type": "buff"
+  },
+  "confiture_bouillante": {
+    "baseMax": 24,
+    "baseMin": 18,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Blop Griotte Royal asperge de confiture bouillante : dégâts et brûlure persistante.",
+    "id": "confiture_bouillante",
+    "nom": "Confiture bouillante",
+    "poison": {
+      "degats": 9,
+      "duree": 2
+    },
+    "type": "degats"
+  },
+  "conjuration": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "ennemi_tous",
+    "conjuration": {
+      "duree": 2,
+      "pct": 0.05,
+      "pctSeuil": 0.1,
+      "seuil": 3
+    },
+    "cooldownTours": 1,
+    "coutPA": 2,
+    "desc": "Marque une cible pendant 2 tours : l'Éliotrope et sa rangée lui infligent 5 % de dégâts en plus, et 10 % à partir de 3 portails ouverts.",
+    "id": "conjuration",
+    "nom": "Conjuration",
+    "type": "degats"
+  },
+  "contagion": {
+    "baseMax": 20,
+    "baseMin": 14,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Kolérat, maladie contagieuse : poison (10 par tour, 3 tours) qui passe au combattant derrière si la cible en meurt.",
+    "id": "contagion",
+    "maxParTour": 1,
+    "nom": "Contagion",
+    "poison": {
+      "degats": 10,
+      "duree": 3,
+      "transmet": true
+    },
+    "type": "degats"
+  },
+  "contre_mesure": {
+    "baseMax": 30,
+    "baseMin": 22,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Wa Wobot verrouille son blindage : 50 % de riposte pendant 3 tours.",
+    "effetLanceur": {
+      "duree": 3,
+      "stat": "contre",
+      "valeur": 0.5
+    },
+    "id": "contre_mesure",
+    "nom": "Contre-mesure",
+    "type": "degats"
+  },
+  "coup_de_bec": {
+    "baseMax": 12,
+    "baseMin": 7,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Piqûre rapide.",
+    "id": "coup_de_bec",
+    "nom": "Coup de bec",
+    "type": "degats"
+  },
+  "crachat_de_seve": {
+    "baseMax": 12,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Dégâts simples + poison léger (2t).",
+    "id": "crachat_de_seve",
+    "nom": "Crachat de sève",
+    "poison": {
+      "degats": 4,
+      "duree": 2
+    },
+    "type": "degats"
+  },
+  "croc_de_l_alpha": {
+    "baseMax": 40,
+    "baseMin": 30,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Meulou referme ses crocs sur une seule proie.",
+    "id": "croc_de_l_alpha",
+    "nom": "Croc de l'alpha",
+    "type": "degats"
+  },
+  "dagues_boomerang": {
+    "baseMax": 13,
+    "baseMin": 9,
+    "boomerang": true,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Frappe la cible, puis l'ennemi placé derrière elle, puis la cible à nouveau au retour. Un seul lancer par tour.",
+    "id": "dagues_boomerang",
+    "maxParTour": 1,
+    "nom": "Dagues Boomerang",
+    "type": "degats"
+  },
+  "dard_venimeux": {
+    "baseMax": 20,
+    "baseMin": 14,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Inocule un venin de laboratoire : dégâts et poison (8 par tour, 2 tours).",
+    "id": "dard_venimeux",
+    "nom": "Dard venimeux",
+    "poison": {
+      "degats": 8,
+      "duree": 2
+    },
+    "type": "degats"
+  },
+  "deferlante": {
+    "baseMax": 8,
+    "baseMin": 5,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Touche les 2 premiers ennemis (dégâts faibles) + initiative réduite (1t).",
+    "effet": {
+      "duree": 1,
+      "stat": "initiative",
+      "valeur": -5
+    },
+    "id": "deferlante",
+    "nom": "Déferlante",
+    "rebond": {
+      "bonusParSaut": 0,
+      "sauts": 1
+    },
+    "type": "degats"
+  },
+  "depouille": {
+    "baseMax": 13,
+    "baseMin": 9,
+    "bonusParEnnemiLigneCible": 0.5,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 1,
+    "coutPA": 4,
+    "desc": "Frappe d'autant plus fort que la cible est entourée : +50 % de dégâts par autre ennemi vivant sur sa rangée. Confère 1 Rage.",
+    "id": "depouille",
+    "nom": "Dépouille",
+    "rage": true,
+    "type": "degats"
+  },
+  "durcissement": {
+    "baseMax": 30,
+    "baseMin": 22,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Craqueleur Légendaire se pétrifie en frappant : +12 d'armure pendant 3 tours.",
+    "effetLanceur": {
+      "duree": 3,
+      "stat": "armure",
+      "valeur": 12
+    },
+    "id": "durcissement",
+    "nom": "Durcissement",
+    "type": "degats"
+  },
+  "ecrasement": {
+    "baseMax": 28,
+    "baseMin": 20,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Piétine toute la ligne avant adverse (le soin de zone ne suit plus).",
+    "id": "ecrasement",
+    "nom": "Écrasement",
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "egide": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "allie",
+    "cooldownTours": 4,
+    "coutPA": 4,
+    "desc": "Invoque une garde sur la rangée de l'allié ciblé, avec autant de PV que le Féca. Pendant 2 tours, elle intercepte tous les coups destinés à cette rangée ; aucun sort ne peut la prendre pour cible.",
+    "id": "egide",
+    "invoqueEgide": {
+      "tours": 2
+    },
+    "nom": "Égide",
+    "type": "buff"
+  },
+  "endurance": {
+    "baseMax": 9,
+    "baseMin": 6,
+    "bouclierPortee": {
+      "pct": 0.08,
+      "portee": "soi",
+      "tours": 1
+    },
+    "cible": "ennemi_ligne",
+    "coutPA": 2,
+    "desc": "Dégâts modérés ; bouclier de 8 % des PV max du Iop pour 1 tour, cumulable si relancé dans le même tour.",
+    "id": "endurance",
+    "maxParTour": 2,
+    "nom": "Endurance",
+    "type": "degats"
+  },
+  "enfer_des_zombies": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "cooldownTours": 4,
+    "coutPA": 6,
+    "desc": "Boostache réinvoque un monstre vaincu à 35 % de ses PV.",
+    "id": "enfer_des_zombies",
+    "nom": "L'Enfer des Zombies",
+    "ressuscite": {
+      "pvPct": 0.35
+    },
+    "type": "invocation"
+  },
+  "epouvante": {
+    "baseMax": 15,
+    "baseMin": 10,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "deplaceCible": "toggle",
+    "desc": "L'épouvantail terrifie sa cible, qui bascule dans la rangée opposée.",
+    "id": "epouvante",
+    "nom": "Épouvante",
+    "type": "degats"
+  },
+  "etreinte_de_valkyr": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "cooldownTours": 2,
+    "coutPA": 2,
+    "desc": "Pendant 1 tour, le Forgelance encaisse la moitié des dégâts destinés aux alliés de la rangée arrière.",
+    "id": "etreinte_de_valkyr",
+    "nom": "Étreinte de Valkyr",
+    "redirigeArriere": {
+      "duree": 1,
+      "ratio": 0.5
+    },
+    "type": "buff"
+  },
+  "etreinte_glaciale": {
+    "baseMax": 24,
+    "baseMin": 18,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 3,
+    "coutPA": 6,
+    "desc": "Kardorim glace toute la ligne avant : dégâts et −1 PA au prochain tour de chaque cible.",
+    "id": "etreinte_glaciale",
+    "nom": "Étreinte glaciale",
+    "retraitPA": 1,
+    "retraitPAChance": 1,
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "etreinte_ronces": {
+    "baseMax": 14,
+    "baseMin": 10,
+    "cible": "ennemi_ligne",
+    "coutPA": 5,
+    "desc": "Dégâts modérés à la 1ʳᵉ ligne + initiative réduite (1t).",
+    "effet": {
+      "duree": 1,
+      "stat": "initiative",
+      "valeur": -5
+    },
+    "id": "etreinte_ronces",
+    "nom": "Étreinte des ronces",
+    "rebond": {
+      "bonusParSaut": 0,
+      "sauts": 1
+    },
+    "type": "degats"
+  },
+  "fil_collant": {
+    "baseMax": 25,
+    "baseMin": 19,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Néfileuse englue la cible : elle ne peut plus viser la rangée arrière (1 tour).",
+    "effet": {
+      "duree": 1,
+      "stat": "tetanise",
+      "valeur": 1
+    },
+    "id": "fil_collant",
+    "nom": "Fil collant",
+    "type": "degats"
+  },
+  "fleche_de_recul": {
+    "baseMax": 9,
+    "baseMin": 6,
+    "cible": "ennemi_ligne",
+    "coutPA": 2,
+    "degatsPoussee": true,
+    "desc": "Repousse la cible en rangée arrière ; si quelqu'un occupe la place, il est bousculé et encaisse des dégâts qui ignorent ses résistances. Un seul tir par tour.",
+    "id": "fleche_de_recul",
+    "maxParTour": 1,
+    "nom": "Flèche de recul",
+    "type": "degats"
+  },
+  "fleche_enflammee": {
+    "baseMax": 11,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Frappe la cible, puis éclabousse pour la moitié des dégâts les 2 ennemis les plus proches de la rangée arrière ; si la cible s'y trouve déjà, ses 2 voisins encaissent le coup entier.",
+    "enflammee": true,
+    "id": "fleche_enflammee",
+    "nom": "Flèche enflammée",
+    "type": "degats"
+  },
+  "fleche_punitive": {
+    "baseMax": 14,
+    "baseMin": 10,
+    "bonusParPADispo": 0.08,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Tir qui récompense une barre de PA pleine : +8 % de dégâts par PA disponible avant le lancer.",
+    "id": "fleche_punitive",
+    "nom": "Flèche Punitive",
+    "type": "degats"
+  },
+  "fortification": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "cooldownTours": 2,
+    "coutPA": 2,
+    "desc": "Pendant 2 tours, la rangée avant alliée gagne 10 % de résistance dans les quatre éléments, ou 15 % si deux héros s'y tiennent.",
+    "effetRangeeAlliee": {
+      "effets": [
+        {
+          "duree": 2,
+          "stat": "resAll",
+          "valeur": 0.1,
+          "valeurSiDeuxDevant": 0.15
+        }
+      ],
+      "rangee": "avant"
+    },
+    "id": "fortification",
+    "nom": "Fortification",
+    "type": "buff"
+  },
+  "fumee_de_curare": {
+    "baseMax": 30,
+    "baseMin": 22,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Kanniboul Ebil enfume la rangée : plus aucun soin ni bouclier pendant 2 tours.",
+    "effet": {
+      "duree": 2,
+      "stat": "friction",
+      "valeur": 1
+    },
+    "id": "fumee_de_curare",
+    "nom": "Fumée de curare",
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "gelification": {
+    "baseMax": 21,
+    "baseMin": 15,
+    "bouclierRatioDegats": 0.4,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Gelée Royale se gélifie en frappant : gagne un bouclier valant 40 % des dégâts infligés.",
+    "id": "gelification",
+    "nom": "Gélification",
+    "type": "degats"
+  },
+  "goinfrerie": {
+    "baseMax": 34,
+    "baseMin": 26,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Dragon Cochon engloutit vos préparatifs : retire boucliers et bonus de la cible.",
+    "id": "goinfrerie",
+    "nom": "Goinfrerie",
+    "procAleatoire": [
+      {
+        "dissipePositifs": true
+      }
+    ],
+    "type": "degats"
+  },
+  "griffe_joueuse": {
+    "baseMax": 11,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Dégâts modérés ; toute la rangée de la cible subit 5 % de dégâts critiques en plus pendant 2 tours. Un nouveau lancer rafraîchit la durée sans doubler l'effet.",
+    "effetLigneCible": {
+      "duree": 2,
+      "stat": "degatsCritSubis",
+      "valeur": 0.05
+    },
+    "id": "griffe_joueuse",
+    "nom": "Griffe joueuse",
+    "type": "degats"
+  },
+  "grignotage": {
+    "baseMax": 3,
+    "baseMin": 2,
+    "cible": "ennemi_ligne",
+    "coutPA": 1,
+    "desc": "Petite morsure d'appoint, pour finir un tour entamé.",
+    "id": "grignotage",
+    "nom": "Grignotage",
+    "type": "degats"
+  },
+  "hydra": {
+    "baseMax": 12,
+    "baseMin": 8,
+    "bouclierParEnnemiTouche": 6,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Balaye la rangée de la cible, ou celle de la lance ; le Forgelance gagne 6 de bouclier par ennemi touché. Un seul lancer par tour.",
+    "id": "hydra",
+    "maxParTour": 1,
+    "nom": "Hydra",
+    "type": "degats",
+    "zoneLance": true
+  },
+  "jormun": {
+    "baseMax": 12,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Balaye la rangée de la cible, ou celle de la lance ; lancé sur une lance plantée en rangée arrière, il frappe tous les ennemis à la fois. Un seul lancer par tour.",
+    "id": "jormun",
+    "maxParTour": 1,
+    "nom": "Jormun",
+    "tousSiLanceArriere": true,
+    "type": "degats",
+    "zoneLance": true
+  },
+  "kaboom": {
+    "baseMax": 12,
+    "baseMin": 8,
+    "cible": "soi",
+    "coutPA": 3,
+    "desc": "Fait sauter toutes les bombes posées : chacune inflige ses dégâts à son porteur et la moitié au reste de sa rangée.",
+    "id": "kaboom",
+    "kaboom": true,
+    "nom": "Kaboom",
+    "type": "degats"
+  },
+  "lame_liquide": {
+    "baseMax": 22,
+    "baseMin": 16,
+    "cible": "ennemi_ligne",
+    "coutPA": 5,
+    "desc": "Gros dégâts mono-cible.",
+    "id": "lame_liquide",
+    "nom": "Lame liquide",
+    "type": "degats"
+  },
+  "lance": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "ennemi_tous",
+    "coutPA": 1,
+    "desc": "Plante la lance dans la rangée de la cible. Elle encaisse 2 coups avant de se briser, et sa destruction laisse un bouclier au Forgelance. Une seule lance vivante à la fois.",
+    "id": "lance",
+    "invoqueLance": true,
+    "maxParTour": 2,
+    "nom": "Lance",
+    "type": "buff"
+  },
+  "langue_rapeuse": {
+    "baseMax": 9,
+    "baseMin": 5,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Dégâts modérés ; l'allié le plus blessé de la rangée avant récupère 65 % des dégâts infligés. Deux lancers par tour au maximum.",
+    "id": "langue_rapeuse",
+    "maxParTour": 2,
+    "nom": "Langue râpeuse",
+    "soinAvantBlesseRatio": 0.65,
+    "type": "degats"
+  },
+  "machoire_du_coffre": {
+    "baseMax": 24,
+    "baseMin": 18,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Coffre des Forgerons happe violemment puis se referme : +30 % de résistances (1t).",
+    "effetLanceur": {
+      "duree": 1,
+      "stat": "resAll",
+      "valeur": 0.3
+    },
+    "id": "machoire_du_coffre",
+    "nom": "Mâchoire du coffre",
+    "type": "degats"
+  },
+  "maree_d_encre": {
+    "baseMax": 23,
+    "baseMin": 17,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Blop Indigo Royal noie la cible d'encre : dégâts et −15 % de dégâts infligés (2t).",
+    "effet": {
+      "duree": 2,
+      "stat": "degatsInfliges",
+      "valeur": -0.15
+    },
+    "id": "maree_d_encre",
+    "nom": "Marée d'encre",
+    "type": "degats"
+  },
+  "molosse": {
+    "baseMax": 12,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Dégâts ; l'Ouginak subit 10 % de dégâts en moins jusqu'à son prochain tour et gagne 1 Rage.",
+    "effetLanceur": {
+      "duree": 2,
+      "stat": "reductionDegats",
+      "valeur": 0.1
+    },
+    "id": "molosse",
+    "nom": "Molosse",
+    "rage": true,
+    "type": "degats"
+  },
+  "morsure": {
+    "baseMax": 18,
+    "baseMin": 12,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Coup de mêlée.",
+    "id": "morsure",
+    "nom": "Morsure",
+    "type": "degats"
+  },
+  "morsure_vorace": {
+    "baseMax": 23,
+    "baseMin": 17,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Gorgouille dévore les enchantements : retire boucliers et bonus de la cible.",
+    "id": "morsure_vorace",
+    "nom": "Morsure vorace",
+    "procAleatoire": [
+      {
+        "dissipePositifs": true
+      }
+    ],
+    "type": "degats"
+  },
+  "mot_de_solidarite": {
+    "baseMax": 12,
+    "baseMin": 8,
+    "cible": "allie_tous",
+    "cooldownTours": 2,
+    "coutPA": 2,
+    "desc": "Soin léger sur toute l'équipe, quel que soit l'état de chacun.",
+    "id": "mot_de_solidarite",
+    "nom": "Mot de solidarité",
+    "type": "soin"
+  },
+  "mot_galvanisant": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "bouclierPct": 0.15,
+    "cible": "allie",
+    "cooldownTours": 2,
+    "coutPA": 3,
+    "desc": "Couvre un allié d'un bouclier valant 15 % de ses PV max, puis lui rend 5 % de sa vitalité au début de chacun de ses 3 prochains tours.",
+    "hotDuree": 3,
+    "hotPct": 0.05,
+    "id": "mot_galvanisant",
+    "nom": "Mot galvanisant",
+    "type": "buff"
+  },
+  "mot_reconstitution": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "allie",
+    "cooldownTours": 4,
+    "coutPA": 6,
+    "desc": "Rend à un allié la totalité des PV qui lui manquent.",
+    "id": "mot_reconstitution",
+    "nom": "Mot de reconstitution",
+    "soinComplet": true,
+    "type": "soin"
+  },
+  "mot_rituel": {
+    "baseMax": 9,
+    "baseMin": 6,
+    "cible": "mixte",
+    "coutPA": 3,
+    "desc": "Se lance sur n'importe qui : un allié reçoit un soin modéré, un ennemi encaisse de faibles dégâts.",
+    "id": "mot_rituel",
+    "mixte": {
+      "surAllie": {
+        "soin": {
+          "max": 20,
+          "min": 14
+        }
+      }
+    },
+    "nom": "Mot rituel",
+    "type": "degats"
+  },
+  "mot_stimulant": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "allie",
+    "cooldown": 3,
+    "coutPA": 2,
+    "desc": "Donne 2 PA à un allié pour son prochain tour. Impossible de le relancer sur la même cible avant 3 tours.",
+    "id": "mot_stimulant",
+    "nom": "Mot stimulant",
+    "paGain": 2,
+    "type": "buff"
+  },
+  "mot_vampirique": {
+    "baseMax": 12,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Dégâts modérés ; toute l'équipe récupère un quart des dégâts infligés.",
+    "id": "mot_vampirique",
+    "nom": "Mot vampirique",
+    "soinEquipeRatio": 0.25,
+    "type": "degats"
+  },
+  "muspel": {
+    "baseMax": 12,
+    "baseMin": 8,
+    "bonusParEnnemiToucheZone": 0.15,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Balaye la rangée de la cible, ou celle de la lance : +15 % de dégâts par ennemi touché. Un seul lancer par tour.",
+    "id": "muspel",
+    "maxParTour": 1,
+    "nom": "Muspel",
+    "type": "degats",
+    "zoneLance": true
+  },
+  "oeil_de_taupe": {
+    "baseMax": 6,
+    "baseMin": 4,
+    "cible": "ennemi_tous",
+    "cooldownTours": 2,
+    "coutPA": 3,
+    "desc": "Balaye une rangée entière, y compris la rangée arrière : les ennemis touchés ne peuvent plus viser la rangée arrière à leur prochain tour.",
+    "effet": {
+      "duree": 1,
+      "stat": "tetanise",
+      "valeur": 1
+    },
+    "id": "oeil_de_taupe",
+    "nom": "Œil de Taupe",
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "parasite": {
+    "baseMax": 15,
+    "baseMin": 11,
+    "cible": "ennemi_ligne",
+    "coutPA": 5,
+    "desc": "Gros dégâts sur une cible ; à partir de 3 portails ouverts, la plaie s'infecte et distille un poison valant la moitié du coup sur 2 tours.",
+    "id": "parasite",
+    "nom": "Parasite",
+    "poisonSiPortails": {
+      "duree": 2,
+      "ratio": 0.5,
+      "seuil": 3
+    },
+    "type": "degats"
+  },
+  "paturage": {
+    "baseMax": 11,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Dégâts modérés ; pendant 1 tour, la rangée avant alliée inflige 10 % de dégâts en plus, ou 15 % si deux héros s'y tiennent.",
+    "effetRangeeAlliee": {
+      "effets": [
+        {
+          "duree": 1,
+          "stat": "degatsInfliges",
+          "valeur": 0.1,
+          "valeurSiDeuxDevant": 0.15
+        }
+      ],
+      "rangee": "avant"
+    },
+    "id": "paturage",
+    "nom": "Pâturage",
+    "type": "degats"
+  },
+  "pendule": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "ennemi_tous",
+    "coutPA": 1,
+    "deplaceCible": "toggle",
+    "desc": "Envoie la cible sur la rangée opposée ; si la place est déjà occupée, les deux combattants récoltent un Téléfrag.",
+    "id": "pendule",
+    "maxParCibleParTour": 1,
+    "nom": "Pendule",
+    "telefragSiOccupee": true,
+    "type": "degats"
+  },
+  "picotement": {
+    "baseMax": 9,
+    "baseMin": 5,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Dégâts faibles.",
+    "id": "picotement",
+    "nom": "Picotement",
+    "type": "degats"
+  },
+  "piege_a_fragmentation": {
+    "baseMax": 11,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Pose un piège sur la rangée de la cible, sans aucun dégât immédiat. Au déclenchement, il éclabousse le reste de la rangée pour la moitié des dégâts.",
+    "id": "piege_a_fragmentation",
+    "maxParTour": 2,
+    "nom": "Piège à Fragmentation",
+    "posePiege": true,
+    "ratioLigne": 0.5,
+    "type": "degats"
+  },
+  "piege_funeste": {
+    "baseMax": 14,
+    "baseMin": 10,
+    "bonusParEnnemiLigneCible": 0.3,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Pose un piège sur la rangée de la cible, sans aucun dégât immédiat. Il part dès qu'un ennemi est déplacé sur cette rangée, avec +30 % de dégâts par autre ennemi vivant qui s'y trouve.",
+    "id": "piege_funeste",
+    "maxParTour": 2,
+    "nom": "Piège Funeste",
+    "posePiege": true,
+    "type": "degats"
+  },
+  "pile_ou_face": {
+    "baseMax": 10,
+    "baseMin": 6,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Petit coup répétable, jusqu'à 4 fois par tour ; chaque critique réduit de 1 PA le coût du lancer suivant, sans jamais descendre sous 1 PA.",
+    "id": "pile_ou_face",
+    "maxParTour": 4,
+    "nom": "Pile ou Face",
+    "reduitCoutSiCrit": 1,
+    "type": "degats"
+  },
+  "pique_fulgurant": {
+    "baseMax": 21,
+    "baseMin": 15,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 3,
+    "coutPA": 6,
+    "desc": "Batofu plonge sur sa proie puis vole en zigzag : +25 % d'esquive (2t).",
+    "effetLanceur": {
+      "duree": 2,
+      "stat": "esquive",
+      "valeur": 0.25
+    },
+    "id": "pique_fulgurant",
+    "nom": "Piqué fulgurant",
+    "type": "degats"
+  },
+  "pluie_de_pommes": {
+    "baseMax": 23,
+    "baseMin": 17,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Blop Reinette Royal fait pleuvoir les pommes sur toute la rangée ciblée.",
+    "id": "pluie_de_pommes",
+    "nom": "Pluie de pommes",
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "ponte_larvaire": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "cooldownTours": 3,
+    "coutPA": 2,
+    "desc": "Shin Larve pond une larve (Bleue, Verte ou Orange, 1 à la fois).",
+    "id": "ponte_larvaire",
+    "invoqueMonstre": {
+      "max": 1,
+      "pool": [
+        "larve_bleue",
+        "larve_verte",
+        "larve_orange"
+      ]
+    },
+    "nom": "Ponte larvaire",
+    "type": "invocation"
+  },
+  "portail": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 1,
+    "desc": "Ouvre un portail, jusqu'à 4 simultanés et 2 par tour. Chaque portail donne +2 % de dégâts à l'Éliotrope et +1 % aux alliés de sa rangée.",
+    "id": "portail",
+    "maxParTour": 2,
+    "nom": "Portail",
+    "posePortail": true,
+    "type": "buff"
+  },
+  "poupee_garde": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 4,
+    "desc": "Invoque une poupée qui provoque les ennemis. Elle encaisse mais ne joue pas.",
+    "id": "poupee_garde",
+    "invocation": {
+      "nom": "Poupée",
+      "provoque": true,
+      "pv": 40
+    },
+    "nom": "Poupée de garde",
+    "type": "invocation"
+  },
+  "poussiere_incandescente": {
+    "baseMax": 16,
+    "baseMin": 11,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Un souffle de poussière brûlante : pendant un tour, les sorts de la cible ont 15 % de chances d'échouer. Les nuages se cumulent.",
+    "effet": {
+      "duree": 1,
+      "stat": "echecCritique",
+      "valeur": 0.15
+    },
+    "id": "poussiere_incandescente",
+    "nom": "Poussière incandescente",
+    "type": "degats"
+  },
+  "precipitation": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "cooldownTours": 3,
+    "coutPA": 3,
+    "desc": "Crédite immédiatement 5 PA pour ce tour-ci ; ils sont perdus s'ils ne sont pas dépensés. Indisponible au premier tour.",
+    "id": "precipitation",
+    "maxParTour": 1,
+    "nom": "Précipitation",
+    "paImmediat": 5,
+    "pasPremierTour": true,
+    "type": "buff"
+  },
+  "premonition": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 3,
+    "desc": "Le Xélor gagne 2 PA à son prochain tour, sans cumul avec un gain déjà prévu.",
+    "id": "premonition",
+    "nom": "Prémonition",
+    "paProchainTour": 2,
+    "type": "buff"
+  },
+  "proie": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "ennemi_tous",
+    "coutPA": 1,
+    "desc": "Marque un ennemi comme Proie, définitivement et un seul à la fois : toute l'équipe lui vole 15 % des dégâts qu'elle lui inflige.",
+    "id": "proie",
+    "marqueProie": 0.15,
+    "nom": "Proie",
+    "type": "debuff"
+  },
+  "pugilat": {
+    "baseMax": 8,
+    "baseMin": 5,
+    "bonusParRelanceCeTour": 0.2,
+    "cible": "ennemi_ligne",
+    "coutPA": 2,
+    "desc": "Dégâts modérés à la cible, moitié dégâts au reste de sa rangée ; +20 % sur l'ensemble du coup à chaque relance dans le même tour (une seule fois par cible).",
+    "id": "pugilat",
+    "maxParCibleParTour": 1,
+    "nom": "Pugilat",
+    "ratioLigne": 0.5,
+    "type": "degats"
+  },
+  "racines_ancestrales": {
+    "baseMax": 42,
+    "baseMin": 32,
+    "cible": "ennemi_tous",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Abraknyde Ancestral ses racines atteignent n'importe qui, même en rangée arrière.",
+    "id": "racines_ancestrales",
+    "nom": "Racines ancestrales",
+    "type": "degats"
+  },
+  "racines_voraces": {
+    "baseMax": 24,
+    "baseMin": 18,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 3,
+    "coutPA": 6,
+    "desc": "Tournesol Affamé draine la cible et rend 60 % des dégâts en PV à tout son camp.",
+    "id": "racines_voraces",
+    "nom": "Racines voraces",
+    "soinEquipeRatio": 0.6,
+    "type": "degats"
+  },
+  "rayon_de_wakfu": {
+    "baseMax": 7,
+    "baseMin": 4,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Balaye la rangée avant adverse ; chaque point de dégât infligé soigne d'autant les alliés de la rangée avant. Deux lancers par tour au maximum.",
+    "id": "rayon_de_wakfu",
+    "maxParTour": 2,
+    "nom": "Rayon de Wakfu",
+    "soinLigneAvantRatio": 1,
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "rayon_obscur": {
+    "baseMax": 12,
+    "baseMin": 8,
+    "bonusParTelefrag": 0.5,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 1,
+    "coutPA": 5,
+    "desc": "Gros coup unique : +50 % de dégâts par Téléfrag accumulé sur la cible, jusqu'à quatre.",
+    "id": "rayon_obscur",
+    "nom": "Rayon Obscur",
+    "type": "degats"
+  },
+  "resquille": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "cooldownTours": 1,
+    "coutPA": 2,
+    "desc": "Les bombes qui explosent pendant ce tour retirent en plus 2 PA à chaque ennemi touché.",
+    "id": "resquille",
+    "nom": "Resquille",
+    "resquille": 2,
+    "type": "buff"
+  },
+  "ripaille": {
+    "baseMax": 32,
+    "baseMin": 24,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Le Chouque se repaît de sa victime : rend la moitié des dégâts en PV.",
+    "id": "ripaille",
+    "nom": "Ripaille",
+    "type": "degats",
+    "vampirismeRatio": 0.5
+  },
+  "riposte_mecanique": {
+    "baseMax": 20,
+    "baseMin": 14,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Wobot frappe et arme son blindage : 25 % de riposte pendant 2 tours.",
+    "effetLanceur": {
+      "duree": 2,
+      "stat": "contre",
+      "valeur": 0.25
+    },
+    "id": "riposte_mecanique",
+    "maxParTour": 1,
+    "nom": "Riposte mécanique",
+    "type": "degats"
+  },
+  "rosee_regenerante": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "allie",
+    "coutPA": 3,
+    "desc": "Soin sur la durée sur un allié (5 % vita / 3t).",
+    "hotDuree": 3,
+    "hotPct": 0.05,
+    "id": "rosee_regenerante",
+    "nom": "Rosée régénérante",
+    "type": "buff"
+  },
+  "rostre_broyeur": {
+    "baseMax": 32,
+    "baseMin": 24,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 3,
+    "coutPA": 6,
+    "desc": "Corailleur Magistral broie la ligne avant : la cible inflige −15 % de dégâts (1t).",
+    "effet": {
+      "duree": 1,
+      "stat": "degatsInfliges",
+      "valeur": -0.15
+    },
+    "id": "rostre_broyeur",
+    "nom": "Rostre broyeur",
+    "type": "degats"
+  },
+  "roublabot": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "ennemi_tous",
+    "cooldownTours": 3,
+    "coutPA": 1,
+    "deplaceCible": "toggle",
+    "desc": "Envoie un ennemi sur la rangée opposée, sans lui infliger de dégâts.",
+    "id": "roublabot",
+    "nom": "Roublabot",
+    "type": "degats"
+  },
+  "roublardise": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "cooldownTours": 5,
+    "coutPA": 2,
+    "desc": "Un double encaisse à la place du Roublard le prochain coup direct qui lui est destiné. Sans effet sur le poison.",
+    "id": "roublardise",
+    "nom": "Roublardise",
+    "nullifieProchain": true,
+    "type": "buff"
+  },
+  "roulette": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "cooldownTours": 3,
+    "coutPA": 3,
+    "desc": "Tire une face au hasard pour 3 tours : +10 % de dégâts finaux pour l'Ecaflip, +10 de critique pour sa rangée, ou 15 % de bouclier pour la rangée avant alliée. Un critique en tire deux, qui se cumulent.",
+    "facesAleatoires": [
+      {
+        "effet": {
+          "duree": 3,
+          "stat": "degatsInfliges",
+          "valeur": 0.1
+        },
+        "portee": "soi"
+      },
+      {
+        "effet": {
+          "duree": 3,
+          "stat": "crit",
+          "valeur": 10
+        },
+        "portee": "rangee_lanceur"
+      },
+      {
+        "bouclierPct": 0.15,
+        "duree": 3,
+        "portee": "rangee_avant"
+      }
+    ],
+    "id": "roulette",
+    "nom": "Roulette",
+    "tiragesSiCrit": 2,
+    "type": "buff"
+  },
+  "sablier_de_xelor": {
+    "baseMax": 8,
+    "baseMin": 5,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Faibles dégâts, mais vole à coup sûr 2 PA à la cible.",
+    "id": "sablier_de_xelor",
+    "nom": "Sablier de Xélor",
+    "retraitPA": 2,
+    "retraitPAChance": 1,
+    "type": "degats"
+  },
+  "sarbacane_curare": {
+    "baseMax": 22,
+    "baseMin": 16,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Kanniboul Sarbak, curare : la cible ne peut plus être soignée ni protégée (2 tours).",
+    "effet": {
+      "duree": 2,
+      "stat": "friction",
+      "valeur": 1
+    },
+    "id": "sarbacane_curare",
+    "nom": "Sarbacane au curare",
+    "type": "degats"
+  },
+  "sarcasme": {
+    "baseMax": 13,
+    "baseMin": 9,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Blesse et démoralise la cible : elle inflige 5 % de dégâts en moins pendant 1 tour, et 10 % à partir de 3 portails ouverts.",
+    "effet": {
+      "duree": 1,
+      "stat": "degatsInfliges",
+      "valeur": -0.05
+    },
+    "effetSiPortails": {
+      "seuil": 3,
+      "valeur": -0.1
+    },
+    "id": "sarcasme",
+    "nom": "Sarcasme",
+    "type": "degats"
+  },
+  "sfvc": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "cooldownTours": 3,
+    "coutPA": 6,
+    "desc": "Kankreblath, borborygme imprévisible : invoque un monstre aléatoire de la zone (2 max).",
+    "id": "sfvc",
+    "invoqueMonstre": {
+      "max": 2,
+      "pool": [
+        "pyrasite",
+        "ceglumen",
+        "cafarcher",
+        "mirgrillon"
+      ]
+    },
+    "nom": "Sfvc%$*R ?!",
+    "type": "invocation"
+  },
+  "soin_noir": {
+    "baseMax": 18,
+    "baseMin": 12,
+    "cible": "allie",
+    "coutPA": 4,
+    "desc": "Rend des PV à un allié.",
+    "id": "soin_noir",
+    "nom": "Soin noir",
+    "type": "soin"
+  },
+  "sortilege_lunaire": {
+    "baseMax": 44,
+    "baseMin": 34,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Moon, sortilège changeant : désenvoûte, bloque les soins, coupe l'arrière ou empoisonne.",
+    "id": "sortilege_lunaire",
+    "nom": "Sortilège lunaire",
+    "procAleatoire": [
+      {
+        "dissipePositifs": true
+      },
+      {
+        "effet": {
+          "duree": 2,
+          "stat": "friction",
+          "valeur": 1
+        }
+      },
+      {
+        "effet": {
+          "duree": 1,
+          "stat": "tetanise",
+          "valeur": 1
+        }
+      },
+      {
+        "effet": {
+          "duree": 2,
+          "stat": "poison",
+          "valeur": 30
+        }
+      }
+    ],
+    "type": "degats"
+  },
+  "souffle_capricieux": {
+    "baseMax": 27,
+    "baseMin": 21,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Dostrogo, souffle imprévisible : bloque les soins OU coupe la rangée arrière.",
+    "id": "souffle_capricieux",
+    "nom": "Souffle capricieux",
+    "procAleatoire": [
+      {
+        "effet": {
+          "duree": 1,
+          "stat": "friction",
+          "valeur": 1
+        }
+      },
+      {
+        "effet": {
+          "duree": 1,
+          "stat": "tetanise",
+          "valeur": 1
+        }
+      }
+    ],
+    "type": "degats"
+  },
+  "souffle_draconique": {
+    "baseMax": 34,
+    "baseMin": 26,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Draegnerys embrase toute la rangée ciblée.",
+    "id": "souffle_draconique",
+    "nom": "Souffle draconique",
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "souffle_regenerant": {
+    "baseMax": 75,
+    "baseMin": 55,
+    "cible": "allie",
+    "coutPA": 4,
+    "desc": "Dragoss Protéiforme régénère l'allié le plus blessé.",
+    "id": "souffle_regenerant",
+    "nom": "Souffle régénérant",
+    "type": "soin"
+  },
+  "sournoiserie": {
+    "baseMax": 5,
+    "baseMin": 3,
+    "cible": "ennemi_tous",
+    "coutPA": 2,
+    "deplaceCible": "toggle",
+    "desc": "Petit coup qui atteint n'importe quel ennemi, rangée arrière comprise, puis le fait passer sur la rangée opposée. Deux lancers par tour au maximum.",
+    "id": "sournoiserie",
+    "maxParTour": 2,
+    "nom": "Sournoiserie",
+    "type": "degats"
+  },
+  "succion": {
+    "baseMax": 17,
+    "baseMin": 12,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "La larve aspire les fluides de sa cible et se soigne de la moitié des dégâts infligés.",
+    "id": "succion",
+    "nom": "Succion",
+    "type": "degats",
+    "vampirismeRatio": 0.5
+  },
+  "tetanie": {
+    "baseMax": 9,
+    "baseMin": 5,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 4,
+    "desc": "Coup volontairement faible, qui vole du temps plutôt que des PV : la cible commence son prochain tour amputée de 2 PA.",
+    "id": "tetanie",
+    "nom": "Tétanie",
+    "retraitPAProchainTour": 2,
+    "type": "degats"
+  },
+  "tetanisation": {
+    "baseMax": 14,
+    "baseMin": 10,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 4,
+    "desc": "Dégâts ; la cible ne peut plus viser la rangée arrière à son prochain tour. Confère 1 Rage.",
+    "effet": {
+      "duree": 1,
+      "stat": "tetanise",
+      "valeur": 1
+    },
+    "id": "tetanisation",
+    "nom": "Tétanisation",
+    "rage": true,
+    "type": "degats"
+  },
+  "tibias": {
+    "baseMax": 10,
+    "baseMin": 7,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 4,
+    "deplaceCible": "arriere",
+    "desc": "Balaye toute la rangée de la cible et repousse la cible principale en rangée arrière. Confère 1 Rage.",
+    "id": "tibias",
+    "nom": "Tibias",
+    "rage": true,
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "tir_courbe": {
+    "baseMax": 14,
+    "baseMin": 9,
+    "cible": "ennemi_tous",
+    "cooldownTours": 2,
+    "coutPA": 4,
+    "desc": "Projectile en cloche : touche n'importe quel ennemi, même en ligne arrière.",
+    "id": "tir_courbe",
+    "nom": "Tir courbe",
+    "type": "degats"
+  },
+  "tir_puissant": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 2,
+    "desc": "Le Cra ajuste son tir : +15 % de coup critique pendant 3 tours.",
+    "effet": {
+      "duree": 3,
+      "stat": "crit",
+      "valeur": 15
+    },
+    "id": "tir_puissant",
+    "maxParTour": 1,
+    "nom": "Tir Puissant",
+    "type": "buff"
+  },
+  "toile_gluante": {
+    "baseMax": 36,
+    "baseMin": 28,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Reine Nyée tisse la rangée entière : plus d'accès à la rangée arrière (1 tour).",
+    "effet": {
+      "duree": 1,
+      "stat": "tetanise",
+      "valeur": 1
+    },
+    "id": "toile_gluante",
+    "nom": "Toile gluante",
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "vajra": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 2,
+    "desc": "Rappelle la lance : le Forgelance récupère le bouclier de bris et un soin proportionnel à la durabilité qu'il lui restait.",
+    "id": "vajra",
+    "maxParTour": 1,
+    "nom": "Vajra",
+    "rappelleLance": {
+      "soinParDurabilite": 7
+    },
+    "type": "buff"
+  },
+  "vapeurs_corrosives": {
+    "baseMax": 24,
+    "baseMin": 18,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 6,
+    "desc": "Nelween libère les vapeurs du laboratoire : frappe toute la rangée ciblée et l'empoisonne (12 par tour, 2 tours).",
+    "id": "vapeurs_corrosives",
+    "nom": "Vapeurs corrosives",
+    "poison": {
+      "degats": 12,
+      "duree": 2
+    },
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "vertu": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "bouclierPortee": {
+      "pct": 0.15,
+      "portee": "rangee_lanceur",
+      "tours": 2
+    },
+    "cible": "soi",
+    "cooldownTours": 3,
+    "coutPA": 3,
+    "desc": "Bouclier de 15 % des PV max à toute la rangée du Iop, lui compris, pendant 2 tours.",
+    "id": "vertu",
+    "nom": "Vertu",
+    "type": "buff"
+  },
+  "vigie": {
+    "baseMax": 11,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 3,
+    "coutPA": 3,
+    "desc": "Dégâts modérés ; pendant 2 tours, la rangée arrière alliée ignore la règle de ligne et inflige 5 % de dégâts en plus.",
+    "effetRangeeAlliee": {
+      "effets": [
+        {
+          "duree": 2,
+          "stat": "ignoreLigne",
+          "valeur": 1
+        },
+        {
+          "duree": 2,
+          "stat": "degatsInfliges",
+          "valeur": 0.05
+        }
+      ],
+      "rangee": "arriere"
+    },
+    "id": "vigie",
+    "nom": "Vigie",
+    "type": "degats"
+  },
+  "vigueur_bois": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "bonusProchainSortPct": 0.3,
+    "cible": "soi",
+    "coutPA": 2,
+    "desc": "+30 % de dégâts au prochain sort offensif du lanceur.",
+    "id": "vigueur_bois",
+    "nom": "Vigueur des bois",
+    "type": "buff"
+  },
+  "zenith": {
+    "baseMax": 11,
+    "baseMin": 7,
+    "bonusParPADispo": 0.07,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Dégâts de zone sur toute la rangée ciblée ; +7 % de dégâts par PA disponible avant le lancer. Un seul lancer par tour.",
+    "id": "zenith",
+    "maxParTour": 1,
+    "nom": "Zénith",
+    "type": "degats",
+    "zoneLigne": true
+  }
+}
