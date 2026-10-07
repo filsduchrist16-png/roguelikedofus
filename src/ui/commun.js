@@ -18,7 +18,7 @@ import {
   statsEffectives,
 } from "../combat/stats.js";
 import { chargerParametres } from "../sauvegarde/parametres.js";
-import { bonusEquipement, pvMaxPerso } from "../jeu/run.js";
+import { comparerObjet, herosAmeliores } from "../jeu/inventaire.js";
 export let racine;
 export function definirRacine(e) {
   racine = e;
@@ -720,36 +720,55 @@ export const AIDE_NOTE_ELEMENT = `<br><i class="aide-note">L'élément de frappe
 export const AIDE_PIEGE = `Piège du Sram : si un adversaire est déplacé sur cette rangée, il le déclenche. Un seul piège part par déplacement. Le premier posé part le premier.`;
 
 // Ce que changerait le fait d'équiper cet objet sur ce héros, par rapport à ce qu'il porte.
+const LIBELLES_DELTA = {
+  pv: ` PV max`,
+  pa: ` PA`,
+  attaque: ` dégâts moyens d'arme`,
+};
+export function libelleDelta(cle) {
+  if (LIBELLES_DELTA[cle]) {
+    return LIBELLES_DELTA[cle];
+  }
+  if (cle.startsWith(`res_`)) {
+    return ` % rés. ${NOMS_ELEMENTS[cle.slice(4)]}`;
+  }
+  return ` ${ABREV_STATS[cle] ?? cle}`;
+}
+export function htmlDeltas(deltas) {
+  return deltas
+    .map(
+      (d) =>
+        `<span class="${d.valeur > 0 ? `delta-plus` : `delta-moins`}${d.utile ? `` : ` delta-inutile`}"${d.utile ? `` : ` title="Peu utile pour cette classe (élément non utilisé)"`}>${d.valeur > 0 ? `+` : `−`}${Math.abs(Math.round(d.valeur * 10) / 10)}${libelleDelta(d.cle)}</span>`,
+    )
+    .join(` `);
+}
+export const VERDICTS = {
+  mieux: { icone: `▲`, texte: `Amélioration` },
+  moins: { icone: `▼`, texte: `Moins bien` },
+  mitige: { icone: `⇅`, texte: `Gains et pertes` },
+  egal: { icone: `=`, texte: `Pareil` },
+  impossible: { icone: `✕`, texte: `Pas équipable` },
+};
 export function htmlComparaisonObjet(inst, perso) {
-  const slot = EQUIPEMENTS[inst.id]?.slot;
-  if (!slot) {
-    return ``;
-  }
-  const actuel = perso.equipement[slot];
-  const avant = bonusEquipement(perso);
-  const essai = { ...perso, equipement: { ...perso.equipement, [slot]: inst } };
-  const apres = bonusEquipement(essai);
-  const deltas = [];
-  const ajouter = (valeur, libelle) => {
-    if (valeur) {
-      deltas.push(
-        `<span class="${valeur > 0 ? `delta-plus` : `delta-moins`}">${valeur > 0 ? `+` : `−`}${Math.abs(valeur)}${libelle}</span>`,
-      );
-    }
-  };
-  ajouter(pvMaxPerso(essai) - pvMaxPerso(perso), ` PV max`);
-  ajouter(apres.paBonus - avant.paBonus, ` PA`);
-  for (const stat of Object.keys(ABREV_STATS)) {
-    if (stat !== `vitalite`) {
-      ajouter((apres.stats[stat] ?? 0) - (avant.stats[stat] ?? 0), ` ${ABREV_STATS[stat]}`);
-    }
-  }
-  for (const el of Object.keys(NOMS_ELEMENTS)) {
-    const d = Math.round(((apres.resistances[el] ?? 0) - (avant.resistances[el] ?? 0)) * 100);
-    ajouter(d, ` % rés. ${NOMS_ELEMENTS[el]}`);
+  const { actuel, deltas, verdict } = comparerObjet(inst, perso);
+  if (verdict === `impossible`) {
+    return `<span class="item-delta"><span class="delta-ref">Équipable seulement en ligne avant.</span></span>`;
   }
   const ref = actuel
     ? `au lieu de ${echapperHtml(EQUIPEMENTS[actuel.id]?.nom ?? actuel.id)}`
     : `emplacement vide`;
-  return `<span class="item-delta"><span class="delta-ref">Si équipé (${ref}) :</span> ${deltas.join(` `) || `<span class="muet">aucun changement de stats</span>`}</span>`;
+  return `<span class="item-delta"><span class="delta-ref">Si équipé (${ref}) :</span> ${htmlDeltas(deltas) || `<span class="muet">aucun changement de stats</span>`}</span>`;
+}
+// Petites pastilles « ▲ Iop » : les héros pour qui l'objet est une amélioration.
+export function htmlBadgesHeros(inst, persos, sauf) {
+  const heros = herosAmeliores(inst, persos).filter((p) => p !== sauf);
+  if (!heros.length) {
+    return ``;
+  }
+  return `<span class="badges-heros" title="Amélioration nette pour ces héros">${heros
+    .map(
+      (p) =>
+        `<span class="badge-heros">▲ ${echapperHtml(CLASSES[p.classeId]?.nom ?? p.classeId)}</span>`,
+    )
+    .join(``)}</span>`;
 }

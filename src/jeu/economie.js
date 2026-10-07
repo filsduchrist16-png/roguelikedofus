@@ -136,3 +136,12 @@ export function vendreObjet(e, t) {
   }
   return false;
 }
+// Annule une vente : l'objet revient dans l'inventaire contre le prix touché.
+export function annulerVente(e, inst, prix) {
+  if (e.kamas < prix) {
+    return false;
+  }
+  ajouterKamas(e, -prix);
+  e.inventaire.push(inst);
+  return true;
+}

@@ -494,10 +494,10 @@ button,
     grid-template-areas:
       "portrait tete"
       "portrait pv"
-      "res res"
+      "portrait res"
       "badges badges";
     column-gap: 10px;
-    row-gap: 4px;
+    row-gap: 3px;
     width: 100%;
     max-width: none;
     padding: 8px 10px;
@@ -515,7 +515,7 @@ button,
   }
   .combat .carte .rang {
     padding: 2px 7px;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
   }
   .combat .carte .portrait-wrap {
     grid-area: portrait;
@@ -857,4 +857,322 @@ button,
 }
 .delta-moins {
   color: #a8261a;
+}
+
+/* ---------- Inventaire : outils, verdicts, fiche d'objet ---------- */
+.equip-onglet .onglet-texte {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+.equip-onglet .onglet-texte small {
+  color: var(--muet);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.onglet-mieux {
+  color: #2f6b12;
+}
+.equip-outils {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.equip-filtres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.filtre-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--bord);
+  border-radius: 999px;
+  background: var(--panel-2);
+  color: var(--txt);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.filtre-btn small {
+  color: var(--muet);
+  font-weight: 800;
+}
+.filtre-btn.actif {
+  border-color: var(--cyan);
+  background: var(--cyan);
+  color: #fff;
+}
+.filtre-btn.actif small {
+  color: #fff;
+}
+.filtre-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.equip-tri,
+.equip-col h3 .equip-tri {
+  margin-left: 0;
+  color: var(--muet);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.tri-btn {
+  padding: 5px 10px;
+  font-size: 0.85rem;
+}
+.equip-astuce {
+  margin: 0 0 8px;
+  font-size: 0.82rem;
+}
+.equip-total {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.slot-vide-txt small {
+  color: #2f6b12;
+  font-weight: 700;
+}
+.item-qte {
+  display: inline-block;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--txt);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 900;
+  vertical-align: 1px;
+}
+.verdict {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 900;
+  vertical-align: 1px;
+  white-space: nowrap;
+}
+.verdict-mieux {
+  background: #2f6b12;
+  color: #fff;
+}
+.verdict-moins {
+  background: #a8261a;
+  color: #fff;
+}
+.verdict-mitige {
+  background: #e9c46a;
+  color: #3a2c1a;
+}
+.verdict-egal,
+.verdict-impossible {
+  background: #d9c9a3;
+  color: #3a2c1a;
+}
+.delta-inutile {
+  opacity: 0.55;
+  text-decoration: line-through dotted;
+}
+.badges-heros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+.badge-heros {
+  padding: 1px 8px;
+  border: 1px solid #2f6b12;
+  border-radius: 999px;
+  color: #2f6b12;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+.fiche-fond {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  background: #1a120a99;
+}
+.fiche-objet {
+  position: fixed;
+  left: 50%;
+  bottom: 0;
+  z-index: 1501;
+  overflow: auto;
+  width: min(560px, 100%);
+  max-height: 88vh;
+  padding: 14px 16px 20px;
+  border: 2px solid var(--bord);
+  border-bottom: 0;
+  border-radius: 18px 18px 0 0;
+  background: linear-gradient(180deg, var(--panel-solide), var(--panel-2));
+  box-shadow: 0 -10px 40px #000a;
+  transform: translateX(-50%);
+  animation: fiche-montee 0.18s ease-out;
+}
+@keyframes fiche-montee {
+  from {
+    transform: translate(-50%, 30px);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fiche-objet {
+    animation: none;
+  }
+}
+.fiche-tete {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.fiche-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+.fiche-titre {
+  flex: 1;
+  min-width: 0;
+}
+.fiche-titre h3 {
+  margin: 0 0 2px;
+  font-size: 1.15rem;
+}
+.fiche-titre .muet {
+  font-size: 0.85rem;
+}
+.fiche-fermer {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--bord);
+  border-radius: 50%;
+  background: var(--panel-2);
+  color: var(--txt);
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+.fiche-chips {
+  margin: 10px 0;
+}
+.fiche-sous-titre {
+  margin: 12px 0 6px;
+  font-size: 0.95rem;
+}
+.fiche-heros {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.fiche-heros li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: "nom bouton" "verdict bouton" "detail detail";
+  align-items: center;
+  gap: 4px 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--bord-clair);
+  border-radius: 10px;
+  background: #f3ead2;
+}
+.fiche-heros li.courant {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 1px var(--cyan);
+}
+.fiche-heros-nom {
+  display: flex;
+  grid-area: nom;
+  align-items: center;
+  gap: 6px;
+  font-weight: 900;
+}
+.fiche-heros-nom img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+.fiche-heros .verdict {
+  grid-area: verdict;
+  justify-self: start;
+  margin: 0;
+}
+.fiche-heros-detail {
+  grid-area: detail;
+  color: var(--muet);
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.fiche-heros button {
+  grid-area: bouton;
+  min-width: 96px;
+  padding: 8px 12px;
+}
+.fiche-porte {
+  margin: 10px 0 6px;
+}
+.fiche-actions {
+  display: flex;
+  gap: 8px;
+}
+.fiche-obtention {
+  margin: 12px 0 0;
+  color: var(--muet);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+.hdv-annuler {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--or);
+  border-radius: 10px;
+  background: #fff4d6;
+  font-size: 0.9rem;
+}
+.hdv-annuler button {
+  margin-left: auto;
+  padding: 6px 14px;
+}
+.fiche-objet {
+  text-align: left;
+  color: var(--txt);
+}
+.item-nom .verdict {
+  align-self: flex-start;
+  margin: 2px 0;
+}
+
+/* ---------- Carte : le nom des cases atteignables est toujours affiché (pas de survol au doigt) ---------- */
+.map-node.atteignable .mn-lbl {
+  display: block;
+  background: #3a2c1a;
+  box-shadow: 0 2px 6px #0006;
+}
+
+/* ---------- Barre d'outils de la carte : une légende sous chaque icône ---------- */
+.topbar-actions .aside-icone {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  min-width: 52px;
+}
+.aside-lbl {
+  color: var(--txt);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.1;
+  white-space: nowrap;
 }

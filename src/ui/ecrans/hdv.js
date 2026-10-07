@@ -1,5 +1,12 @@
 import { EQUIPEMENTS } from "../../data/index.js";
-import { acheterObjet, prixRevente, vendreObjet, vendreTout } from "../../jeu/economie.js";
+import {
+  acheterObjet,
+  annulerVente,
+  prixRevente,
+  vendreObjet,
+  vendreTout,
+} from "../../jeu/economie.js";
+import { grouperInventaire } from "../../jeu/inventaire.js";
 import { enregistrerCollection } from "../../sauvegarde/meta.js";
 import {
   NOMS_SLOTS,
@@ -7,6 +14,8 @@ import {
   attrTipObjet,
   barreRetour,
   classeRarete,
+  echapperHtml,
+  htmlBadgesHeros,
   htmlChipsObjet,
   htmlKamas,
   htmlNomObjet,
@@ -17,6 +26,8 @@ export function ecranHdv(e, t, n) {
   return new Promise((resolve) => {
     // vendre tout demande une confirmation (un seul appui vidait tout l'inventaire)
     let confirmerVenteTotale = false;
+    // dernière vente, pour pouvoir l'annuler
+    let derniereVente = null;
     let i = () => {
       let a = t.length
         ? t
@@ -24,22 +35,22 @@ export function ecranHdv(e, t, n) {
               let r = e.kamas >= t.prix;
               return `<button class="item-carte hdv-achat${classeRarete(t.inst)}" data-achat="${n}" ${r ? `` : `disabled`}${attrTipObjet(t.inst.id)}>
               <img src="${imgObjet(t.inst.id)}" alt="" loading="lazy" onerror="this.remove()" />
-              <span class="item-nom">${htmlNomObjet(t.inst)}<small>${NOMS_SLOTS[EQUIPEMENTS[t.inst.id].slot]} ${htmlChipsObjet(t.inst)}</small></span>
+              <span class="item-nom">${htmlNomObjet(t.inst)}<small>${NOMS_SLOTS[EQUIPEMENTS[t.inst.id].slot]} ${htmlChipsObjet(t.inst)}</small>${htmlBadgesHeros(t.inst, e.persos)}</span>
               <span class="hdv-prix">${htmlKamas(t.prix)}</span>
             </button>`;
             })
             .join(``)
         : `<p class="muet">Rayons vides, reviens à un prochain Hôtel de vente.</p>`;
       let o = e.inventaire.length
-        ? e.inventaire
+        ? grouperInventaire(e.inventaire)
             .map(
-              (
-                e,
-                t,
-              ) => `<button class="item-carte hdv-vente${classeRarete(e)}" data-vente="${t}"${attrTipObjet(e.id)}>
-              <img src="${imgObjet(e.id)}" alt="" loading="lazy" onerror="this.remove()" />
-              <span class="item-nom">${htmlNomObjet(e)}<small>${NOMS_SLOTS[EQUIPEMENTS[e.id].slot]} ${htmlChipsObjet(e)}</small></span>
-              <span class="hdv-prix vente">${htmlKamas(prixRevente(e))}</span>
+              ({
+                inst: e_,
+                indices,
+              }) => `<button class="item-carte hdv-vente${classeRarete(e_)}" data-vente="${indices[0]}"${attrTipObjet(e_.id)}>
+              <img src="${imgObjet(e_.id)}" alt="" loading="lazy" onerror="this.remove()" />
+              <span class="item-nom">${htmlNomObjet(e_)}${indices.length > 1 ? ` <span class="item-qte">×${indices.length}</span>` : ``}<small>${NOMS_SLOTS[EQUIPEMENTS[e_.id].slot]} ${htmlChipsObjet(e_)}</small>${htmlBadgesHeros(e_, e.persos)}</span>
+              <span class="hdv-prix vente">${htmlKamas(prixRevente(e_))}</span>
             </button>`,
             )
             .join(``)
@@ -57,6 +68,8 @@ export function ecranHdv(e, t, n) {
             <h3>Ton inventaire (${e.inventaire.length})
               ${e.inventaire.length ? `<button id="hdv-vendre-tout" class="secondaire hdv-tout${confirmerVenteTotale ? ` danger-arme` : ``}" title="Vendre tout l'inventaire (l'équipement porté n'est pas concerné)">${confirmerVenteTotale ? `Confirmer : tout vendre` : `Vendre tout`} · ${htmlKamas(e.inventaire.reduce((acc, item) => acc + prixRevente(item), 0))}</button>` : ``}
             </h3>
+            ${derniereVente ? `<div class="hdv-annuler" role="status">Vendu : <b>${echapperHtml(EQUIPEMENTS[derniereVente.inst.id]?.nom ?? ``)}</b> (+${htmlKamas(derniereVente.prix)}) <button id="hdv-annuler" class="secondaire">Annuler</button></div>` : ``}
+            <p class="equip-astuce muet">▲ : amélioration pour ce héros. Un appui vend l'objet ; la dernière vente peut être annulée.</p>
             <div class="equip-inv">${o}</div>
           </div>
         </div>
@@ -67,6 +80,7 @@ export function ecranHdv(e, t, n) {
           let a = Number(r.dataset.achat);
           let o = t[a]?.inst;
           if (acheterObjet(e, t, a)) {
+            derniereVente = null;
             if (n && o) {
               enregistrerCollection(n, [o]);
             }
@@ -76,7 +90,11 @@ export function ecranHdv(e, t, n) {
       );
       racine.querySelectorAll(`[data-vente]`).forEach((t) =>
         t.addEventListener(`click`, () => {
-          if (vendreObjet(e, Number(t.dataset.vente))) {
+          let index = Number(t.dataset.vente);
+          let inst = e.inventaire[index];
+          let prix = inst ? prixRevente(inst) : 0;
+          if (vendreObjet(e, index)) {
+            derniereVente = { inst, prix };
             confirmerVenteTotale = false;
             i();
           }
@@ -89,8 +107,15 @@ export function ecranHdv(e, t, n) {
           return;
         }
         confirmerVenteTotale = false;
+        derniereVente = null;
         vendreTout(e);
         i();
+      });
+      document.getElementById(`hdv-annuler`)?.addEventListener(`click`, () => {
+        if (derniereVente && annulerVente(e, derniereVente.inst, derniereVente.prix)) {
+          derniereVente = null;
+          i();
+        }
       });
       document.getElementById(`hdv-retour`)?.addEventListener(`click`, () => resolve());
     };

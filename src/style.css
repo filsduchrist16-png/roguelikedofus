@@ -205,7 +205,7 @@ button:focus-visible {
 }
 .recap-nom small {
   color: var(--muet);
-  font-size: 0.72rem;
+  font-size: 0.812rem;
   font-weight: 600;
   display: block;
 }
@@ -225,7 +225,7 @@ button:focus-visible {
 .recap-barre span {
   text-shadow: 0 1px 2px #fff8;
   place-items: center;
-  font-size: 0.72rem;
+  font-size: 0.812rem;
   font-weight: 800;
   display: grid;
   position: absolute;
@@ -264,7 +264,7 @@ button:focus-visible {
   vertical-align: middle;
   margin-left: 10px;
   padding: 3px 10px;
-  font-size: 0.78rem;
+  font-size: 0.812rem;
 }
 .hdv-tout .kamas {
   font-size: 0.82rem;
@@ -291,7 +291,7 @@ button.item-carte:disabled {
   color: var(--danger);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   font-weight: 900;
   display: block;
 }
@@ -344,7 +344,7 @@ button.item-carte:disabled {
 .drop-rarete {
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   display: block;
 }
 .ichips {
@@ -361,7 +361,7 @@ button.item-carte:disabled {
   background: #e4d6b2;
   border-radius: 6px;
   padding: 1px 5px;
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   font-weight: 800;
 }
 .ichip.ichip-force {
@@ -789,7 +789,7 @@ button.item-carte:disabled {
   border: 1px solid #2a1c0255;
   border-radius: 999px;
   padding: 0 5px;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   font-weight: 900;
   position: absolute;
   bottom: -5px;
@@ -836,7 +836,7 @@ button.item-carte:disabled {
   align-items: center;
   gap: 6px;
   margin-top: 5px;
-  font-size: 0.74rem;
+  font-size: 0.812rem;
   display: flex;
 }
 .dofus-tip .tip-boss img {
@@ -847,7 +847,7 @@ button.item-carte:disabled {
 .dofus-tip .tip-muet {
   color: var(--muet);
   margin-top: 5px;
-  font-size: 0.74rem;
+  font-size: 0.812rem;
   font-style: italic;
 }
 .fx-layer {
@@ -993,7 +993,7 @@ button.item-carte:disabled {
   border-radius: 999px;
   flex: none;
   padding: 1px 8px;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 900;
 }
 .sort-tip .tip-stat,
@@ -1023,7 +1023,7 @@ button.item-carte:disabled {
   color: var(--muet);
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
 }
 .sort-tip .tip-el,
 .ency-sort-detail .tip-el {
@@ -1031,7 +1031,7 @@ button.item-carte:disabled {
   background: #00000014;
   border-radius: 999px;
   padding: 2px 8px;
-  font-size: 0.7rem;
+  font-size: 0.812rem;
   font-weight: 800;
 }
 .sort-tip .tip-el.el-terre,
@@ -1061,7 +1061,7 @@ button.item-carte:disabled {
   border-top: 1px solid #00000016;
   margin-top: 7px;
   padding-top: 6px;
-  font-size: 0.72rem;
+  font-size: 0.812rem;
 }
 .boutons-ecran {
   z-index: 5;
@@ -1093,7 +1093,7 @@ button.item-carte:disabled {
   text-align: center;
   flex-basis: 100%;
   margin: 2px 0 0;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
 }
 .btn-lien {
   box-shadow: none;
@@ -1241,7 +1241,7 @@ button.item-carte:disabled {
   border: 1px solid #2a1c0255;
   border-radius: 999px;
   padding: 0 5px;
-  font-size: 0.6rem;
+  font-size: 0.75rem;
   font-weight: 900;
   position: absolute;
   top: -3px;
@@ -1325,7 +1325,7 @@ kbd {
 }
 .classe-role {
   color: var(--muet);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   line-height: 1.25;
 }
 .classe-elems {
@@ -1344,7 +1344,7 @@ kbd {
   cursor: help;
   border-radius: 999px;
   padding: 1px 7px;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
 }
 .ency-archetype {
   margin: 3px 0;
@@ -1354,7 +1354,7 @@ kbd {
   height: 16px;
 }
 .ency-archetype .classe-archetype {
-  font-size: 0.68rem;
+  font-size: 0.75rem;
 }
 .archetype-icone {
   object-fit: contain;
@@ -1426,7 +1426,7 @@ kbd {
   color: var(--muet);
   flex: none;
   width: 72px;
-  font-size: 0.72rem;
+  font-size: 0.812rem;
   font-weight: 800;
 }
 .slot-img {
@@ -1446,19 +1446,19 @@ kbd {
 .item-nom small,
 .drop-nom small {
   color: var(--muet);
-  font-size: 0.64rem;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 .slot-vide-txt {
-  color: #b09a72;
+  color: #7d6644;
   font-size: 0.8rem;
 }
 .equip-total {
-  font-size: 0.72rem;
+  font-size: 0.812rem;
 }
 .equip-pano {
   margin: 2px 0 0;
-  font-size: 0.72rem;
+  font-size: 0.812rem;
 }
 .equip-pano.complete {
   color: var(--or-texte);
@@ -1699,7 +1699,7 @@ kbd {
   color: var(--muet);
   text-align: left;
   margin-bottom: 8px;
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 800;
   display: block;
 }
@@ -1724,7 +1724,7 @@ kbd {
   height: 56px;
 }
 .form-cell span {
-  font-size: 0.72rem;
+  font-size: 0.812rem;
 }
 .form-cell.vide {
   opacity: 0.5;
@@ -1804,7 +1804,7 @@ kbd {
 }
 .best-onglet small {
   color: var(--muet);
-  font-size: 0.75rem;
+  font-size: 0.812rem;
 }
 .best-vue {
   text-align: left;
@@ -1864,7 +1864,7 @@ kbd {
 }
 .best-zone-txt small {
   color: var(--muet);
-  font-size: 0.75rem;
+  font-size: 0.812rem;
   font-weight: 400;
 }
 .best-pastille {
@@ -1878,7 +1878,7 @@ kbd {
   justify-content: center;
   align-items: center;
   padding: 0 6px;
-  font-size: 0.75rem;
+  font-size: 0.812rem;
   font-weight: 900;
   display: flex;
 }
@@ -1946,7 +1946,7 @@ kbd {
   border-radius: 999px;
   align-self: flex-start;
   padding: 2px 8px;
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-style: normal;
   font-weight: 900;
 }
@@ -2041,7 +2041,7 @@ kbd {
 }
 .best-espece small {
   color: var(--muet);
-  font-size: 0.7rem;
+  font-size: 0.812rem;
 }
 .armu-section {
   flex-direction: column;
@@ -2091,7 +2091,7 @@ kbd {
 }
 .armu-objet small {
   color: var(--muet);
-  font-size: 0.7rem;
+  font-size: 0.812rem;
 }
 .armu-rarete {
   color: var(--muet);
@@ -2099,7 +2099,7 @@ kbd {
   border-radius: 999px;
   margin-top: 2px;
   padding: 1px 9px;
-  font-size: 0.7rem;
+  font-size: 0.812rem;
   font-weight: 900;
 }
 .armu-r-commun {
@@ -2121,7 +2121,7 @@ kbd {
 .armu-legende {
   gap: 10px;
   margin-left: auto;
-  font-size: 0.75rem;
+  font-size: 0.812rem;
   font-weight: 700;
   display: flex;
 }
@@ -2179,7 +2179,7 @@ kbd {
   width: 100%;
   height: 100%;
   padding: 2px;
-  font-size: 0.56rem;
+  font-size: 0.685rem;
   font-weight: 700;
   line-height: 1.05;
   display: flex;
@@ -2187,7 +2187,7 @@ kbd {
 .equip-tri {
   color: var(--muet);
   margin-left: 10px;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 400;
 }
 .tri-btn {
@@ -2198,7 +2198,7 @@ kbd {
   border-radius: 7px;
   margin-left: 4px;
   padding: 2px 8px;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
 }
 .tri-btn.actif {
   color: var(--or-texte);
@@ -2313,7 +2313,7 @@ kbd {
 }
 .tl-pastille .tl-ini {
   color: var(--muet);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 900;
 }
 .tl-pastille.joueur {
@@ -2366,14 +2366,14 @@ kbd {
   color: var(--muet);
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  font-size: 0.78rem;
+  font-size: 0.812rem;
   font-weight: 800;
 }
 .colonne h3 .hint {
   color: #8a7350;
   text-transform: none;
   letter-spacing: 0;
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 .camp-lignes {
@@ -2406,7 +2406,7 @@ kbd {
   text-transform: uppercase;
   color: #8a7350;
   margin: 0 0 6px 2px;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   font-weight: 800;
   display: block;
 }
@@ -2420,7 +2420,7 @@ kbd {
   border-radius: 6px;
   margin-left: 6px;
   padding: 0 5px;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   font-weight: 700;
   display: inline-block;
 }
@@ -2536,7 +2536,7 @@ kbd {
   font-variant-numeric: tabular-nums;
   flex-direction: column;
   align-items: center;
-  font-size: 0.78rem;
+  font-size: 0.812rem;
   font-weight: 900;
   line-height: 1;
   display: flex;
@@ -2544,7 +2544,7 @@ kbd {
 }
 .pv-num span {
   opacity: 0.85;
-  font-size: 0.55rem;
+  font-size: 0.675rem;
 }
 .pv-gem-aside {
   flex: none;
@@ -2571,7 +2571,7 @@ kbd {
   align-items: center;
   min-width: 23px;
   padding: 2px 7px;
-  font-size: 0.76rem;
+  font-size: 0.812rem;
   font-weight: 900;
   line-height: 1;
   display: inline-flex;
@@ -2603,7 +2603,7 @@ kbd {
   text-shadow:
     0 1px 2px #000,
     0 0 4px #0008;
-  font-size: 0.58rem;
+  font-size: 0.705rem;
   font-weight: 900;
   position: relative;
 }
@@ -2619,7 +2619,7 @@ kbd {
   font-variant-numeric: tabular-nums;
   align-items: center;
   gap: 3px;
-  font-size: 0.64rem;
+  font-size: 0.75rem;
   font-weight: 800;
   display: inline-flex;
 }
@@ -2635,7 +2635,7 @@ kbd {
   align-items: center;
   gap: 4px;
   margin-top: 2px;
-  font-size: 0.64rem;
+  font-size: 0.75rem;
   font-weight: 800;
   display: flex;
 }
@@ -2660,7 +2660,7 @@ kbd {
   align-items: center;
   gap: 3px;
   padding: 1px 4px;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   font-weight: 800;
   display: inline-flex;
 }
@@ -2694,7 +2694,7 @@ kbd {
   background: #e4d6b2;
   border-radius: 6px;
   padding: 1px 5px;
-  font-size: 0.56rem;
+  font-size: 0.685rem;
   font-weight: 700;
 }
 .ko-label {
@@ -2713,7 +2713,7 @@ kbd {
   border-radius: 999px;
   flex: none;
   padding: 1px 6px;
-  font-size: 0.54rem;
+  font-size: 0.665rem;
   font-weight: 900;
 }
 .rang-avant {
@@ -2842,7 +2842,7 @@ kbd {
   border-radius: 5px;
   justify-content: center;
   align-items: center;
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 900;
   display: flex;
   position: absolute;
@@ -2865,7 +2865,7 @@ kbd {
 .sort-nom {
   text-align: center;
   color: var(--txt);
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 700;
   line-height: 1;
 }
@@ -2907,7 +2907,7 @@ kbd {
   white-space: nowrap;
   border-radius: 9px;
   padding: 7px 10px;
-  font-size: 0.74rem;
+  font-size: 0.812rem;
   font-weight: 800;
 }
 .fin-tour kbd {
@@ -2960,7 +2960,7 @@ kbd {
   border: 1px solid #c8881e;
   border-radius: 999px;
   padding: 2px 10px;
-  font-size: 0.78rem;
+  font-size: 0.812rem;
   font-weight: 800;
 }
 .carte-prog {
@@ -3004,7 +3004,7 @@ kbd {
   font-variant-numeric: tabular-nums;
   justify-content: center;
   align-items: center;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 800;
   display: flex;
   position: absolute;
@@ -3044,7 +3044,7 @@ kbd {
 }
 .stat-info {
   color: var(--muet);
-  font-size: 0.7rem;
+  font-size: 0.812rem;
 }
 .el-pastilles {
   align-items: center;
@@ -3108,7 +3108,7 @@ kbd {
   pointer-events: none;
   border-radius: 10px;
   padding: 9px 11px;
-  font-size: 0.72rem;
+  font-size: 0.812rem;
   font-weight: 600;
   line-height: 1.4;
   transition:
@@ -3220,7 +3220,7 @@ kbd {
   background: #3b82f6;
   border-radius: 999px;
   padding: 2px 8px;
-  font-size: 0.72rem;
+  font-size: 0.812rem;
   font-weight: 800;
   animation: 1.8s ease-out forwards niv-pop;
   position: absolute;
@@ -3289,7 +3289,7 @@ kbd {
 }
 .aside-niv {
   color: var(--or-texte);
-  font-size: 0.72rem;
+  font-size: 0.812rem;
   font-weight: 700;
 }
 .map-scroll {
@@ -3387,7 +3387,7 @@ body.avec-fond .map-zone {
   border: 1px solid #fff2;
   border-radius: 999px;
   padding: 1px 8px;
-  font-size: 0.72rem;
+  font-size: 0.812rem;
   font-weight: 700;
   display: none;
   position: absolute;
@@ -3714,7 +3714,7 @@ body.avec-fond .map-zone {
   border-radius: 999px;
   min-width: 18px;
   padding: 0 4px;
-  font-size: 0.62rem;
+  font-size: 0.75rem;
   font-weight: 900;
   line-height: 1.5;
   position: absolute;
@@ -3722,7 +3722,7 @@ body.avec-fond .map-zone {
   left: -6px;
 }
 .ordre-nom {
-  font-size: 0.66rem;
+  font-size: 0.75rem;
   font-weight: 700;
 }
 .ordre-jeton.sel {

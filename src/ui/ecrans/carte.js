@@ -178,16 +178,16 @@ Ennemis : ${o.desc}`)}"`
           <header class="map-topbar">
             <h2 class="zone-titre">${echapperHtml(r)}${o >= 1 ? `<span class="asc-badge" title="${echapperHtml(DIFFICULTES[o].desc)}">${etoilesDifficulte(o)}</span>` : ``}${s >= 1 ? `<span class="asc-badge" title="Philtres d'Otomai bus : les archimonstres apparaissent plus souvent">🧪 ×${s}</span>` : ``}</h2>
             <div class="topbar-actions">
-              <button id="carte-persos" class="aside-icone" title="Caractéristiques"><img src="${IMG_CARACTERISTIQUES}" alt="Caractéristiques" onerror="this.remove()" /></button>
-              <button id="carte-formation" class="aside-icone" title="Formation"><img src="${IMG_FORMATION}" alt="Formation" onerror="this.remove()" /></button>
-              <button id="carte-equip" class="aside-icone" title="Équipement${i.length ? ` · ${i.length} objet(s)` : ``}"><img src="${IMG_INVENTAIRE}" alt="Équipement" onerror="this.remove()" />${i.length ? `<span class="aside-compte">${i.length}</span>` : ``}</button>
-              <button id="carte-bestiaire" class="aside-icone" title="Bestiaire"><img src="${IMG_BESTIAIRE}" alt="Bestiaire" onerror="this.remove()" /></button>
-              <button id="carte-armurerie" class="aside-icone" title="Armurerie"><img src="${IMG_ARMURERIE}" alt="Armurerie" onerror="this.parentElement.textContent='🛡️'" /></button>
-              <button id="carte-dofus" class="aside-icone" title="Dofus"><img src="${IMG_DOFUS}" alt="Dofus" onerror="this.remove()" /></button>
+              <button id="carte-persos" class="aside-icone" title="Caractéristiques"><img src="${IMG_CARACTERISTIQUES}" alt="Caractéristiques" onerror="this.remove()" /><span class="aside-lbl">Stats</span></button>
+              <button id="carte-formation" class="aside-icone" title="Formation"><img src="${IMG_FORMATION}" alt="Formation" onerror="this.remove()" /><span class="aside-lbl">Formation</span></button>
+              <button id="carte-equip" class="aside-icone" title="Équipement${i.length ? ` · ${i.length} objet(s)` : ``}"><img src="${IMG_INVENTAIRE}" alt="Équipement" onerror="this.remove()" />${i.length ? `<span class="aside-compte">${i.length}</span>` : ``}<span class="aside-lbl">Équipement</span></button>
+              <button id="carte-bestiaire" class="aside-icone" title="Bestiaire"><img src="${IMG_BESTIAIRE}" alt="Bestiaire" onerror="this.remove()" /><span class="aside-lbl">Bestiaire</span></button>
+              <button id="carte-armurerie" class="aside-icone" title="Armurerie"><img src="${IMG_ARMURERIE}" alt="Armurerie" onerror="this.parentElement.textContent='🛡️'" /><span class="aside-lbl">Armurerie</span></button>
+              <button id="carte-dofus" class="aside-icone" title="Dofus"><img src="${IMG_DOFUS}" alt="Dofus" onerror="this.remove()" /><span class="aside-lbl">Dofus</span></button>
               <span class="topbar-sep"></span>
-              <button id="carte-accueil" class="aside-icone" title="Retour à l'accueil (la run reste sauvegardée)"><img src="${IMG_MENU}" alt="Accueil" onerror="this.remove()" /></button>
-              <button id="carte-restart" class="aside-icone" title="Recommencer avec les mêmes héros (abandonne la run en cours)"><img src="${IMG_RECOMMENCER}" alt="Recommencer" onerror="this.remove()" /></button>
-              <button id="carte-restart-choix" class="aside-icone" title="Recommencer en choisissant d'autres héros (abandonne la run en cours)"><img src="${IMG_RECOMMENCER_AVEC_PERSO}" alt="Recommencer (autres héros)" onerror="this.remove()" /></button>
+              <button id="carte-accueil" class="aside-icone" title="Retour à l'accueil (la run reste sauvegardée)"><img src="${IMG_MENU}" alt="Accueil" onerror="this.remove()" /><span class="aside-lbl">Accueil</span></button>
+              <button id="carte-restart" class="aside-icone" title="Recommencer avec les mêmes héros (abandonne la run en cours)"><img src="${IMG_RECOMMENCER}" alt="Recommencer" onerror="this.remove()" /><span class="aside-lbl">Rejouer</span></button>
+              <button id="carte-restart-choix" class="aside-icone" title="Recommencer en choisissant d'autres héros (abandonne la run en cours)"><img src="${IMG_RECOMMENCER_AVEC_PERSO}" alt="Recommencer (autres héros)" onerror="this.remove()" /><span class="aside-lbl">Autre équipe</span></button>
             </div>
           </header>
           <div class="map-scroll"><div class="map-zone" style="width:${f}px;height:${CARTE_HAUTEUR}px">

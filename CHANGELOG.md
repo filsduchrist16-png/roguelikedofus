@@ -1,5 +1,28 @@
 # Journal des modifications
 
+## Inventaire et lisibilité
+
+### Inventaire (écran Équipement)
+- Toucher un objet ouvre sa **fiche** : tout ce qu'il donne, où le trouver, et pour **chaque héros**
+  ce qu'il changerait (verdict ▲ Amélioration / ▼ Moins bien / ⇅ Gains et pertes) avec un bouton
+  « Équiper » : on peut équiper n'importe quel héros sans changer d'onglet.
+- Un équipement porté s'ouvre aussi en fiche, avec « Retirer » (fini les retraits par erreur au toucher).
+- Filtres par emplacement (Arme, Coiffe, Cape, Anneau) et tri par toile, type, rareté ou **intérêt**
+  (les améliorations d'abord).
+- Les objets identiques sont regroupés (×2, ×3…).
+- Les onglets des héros indiquent les emplacements remplis et le nombre d'améliorations disponibles.
+- Sur ordinateur : double-clic pour équiper directement, glisser-déposer toujours possible.
+
+### Hôtel de vente
+- Pastilles « ▲ Iop » sur les objets à vendre ou à acheter qui amélioreraient un héros.
+- Doublons regroupés dans l'inventaire, et la **dernière vente peut être annulée**.
+
+### Lisibilité
+- Tous les petits textes de l'interface d'origine ont été agrandis (plus rien sous 11 px).
+- Carte : le nom des cases atteignables est toujours affiché, et chaque icône de la barre d'outils
+  a sa légende (Stats, Formation, Équipement…).
+- Combat sur téléphone : cartes plus compactes (résistances à côté du portrait).
+
 ## Lisibilité mobile, objectifs de combat et aides
 
 ### Objectifs de succès en combat
