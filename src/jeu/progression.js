@@ -117,6 +117,19 @@ export function effetsDebutTourReliques(e, t, n) {
   if (n.has(`dofus_nebuleux`)) {
     r.degatsPct += i % 2 == 0 ? 0.05 : -0.05;
   }
+  if (n.has(`dofus_sylvestre`)) {
+    r.soins.push({
+      ref: e.ref,
+      montant: pctPvMax(e, 0.03),
+    });
+  }
+  if (n.has(`dofus_abyssal`) && e.position >= 4) {
+    r.boucliers.push({
+      ref: e.ref,
+      montant: pctPvMax(e, 0.05),
+      tours: 1,
+    });
+  }
   if (e.argenteArme !== undefined && i > e.argenteArme) {
     r.soins.push({
       ref: e.ref,
@@ -125,6 +138,16 @@ export function effetsDebutTourReliques(e, t, n) {
     });
   }
   return r;
+}
+// Dofus Verdoyant : bonus contre les ennemis empoisonnés ou infectés
+export function multiplicateurDofusDegats(attaquant, cible, reliques) {
+  if (
+    reliques.has(`dofus_verdoyant`) &&
+    cible.effets.some((x) => x.stat === `poison` || x.stat === `infection`)
+  ) {
+    return 1.15;
+  }
+  return 1;
 }
 export function boucliersDorigami(e, t) {
   let n = effetsTourVides();

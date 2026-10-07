@@ -100,6 +100,20 @@ export function infligerDegats(e, t, n, ctx, i, a, element) {
     c -= t;
   }
   e.pvActuels = Math.max(0, e.pvActuels - c);
+  // Dokille : le premier héros qui tombe sous un coup reste debout, une fois par combat
+  if (
+    s &&
+    e.pvActuels <= 0 &&
+    ctx &&
+    !ctx.dokilleUtilise &&
+    !e.estInvocation &&
+    !e.creature &&
+    reliquesActivesDe(e, ctx).has(`dokille`)
+  ) {
+    ctx.dokilleUtilise = true;
+    e.pvActuels = 1;
+    ctx.log(`💀 Le Dokille retient ${e.nom} : il reste debout avec 1 PV !`);
+  }
   verifierDofusArgente(e, reliquesActivesDe(e, ctx ?? {}));
   verifierRenaissance(e, ctx);
   s &&
@@ -574,41 +588,53 @@ export function brumeRangee(e, t, toursRestants, r, i) {
 export function invoquerPoupee(e, t, n, r) {
   let i = `poupee_${e.ref}`;
   if (n.some((e) => e.ref === i && e.pvActuels > 0)) {
-    r.log(`${e.nom} a déjà une ${t.nom} active.`);
+    r.log(`${e.nom} a déjà ${t.article ?? `une`} ${t.nom} active.`);
+    return;
+  }
+  // place libre, de préférence en ligne avant (la poupée provoque et encaisse)
+  let prises = new Set(
+    vivants(n)
+      .filter((c) => c.camp === e.camp)
+      .map((c) => c.position),
+  );
+  let position = [0, 1, 2, 3, 4, 5, 6, 7].find((p) => !prises.has(p));
+  if (position === undefined) {
+    r.log(`L'invocation de ${e.nom} échoue (plus de place).`);
     return;
   }
   let a = n.findIndex((e) => e.ref === i);
   if (a >= 0) {
     n.splice(a, 1);
   }
+  let pv = t.pvPct ? Math.max(10, Math.round(e.pvMax * t.pvPct)) : t.pv;
   n.push({
     ref: i,
     nom: t.nom,
-    pvBase: t.pv,
-    pvMax: t.pv,
-    pvActuels: t.pv,
+    pvBase: pv,
+    pvMax: pv,
+    pvActuels: pv,
     stats: {
       force: 0,
       intelligence: 0,
       agilite: 0,
-      vitalite: t.pv,
+      vitalite: pv,
     },
     paMax: 0,
     paActuels: 0,
     initiative: 0,
-    resistances: {},
+    resistances: { ...(t.resistances ?? {}) },
     sorts: [],
-    camp: `joueur`,
-    position: 0,
+    camp: e.camp,
+    position,
     niveau: 1,
-    img: `/assets/divers/poupee.png`,
+    img: t.img ?? `/assets/divers/poupee.png`,
     ...etatCombatInitial(),
     estInvocation: true,
     joueTour: false,
     provoque: t.provoque,
     invoquePar: e.ref,
   });
-  r.log(`${e.nom} invoque une ${t.nom} (${t.pv} PV) qui provoque les ennemis.`);
+  r.log(`${e.nom} invoque ${t.article ?? `une`} ${t.nom} (${pv} PV) qui provoque les ennemis.`);
 }
 export function planterLance(e, t, n, r) {
   let i = `lance_${e.ref}`;

@@ -94,6 +94,34 @@ button.danger-arme,
   margin-top: 4px;
 }
 
+/* ---------- plateau de combat ---------- */
+/* deux colonnes de même largeur, même quand un camp a beaucoup d'invocations */
+.plateau {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.ligne-cards {
+  flex-wrap: wrap;
+}
+.ligne-cards .carte {
+  flex: 1 1 120px;
+}
+.camp-lignes .ligne-col {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.camp-lignes .ligne-col:has(.ligne-vide) {
+  flex: none;
+}
+/* choix des classes : la dernière rangée est centrée */
+.choix-grille {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.choix-grille .classe-carte {
+  width: 150px;
+}
+
 /* ---------- écrans tactiles : pas de survol ni de clavier ---------- */
 @media (hover: none) {
   .fin-tour kbd,
@@ -142,6 +170,9 @@ button.danger-arme,
   }
   .monde-carte {
     width: 150px;
+  }
+  .choix-grille .classe-carte {
+    width: calc(50% - 6px);
   }
 
   /* carte de la zone : titre puis barre d'icônes sur toute la largeur */
@@ -406,4 +437,19 @@ button,
 /* le nom du sort est déjà dans la consigne au-dessus */
 .aide-sort-detail .tip-nom {
   display: none;
+}
+
+/* bandeau de crédits sur l'accueil */
+.bandeau-credits {
+  color: var(--muet);
+  background: #fffbf066;
+  border: 1px solid var(--bord);
+  border-radius: 10px;
+  margin: 8px auto 0;
+  padding: 6px 12px;
+  font-size: 0.74rem;
+  max-width: 720px;
+}
+.bandeau-credits a {
+  color: inherit;
 }

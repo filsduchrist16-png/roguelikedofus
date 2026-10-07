@@ -266,6 +266,12 @@ export function bonusDofus(e) {
     perceResistances: 0,
     prospection: 0,
     ouvreToujours: false,
+    pvPct: 0,
+    multKamas: 1,
+    bouclierDebutPct: 0,
+    initiativeBonus: 0,
+    esquiveBonus: 0,
+    soinPlat: 0,
   };
   for (let n of dofusPossedes(e)) {
     let r = DOFUS[n];
@@ -279,6 +285,15 @@ export function bonusDofus(e) {
       r.perceResistances && (t.perceResistances += r.perceResistances),
       r.prospectionJet && (t.prospection += meilleurJetDofus(e, n) ?? 0),
       n === `dofus_du_cauchemar` && (t.ouvreToujours = true));
+    if (r) {
+      t.pvPct += r.pvPct ?? 0;
+      t.multKamas *= r.multKamas ?? 1;
+      t.prospection += r.prospectionPlat ?? 0;
+      t.bouclierDebutPct += r.bouclierDebutPct ?? 0;
+      t.initiativeBonus += r.initiativeBonus ?? 0;
+      t.esquiveBonus += r.esquiveBonus ?? 0;
+      t.soinPlat += r.soinPlat ?? 0;
+    }
   }
   return t;
 }
@@ -315,6 +330,28 @@ export function appliquerBonusDofus(e, t) {
     }
     if (t.perceResistances) {
       n.perceResistances = (n.perceResistances ?? 0) + t.perceResistances;
+    }
+    if (t.pvPct) {
+      const gain = Math.round(n.pvMax * t.pvPct);
+      n.pvBase += gain;
+      n.pvMax += gain;
+      if (n.pvActuels > 0) {
+        n.pvActuels += gain;
+      }
+    }
+    if (t.bouclierDebutPct && n.pvActuels > 0) {
+      const b = Math.round(n.pvMax * t.bouclierDebutPct);
+      n.bouclier += b;
+      (n.boucliersTemporaires ??= []).push({ montant: b, tours: 2 });
+    }
+    if (t.initiativeBonus) {
+      n.initiative += t.initiativeBonus;
+    }
+    if (t.esquiveBonus) {
+      n.esquiveBonus = (n.esquiveBonus ?? 0) + t.esquiveBonus;
+    }
+    if (t.soinPlat) {
+      n.stats = { ...n.stats, soin: (n.stats.soin ?? 0) + t.soinPlat };
     }
     if (t.ouvreToujours) {
       n.ouvreToujours = true;

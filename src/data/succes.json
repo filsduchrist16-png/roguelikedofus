@@ -515,5 +515,732 @@
         "nom": "Posséder un Dofus."
       }
     ]
+  },
+  "dofawa": {
+    "categorie": {
+      "dofus": "dofawa"
+    },
+    "nom": "Premiers pas",
+    "quetes": [
+      {
+        "critere": {
+          "type": "runs_jouees",
+          "seuil": 3
+        },
+        "id": "d_dofawa_1",
+        "nom": "Jouer 3 runs."
+      },
+      {
+        "critere": {
+          "type": "zone_terminee",
+          "zone": "astrub"
+        },
+        "id": "d_dofawa_2",
+        "nom": "Terminer les Champs d'Astrub."
+      }
+    ]
+  },
+  "dofus_pourpre": {
+    "categorie": {
+      "dofus": "dofus_pourpre"
+    },
+    "nom": "Coloriste",
+    "quetes": [
+      {
+        "critere": {
+          "type": "compteur",
+          "evenement": "degats_element",
+          "seuil": 2000,
+          "element": "terre"
+        },
+        "id": "d_dofus_pourpre_1",
+        "nom": "Infliger 2 000 dégâts Terre au total."
+      },
+      {
+        "critere": {
+          "type": "compteur",
+          "evenement": "degats_element",
+          "seuil": 2000,
+          "element": "feu"
+        },
+        "id": "d_dofus_pourpre_2",
+        "nom": "Infliger 2 000 dégâts Feu au total."
+      },
+      {
+        "critere": {
+          "type": "compteur",
+          "evenement": "degats_element",
+          "seuil": 2000,
+          "element": "eau"
+        },
+        "id": "d_dofus_pourpre_3",
+        "nom": "Infliger 2 000 dégâts Eau au total."
+      },
+      {
+        "critere": {
+          "type": "compteur",
+          "evenement": "degats_element",
+          "seuil": 2000,
+          "element": "air"
+        },
+        "id": "d_dofus_pourpre_4",
+        "nom": "Infliger 2 000 dégâts Air au total."
+      }
+    ]
+  },
+  "dolmanax": {
+    "categorie": {
+      "dofus": "dolmanax"
+    },
+    "nom": "Maître des éléments",
+    "quetes": [
+      {
+        "critere": {
+          "type": "compteur",
+          "evenement": "degats_element",
+          "seuil": 10000,
+          "element": "terre"
+        },
+        "id": "d_dolmanax_1",
+        "nom": "Infliger 10 000 dégâts Terre au total."
+      },
+      {
+        "critere": {
+          "type": "compteur",
+          "evenement": "degats_element",
+          "seuil": 10000,
+          "element": "feu"
+        },
+        "id": "d_dolmanax_2",
+        "nom": "Infliger 10 000 dégâts Feu au total."
+      },
+      {
+        "critere": {
+          "type": "compteur",
+          "evenement": "degats_element",
+          "seuil": 10000,
+          "element": "eau"
+        },
+        "id": "d_dolmanax_3",
+        "nom": "Infliger 10 000 dégâts Eau au total."
+      },
+      {
+        "critere": {
+          "type": "compteur",
+          "evenement": "degats_element",
+          "seuil": 10000,
+          "element": "air"
+        },
+        "id": "d_dolmanax_4",
+        "nom": "Infliger 10 000 dégâts Air au total."
+      }
+    ]
+  },
+  "dofus_turquoise": {
+    "categorie": {
+      "dofus": "dofus_turquoise"
+    },
+    "nom": "Sans une égratignure",
+    "quetes": [
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "bouftou_royal",
+          "sansKO": true
+        },
+        "id": "d_dofus_turquoise_1",
+        "nom": "Vaincre le Bouftou Royal sans perdre de héros."
+      },
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "batofu",
+          "sansKO": true
+        },
+        "id": "d_dofus_turquoise_2",
+        "nom": "Vaincre le Batofu sans perdre de héros."
+      },
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "scarabosse_dore",
+          "sansKO": true
+        },
+        "id": "d_dofus_turquoise_3",
+        "nom": "Vaincre le Scarabosse Doré sans perdre de héros."
+      }
+    ]
+  },
+  "dofus_ivoire": {
+    "categorie": {
+      "dofus": "dofus_ivoire"
+    },
+    "nom": "À la dure",
+    "quetes": [
+      {
+        "critere": {
+          "type": "run_gagnee",
+          "tranche": "t1",
+          "sansTaverne": true
+        },
+        "id": "d_dofus_ivoire_1",
+        "nom": "Gagner le monde 1 sans jamais entrer dans une taverne."
+      }
+    ]
+  },
+  "dofus_ebene": {
+    "categorie": {
+      "dofus": "dofus_ebene"
+    },
+    "nom": "Exterminateur",
+    "quetes": [
+      {
+        "critere": {
+          "type": "compteur",
+          "evenement": "monstre_vaincu",
+          "seuil": 150
+        },
+        "id": "d_dofus_ebene_1",
+        "nom": "Vaincre 150 monstres."
+      },
+      {
+        "critere": {
+          "type": "compteur",
+          "evenement": "monstre_vaincu",
+          "seuil": 400
+        },
+        "id": "d_dofus_ebene_2",
+        "nom": "Vaincre 400 monstres."
+      }
+    ]
+  },
+  "dofus_des_glaces": {
+    "categorie": {
+      "dofus": "dofus_des_glaces"
+    },
+    "nom": "Grand froid",
+    "quetes": [
+      {
+        "critere": {
+          "type": "zone_terminee",
+          "zone": "gelaxieme_dimension"
+        },
+        "id": "d_dofus_des_glaces_1",
+        "nom": "Terminer la Gelaxième Dimension."
+      },
+      {
+        "critere": {
+          "type": "zone_terminee",
+          "zone": "cale_de_l_arche"
+        },
+        "id": "d_dofus_des_glaces_2",
+        "nom": "Terminer la Cale de l'Arche d'Otomaï."
+      }
+    ]
+  },
+  "dofus_kaliptus": {
+    "categorie": {
+      "dofus": "dofus_kaliptus"
+    },
+    "nom": "Explorateur",
+    "quetes": [
+      {
+        "critere": {
+          "type": "zone_terminee",
+          "zone": "tainela"
+        },
+        "id": "d_dofus_kaliptus_1",
+        "nom": "Terminer Tainéla."
+      },
+      {
+        "critere": {
+          "type": "zone_terminee",
+          "zone": "tofus"
+        },
+        "id": "d_dofus_kaliptus_2",
+        "nom": "Terminer le Donjon des Tofus."
+      },
+      {
+        "critere": {
+          "type": "zone_terminee",
+          "zone": "akademie"
+        },
+        "id": "d_dofus_kaliptus_3",
+        "nom": "Terminer l'Akadémie des Gobs."
+      },
+      {
+        "critere": {
+          "type": "zone_terminee",
+          "zone": "larves"
+        },
+        "id": "d_dofus_kaliptus_4",
+        "nom": "Terminer le Donjon des Larves."
+      }
+    ]
+  },
+  "dofus_argente_scintillant": {
+    "categorie": {
+      "dofus": "dofus_argente_scintillant"
+    },
+    "nom": "Argent pur",
+    "quetes": [
+      {
+        "critere": {
+          "type": "run_gagnee",
+          "tranche": "t1",
+          "ascensionMin": 2
+        },
+        "id": "d_dofus_argente_scintillant_1",
+        "nom": "Gagner le monde 1 en Extrême (★★★)."
+      },
+      {
+        "critere": {
+          "type": "archis_total",
+          "seuil": 15
+        },
+        "id": "d_dofus_argente_scintillant_2",
+        "nom": "Capturer 15 âmes d'Archimonstres."
+      }
+    ]
+  },
+  "dokoko": {
+    "categorie": {
+      "dofus": "dokoko"
+    },
+    "nom": "Médecin de campagne",
+    "quetes": [
+      {
+        "critere": {
+          "type": "compteur",
+          "evenement": "soins",
+          "seuil": 2500
+        },
+        "id": "d_dokoko_1",
+        "nom": "Soigner 2 500 PV au total."
+      }
+    ]
+  },
+  "dofus_nebuleux": {
+    "categorie": {
+      "dofus": "dofus_nebuleux"
+    },
+    "nom": "Au-delà des nuages",
+    "quetes": [
+      {
+        "critere": {
+          "type": "run_gagnee",
+          "tranche": "t2"
+        },
+        "id": "d_dofus_nebuleux_1",
+        "nom": "Gagner le monde 2."
+      }
+    ]
+  },
+  "dofus_des_veilleurs": {
+    "categorie": {
+      "dofus": "dofus_des_veilleurs"
+    },
+    "nom": "Garde rapprochée",
+    "quetes": [
+      {
+        "critere": {
+          "type": "run_gagnee",
+          "quatreHerosEquipes": true
+        },
+        "id": "d_dofus_des_veilleurs_1",
+        "nom": "Gagner un monde avec 4 héros portant chacun une arme, une coiffe, une cape et un anneau."
+      }
+    ]
+  },
+  "dorigami": {
+    "categorie": {
+      "dofus": "dorigami"
+    },
+    "nom": "Grand chasseur",
+    "quetes": [
+      {
+        "critere": {
+          "type": "compteur",
+          "evenement": "monstre_vaincu",
+          "seuil": 800
+        },
+        "id": "d_dorigami_1",
+        "nom": "Vaincre 800 monstres."
+      }
+    ]
+  },
+  "dofus_tachete": {
+    "categorie": {
+      "dofus": "dofus_tachete"
+    },
+    "nom": "Duo de choc",
+    "quetes": [
+      {
+        "critere": {
+          "type": "run_gagnee",
+          "tranche": "t1",
+          "sansRecrutement": true
+        },
+        "id": "d_dofus_tachete_1",
+        "nom": "Gagner le monde 1 sans recruter personne en taverne."
+      }
+    ]
+  },
+  "domakuro": {
+    "categorie": {
+      "dofus": "domakuro"
+    },
+    "nom": "Éclair",
+    "quetes": [
+      {
+        "critere": {
+          "type": "vaincre",
+          "noeud": "combat_dur",
+          "toursMax": 2
+        },
+        "id": "d_domakuro_1",
+        "nom": "Gagner un combat dur en 2 rondes ou moins."
+      }
+    ]
+  },
+  "dofus_vulbis": {
+    "categorie": {
+      "dofus": "dofus_vulbis"
+    },
+    "nom": "Collectionneur légendaire",
+    "quetes": [
+      {
+        "critere": {
+          "type": "dofus_possedes",
+          "seuil": 20
+        },
+        "id": "d_dofus_vulbis_1",
+        "nom": "Posséder 20 Dofus différents."
+      }
+    ]
+  },
+  "dofus_abyssal": {
+    "categorie": {
+      "dofus": "dofus_abyssal"
+    },
+    "nom": "Fonds marins",
+    "quetes": [
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "gourlo_le_terrible"
+        },
+        "id": "d_dofus_abyssal_1",
+        "nom": "Vaincre Gourlo le Terrible."
+      },
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "le_chouque"
+        },
+        "id": "d_dofus_abyssal_2",
+        "nom": "Vaincre le Chouque."
+      },
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "corailleur_magistral"
+        },
+        "id": "d_dofus_abyssal_3",
+        "nom": "Vaincre le Corailleur Magistral."
+      }
+    ]
+  },
+  "dofus_cawotte": {
+    "categorie": {
+      "dofus": "dofus_cawotte"
+    },
+    "nom": "Terrier",
+    "quetes": [
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "wa_wabbit"
+        },
+        "id": "d_dofus_cawotte_1",
+        "nom": "Vaincre le Wa Wabbit."
+      },
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "wa_wobot"
+        },
+        "id": "d_dofus_cawotte_2",
+        "nom": "Vaincre le Wa Wobot."
+      }
+    ]
+  },
+  "dofus_sylvestre": {
+    "categorie": {
+      "dofus": "dofus_sylvestre"
+    },
+    "nom": "Esprit de la forêt",
+    "quetes": [
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "moon"
+        },
+        "id": "d_dofus_sylvestre_1",
+        "nom": "Vaincre Moon."
+      },
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "abraknyde_ancestral"
+        },
+        "id": "d_dofus_sylvestre_2",
+        "nom": "Vaincre l'Abraknyde Ancestral."
+      },
+      {
+        "critere": {
+          "type": "run_gagnee",
+          "classe": "sadida"
+        },
+        "id": "d_dofus_sylvestre_3",
+        "nom": "Gagner un monde avec un Sadida dans l'équipe."
+      }
+    ]
+  },
+  "dofus_verdoyant": {
+    "categorie": {
+      "dofus": "dofus_verdoyant"
+    },
+    "nom": "Poison lent",
+    "quetes": [
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "shin_larve"
+        },
+        "id": "d_dofus_verdoyant_1",
+        "nom": "Vaincre Shin Larve."
+      },
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "kwakwa"
+        },
+        "id": "d_dofus_verdoyant_2",
+        "nom": "Vaincre le Kwakwa."
+      },
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "reine_nyee"
+        },
+        "id": "d_dofus_verdoyant_3",
+        "nom": "Vaincre la Reine Nyée."
+      }
+    ]
+  },
+  "dofus_cacao": {
+    "categorie": {
+      "dofus": "dofus_cacao"
+    },
+    "nom": "Gourmandise",
+    "quetes": [
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "blop_coco_royal"
+        },
+        "id": "d_dofus_cacao_1",
+        "nom": "Vaincre le Blop Coco Royal."
+      },
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "blop_griotte_royal"
+        },
+        "id": "d_dofus_cacao_2",
+        "nom": "Vaincre le Blop Griotte Royal."
+      },
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "blop_indigo_royal"
+        },
+        "id": "d_dofus_cacao_3",
+        "nom": "Vaincre le Blop Indigo Royal."
+      },
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "blop_reinette_royal"
+        },
+        "id": "d_dofus_cacao_4",
+        "nom": "Vaincre le Blop Reinette Royal."
+      }
+    ]
+  },
+  "dofus_forgelave": {
+    "categorie": {
+      "dofus": "dofus_forgelave"
+    },
+    "nom": "Cœur de lave",
+    "quetes": [
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "craqueleur_legendaire"
+        },
+        "id": "d_dofus_forgelave_1",
+        "nom": "Vaincre le Craqueleur Légendaire."
+      },
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "dragon_cochon"
+        },
+        "id": "d_dofus_forgelave_2",
+        "nom": "Vaincre le Dragon Cochon."
+      },
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "coffre_forgerons"
+        },
+        "id": "d_dofus_forgelave_3",
+        "nom": "Vaincre le Coffre des Forgerons."
+      }
+    ]
+  },
+  "dofoozbz": {
+    "categorie": {
+      "dofus": "dofoozbz"
+    },
+    "nom": "Arène",
+    "quetes": [
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "kharnozor"
+        },
+        "id": "d_dofoozbz_1",
+        "nom": "Vaincre Kharnozor."
+      },
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "draegnerys"
+        },
+        "id": "d_dofoozbz_2",
+        "nom": "Vaincre Draegnerys."
+      }
+    ]
+  },
+  "dokille": {
+    "categorie": {
+      "dofus": "dokille"
+    },
+    "nom": "Revenant",
+    "quetes": [
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "boostache",
+          "sansKO": true
+        },
+        "id": "d_dokille_1",
+        "nom": "Vaincre Boostache sans perdre de héros."
+      },
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "kankreblath"
+        },
+        "id": "d_dokille_2",
+        "nom": "Vaincre Kankreblath."
+      }
+    ]
+  },
+  "dom_de_pin": {
+    "categorie": {
+      "dofus": "dom_de_pin"
+    },
+    "nom": "Hiver rigoureux",
+    "quetes": [
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "meulou"
+        },
+        "id": "d_dom_de_pin_1",
+        "nom": "Vaincre le Meulou."
+      },
+      {
+        "critere": {
+          "type": "run_gagnee",
+          "tranche": "t2",
+          "ascensionMin": 1
+        },
+        "id": "d_dom_de_pin_2",
+        "nom": "Gagner le monde 2 en Difficile (★★)."
+      }
+    ]
+  },
+  "dotruche": {
+    "categorie": {
+      "dofus": "dotruche"
+    },
+    "nom": "Course folle",
+    "quetes": [
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "nelween"
+        },
+        "id": "d_dotruche_1",
+        "nom": "Vaincre Nelween."
+      },
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "directeur_grunob"
+        },
+        "id": "d_dotruche_2",
+        "nom": "Vaincre le Directeur Grunob."
+      },
+      {
+        "critere": {
+          "type": "vaincre",
+          "boss": "tournesol_affame",
+          "toursMax": 3
+        },
+        "id": "d_dotruche_3",
+        "nom": "Vaincre le Tournesol Affamé en 3 rondes ou moins."
+      }
+    ]
+  },
+  "jyfus": {
+    "categorie": {
+      "dofus": "jyfus"
+    },
+    "nom": "Main de Jiva",
+    "quetes": [
+      {
+        "critere": {
+          "type": "compteur",
+          "evenement": "soins",
+          "seuil": 6000
+        },
+        "id": "d_jyfus_1",
+        "nom": "Soigner 6 000 PV au total."
+      },
+      {
+        "critere": {
+          "type": "run_gagnee",
+          "classe": "eniripsa"
+        },
+        "id": "d_jyfus_2",
+        "nom": "Gagner un monde avec une Eniripsa dans l'équipe."
+      }
+    ]
   }
 }

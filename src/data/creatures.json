@@ -1,0 +1,73 @@
+{
+  "tofu": {
+    "nom": "Tofu",
+    "img": "/assets/monstres/tofu.png",
+    "pvPct": 0.3,
+    "statsPct": 0.4,
+    "pa": 4,
+    "initiative": 15,
+    "sorts": [
+      "tofu_picore"
+    ],
+    "ia": "agressif"
+  },
+  "bouftou": {
+    "nom": "Bouftou",
+    "img": "/assets/monstres/bouftou.png",
+    "pvPct": 0.45,
+    "statsPct": 0.4,
+    "pa": 3,
+    "initiative": 6,
+    "sorts": [
+      "bouftou_morsure"
+    ],
+    "ia": "agressif",
+    "provoque": true,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    }
+  },
+  "crapaud": {
+    "nom": "Crapipou",
+    "img": "/assets/divers/invocation_crapipou.png",
+    "pvPct": 0.35,
+    "statsPct": 0.4,
+    "pa": 3,
+    "initiative": 9,
+    "sorts": [
+      "crapaud_crachat"
+    ],
+    "ia": "agressif"
+  },
+  "harponneuse": {
+    "nom": "Harponneuse",
+    "img": "/assets/divers/harponneuse.png",
+    "pvPct": 0.5,
+    "statsPct": 0.6,
+    "pa": 3,
+    "initiative": 5,
+    "sorts": [
+      "harpon"
+    ],
+    "ia": "agressif",
+    "tourelle": true,
+    "arriere": true
+  },
+  "gardienne": {
+    "nom": "Gardienne",
+    "img": "/assets/divers/gardienne.png",
+    "pvPct": 0.5,
+    "statsPct": 0.6,
+    "pa": 3,
+    "initiative": 5,
+    "sorts": [
+      "soin_gardienne"
+    ],
+    "ia": "soutien",
+    "tourelle": true,
+    "arriere": true
+  }
+}

@@ -1,3 +1,13 @@
+import {
+  effetsClasseApresSoin,
+  effetsClasseFinLancer,
+  effetsClasseSoutien,
+  effetsClasseSurCible,
+  invoquerCreature,
+  multiplicateurSoinCreature,
+  propagerInfection,
+  sortSelonEtat,
+} from "./classes.js";
 import { SORTS } from "../data/index.js";
 import { appliquerDofusTachete } from "../jeu/progression.js";
 import {
@@ -479,6 +489,9 @@ const RESOLVEURS_SORTS = [
       if (sort.ressuscite) {
         ressusciterAllie(lanceur, sort.ressuscite, cs, ctx);
       }
+      if (sort.invoqueCreature) {
+        invoquerCreature(lanceur, sort.invoqueCreature, cs, ctx);
+      }
       poseCooldown(lanceur);
     },
   },
@@ -579,12 +592,15 @@ const RESOLVEURS_SORTS = [
           sort.soinComplet
             ? e.pvMax - e.pvActuels
             : Math.round(
-                tirageEntier(sort.baseMin, sort.baseMax, ctx.rng) * multiplicateurSoinDe(lanceur),
+                tirageEntier(sort.baseMin, sort.baseMax, ctx.rng) *
+                  multiplicateurSoinDe(lanceur) *
+                  multiplicateurSoinCreature(lanceur),
               ),
           ctx,
         );
         poseCooldown(e);
       }
+      effetsClasseApresSoin(lanceur, sort, cs, ctx);
     },
   },
   {
@@ -690,6 +706,7 @@ const RESOLVEURS_SORTS = [
       let s = aBonusSiCrit(sort) && ctx.rng() < chanceCritique(statsEffectives(lanceur));
       for (let e of ciblesSoutien(sort, lanceur, cible, cs)) {
         appliquerSoutien(sort, e, lanceur, ctx, s);
+        effetsClasseSoutien(sort, e, lanceur, cs, ctx);
         poseCooldown(e);
       }
       if (sort.effetRangeeAlliee) {
@@ -723,6 +740,7 @@ function resoudreDegats(e) {
     return;
   }
   let i = appliquerDegatsSort(n, r);
+  propagerInfection(n.lanceur, n.sort, cible, n.cs, n.ctx);
   effetsApresDegats(n, i);
   soinsApresDegats(n, i, i.totalDmg + degatsToucheDerriere(n, r));
   effetsFinLancer(n, i);
@@ -867,6 +885,11 @@ function appliquerDegatsSort(e, t) {
 }
 function effetsSurCibleTouchee({ lanceur, sort, ctx, paAvant }, t, n, mult, { useMax }) {
   let u = 0;
+  effetsClasseSurCible(lanceur, sort, t, n, ctx);
+  if (n.crit && n.dmg > 0 && reliquesActivesDe(lanceur, ctx).has(`dofus_forgelave`)) {
+    appliquerPoison(t, { degats: Math.max(1, Math.round(n.dmg * 0.15)), duree: 2 });
+    ctx.log(`🔥 Le Dofus Forgelave embrase ${t.nom}.`);
+  }
   if (sort.poison) {
     appliquerPoison(t, sort.poison);
   }
@@ -1087,8 +1110,10 @@ function effetsFinLancer(
   if (sort.rage) {
     gagnerRage(lanceur, ctx);
   }
+  effetsClasseFinLancer(lanceur, sort, cs, ctx);
 }
 export function lancerSort(e, t, n, r, i) {
+  t = sortSelonEtat(e, t);
   let a = preparerLancer(e, t, n, r, i);
   if (echecCritique(a)) {
     return;

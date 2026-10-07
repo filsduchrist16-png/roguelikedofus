@@ -4,6 +4,7 @@ import { enregistrerCollection } from "../../sauvegarde/meta.js";
 import {
   NOMS_SLOTS,
   afficherEcran,
+  attrTipObjet,
   barreRetour,
   classeRarete,
   htmlChipsObjet,
@@ -21,7 +22,7 @@ export function ecranHdv(e, t, n) {
         ? t
             .map((t, n) => {
               let r = e.kamas >= t.prix;
-              return `<button class="item-carte hdv-achat${classeRarete(t.inst)}" data-achat="${n}" ${r ? `` : `disabled`}>
+              return `<button class="item-carte hdv-achat${classeRarete(t.inst)}" data-achat="${n}" ${r ? `` : `disabled`}${attrTipObjet(t.inst.id)}>
               <img src="${imgObjet(t.inst.id)}" alt="" loading="lazy" onerror="this.remove()" />
               <span class="item-nom">${htmlNomObjet(t.inst)}<small>${NOMS_SLOTS[EQUIPEMENTS[t.inst.id].slot]} ${htmlChipsObjet(t.inst)}</small></span>
               <span class="hdv-prix">${htmlKamas(t.prix)}</span>
@@ -32,7 +33,10 @@ export function ecranHdv(e, t, n) {
       let o = e.inventaire.length
         ? e.inventaire
             .map(
-              (e, t) => `<button class="item-carte hdv-vente${classeRarete(e)}" data-vente="${t}">
+              (
+                e,
+                t,
+              ) => `<button class="item-carte hdv-vente${classeRarete(e)}" data-vente="${t}"${attrTipObjet(e.id)}>
               <img src="${imgObjet(e.id)}" alt="" loading="lazy" onerror="this.remove()" />
               <span class="item-nom">${htmlNomObjet(e)}<small>${NOMS_SLOTS[EQUIPEMENTS[e.id].slot]} ${htmlChipsObjet(e)}</small></span>
               <span class="hdv-prix vente">${htmlKamas(prixRevente(e))}</span>

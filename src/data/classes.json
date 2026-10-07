@@ -253,10 +253,10 @@
     }
   },
   "sadida": {
-    "archetype": "melee",
+    "archetype": "distance",
     "elements": [
       "terre",
-      "eau"
+      "air"
     ],
     "id": "sadida",
     "img": "/assets/classes/sadida.png",
@@ -265,13 +265,12 @@
     "pa": 6,
     "pvBase": 50,
     "sorts": [
-      "crachat_de_seve",
-      "deferlante",
-      "lame_liquide",
-      "etreinte_ronces",
-      "poupee_garde",
-      "rosee_regenerante",
-      "vigueur_bois"
+      "ronce",
+      "larme_de_sadida",
+      "seve_paralysante",
+      "contagion_sadida",
+      "inoculation",
+      "la_bloqueuse"
     ],
     "stats": {
       "agilite": 0,
@@ -328,6 +327,205 @@
       "rayon_obscur",
       "cadran_de_xelor",
       "premonition"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "vitalite": 0
+    }
+  },
+  "osamodas": {
+    "archetype": "distance",
+    "elements": [
+      "terre",
+      "feu"
+    ],
+    "id": "osamodas",
+    "img": "/assets/classes/osamodas.png",
+    "initiative": 10,
+    "nom": "Osamodas",
+    "pa": 6,
+    "pvBase": 45,
+    "sorts": [
+      "fouet",
+      "cri_de_l_ours",
+      "invocation_tofu",
+      "invocation_bouftou",
+      "invocation_crapipou",
+      "piqure_motivante"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "vitalite": 0
+    }
+  },
+  "enutrof": {
+    "archetype": "distance",
+    "elements": [
+      "eau",
+      "terre"
+    ],
+    "id": "enutrof",
+    "img": "/assets/classes/enutrof.png",
+    "initiative": 7,
+    "nom": "Enutrof",
+    "pa": 6,
+    "pvBase": 50,
+    "sorts": [
+      "lancer_de_pieces",
+      "force_de_l_age",
+      "abattement",
+      "pelle_fantomatique",
+      "sac_anime",
+      "boite_de_pandore"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 160,
+      "vitalite": 0
+    },
+    "multKamas": 1.25
+  },
+  "sacrieur": {
+    "archetype": "melee",
+    "elements": [
+      "terre",
+      "air"
+    ],
+    "id": "sacrieur",
+    "img": "/assets/classes/sacrieur.png",
+    "initiative": 9,
+    "nom": "Sacrieur",
+    "pa": 6,
+    "pvBase": 60,
+    "sorts": [
+      "absorption",
+      "hemorragie",
+      "bain_de_sang",
+      "mutilation",
+      "transfusion",
+      "sacrifice"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "vitalite": 0
+    },
+    "souffrance": true
+  },
+  "pandawa": {
+    "archetype": "melee",
+    "elements": [
+      "terre",
+      "eau"
+    ],
+    "id": "pandawa",
+    "img": "/assets/classes/pandawa.png",
+    "initiative": 8,
+    "nom": "Pandawa",
+    "pa": 6,
+    "pvBase": 55,
+    "sorts": [
+      "bombance",
+      "gueule_de_bois",
+      "paume_explosive",
+      "karcham",
+      "fermentation",
+      "eau_de_vie"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "vitalite": 0
+    },
+    "etatInitial": "sobre"
+  },
+  "zobal": {
+    "archetype": "melee",
+    "elements": [
+      "feu",
+      "air"
+    ],
+    "id": "zobal",
+    "img": "/assets/classes/zobal.png",
+    "initiative": 11,
+    "nom": "Zobal",
+    "pa": 6,
+    "pvBase": 50,
+    "sorts": [
+      "masque_intrepide",
+      "masque_psychopathe",
+      "masque_pleutre",
+      "plastron",
+      "furia",
+      "cabriole"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "vitalite": 0
+    }
+  },
+  "steamer": {
+    "archetype": "distance",
+    "elements": [
+      "terre",
+      "eau"
+    ],
+    "id": "steamer",
+    "img": "/assets/classes/steamer.png",
+    "initiative": 9,
+    "nom": "Steamer",
+    "pa": 6,
+    "pvBase": 50,
+    "sorts": [
+      "harponneuse",
+      "gardienne",
+      "evolution",
+      "longue_vue",
+      "ressac",
+      "scaphandre"
+    ],
+    "stats": {
+      "agilite": 0,
+      "force": 0,
+      "intelligence": 0,
+      "prospection": 100,
+      "vitalite": 0
+    }
+  },
+  "huppermage": {
+    "archetype": "distance",
+    "elements": [
+      "feu",
+      "eau"
+    ],
+    "id": "huppermage",
+    "img": "/assets/classes/huppermage.png",
+    "initiative": 12,
+    "nom": "Huppermage",
+    "pa": 6,
+    "pvBase": 45,
+    "sorts": [
+      "lance_flamme",
+      "stalagmite",
+      "trait_ardent",
+      "glacier",
+      "polarite",
+      "bouclier_elementaire"
     ],
     "stats": {
       "agilite": 0,

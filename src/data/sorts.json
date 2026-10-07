@@ -341,20 +341,6 @@
     "nom": "Coup de bec",
     "type": "degats"
   },
-  "crachat_de_seve": {
-    "baseMax": 12,
-    "baseMin": 8,
-    "cible": "ennemi_ligne",
-    "coutPA": 3,
-    "desc": "Dégâts simples + poison léger (2t).",
-    "id": "crachat_de_seve",
-    "nom": "Crachat de sève",
-    "poison": {
-      "degats": 4,
-      "duree": 2
-    },
-    "type": "degats"
-  },
   "croc_de_l_alpha": {
     "baseMax": 40,
     "baseMin": 30,
@@ -389,25 +375,6 @@
     "poison": {
       "degats": 8,
       "duree": 2
-    },
-    "type": "degats"
-  },
-  "deferlante": {
-    "baseMax": 8,
-    "baseMin": 5,
-    "cible": "ennemi_ligne",
-    "coutPA": 4,
-    "desc": "Touche les 2 premiers ennemis (dégâts faibles) + initiative réduite (1t).",
-    "effet": {
-      "duree": 1,
-      "stat": "initiative",
-      "valeur": -5
-    },
-    "id": "deferlante",
-    "nom": "Déferlante",
-    "rebond": {
-      "bonusParSaut": 0,
-      "sauts": 1
     },
     "type": "degats"
   },
@@ -535,25 +502,6 @@
     "retraitPAChance": 1,
     "type": "degats",
     "zoneLigne": true
-  },
-  "etreinte_ronces": {
-    "baseMax": 14,
-    "baseMin": 10,
-    "cible": "ennemi_ligne",
-    "coutPA": 5,
-    "desc": "Dégâts modérés à la 1ʳᵉ ligne + initiative réduite (1t).",
-    "effet": {
-      "duree": 1,
-      "stat": "initiative",
-      "valeur": -5
-    },
-    "id": "etreinte_ronces",
-    "nom": "Étreinte des ronces",
-    "rebond": {
-      "bonusParSaut": 0,
-      "sauts": 1
-    },
-    "type": "degats"
   },
   "fil_collant": {
     "baseMax": 25,
@@ -731,16 +679,6 @@
     "id": "kaboom",
     "kaboom": true,
     "nom": "Kaboom",
-    "type": "degats"
-  },
-  "lame_liquide": {
-    "baseMax": 22,
-    "baseMin": 16,
-    "cible": "ennemi_ligne",
-    "coutPA": 5,
-    "desc": "Gros dégâts mono-cible.",
-    "id": "lame_liquide",
-    "nom": "Lame liquide",
     "type": "degats"
   },
   "lance": {
@@ -1104,21 +1042,6 @@
     "posePortail": true,
     "type": "buff"
   },
-  "poupee_garde": {
-    "baseMax": 0,
-    "baseMin": 0,
-    "cible": "soi",
-    "coutPA": 4,
-    "desc": "Invoque une poupée qui provoque les ennemis. Elle encaisse mais ne joue pas.",
-    "id": "poupee_garde",
-    "invocation": {
-      "nom": "Poupée",
-      "provoque": true,
-      "pv": 40
-    },
-    "nom": "Poupée de garde",
-    "type": "invocation"
-  },
   "poussiere_incandescente": {
     "baseMax": 16,
     "baseMin": 11,
@@ -1270,18 +1193,6 @@
     "maxParTour": 1,
     "nom": "Riposte mécanique",
     "type": "degats"
-  },
-  "rosee_regenerante": {
-    "baseMax": 0,
-    "baseMin": 0,
-    "cible": "allie",
-    "coutPA": 3,
-    "desc": "Soin sur la durée sur un allié (5 % vita / 3t).",
-    "hotDuree": 3,
-    "hotPct": 0.05,
-    "id": "rosee_regenerante",
-    "nom": "Rosée régénérante",
-    "type": "buff"
   },
   "rostre_broyeur": {
     "baseMax": 32,
@@ -1701,17 +1612,6 @@
     "nom": "Vigie",
     "type": "degats"
   },
-  "vigueur_bois": {
-    "baseMax": 0,
-    "baseMin": 0,
-    "bonusProchainSortPct": 0.3,
-    "cible": "soi",
-    "coutPA": 2,
-    "desc": "+30 % de dégâts au prochain sort offensif du lanceur.",
-    "id": "vigueur_bois",
-    "nom": "Vigueur des bois",
-    "type": "buff"
-  },
   "zenith": {
     "baseMax": 11,
     "baseMin": 7,
@@ -1724,5 +1624,736 @@
     "nom": "Zénith",
     "type": "degats",
     "zoneLigne": true
+  },
+  "ronce": {
+    "baseMax": 12,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Dégâts modérés ; la cible est infectée pendant 2 tours.",
+    "id": "ronce",
+    "nom": "Ronce",
+    "type": "degats",
+    "infecte": 2
+  },
+  "larme_de_sadida": {
+    "baseMax": 9,
+    "baseMin": 6,
+    "cible": "mixte",
+    "coutPA": 3,
+    "desc": "Se lance sur n'importe qui : un allié est soigné, un ennemi encaisse de faibles dégâts et est infecté 2 tours.",
+    "id": "larme_de_sadida",
+    "nom": "Larme de Sadida",
+    "type": "degats",
+    "mixte": {
+      "surAllie": {
+        "soin": {
+          "min": 12,
+          "max": 18
+        }
+      }
+    },
+    "infecte": 2
+  },
+  "seve_paralysante": {
+    "baseMax": 5,
+    "baseMin": 3,
+    "cible": "ennemi_tous",
+    "coutPA": 3,
+    "desc": "Atteint n'importe quel ennemi : il est infecté 3 tours et empoisonné (5 dégâts par tour pendant 3 tours).",
+    "id": "seve_paralysante",
+    "nom": "Sève Paralysante",
+    "type": "degats",
+    "infecte": 3,
+    "poison": {
+      "degats": 5,
+      "duree": 3
+    }
+  },
+  "contagion_sadida": {
+    "baseMax": 10,
+    "baseMin": 7,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Dégâts modérés ; sur une cible infectée, le sort se propage à tous les autres ennemis infectés (70 % des dégâts).",
+    "id": "contagion_sadida",
+    "nom": "Contagion",
+    "type": "degats",
+    "propageInfectes": true,
+    "maxParTour": 2
+  },
+  "inoculation": {
+    "baseMax": 11,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Gros dégâts : +20 % par ennemi infecté sur le terrain.",
+    "id": "inoculation",
+    "nom": "Inoculation",
+    "type": "degats",
+    "bonusParInfecte": 0.2
+  },
+  "la_bloqueuse": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 3,
+    "desc": "Invoque une poupée qui provoque les ennemis, avec 40 % des PV max du Sadida. Elle encaisse mais ne joue pas. Une seule à la fois.",
+    "id": "la_bloqueuse",
+    "nom": "La Bloqueuse",
+    "type": "invocation",
+    "invocation": {
+      "nom": "Bloqueuse",
+      "provoque": true,
+      "pvPct": 0.4,
+      "img": "/assets/divers/la_bloqueuse.png",
+      "article": "une"
+    },
+    "cooldownTours": 3
+  },
+  "fouet": {
+    "baseMax": 10,
+    "baseMin": 7,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Dégâts modérés ; les créatures de l'Osamodas infligent 25 % de dégâts en plus pendant 2 tours.",
+    "id": "fouet",
+    "nom": "Fouet",
+    "type": "degats",
+    "boostInvocations": {
+      "valeur": 0.25,
+      "duree": 2
+    }
+  },
+  "cri_de_l_ours": {
+    "baseMax": 12,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Vole de la vie : l'Osamodas récupère 35 % des dégâts infligés.",
+    "id": "cri_de_l_ours",
+    "nom": "Cri de l'Ours",
+    "type": "degats",
+    "vampirismeRatio": 0.35
+  },
+  "invocation_tofu": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 2,
+    "desc": "Invoque un Tofu rapide (30 % des PV de l'Osamodas) qui picore la ligne avant ennemie à chaque tour.",
+    "id": "invocation_tofu",
+    "nom": "Tofu",
+    "type": "invocation",
+    "invoqueCreature": "tofu",
+    "cooldownTours": 2
+  },
+  "invocation_bouftou": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 3,
+    "desc": "Invoque un Bouftou robuste (45 % des PV de l'Osamodas) qui provoque les ennemis et les mord.",
+    "id": "invocation_bouftou",
+    "nom": "Bouftou",
+    "type": "invocation",
+    "invoqueCreature": "bouftou",
+    "cooldownTours": 4
+  },
+  "invocation_crapipou": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 3,
+    "desc": "Invoque un Crapipou (35 % des PV de l'Osamodas) qui crache du poison sur n'importe quel ennemi.",
+    "id": "invocation_crapipou",
+    "nom": "Crapipou",
+    "type": "invocation",
+    "invoqueCreature": "crapaud",
+    "cooldownTours": 3
+  },
+  "piqure_motivante": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "allie",
+    "coutPA": 2,
+    "desc": "Sur une créature : +2 PA immédiatement. Sur un héros : +1 PA à son prochain tour. Un lancer par tour.",
+    "id": "piqure_motivante",
+    "nom": "Piqûre Motivante",
+    "type": "buff",
+    "piqure": true,
+    "maxParTour": 1
+  },
+  "lancer_de_pieces": {
+    "baseMax": 9,
+    "baseMin": 6,
+    "cible": "ennemi_tous",
+    "coutPA": 2,
+    "desc": "Petit coup qui atteint n'importe quel ennemi, rangée arrière comprise. Deux lancers par tour.",
+    "id": "lancer_de_pieces",
+    "nom": "Lancer de Pièces",
+    "type": "degats",
+    "maxParTour": 2
+  },
+  "force_de_l_age": {
+    "baseMax": 14,
+    "baseMin": 10,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Gros coup qui mûrit avec le combat : +8 % de dégâts par tour déjà joué par l'Enutrof (jusqu'à +80 %).",
+    "id": "force_de_l_age",
+    "nom": "Force de l'Âge",
+    "type": "degats",
+    "bonusParTourJoue": 0.08
+  },
+  "abattement": {
+    "baseMax": 10,
+    "baseMin": 7,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Balaye toute la rangée de la cible ; chaque ennemi touché a une chance sur deux de perdre 1 PA.",
+    "id": "abattement",
+    "nom": "Abattement",
+    "type": "degats",
+    "zoneLigne": true,
+    "retraitPA": 1,
+    "retraitPAChance": 0.5,
+    "cooldownTours": 2
+  },
+  "pelle_fantomatique": {
+    "baseMax": 11,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Dégâts modérés ; la cible perd ses effets bénéfiques et son bouclier.",
+    "id": "pelle_fantomatique",
+    "nom": "Pelle Fantomatique",
+    "type": "degats",
+    "desenvouteCible": true
+  },
+  "sac_anime": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 3,
+    "desc": "Invoque un Sac Animé qui provoque les ennemis, avec 50 % des PV max de l'Enutrof. Il encaisse mais ne joue pas. Un seul à la fois.",
+    "id": "sac_anime",
+    "nom": "Sac Animé",
+    "type": "invocation",
+    "invocation": {
+      "nom": "Sac Animé",
+      "provoque": true,
+      "pvPct": 0.5,
+      "img": "/assets/divers/sac_anime.png",
+      "article": "un"
+    },
+    "cooldownTours": 3
+  },
+  "boite_de_pandore": {
+    "baseMax": 16,
+    "baseMin": 12,
+    "cible": "allie_tous",
+    "coutPA": 3,
+    "desc": "Soigne toute l'équipe… mais chaque ennemi a une chance sur deux de gagner 1 PA à son prochain tour.",
+    "id": "boite_de_pandore",
+    "nom": "Boîte de Pandore",
+    "type": "soin",
+    "paEnnemisProchainTour": 1,
+    "cooldownTours": 2,
+    "paEnnemisChance": 0.5
+  },
+  "absorption": {
+    "baseMax": 12,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Vole de la vie : le Sacrieur récupère 40 % des dégâts infligés.",
+    "id": "absorption",
+    "nom": "Absorption",
+    "type": "degats",
+    "vampirismeRatio": 0.4
+  },
+  "hemorragie": {
+    "baseMax": 10,
+    "baseMin": 7,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Dégâts modérés ; la cible saigne (5 dégâts par tour pendant 3 tours).",
+    "id": "hemorragie",
+    "nom": "Hémorragie",
+    "type": "degats",
+    "poison": {
+      "degats": 5,
+      "duree": 3
+    }
+  },
+  "bain_de_sang": {
+    "baseMax": 10,
+    "baseMin": 7,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Balaye toute la rangée de la cible ; le Sacrieur récupère 25 % des dégâts infligés.",
+    "id": "bain_de_sang",
+    "nom": "Bain de Sang",
+    "type": "degats",
+    "zoneLigne": true,
+    "vampirismeRatio": 0.25,
+    "maxParTour": 1
+  },
+  "mutilation": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 1,
+    "desc": "Le Sacrieur sacrifie 12 % de ses PV max pour infliger 30 % de dégâts en plus pendant 2 tours.",
+    "id": "mutilation",
+    "nom": "Mutilation",
+    "type": "buff",
+    "sacrifiePvPct": 0.12,
+    "effet": {
+      "stat": "degatsInfliges",
+      "valeur": 0.3,
+      "duree": 2
+    },
+    "cooldownTours": 3
+  },
+  "transfusion": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "allie",
+    "coutPA": 2,
+    "desc": "Le Sacrieur donne 15 % de ses PV max à un autre allié, qui en récupère le double.",
+    "id": "transfusion",
+    "nom": "Transfusion",
+    "type": "buff",
+    "transfertPvPct": 0.15,
+    "cooldownTours": 2
+  },
+  "sacrifice": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 3,
+    "desc": "Pendant 1 tour, le Sacrieur encaisse les trois quarts des dégâts destinés aux alliés de la rangée arrière.",
+    "id": "sacrifice",
+    "nom": "Sacrifice",
+    "type": "buff",
+    "redirigeArriere": {
+      "ratio": 0.75,
+      "duree": 1
+    },
+    "cooldownTours": 3
+  },
+  "bombance": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 1,
+    "desc": "Bascule entre Sobre et Saoul. Saoul : +15 % de dégâts mais -10 % de résistances. Redevenir Sobre rend 1 PA.",
+    "id": "bombance",
+    "nom": "Bombance",
+    "type": "buff",
+    "basculeEtat": [
+      "sobre",
+      "saoul"
+    ],
+    "maxParTour": 2
+  },
+  "gueule_de_bois": {
+    "baseMax": 13,
+    "baseMin": 9,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Gros coup ; si le Pandawa est Saoul, +40 % de dégâts et il dessoûle d'un coup (redevient Sobre).",
+    "id": "gueule_de_bois",
+    "nom": "Gueule de Bois",
+    "type": "degats",
+    "selonEtat": {
+      "saoul": {
+        "multEtat": 1.4,
+        "etatApres": "sobre"
+      }
+    }
+  },
+  "paume_explosive": {
+    "baseMax": 11,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Sobre : un bouclier de 8 % des PV max protège le Pandawa 1 tour. Saoul : l'explosion éclabousse le reste de la rangée pour moitié.",
+    "id": "paume_explosive",
+    "nom": "Paume Explosive",
+    "type": "degats",
+    "bouclierPortee": {
+      "pct": 0.08,
+      "portee": "soi",
+      "tours": 1
+    },
+    "selonEtat": {
+      "saoul": {
+        "ratioLigne": 0.5,
+        "bouclierPortee": null
+      }
+    }
+  },
+  "karcham": {
+    "baseMax": 6,
+    "baseMin": 4,
+    "cible": "ennemi_ligne",
+    "coutPA": 2,
+    "desc": "Le Pandawa empoigne la cible et la jette sur la rangée opposée ; Saoul, il la jette plus fort (+50 % de dégâts). Un lancer par tour.",
+    "id": "karcham",
+    "nom": "Karcham",
+    "type": "degats",
+    "deplaceCible": "toggle",
+    "maxParTour": 1,
+    "selonEtat": {
+      "saoul": {
+        "multEtat": 1.5
+      }
+    }
+  },
+  "fermentation": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "allie",
+    "coutPA": 3,
+    "desc": "Couvre un allié d'un bouclier valant 15 % de ses PV max pendant 2 tours.",
+    "id": "fermentation",
+    "nom": "Fermentation",
+    "type": "buff",
+    "bouclierPct": 0.15,
+    "bouclierTours": 2,
+    "cooldownTours": 2
+  },
+  "eau_de_vie": {
+    "baseMax": 9,
+    "baseMin": 6,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Balaye la rangée de la cible ; l'équipe récupère 25 % des dégâts infligés, 40 % si le Pandawa est Saoul.",
+    "id": "eau_de_vie",
+    "nom": "Eau-de-vie",
+    "type": "degats",
+    "zoneLigne": true,
+    "soinEquipeRatio": 0.25,
+    "cooldownTours": 1,
+    "selonEtat": {
+      "saoul": {
+        "soinEquipeRatio": 0.4
+      }
+    }
+  },
+  "masque_intrepide": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 1,
+    "desc": "Le Zobal porte le Masque de l'Intrépide : +15 % de résistances. Renforce Plastron.",
+    "id": "masque_intrepide",
+    "nom": "Masque de l'Intrépide",
+    "type": "buff",
+    "etat": "intrepide",
+    "maxParTour": 1
+  },
+  "masque_psychopathe": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 1,
+    "desc": "Le Zobal porte le Masque du Psychopathe : +20 % de dégâts mais -10 % de résistances. Renforce Furia.",
+    "id": "masque_psychopathe",
+    "nom": "Masque du Psychopathe",
+    "type": "buff",
+    "etat": "psychopathe",
+    "maxParTour": 1
+  },
+  "masque_pleutre": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 1,
+    "desc": "Le Zobal porte le Masque du Pleutre : +15 % d'esquive. Cabriole lui rend alors 1 PA.",
+    "id": "masque_pleutre",
+    "nom": "Masque du Pleutre",
+    "type": "buff",
+    "etat": "pleutre",
+    "maxParTour": 1
+  },
+  "plastron": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 3,
+    "desc": "Bouclier de 10 % des PV max pour toute la rangée du Zobal pendant 2 tours, 18 % sous le Masque de l'Intrépide.",
+    "id": "plastron",
+    "nom": "Plastron",
+    "type": "buff",
+    "bouclierPortee": {
+      "pct": 0.1,
+      "portee": "rangee_lanceur",
+      "tours": 2
+    },
+    "cooldownTours": 2,
+    "selonEtat": {
+      "intrepide": {
+        "bouclierPortee": {
+          "pct": 0.18,
+          "portee": "rangee_lanceur",
+          "tours": 2
+        }
+      }
+    }
+  },
+  "furia": {
+    "baseMax": 14,
+    "baseMin": 10,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Gros coup ; +30 % de dégâts sous le Masque du Psychopathe.",
+    "id": "furia",
+    "nom": "Furia",
+    "type": "degats",
+    "selonEtat": {
+      "psychopathe": {
+        "multEtat": 1.3
+      }
+    }
+  },
+  "cabriole": {
+    "baseMax": 9,
+    "baseMin": 6,
+    "cible": "ennemi_tous",
+    "coutPA": 2,
+    "desc": "Frappe n'importe quel ennemi puis le Zobal bondit sur sa rangée opposée. Sous le Masque du Pleutre, il récupère 1 PA. Un lancer par tour.",
+    "id": "cabriole",
+    "nom": "Cabriole",
+    "type": "degats",
+    "lanceurChangeLigne": true,
+    "maxParTour": 1,
+    "selonEtat": {
+      "pleutre": {
+        "paImmediatLanceur": 1
+      }
+    }
+  },
+  "harponneuse": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 3,
+    "desc": "Pose une tourelle offensive en ligne arrière (50 % des PV du Steamer) qui harponne n'importe quel ennemi à chaque tour.",
+    "id": "harponneuse",
+    "nom": "Harponneuse",
+    "type": "invocation",
+    "invoqueCreature": "harponneuse",
+    "cooldownTours": 2
+  },
+  "gardienne": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 3,
+    "desc": "Pose une tourelle défensive en ligne arrière (50 % des PV du Steamer) qui soigne l'allié le plus blessé à chaque tour.",
+    "id": "gardienne",
+    "nom": "Gardienne",
+    "type": "invocation",
+    "invoqueCreature": "gardienne",
+    "cooldownTours": 3
+  },
+  "evolution": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "allie",
+    "coutPA": 2,
+    "desc": "Sur une tourelle : elle évolue (+25 % d'efficacité et de PV, jusqu'au niveau 3) et récupère 30 % de ses PV. Sur un héros : +1 PA au prochain tour. Un lancer par tour.",
+    "id": "evolution",
+    "nom": "Évolution",
+    "type": "buff",
+    "evolue": true,
+    "maxParTour": 1
+  },
+  "longue_vue": {
+    "baseMax": 13,
+    "baseMin": 9,
+    "cible": "ennemi_tous",
+    "coutPA": 4,
+    "desc": "Tir de précision sur n'importe quel ennemi, rangée arrière comprise.",
+    "id": "longue_vue",
+    "nom": "Longue-vue",
+    "type": "degats"
+  },
+  "ressac": {
+    "baseMax": 10,
+    "baseMin": 7,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Dégâts modérés ; le Steamer récupère 1 PA. Un lancer par tour.",
+    "id": "ressac",
+    "nom": "Ressac",
+    "type": "degats",
+    "paImmediatLanceur": 1,
+    "maxParTour": 1
+  },
+  "scaphandre": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "coutPA": 2,
+    "desc": "Bouclier de 12 % des PV max pour le Steamer et de 25 % pour chacune de ses tourelles, pendant 2 tours.",
+    "id": "scaphandre",
+    "nom": "Scaphandre",
+    "type": "buff",
+    "bouclierPortee": {
+      "pct": 0.12,
+      "portee": "soi",
+      "tours": 2
+    },
+    "bouclierInvocationsPct": 0.25,
+    "cooldownTours": 3
+  },
+  "lance_flamme": {
+    "baseMax": 11,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Dégâts Feu ; marque la cible du Feu. Sur une cible marquée de l'Eau, déclenche une combinaison élémentaire (60 % de dégâts en plus). Une chance sur trois de retirer 1 PA.",
+    "id": "lance_flamme",
+    "nom": "Lance-flamme",
+    "type": "degats",
+    "element": "feu",
+    "marqueElement": "feu",
+    "retraitPA": 1,
+    "retraitPAChance": 0.33
+  },
+  "stalagmite": {
+    "baseMax": 11,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Dégâts Eau ; marque la cible de l'Eau et réduit ses dégâts de 10 % pendant 1 tour. Sur une cible marquée du Feu, déclenche une combinaison élémentaire.",
+    "id": "stalagmite",
+    "nom": "Stalagmite",
+    "type": "degats",
+    "element": "eau",
+    "marqueElement": "eau",
+    "effet": {
+      "stat": "degatsInfliges",
+      "valeur": -0.1,
+      "duree": 1
+    }
+  },
+  "trait_ardent": {
+    "baseMax": 9,
+    "baseMin": 6,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Dégâts Feu sur toute la rangée de la cible, qui est marquée du Feu.",
+    "id": "trait_ardent",
+    "nom": "Trait Ardent",
+    "type": "degats",
+    "element": "feu",
+    "marqueElement": "feu",
+    "zoneLigne": true,
+    "maxParTour": 1
+  },
+  "glacier": {
+    "baseMax": 9,
+    "baseMin": 6,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Dégâts Eau sur toute la rangée de la cible, qui est marquée de l'Eau ; l'Huppermage récupère 20 % des dégâts.",
+    "id": "glacier",
+    "nom": "Glacier",
+    "type": "degats",
+    "element": "eau",
+    "marqueElement": "eau",
+    "zoneLigne": true,
+    "vampirismeRatio": 0.2,
+    "maxParTour": 1
+  },
+  "polarite": {
+    "baseMax": 12,
+    "baseMin": 8,
+    "cible": "ennemi_tous",
+    "coutPA": 3,
+    "desc": "Atteint n'importe quel ennemi ; s'il porte une marque élémentaire, Polarité la consomme et inflige 60 % de dégâts en plus.",
+    "id": "polarite",
+    "nom": "Polarité",
+    "type": "degats",
+    "bonusSiMarque": 0.6,
+    "consommeMarque": true
+  },
+  "bouclier_elementaire": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "allie",
+    "coutPA": 3,
+    "desc": "Un allié gagne 15 % de résistances et un bouclier de 10 % de ses PV max pendant 2 tours.",
+    "id": "bouclier_elementaire",
+    "nom": "Bouclier Élémentaire",
+    "type": "buff",
+    "effet": {
+      "stat": "resAll",
+      "valeur": 0.15,
+      "duree": 2
+    },
+    "bouclierPct": 0.1,
+    "bouclierTours": 2,
+    "cooldownTours": 2
+  },
+  "tofu_picore": {
+    "baseMax": 7,
+    "baseMin": 5,
+    "cible": "ennemi_ligne",
+    "coutPA": 2,
+    "desc": "Le Tofu picore.",
+    "id": "tofu_picore",
+    "nom": "Picore",
+    "type": "degats"
+  },
+  "bouftou_morsure": {
+    "baseMax": 10,
+    "baseMin": 7,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Le Bouftou mord.",
+    "id": "bouftou_morsure",
+    "nom": "Morsure du Bouftou",
+    "type": "degats"
+  },
+  "crapaud_crachat": {
+    "baseMax": 6,
+    "baseMin": 4,
+    "cible": "ennemi_tous",
+    "coutPA": 3,
+    "desc": "Le Crapipou crache du poison (3 dégâts par tour pendant 2 tours).",
+    "id": "crapaud_crachat",
+    "nom": "Crachat",
+    "type": "degats",
+    "poison": {
+      "degats": 3,
+      "duree": 2
+    }
+  },
+  "harpon": {
+    "baseMax": 10,
+    "baseMin": 7,
+    "cible": "ennemi_tous",
+    "coutPA": 3,
+    "desc": "La Harponneuse tire sur n'importe quel ennemi.",
+    "id": "harpon",
+    "nom": "Harpon",
+    "type": "degats"
+  },
+  "soin_gardienne": {
+    "baseMax": 12,
+    "baseMin": 8,
+    "cible": "allie",
+    "coutPA": 3,
+    "desc": "La Gardienne soigne un allié.",
+    "id": "soin_gardienne",
+    "nom": "Soin de la Gardienne",
+    "type": "soin"
   }
 }

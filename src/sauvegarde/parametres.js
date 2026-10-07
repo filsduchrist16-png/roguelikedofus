@@ -12,6 +12,13 @@ const ORDRE_DEFAUT = {
   ouginak: 10,
   sadida: 11,
   feca: 12,
+  osamodas: 13,
+  enutrof: 14,
+  sacrieur: 15,
+  pandawa: 16,
+  zobal: 17,
+  steamer: 18,
+  huppermage: 19,
 };
 export const rangOrdre = (e, t) => e[t] ?? 99;
 const PARAMETRES_DEFAUT = {
@@ -32,6 +39,13 @@ const PARAMETRES_DEFAUT = {
     roublard: `arriere`,
     xelor: `arriere`,
     eliotrope: `arriere`,
+    sacrieur: `avant`,
+    pandawa: `avant`,
+    zobal: `avant`,
+    osamodas: `arriere`,
+    enutrof: `arriere`,
+    steamer: `arriere`,
+    huppermage: `arriere`,
   },
   ordre: {
     ...ORDRE_DEFAUT,

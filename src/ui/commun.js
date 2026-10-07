@@ -1,3 +1,4 @@
+import { texteObtentionDofus, texteObtentionObjet } from "../jeu/obtention.js";
 import { CLASSES, DOFUS, EQUIPEMENTS } from "../data/index.js";
 import { DIFFICULTES, DIFFICULTE_MAX, DOSSIER_ICONE_SORT, RARETES_INFO } from "../jeu/config.js";
 import {
@@ -235,9 +236,9 @@ export function installerInfobulleDofus() {
     let n = t.dataset.nom ?? ``;
     let r = t.dataset.effet ?? ``;
     let i;
-    i = t.dataset.ocre
-      ? `<div class="tip-boss"><img src="${cheminAsset(`/assets/divers/Archmonster.webp`)}" alt="" onerror="this.remove()" />Débloqué via les Archimonstres</div>`
-      : `<div class="tip-muet">À débloquer par quête</div>`;
+    i = t.dataset.possede
+      ? `<div class="tip-muet">✓ Obtenu</div>`
+      : `<div class="tip-muet">🔒 ${echapperHtml(t.dataset.obtention ?? ``)}</div>`;
     e.innerHTML =
       `<div class="tip-nom">${echapperHtml(n)}</div><div class="tip-effet">${echapperHtml(r)}</div>` +
       i;
@@ -361,7 +362,7 @@ export function htmlRackDofus(e, t = false) {
       let r = length > 0;
       let i = t.id === `dofus_ocre` ? `data-ocre="1"` : ``;
       return `
-        <div class="dofus-slot ${r ? `` : `locked`}" data-nom="${echapperHtml(t.nom)}" data-effet="${echapperHtml(t.desc)}" ${i}>
+        <div class="dofus-slot ${r ? `` : `locked`}" data-nom="${echapperHtml(t.nom)}" data-effet="${echapperHtml(t.desc)}" data-obtention="${echapperHtml(texteObtentionDofus(t.id))}" data-possede="${r ? 1 : ``}" ${i}>
           ${t.img ? `<img src="${cheminAsset(t.img)}" alt="${echapperHtml(t.nom)}" loading="lazy" onerror="this.remove()" />` : ``}
           ${length > 1 ? `<span class="dofus-count">×${length}</span>` : ``}
         </div>`;
@@ -373,7 +374,14 @@ export const ROLES_CLASSES = {
   iop: `Bourrin, frappe de plus en plus fort à mesure qu'il enchaîne`,
   cra: `Archère, ouvre sa ligne de vue et ferme celle d'en face`,
   eniripsa: `Soigneuse, remet debout, protège et redonne des PA`,
-  sadida: `Invocateur, une poupée qui encaisse et du poison qui use`,
+  sadida: `Infecteur, sa contagion se propage et sa poupée encaisse`,
+  osamodas: `Dompteur, ses créatures se battent à ses côtés`,
+  enutrof: `Prospecteur, plus fort à chaque tour et plus riche à chaque combat`,
+  sacrieur: `Berserker, plus il saigne plus il frappe, et il se sacrifie pour les autres`,
+  pandawa: `Bagarreur, sobre il protège, saoul il cogne`,
+  zobal: `Masqué, change de masque pour tenir, frapper ou esquiver`,
+  steamer: `Ingénieur, ses tourelles tirent et soignent à sa place`,
+  huppermage: `Élémentaliste, combine le Feu et l'Eau pour faire exploser ses cibles`,
   sram: `Assassin, sème des pièges et frappe quand ils ont mordu`,
   feca: `Protecteur, durcit sa rangée et prend les coups à la place des autres`,
   ecaflip: `Flambeur, tout son kit s'emballe au coup critique`,
@@ -434,6 +442,8 @@ export const classeRarete = (e) => {
   }
   return ``;
 };
+// infobulle « où trouver cet objet » (à mettre sur la carte d'un objet)
+export const attrTipObjet = (id) => ` data-tip="${echapperHtml(texteObtentionObjet(id))}"`;
 export function htmlNomObjet(e) {
   let t = EQUIPEMENTS[e.id];
   let n = echapperHtml(t?.nom ?? e.id);

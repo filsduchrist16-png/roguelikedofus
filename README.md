@@ -44,6 +44,7 @@ src/
     butinZones.json      objets lâchés dans chaque zone
     succes.json          succès et quêtes
     reliques.json        reliques de boss
+    creatures.json       créatures et tourelles invoquées par les héros (Osamodas, Steamer)
     index.js             Dofus, zones et mondes (+ ré-export des JSON)
   jeu/                   règles hors combat
     config.js            constantes : XP, carte, raretés, économie, difficultés
@@ -52,12 +53,14 @@ src/
     economie.js          kamas, hôtel de vente, forgemagie
     quetes.js            quêtes et succès
     suiviCombat.js       statistiques d'un combat (pour les quêtes)
+    obtention.js         textes d'aide : où trouver un objet, comment obtenir un Dofus
   combat/                moteur de combat (sans affichage)
     stats.js             calculs : cibles valides, esquive, critique, résistances, dégâts
     effets.js            dégâts infligés, soins, boucliers, effets de début/fin de tour, invocations
     sorts.js             résolution de chaque type de sort
     moteur.js            ordre de jeu et boucle des tours
-    ia.js                comportement des monstres
+    ia.js                comportement des monstres (et des créatures invoquées par les héros)
+    classes.js           mécaniques des classes ajoutées : infection, créatures, états, marques…
   carte/generation.js    génération de la carte d'une zone
   sauvegarde/            localStorage : paramètres, run en cours, progression (meta), export/import
   ui/                    affichage
@@ -71,6 +74,8 @@ src/
 
 - `tests/donnees.test.js` : chaque sort, monstre, combat, objet, succès et image référencé existe.
   À lancer après chaque modification des JSON.
+- `tests/classes.test.js`, `tests/dofus.test.js`, `tests/succes.test.js` : mécaniques des classes
+  ajoutées, effets des Dofus, quêtes qui les débloquent.
 - `tests/fuzz-combat.test.js` : joue des centaines de combats complets avec des équipes, niveaux,
   équipements, difficultés et Dofus tirés au hasard, et vérifie qu'aucun plantage, boucle infinie
   ou état incohérent (PV négatifs, PA invalides…) ne se produit.

@@ -1,4 +1,5 @@
 import { afficherEcran, barreRetour, racine } from "../commun.js";
+import { AIDE_OBTENTION } from "../../jeu/obtention.js";
 const SECTIONS_REGLES = [
   {
     titre: `La run`,
@@ -64,6 +65,10 @@ const SECTIONS_REGLES = [
     titre: `Archimonstres`,
     corps: `<p>N'importe quel monstre peut apparaître en version archimonstre, plus forte. Le vaincre
       l'ajoute au bestiaire. Le bestiaire complet donne le Dofus Ocre.</p>`,
+  },
+  {
+    titre: `Obtenir équipement, Dofus et reliques`,
+    corps: AIDE_OBTENTION,
   },
   {
     titre: `Ascension`,

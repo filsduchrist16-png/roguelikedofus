@@ -11,6 +11,7 @@ import {
   statsEffectives,
 } from "../combat/stats.js";
 import { ordreDeJeu } from "../combat/moteur.js";
+import { ETATS_CLASSE, ICONES_MARQUES } from "../combat/classes.js";
 import { nomTouche } from "../sauvegarde/parametres.js";
 import {
   AIDE_PIEGE,
@@ -405,7 +406,20 @@ function htmlCarteCombattant(e, t) {
       c.push(`💨 Esquive +${Math.round(t.valeur * 100)} % (${t.toursRestants})`);
     } else if (t.stat === `bonusPieges`) {
       c.push(`🪤 Pièges +${Math.round(t.valeur * 100)} % (${t.toursRestants})`);
+    } else if (t.stat === `infection`) {
+      c.push(`🌿 Infecté (${t.toursRestants})`);
     }
+  }
+  if (e.etatClasse && ETATS_CLASSE[e.etatClasse]) {
+    c.push(`${ETATS_CLASSE[e.etatClasse].icone} ${ETATS_CLASSE[e.etatClasse].nom}`);
+  }
+  if (e.marqueElement) {
+    c.push(`${ICONES_MARQUES[e.marqueElement]} Marque ${NOMS_ELEMENTS[e.marqueElement]}`);
+  }
+  if (e.tourelle) {
+    c.push(`⚙️ Tourelle niv. ${e.niveauTourelle ?? 1}`);
+  } else if (e.creature) {
+    c.push(`🐾 Créature`);
   }
   if ((e.bombes ?? 0) > 0) {
     c.push(`💣 ×${e.bombes}`);

@@ -1,5 +1,49 @@
 # Journal des modifications
 
+## Nouvelles classes, Dofus et aides
+
+### 8 classes jouables en plus (19 au total)
+Chaque classe a 6 sorts tirés de DOFUS et une mécanique propre :
+- **Sadida** (réactivé, refait) : infecte ses cibles ; Contagion se propage aux infectés, Inoculation
+  grossit avec leur nombre ; La Bloqueuse provoque les ennemis.
+- **Osamodas** : invoque Tofu, Bouftou (qui provoque) et Crapipou, qui jouent seuls ; Fouet les excite,
+  Piqûre Motivante leur donne des PA.
+- **Enutrof** : Force de l'Âge grandit à chaque tour ; Pelle Fantomatique désenvoûte ; Sac Animé ;
+  passif : +25 % de kamas et prospection élevée.
+- **Sacrieur** : Souffrance (jusqu'à +60 % de dégâts à bas PV), vol de vie, Mutilation, Transfusion,
+  Sacrifice.
+- **Pandawa** : Sobre ou Saoul (Bombance) ; ses sorts changent selon son état.
+- **Zobal** : trois masques (Intrépide, Psychopathe, Pleutre) qui renforcent chacun un sort.
+- **Steamer** : tourelles Harponneuse et Gardienne qui jouent seules, Évolution, Scaphandre.
+- **Huppermage** : marques Feu et Eau ; mélanger les deux déclenche une combinaison élémentaire,
+  Polarité consomme les marques.
+
+Équilibrage vérifié par simulation : les nouvelles classes ont des taux de victoire dans la
+fourchette des classes d'origine.
+
+### Dofus
+- Les 12 Dofus « effet à venir » ont maintenant un effet (Vulbis, Abyssal, Cawotte, Sylvestre,
+  Verdoyant, Cacao, Forgelave, Dofoozbz, Dokille, Dom de Pin, Dotruche, Jyfus).
+- **27 Dofus étaient impossibles à obtenir** (seuls 4 avaient un succès) : chacun a maintenant son
+  succès (vaincre des boss, terminer des zones, gagner un monde sous condition, cumuler des dégâts
+  ou des soins…).
+
+### Aides
+- Survoler un objet (équipement, HDV, butin, armurerie, forgemage) indique où il tombe.
+- L'infobulle d'un Dofus indique le succès et les quêtes qui le donnent.
+- Nouvelle section des règles « Obtenir équipement, Dofus et reliques », avec les vrais taux.
+
+### Corrections
+- La poupée du Sadida apparaissait sur la case d'un héros (position 0) ; elle prend désormais une
+  case libre.
+- Plateau de combat : les cartes passent à la ligne quand un camp a beaucoup d'invocations, au lieu
+  de pousser l'autre camp hors de l'écran.
+
+### Crédits
+- Portraits (encyclopédie officielle dofus.com), symboles de classe et icônes de sorts
+  (DofusDB) © Ankama Games ; bandeau de crédits sur l'accueil et dans les mentions légales.
+
+
 ## Corrections et améliorations (passe complète)
 
 ### Bugs corrigés

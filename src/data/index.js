@@ -6,6 +6,7 @@ import POOLS_ZONES from "./poolsZones.json";
 import EQUIPEMENTS from "./equipements.json";
 import BUTIN_ZONES from "./butinZones.json";
 import SUCCES from "./succes.json";
+import CREATURES from "./creatures.json";
 import RELIQUES from "./reliques.json";
 export const CONFIG_RELIQUES = {
   base: 0.01,
@@ -46,6 +47,51 @@ const LISTE_DOFUS = [
   [`jyfus`, `Jyfus`],
 ];
 const EFFETS_DOFUS = {
+  dofus_vulbis: {
+    desc: `+5 % de dégâts finaux et +5 % de résistance dans chaque élément.`,
+    degatsPct: 0.05,
+    resAll: 0.05,
+  },
+  dofus_abyssal: {
+    desc: `Au début de son tour, un héros de la ligne arrière gagne un bouclier de 5 % de ses PV max pour 1 tour.`,
+  },
+  dofus_cawotte: {
+    desc: `+8 % de PV max pour toute l'équipe.`,
+    pvPct: 0.08,
+  },
+  dofus_sylvestre: {
+    desc: `Chaque héros régénère 3 % de ses PV max au début de son tour.`,
+  },
+  dofus_verdoyant: {
+    desc: `+15 % de dégâts contre les ennemis empoisonnés ou infectés.`,
+  },
+  dofus_cacao: {
+    desc: `+20 % de kamas gagnés en combat.`,
+    multKamas: 1.2,
+  },
+  dofus_forgelave: {
+    desc: `Les coups critiques de l'équipe brûlent la cible : 15 % des dégâts du coup, par tour, pendant 2 tours.`,
+  },
+  dofoozbz: {
+    desc: `+20 en prospection pour toute l'équipe.`,
+    prospectionPlat: 20,
+  },
+  dokille: {
+    desc: `Une fois par combat, le premier héros qui devrait tomber sous un coup reste debout avec 1 PV.`,
+  },
+  dom_de_pin: {
+    desc: `Au début de chaque combat, toute l'équipe gagne un bouclier de 8 % de ses PV max pour 2 tours.`,
+    bouclierDebutPct: 0.08,
+  },
+  dotruche: {
+    desc: `+5 d'initiative et +3 % d'esquive pour toute l'équipe.`,
+    initiativeBonus: 5,
+    esquiveBonus: 0.03,
+  },
+  jyfus: {
+    desc: `+10 % de soins prodigués par toute l'équipe.`,
+    soinPlat: 20,
+  },
   dofus_pourpre: {
     desc: `+6 en force, intelligence, agilité et chance.`,
     statsElementaires: 6,
@@ -115,55 +161,16 @@ const EFFETS_DOFUS = {
   },
 };
 export const DOFUS = Object.fromEntries(
-  LISTE_DOFUS.map(([e, nom]) => {
-    let n = EFFETS_DOFUS[e];
+  LISTE_DOFUS.map(([id, nom]) => {
+    const effet = EFFETS_DOFUS[id] ?? {};
     return [
-      e,
+      id,
       {
-        id: e,
+        ...effet,
+        id,
         nom,
-        desc: n?.desc ?? `Relique légendaire — effet à venir.`,
-        ...(n?.degatsPct === undefined
-          ? {}
-          : {
-              degatsPct: n.degatsPct,
-            }),
-        ...(n?.resAll === undefined
-          ? {}
-          : {
-              resAll: n.resAll,
-            }),
-        ...(n?.critPlat === undefined
-          ? {}
-          : {
-              critPlat: n.critPlat,
-            }),
-        ...(n?.perceResistances === undefined
-          ? {}
-          : {
-              perceResistances: n.perceResistances,
-            }),
-        ...(n?.statsElementaires === undefined
-          ? {}
-          : {
-              statsElementaires: n.statsElementaires,
-            }),
-        ...(n?.pvBonus === undefined
-          ? {}
-          : {
-              pvBonus: n.pvBonus,
-            }),
-        ...(n?.paBonus === undefined
-          ? {}
-          : {
-              paBonus: n.paBonus,
-            }),
-        ...(n?.prospectionJet === undefined
-          ? {}
-          : {
-              prospectionJet: n.prospectionJet,
-            }),
-        img: `/assets/dofus/${e}.png`,
+        desc: effet.desc ?? `Relique légendaire — effet à venir.`,
+        img: `/assets/dofus/${id}.png`,
       },
     ];
   }),
@@ -329,4 +336,4 @@ export const MONDES = [
     zones: [],
   },
 ];
-export { SORTS, CLASSES, MONSTRES, COMBATS, EQUIPEMENTS, BUTIN_ZONES, SUCCES, RELIQUES };
+export { SORTS, CLASSES, MONSTRES, COMBATS, EQUIPEMENTS, BUTIN_ZONES, SUCCES, RELIQUES, CREATURES };

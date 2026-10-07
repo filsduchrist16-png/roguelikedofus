@@ -5,6 +5,7 @@ import { forgerObjet, prixForge, rareteSuivante } from "../../jeu/economie.js";
 import { enregistrerCollection } from "../../sauvegarde/meta.js";
 import {
   afficherEcran,
+  attrTipObjet,
   barreRetour,
   classeRarete,
   echapperHtml,
@@ -42,7 +43,7 @@ export function ecranForgemagie(e, t) {
               let a = instancierObjet(inst.id, i);
               let o = prixForge(inst);
               let s = prixForge(inst, true);
-              return `<div class="item-carte forge-carte${classeRarete(inst)}">
+              return `<div class="item-carte forge-carte${classeRarete(inst)}"${attrTipObjet(inst.id)}>
               <img src="${imgObjet(inst.id)}" alt="" loading="lazy" onerror="this.remove()" />
               <span class="item-nom">${htmlNomObjet(inst)}<small>${ou} ${htmlChipsObjet(inst)}</small>
                 <small class="forge-apercu">→ <span class="inom-${i}">${RARETES_INFO[i].nom}</span> ${htmlChipsObjet(a)}</small>

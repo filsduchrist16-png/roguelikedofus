@@ -1,6 +1,8 @@
+import { filtrerCiblesClasse, multiplicateurClasse, sortIndisponible } from "./classes.js";
 import { SORTS } from "../data/index.js";
 import {
   bonusDegatsIntelligence,
+  multiplicateurDofusDegats,
   multiplicateurSoin,
   multiplicateurStat,
   statElement,
@@ -152,16 +154,16 @@ export function ciblesValides(e, t, n) {
       (i = i.filter((t) => caseLibreSurLigne(e.camp, enLigneAvant(t), n) !== null)),
     t.changeLigne && caseOpposeeLibre(e, n) === null) ||
     enCooldown(e, t) ||
+    sortIndisponible(e, t, n) ||
     (t.cooldown && (i = i.filter((n) => !enCooldownSurCible(e, t, n.ref))),
     t.maxParTour && (e.lancersCeTour?.[t.id] ?? 0) >= t.maxParTour)
   ) {
     return [];
   }
-  return (
-    t.maxParCibleParTour &&
-      (i = i.filter((n) => (e.lancersCeTour?.[`${t.id}:${n.ref}`] ?? 0) < t.maxParCibleParTour)),
-    i
-  );
+  if (t.maxParCibleParTour) {
+    i = i.filter((n) => (e.lancersCeTour?.[`${t.id}:${n.ref}`] ?? 0) < t.maxParCibleParTour);
+  }
+  return filtrerCiblesClasse(e, t, i);
 }
 export function reinitialiserTour(e) {
   e.lancersCeTour = {};
@@ -324,6 +326,9 @@ function elementsTries(e, t, n) {
     .map(([e]) => e);
 }
 export function choisirElement(e, t, n) {
+  if (n?.element) {
+    return n.element;
+  }
   let r = elementsTries(e, t, {
     baseMin: n?.baseMin ?? 0,
     baseMax: n?.baseMax ?? 0,
@@ -351,7 +356,8 @@ export function calculerDegatsDetail(e, t, n, r) {
   }
   let o = r.useMax ? t.baseMax : tirageEntier(t.baseMin, t.baseMax, ctx.rng);
   let s = elementsTries(e, n, t);
-  let element = t.elementPire ? s[s.length - 1] : s[0];
+  // un sort peut imposer son élément (sorts élémentaires de l'Huppermage)
+  let element = t.element ?? (t.elementPire ? s[s.length - 1] : s[0]);
   o *= multiplicateurStat(statElement(a, element));
   let crit = false;
   if (!t.sansEsquiveNiCrit && ctx.rng() < chanceCritique(a)) {
@@ -370,6 +376,8 @@ export function calculerDegatsDetail(e, t, n, r) {
     o *= 1 + t.bonusParTelefrag * (n.telefrags ?? 0);
   }
   o *= r.mult;
+  o *= multiplicateurClasse(e, t, n, ctx);
+  o *= multiplicateurDofusDegats(e, n, reliquesActivesDe(e, ctx));
   if (!t.ignoreResistances) {
     o *= 1 - resistanceEffective(n, element, t, e);
   }

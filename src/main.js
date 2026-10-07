@@ -178,7 +178,8 @@ async function jouerCombat(e, combatId, n) {
   let gagne = await executerCombat(c, {
     onEvenement: (e) => suivreEvenement(l, e, c),
     controllers: {
-      joueur: controleurJoueur,
+      // les créatures et tourelles invoquées par les héros jouent seules
+      joueur: (c, cs) => (c.creature ? controleurEnnemi(c, cs) : controleurJoueur(c, cs)),
       ennemi: controleurEnnemi,
     },
     log: journaliser,
@@ -274,7 +275,10 @@ async function distribuerButin(e, t, n, r) {
   }
 }
 function distribuerKamas(e, t, n) {
-  ajouterKamas(e, Math.round(gainKamas(t, n, Math.random) * multiplicateurKamas(e)));
+  ajouterKamas(
+    e,
+    Math.round(gainKamas(t, n, Math.random) * multiplicateurKamas(e) * bonusDofus(meta).multKamas),
+  );
 }
 const ARTICLES_NOEUDS = {
   combat: `un combat`,

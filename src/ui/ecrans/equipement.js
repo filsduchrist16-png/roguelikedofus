@@ -12,6 +12,7 @@ import {
   NOMS_SLOTS,
   SLOTS,
   afficherEcran,
+  attrTipObjet,
   barreRetour,
   classeRarete,
   echapperHtml,
@@ -65,7 +66,7 @@ export function ecranEquipement(e, t) {
             .map(({ inst, i }) => {
               let n = EQUIPEMENTS[inst.id];
               let r = peutEquiper(s, inst.id);
-              return `<button class="item-carte${classeRarete(inst)}${r ? `` : ` inequipable`}" data-index="${i}" draggable="true" ${r ? `` : `title="Équipable uniquement sur un personnage de la ligne avant"`}>
+              return `<button class="item-carte${classeRarete(inst)}${r ? `` : ` inequipable`}" data-index="${i}" draggable="true"${r ? attrTipObjet(inst.id) : ` title="Équipable uniquement sur un personnage de la ligne avant"`}>
               <img src="${imgObjet(inst.id)}" alt="" loading="lazy" onerror="this.remove()" />
               <span class="item-nom">${htmlNomObjet(inst)}<small>T${numeroZoneObjet(inst.id)} · ${NOMS_SLOTS[n.slot]} ${htmlChipsObjet(inst)}</small></span>
             </button>`;

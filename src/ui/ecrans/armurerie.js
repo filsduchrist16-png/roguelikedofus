@@ -4,6 +4,7 @@ import { numeroZone } from "../../jeu/economie.js";
 import {
   NOMS_SLOTS,
   afficherEcran,
+  attrTipObjet,
   barreRetour,
   cheminAsset,
   echapperHtml,
@@ -32,7 +33,7 @@ export function ecranArmurerie(e) {
     let c = (e, t = ``) => {
       let r = EQUIPEMENTS[e];
       let i = n[e];
-      return `<div class="armu-objet${i ? ` eu rarete-${i}` : ``}" title="${echapperHtml(r.nom)}${t ? ` (${t})` : ``}">
+      return `<div class="armu-objet${i ? ` eu rarete-${i}` : ``}"${attrTipObjet(e)}>
           <img src="${imgObjet(e)}" alt="" loading="lazy" onerror="this.remove()" />
           <b>${echapperHtml(r.nom)}</b>
           <small>${NOMS_SLOTS[r.slot]}${t ? ` · ${echapperHtml(t)}` : ``}</small>

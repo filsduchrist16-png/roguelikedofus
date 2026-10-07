@@ -36,7 +36,7 @@ const niveauMaxMonde = (e) => getMonde(e).niveaux[1];
 export function gagnerXpPerso(e, t, n) {
   return gagnerXp(e.progression, t, niveauMaxMonde(n));
 }
-const CLASSES_DESACTIVEES = new Set([`sadida`]);
+const CLASSES_DESACTIVEES = new Set();
 export const classesJouables = () =>
   Object.keys(CLASSES).filter((e) => !CLASSES_DESACTIVEES.has(e));
 function positionParDefaut(e, t) {
@@ -327,6 +327,9 @@ function creerCombattantPerso(e) {
     elementLibre: l(`elementLibre`),
     renaissance,
     renaissancesRestantes: +!!renaissance,
+    // passifs et état de départ des classes (Sacrieur, Pandawa…)
+    souffrance: t.souffrance,
+    etatClasse: t.etatInitial,
     ref: `j_${e.classeId}`,
     nom: t.nom,
     pvBase: i,
@@ -419,6 +422,8 @@ export function prospectionEquipe(e) {
 }
 export function multiplicateurKamas(e) {
   return e.persos.reduce((acc, perso) => {
+    // passif de classe (Enutrof)
+    acc *= CLASSES[perso.classeId]?.multKamas ?? 1;
     for (let n of Object.values(perso.equipement)) {
       let t = n && EQUIPEMENTS[n.id]?.multKamas;
       if (t) {
