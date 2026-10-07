@@ -176,6 +176,19 @@ export function ecranSuccesObtenu(e, t) {
     document.getElementById(`succes-ok`)?.addEventListener(`click`, () => resolve());
   });
 }
+export function afficherBandeau(texte) {
+  let t = document.getElementById(`bandeaux-quete`);
+  if (!t) {
+    t = document.createElement(`div`);
+    t.id = `bandeaux-quete`;
+    document.body.appendChild(t);
+  }
+  let n = document.createElement(`div`);
+  n.className = `bandeau-quete`;
+  n.textContent = texte;
+  t.appendChild(n);
+  setTimeout(() => n.remove(), 4000);
+}
 export function afficherBandeauQuete(e) {
   let t = document.getElementById(`bandeaux-quete`);
   if (!t) {

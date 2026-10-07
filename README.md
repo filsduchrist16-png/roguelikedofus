@@ -59,6 +59,8 @@ src/
     obtention.js         textes d'aide : où trouver un objet, un boss, comment faire une quête
     objectifs.js         objectifs de succès réalisables dans le combat qui commence
     inventaire.js        comparer un objet à celui porté, regrouper les doublons
+    defis.js             défis de combat (Premier, Dernier, Blitzkrieg, Survivant…)
+    rencontres.js        cases « Rencontre » : bénédictions, idoles, coffre, marchand, traque
   combat/                moteur de combat (sans affichage)
     stats.js             calculs : cibles valides, esquive, critique, résistances, dégâts
     effets.js            dégâts infligés, soins, boucliers, effets de début/fin de tour, invocations
@@ -73,7 +75,7 @@ src/
     combat.js            écran de combat
     objectifs.js         fenêtre « Objectifs dans ce combat »
     collection.js        aides pour le bestiaire et l'armurerie
-    ecrans/              un fichier par écran (accueil, carte, taverne, HDV, succès…)
+    ecrans/              un fichier par écran (accueil, carte, rencontre, taverne, HDV, succès…)
 ```
 
 ## Tests

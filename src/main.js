@@ -1,5 +1,11 @@
-import { CLASSES, COMBATS, MONSTRES } from "./data/index.js";
-import { XP_PAR_COMBAT, calculerXpCombat, getMonde, zonesDuMonde } from "./jeu/config.js";
+import { CLASSES, COMBATS, EQUIPEMENTS, MONSTRES } from "./data/index.js";
+import {
+  XP_PAR_COMBAT,
+  butinDeZone,
+  calculerXpCombat,
+  getMonde,
+  zonesDuMonde,
+} from "./jeu/config.js";
 import { executerCombat } from "./combat/moteur.js";
 import { choisirActionIA } from "./combat/ia.js";
 import { genererCarte, tirerTypeZaap } from "./carte/generation.js";
@@ -24,12 +30,14 @@ import {
   multiplicateurKamas,
   noeudsExclus,
   nouvelleRun,
+  pvMaxPerso,
   recruter,
   soignerEquipe,
   synchroniserPv,
   tirerArchis,
   tirerButin,
   tirerMonstreRare,
+  tirerObjet,
   tirerRecrues,
 } from "./jeu/run.js";
 import { chargerRun, effacerRun, sauverRun } from "./sauvegarde/run.js";
@@ -64,6 +72,7 @@ import {
 } from "./ui/commun.js";
 import {
   controleurJoueur,
+  definirDefiCombat,
   enregistrerFx,
   initialiserVueCombat,
   installerInfobulleSorts,
@@ -74,8 +83,25 @@ import {
 import { ecranButin } from "./ui/ecrans/butin.js";
 import { afficherObjectifsCombat, retirerObjectifsCombat } from "./ui/objectifs.js";
 import { objectifsDuCombat } from "./jeu/objectifs.js";
+import { BONUS_DEFI, defiReussi, tirerDefi } from "./jeu/defis.js";
+import {
+  BENEDICTIONS,
+  IDOLES,
+  bonusEquipeRun,
+  dieuxProposes,
+  effetsEnCours,
+  gainBase,
+  idoleActive,
+  idolesProposees,
+  peutCrocheter,
+  prixMarchand,
+  tirerRencontre,
+  traqueActive,
+  zoneAArchis,
+} from "./jeu/rencontres.js";
+import { ecranRencontre } from "./ui/ecrans/rencontre.js";
 import { ecranCaptureArchi, ecranReliques } from "./ui/ecrans/recompenses.js";
-import { afficherBandeauQuete, ecranSuccesObtenu } from "./ui/ecrans/succes.js";
+import { afficherBandeau, afficherBandeauQuete, ecranSuccesObtenu } from "./ui/ecrans/succes.js";
 import { ecranAccueil } from "./ui/ecrans/accueil.js";
 import { ecranChoixEquipe } from "./ui/ecrans/choixEquipe.js";
 import { ecranTaverne } from "./ui/ecrans/taverne.js";
@@ -164,7 +190,30 @@ async function jouerCombat(e, combatId, n) {
     let e = appliquerAffixesElite(a, Math.random, n.eliteModifs);
     r = `${r} · ${e.map((e) => `${e.nom} (${e.desc})`).join(` · `)}`;
   }
+  // idole de la zone et avis de recherche (rencontres)
+  let idole = idoleActive(e, n.zone?.id);
+  let traque = n.type === `donjon` ? null : traqueActive(e, n.zone?.id);
+  let pvMult = (idole?.pvMult ?? 1) * (traque ? 1.2 : 1);
+  if (pvMult !== 1) {
+    for (let m of a) {
+      m.pvBase = m.pvMax = m.pvActuels = Math.round(m.pvMax * pvMult);
+    }
+  }
   tirerArchis(a, Math.random, chanceArchi(e));
+  let prime = false;
+  if (traque) {
+    let candidats = a.filter((m) => m.archiNom && !m.archi);
+    if (!traque.archi) {
+      prime = true;
+      e.traque = null;
+    } else if (a.some((m) => m.archi) || candidats.length) {
+      if (!a.some((m) => m.archi)) {
+        tirerArchis([candidats[Math.floor(Math.random() * candidats.length)]], () => 0, 1);
+      }
+      r = `${r} · 📜 Traque`;
+      e.traque = null;
+    }
+  }
   let o = tirerMonstreRare(a, Math.random, {
     type: n.type,
     tranche: e.trancheId,
@@ -172,7 +221,7 @@ async function jouerCombat(e, combatId, n) {
   if (o) {
     r = `${r} · ⭐ ${o}`;
   }
-  let s = bonusDofus(meta);
+  let s = bonusEquipeRun(meta, e);
   appliquerBonusDofus(i, s);
   let c = [...i, ...a];
   initialiserVueCombat(c, r, meta);
@@ -187,15 +236,18 @@ async function jouerCombat(e, combatId, n) {
       ascension: e.ascension,
       archis: meta.archis,
       reliques: meta.reliques ?? [],
-      chanceRelique: chanceRelique(
-        e.ascension,
-        prospectionMoyenne(e, bonusDofus(meta).prospection),
-      ),
+      chanceRelique: chanceRelique(e.ascension, prospectionMoyenne(e, s.prospection)),
       dernierDonjon: n.type === `donjon` && getMonde(e.trancheId).zones.at(-1) === n.zone?.id,
       runSiVictoire: contexteRun(e, e.trancheId, true),
     }),
     { replierApres: parametres.combatRapide ? 5000 : 9000 },
   );
+  let defi = tirerDefi(
+    Math.random,
+    a.map((m) => ({ ref: m.ref, nom: m.nom, boss: !!MONSTRES[m.monstreId]?.boss })),
+    i,
+  );
+  definirDefiCombat(defi);
   let l = nouveauSuiviCombat();
   let herosVivantsAuDepart = i.filter((e) => e.pvActuels > 0).map((e) => e.ref);
   let gagne = await executerCombat(c, {
@@ -218,7 +270,7 @@ async function jouerCombat(e, combatId, n) {
       await attendre(parametres.combatRapide ? 20 : 60);
     },
     playerDamageBonus: s.damageMult,
-    enemyDamageBonus: effetsDifficulte(e.ascension).degatsMult ?? 1,
+    enemyDamageBonus: (effetsDifficulte(e.ascension).degatsMult ?? 1) * (idole?.degatsMult ?? 1),
     reliquesActives: dofusPossedes(meta),
   });
   retirerObjectifsCombat();
@@ -236,7 +288,7 @@ async function jouerCombat(e, combatId, n) {
         )
         .map((e) => e.monstreId),
       e.ascension,
-      prospectionMoyenne(e, bonusDofus(meta).prospection),
+      prospectionMoyenne(e, s.prospection + (idole?.prospection ?? 0)),
       Math.random,
     );
     if (t.length) {
@@ -245,26 +297,35 @@ async function jouerCombat(e, combatId, n) {
       await ecranReliques(t);
     }
   }
-  await traiterQuetes(
-    e,
-    verifierQuetesCombat(
-      quetesMeta(),
-      resumeCombat(l, {
-        combattants: c,
-        herosVivantsAuDepart,
-        gagne,
-        combatId,
-        noeud: n.type,
-        zoneId: n.zone?.id,
-        classes: e.persos.map((e) => e.classeId),
-        ascension: e.ascension,
-      }),
-    ),
-  );
+  let resume = resumeCombat(l, {
+    combattants: c,
+    herosVivantsAuDepart,
+    gagne,
+    combatId,
+    noeud: n.type,
+    zoneId: n.zone?.id,
+    classes: e.persos.map((e) => e.classeId),
+    ascension: e.ascension,
+  });
+  let defiOk = defiReussi(defi, {
+    ...resume,
+    ordreMorts: [...l.morts].filter((ref) => a.some((m) => m.ref === ref)),
+  });
+  if (gagne) {
+    e.stats.defis = (e.stats.defis ?? 0) + (defiOk ? 1 : 0);
+    afficherBandeau(
+      defiOk
+        ? `🎯 Défi ${defi.nom} réussi : +${Math.round(BONUS_DEFI * 100)} % d'XP et de kamas`
+        : `Défi ${defi.nom} raté`,
+    );
+  }
+  await traiterQuetes(e, verifierQuetesCombat(quetesMeta(), resume));
   await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta()));
   return {
     gagne,
     combatants: c,
+    defiOk,
+    prime,
   };
 }
 function gagnerXpEquipe(e, t) {
@@ -290,7 +351,7 @@ async function distribuerButin(e, t, n, r) {
   if (!t) {
     return;
   }
-  let prospection = bonusDofus(meta).prospection;
+  let prospection = bonusEquipeRun(meta, e).prospection + (idoleActive(e, t)?.prospection ?? 0);
   let a = tirerButin(e, t, n, Math.random, r, prospection);
   enregistrerCollection(meta, a);
   e.stats.objets += a.length;
@@ -298,10 +359,15 @@ async function distribuerButin(e, t, n, r) {
     await ecranButin(a);
   }
 }
-function distribuerKamas(e, t, n) {
+function distribuerKamas(e, t, n, mult = 1) {
   ajouterKamas(
     e,
-    Math.round(gainKamas(t, n, Math.random) * multiplicateurKamas(e) * bonusDofus(meta).multKamas),
+    Math.round(
+      gainKamas(t, n, Math.random) *
+        multiplicateurKamas(e) *
+        bonusEquipeRun(meta, e).multKamas *
+        mult,
+    ),
   );
 }
 const ARTICLES_NOEUDS = {
@@ -313,13 +379,14 @@ const ARTICLES_NOEUDS = {
   donjon: `le donjon`,
   hdv: `un Hôtel de vente`,
   forgemagie: `un Forgemage`,
+  rencontre: `une rencontre`,
 };
 async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
   let o = zone?.id;
   switch (type) {
     case `combat`:
     case `combat_dur`: {
-      let { gagne } = await jouerCombat(e, n, {
+      let { gagne, defiOk, prime } = await jouerCombat(e, n, {
         elite: type === `combat_dur`,
         eliteModifs,
         type,
@@ -329,8 +396,13 @@ async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
         return `wipe`;
       }
       let c = o ? numeroZone(o) : 1;
-      distribuerKamas(e, type, c);
-      gagnerXpEquipe(e, calculerXpCombat(r, c, e.trancheId));
+      let idole = idoleActive(e, o);
+      let bonusDefi = defiOk ? 1 + BONUS_DEFI : 1;
+      distribuerKamas(e, type, c, bonusDefi * (idole?.kamasMult ?? 1) * (prime ? 2 : 1));
+      gagnerXpEquipe(
+        e,
+        Math.round(calculerXpCombat(r, c, e.trancheId) * bonusDefi * (idole?.xpMult ?? 1)),
+      );
       await distribuerButin(e, o, type, type === `combat_dur` ? `donjon` : undefined);
       await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta()));
       return `continue`;
@@ -370,10 +442,13 @@ async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
       );
       return `continue`;
     case `donjon`: {
-      let { gagne } = await jouerCombat(e, n, {
+      let { gagne, defiOk } = await jouerCombat(e, n, {
         type: `donjon`,
         zone,
       });
+      if (gagne && defiOk) {
+        distribuerKamas(e, `combat_dur`, o ? numeroZone(o) : 1);
+      }
       if (gagne) {
         return (
           await distribuerButin(e, o, type),
@@ -383,8 +458,197 @@ async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
       }
       return `wipe`;
     }
+    case `rencontre`:
+      await jouerRencontre(e, zone);
+      await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta()));
+      return `continue`;
     default:
       return `continue`;
+  }
+}
+// ---------- Rencontres (case « Rencontre » de la carte) ----------
+async function jouerRencontre(e, zone) {
+  let toile = zone ? numeroZone(zone.id) : 1;
+  let type = tirerRencontre(Math.random);
+  if (
+    (type === `idoles` && idoleActive(e, zone?.id)) ||
+    (type === `traque` && traqueActive(e, zone?.id))
+  ) {
+    type = `coffre`;
+  }
+  e.stats.rencontres = (e.stats.rencontres ?? 0) + 1;
+  if (type === `sanctuaire`) {
+    let dieux = dieuxProposes(e, Math.random);
+    let choix = await ecranRencontre({
+      titre: `⛩️ Sanctuaire des Douze`,
+      texte: `Un autel dédié aux dieux du Krosmoz se dresse au bord du chemin. Une seule prière sera exaucée.`,
+      choix: [
+        ...dieux.map((id) => ({
+          id,
+          img: `/assets/class_symbol/${id}.png`,
+          libelle: `Prier ${BENEDICTIONS[id].dieu} : ${BENEDICTIONS[id].nom}`,
+          detail: `${BENEDICTIONS[id].desc}, pour toute la run.`,
+        })),
+        { id: `soin`, libelle: `Se recueillir`, detail: `L'équipe récupère 30 % de ses PV max.` },
+      ],
+    });
+    if (choix === `soin`) {
+      soignerEquipe(e, 0.3);
+      await ecranMessage(`⛩️ Recueillement`, `L'équipe récupère 30 % de ses PV max.`);
+    } else {
+      (e.benedictions ??= []).push(choix);
+      let b = BENEDICTIONS[choix];
+      await ecranMessage(
+        `✨ ${b.nom}`,
+        `${b.dieu} exauce ta prière : ${b.desc} jusqu'à la fin de la run.`,
+      );
+    }
+    return;
+  }
+  if (type === `coffre`) {
+    let crochet = peutCrocheter(e);
+    let choix = await ecranRencontre({
+      titre: `🧰 Coffre abandonné`,
+      img: `/assets/monstres/coffre_forgerons.png`,
+      texte: `Un vieux coffre traîne au milieu du chemin. Trésor… ou piège ?`,
+      choix: [
+        {
+          id: `ouvrir`,
+          libelle: `L'ouvrir`,
+          detail: `2 chances sur 3 : kamas, et peut-être un objet. Sinon, un piège blesse l'équipe (−20 % de PV max).`,
+        },
+        {
+          id: `crocheter`,
+          libelle: `Le crocheter prudemment`,
+          detail: `Pas de piège : le trésor est garanti.`,
+          desactive: crochet ? `` : `Il faut un Sram, un Roublard ou un Ecaflip dans l'équipe.`,
+        },
+        { id: `partir`, libelle: `Passer son chemin` },
+      ],
+    });
+    if (choix === `partir`) {
+      return;
+    }
+    if (choix === `ouvrir` && Math.random() < 1 / 3) {
+      for (let p of e.persos) {
+        if (p.pvActuels > 0) {
+          p.pvActuels = Math.max(1, Math.round(p.pvActuels - pvMaxPerso(p) * 0.2));
+        }
+      }
+      await ecranMessage(
+        `💥 Piège !`,
+        `Le coffre était piégé : chaque héros perd 20 % de ses PV max.`,
+      );
+      return;
+    }
+    let kamas = Math.round(gainBase(toile) * 1.5);
+    ajouterKamas(e, kamas);
+    let texte = `Le coffre contenait ${kamas} kamas.`;
+    let butin = zone ? butinDeZone(zone.id) : null;
+    if (butin?.normales.length && Math.random() < 0.45) {
+      let obj = tirerObjet(
+        butin.normales[Math.floor(Math.random() * butin.normales.length)],
+        Math.random,
+      );
+      if (obj) {
+        e.inventaire.push(obj);
+        enregistrerCollection(meta, [obj]);
+        texte += ` Et un objet : ${EQUIPEMENTS[obj.id]?.nom ?? obj.id} !`;
+      }
+    }
+    await ecranMessage(`💰 Trésor`, texte);
+    return;
+  }
+  if (type === `marchand`) {
+    let prix = prixMarchand(toile);
+    let achete = new Set();
+    let xp = calculerXpCombat(XP_PAR_COMBAT.combat_dur, toile, e.trancheId);
+    while (true) {
+      let offre = (id, libelle, detail) => ({
+        id,
+        libelle,
+        detail,
+        prix: prix[id],
+        desactive: achete.has(id)
+          ? `Déjà acheté.`
+          : e.kamas < prix[id]
+            ? `Pas assez de kamas.`
+            : ``,
+      });
+      let choix = await ecranRencontre({
+        titre: `🧳 Marchand ambulant`,
+        img: `/assets/divers/potion_de_soin.png`,
+        texte: `Kerubim Crépin, l'antiquaire de Bonta, est en vadrouille et déballe quelques trouvailles.`,
+        kamas: e.kamas,
+        choix: [
+          offre(`potion`, `Potion de Soin`, `L'équipe récupère 40 % de ses PV max.`),
+          offre(`parchemin`, `Parchemin d'expérience`, `${xp} XP pour chaque héros.`),
+          offre(
+            `philtre`,
+            `Philtre d'Otomaï`,
+            `Les archimonstres apparaissent plus souvent pour le reste de la run.`,
+          ),
+          { id: `partir`, libelle: `Repartir` },
+        ],
+      });
+      if (choix === `partir`) {
+        return;
+      }
+      e.kamas -= prix[choix];
+      achete.add(choix);
+      if (choix === `potion`) {
+        soignerEquipe(e, 0.4);
+      } else if (choix === `parchemin`) {
+        gagnerXpEquipe(e, xp);
+      } else {
+        e.philtres += 1;
+      }
+    }
+  }
+  if (type === `idoles`) {
+    let ids = idolesProposees(Math.random);
+    let choix = await ecranRencontre({
+      titre: `🗿 Autel des Idoles`,
+      texte: `Des idoles anciennes promettent gloire et richesses à qui ose les porter… jusqu'à la fin de la zone.`,
+      choix: [
+        ...ids.map((id) => ({
+          id,
+          libelle: IDOLES[id].nom,
+          detail: `${IDOLES[id].malus} · ${IDOLES[id].bonus}`,
+        })),
+        { id: `partir`, libelle: `Ne pas tenter le sort` },
+      ],
+    });
+    if (choix !== `partir`) {
+      e.idole = { id: choix, zone: zone?.id };
+      await ecranMessage(
+        `🗿 ${IDOLES[choix].nom}`,
+        `Jusqu'à la fin de la zone : ${IDOLES[choix].malus} ; ${IDOLES[choix].bonus}.`,
+      );
+    }
+    return;
+  }
+  // avis de recherche : traque d'un archimonstre, ou prime si la zone n'en a pas
+  let archi = zone ? zoneAArchis(zone) : false;
+  let choix = await ecranRencontre({
+    titre: `📜 Avis de recherche`,
+    img: `/assets/divers/avis_de_recherche.png`,
+    texte: archi
+      ? `Un archimonstre rôde dans la zone. Un chasseur de primes te propose de le traquer.`
+      : `Une bande de monstres est recherchée dans la zone, avec une belle prime à la clé.`,
+    choix: [
+      {
+        id: `accepter`,
+        libelle: archi ? `Traquer l'archimonstre` : `Accepter la prime`,
+        detail: archi
+          ? `Le prochain combat contiendra un archimonstre, mais ses monstres auront +20 % de PV.`
+          : `Le prochain combat rapportera le double de kamas, mais ses monstres auront +20 % de PV.`,
+      },
+      { id: `partir`, libelle: `Décliner` },
+    ],
+  });
+  if (choix === `accepter`) {
+    e.traque = { zone: zone?.id, archi };
   }
 }
 async function resoudreZaap(pools, t) {
@@ -427,6 +691,7 @@ async function jouerZone(e, t, n) {
       e.ascension,
       e.philtres,
       () => sauverRun(n, e),
+      effetsEnCours(e, t.id),
     );
     if (r === `accueil`) {
       return `accueil`;

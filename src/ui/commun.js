@@ -13,6 +13,7 @@ import {
   bonusDegatsCritiques,
   chanceCritique,
   coutPA,
+  elementsUtilisables,
   meilleurElement,
   multiplicateurRelance,
   statsEffectives,
@@ -137,7 +138,7 @@ export const IMG_RECOMMENCER_AVEC_PERSO = cheminAsset(`/assets/menu/Recommencer_
 export const imgMonde = (e) => cheminAsset(`/assets/menu/Monde_${e}.png`);
 export const IMG_DOFUS = cheminAsset(`/assets/menu/dofus.png`);
 const IMG_KAMAS = cheminAsset(`/assets/divers/kamas.png`);
-const imgElement = (e) => cheminAsset(`/assets/elements/${e}.png`);
+export const imgElement = (e) => cheminAsset(`/assets/elements/${e}.png`);
 const imgArchetype = (archetype) =>
   cheminAsset(`/assets/elements/${archetype === `melee` ? `dmgMelee` : `dmgDistance`}.png`);
 const FONDS_MONDE = {
@@ -176,6 +177,47 @@ export function etoilesDifficulte(e) {
 export function fondDuMonde(e) {
   definirFond((e ? FONDS_MONDE[e] : null) ?? FOND_ACCUEIL);
 }
+// Élément frappé par un sort de dégâts (null pour un soin, un buff, une invocation…).
+export const sortDeDegats = (sort) =>
+  (sort?.type === `degats` || sort?.type === `mixte`) && sort.baseMax > 0;
+export function elementDuSort(sort, lanceur) {
+  if (!sortDeDegats(sort)) {
+    return null;
+  }
+  if (sort.element) {
+    return sort.element;
+  }
+  return lanceur ? meilleurElement(lanceur) : null;
+}
+// Attributs d'icône : teinte de l'élément (une ou deux couleurs) + pastille.
+export function attrElementSort(sort, lanceur, elementsClasse) {
+  const el = elementDuSort(sort, lanceur);
+  if (el) {
+    return ` data-el="${el}" title="Frappe en ${NOMS_ELEMENTS[el]}"`;
+  }
+  if (sortDeDegats(sort) && elementsClasse?.length) {
+    return ` data-el="${elementsClasse[0]}" data-el2="${elementsClasse[1] ?? elementsClasse[0]}"`;
+  }
+  return ``;
+}
+export function pastilleElementSort(sort, lanceur) {
+  const el = elementDuSort(sort, lanceur);
+  return el
+    ? `<img class="sort-el" src="${imgElement(el)}" alt="${NOMS_ELEMENTS[el]}" onerror="this.remove()" />`
+    : ``;
+}
+function texteElement(sort, lanceur) {
+  if (sort.element) {
+    return `toujours en <b>${NOMS_ELEMENTS[sort.element]}</b>`;
+  }
+  const els = elementsUtilisables(lanceur);
+  const meilleur = meilleurElement(lanceur);
+  const autres = els.filter((x) => x !== meilleur).map((x) => NOMS_ELEMENTS[x]);
+  if (sort.elementPire) {
+    return `dans l'élément le <b>moins</b> efficace contre la cible`;
+  }
+  return `en <b>${NOMS_ELEMENTS[meilleur]}</b>${autres.length ? ` (ou ${autres.join(` / `)} si la cible y résiste moins)` : ``}`;
+}
 export function infobulleSort(e, t) {
   let n = ``;
   if (t) {
@@ -192,7 +234,7 @@ export function infobulleSort(e, t) {
         multiplicateurStat(statElement(r, meilleurElement(t))) *
         bonusDegatsIntelligence(r) *
         multiplicateurRelance(e, t);
-      n = `<span class="tip-val dgt">⚔ ${Math.round(e.baseMin * i)} – ${Math.round(e.baseMax * i)}</span><span class="tip-el">selon la cible</span>`;
+      n = `<span class="tip-val dgt">⚔ ${Math.round(e.baseMin * i)} – ${Math.round(e.baseMax * i)}</span><span class="tip-el">${texteElement(e, t)}</span>`;
     }
   } else {
     if (e.baseMax > 0) {

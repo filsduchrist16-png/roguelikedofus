@@ -47,6 +47,7 @@ export const CONFIG_CARTE = {
     zaap: 8,
     hdv: 8,
     forgemagie: 6,
+    rencontre: 10,
   },
 };
 export const RARETES = [`commun`, `rare`, `epique`, `legendaire`];

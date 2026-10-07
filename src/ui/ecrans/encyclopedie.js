@@ -9,6 +9,7 @@ import {
   iconeSort,
   imgClasse,
   imgSymboleClasse,
+  attrElementSort,
   infobulleSort,
   racine,
 } from "../commun.js";
@@ -17,12 +18,13 @@ export function ecranEncyclopedie() {
     let t = classesJouables()[0];
     let n = (e) => {
       let t = CLASSES[e];
+      let cid = e;
       let n = t.sorts
         .map((e) => {
           let t = SORTS[e];
           if (t) {
             return `<div class="ency-sort">
-            <span class="ency-sort-icone"><img src="${iconeSort(e)}" alt="" loading="lazy" onerror="this.remove()" /></span>
+            <span class="ency-sort-icone"${attrElementSort(t, null, CLASSES[cid].elements)}><img src="${iconeSort(e)}" alt="" loading="lazy" onerror="this.remove()" /></span>
             <div class="ency-sort-detail">${infobulleSort(t, null)}</div>
           </div>`;
           }

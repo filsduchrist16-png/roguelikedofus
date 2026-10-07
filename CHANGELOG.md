@@ -1,5 +1,34 @@
 # Journal des modifications
 
+## Sorts colorés, défis et rencontres
+
+**Icônes de sorts par élément.** Chaque sort de dégâts est teinté de la couleur de l'élément qu'il
+frappe (Terre marron, Feu rouge, Eau bleu, Air vert), avec une pastille d'élément dans le
+coin. Pour un sort qui suit le meilleur élément du héros, la teinte suit ses caractéristiques du moment ;
+dans l'encyclopédie, les sorts des classes bi-élément sont teintés des deux couleurs. L'infobulle
+précise l'élément frappé.
+
+**Défis de combat.** Comme dans DOFUS, chaque combat tire un défi, affiché en haut de l'écran.
+Le réussir donne +30 % d'XP et de kamas (et une bourse en plus pour un donjon). Les défis sont Premier,
+Dernier (la cible est marquée 🎯), Blitzkrieg, Survivant, Abnégation (seulement si l'équipe peut se
+soigner) et Élémentaire (seulement si les héros ont un élément en commun).
+
+**Case « Rencontre »** sur la carte, avec cinq événements :
+
+- **Sanctuaire des Douze** : prier un dieu parmi trois pour une bénédiction qui dure toute la run
+  (Iop +8 % de dégâts, Sacrieur +10 % de PV, Feca +6 % de résistances, Enutrof kamas et prospection,
+  Ecaflip critique, Eniripsa soins, Xélor initiative, Sram esquive), ou se recueillir pour soigner 30 %.
+- **Coffre abandonné** : l'ouvrir (un tiers de chance de piège), le crocheter sans risque avec un Sram,
+  un Roublard ou un Ecaflip, ou passer son chemin. Il contient des kamas et parfois un objet de la zone.
+- **Marchand ambulant** : potion de soin, parchemin d'expérience ou philtre d'Otomaï (plus
+  d'archimonstres).
+- **Autel des Idoles** : des monstres plus forts jusqu'à la fin de la zone, en échange de plus d'XP, de
+  kamas ou de prospection.
+- **Avis de recherche** : traquer un archimonstre de la zone, ou accepter une prime (le prochain combat
+  rapporte le double de kamas).
+
+Les effets en cours (bénédictions, idole, traque) s'affichent sous le titre de la carte.
+
 ## Progression linéaire des Dofus (lore de Dofus 3)
 
 Les 31 Dofus se gagnent maintenant au fil des mondes, selon leur niveau d'obtention réel dans Dofus 3
@@ -52,6 +81,7 @@ des boss, panoplies, reliques et archimonstres viennent des données du jeu (Dof
 ## Inventaire et lisibilité
 
 ### Inventaire (écran Équipement)
+
 - Toucher un objet ouvre sa **fiche** : tout ce qu'il donne, où le trouver, et pour **chaque héros**
   ce qu'il changerait (verdict ▲ Amélioration / ▼ Moins bien / ⇅ Gains et pertes) avec un bouton
   « Équiper » : on peut équiper n'importe quel héros sans changer d'onglet.
@@ -63,10 +93,12 @@ des boss, panoplies, reliques et archimonstres viennent des données du jeu (Dof
 - Sur ordinateur : double-clic pour équiper directement, glisser-déposer toujours possible.
 
 ### Hôtel de vente
+
 - Pastilles « ▲ Iop » sur les objets à vendre ou à acheter qui amélioreraient un héros.
 - Doublons regroupés dans l'inventaire, et la **dernière vente peut être annulée**.
 
 ### Lisibilité
+
 - Tous les petits textes de l'interface d'origine ont été agrandis (plus rien sous 11 px).
 - Carte : le nom des cases atteignables est toujours affiché, et chaque icône de la barre d'outils
   a sa légende (Stats, Formation, Équipement…).
@@ -75,6 +107,7 @@ des boss, panoplies, reliques et archimonstres viennent des données du jeu (Dof
 ## Lisibilité mobile, objectifs de combat et aides
 
 ### Objectifs de succès en combat
+
 - Au début d'un combat, une fenêtre « 🏆 Objectifs dans ce combat » (façon suivi de succès de DOFUS)
   liste ce qu'on peut y gagner : quêtes de Dofus en jeu (boss présent, combat dur, donjon de fin de
   zone, dernier donjon du monde) avec la consigne exacte (« aucun héros ne doit tomber », « gagne en
@@ -82,17 +115,20 @@ des boss, panoplies, reliques et archimonstres viennent des données du jeu (Dof
 - Elle se replie toute seule en bouton 🏆, qu'on touche pour la rouvrir.
 
 ### Quêtes et succès
+
 - Chaque quête non faite affiche un indice : où trouver le boss (zone, monde, type de case),
   quelles classes font avancer un compteur, quelle difficulté choisir, quelles règles respecter.
 - Sur téléphone, choisir un Dofus fait défiler jusqu'à ses quêtes.
 
 ### Caractéristiques
+
 - Chaque caractéristique montre ce qu'elle apporte vraiment (« Dégâts Feu +36 % », « Critique 8 % »,
   « +12 Prospection »…) et signale un élément que la classe n'utilise pas.
 - Nouveau bloc « En combat » : PA, initiative, critique, dégâts critiques, esquive, soins,
   prospection et résistances, Dofus compris. Chaque valeur a son aide.
 
 ### Équipement
+
 - Noms complets des caractéristiques (Force, Intelligence… au lieu de For, Int…), avec leur effet
   au survol.
 - Les stats adaptatives sont résolues pour le héros (« +12 Force ★ +12 Chance ★ » sur un Feca).
@@ -101,6 +137,7 @@ des boss, panoplies, reliques et archimonstres viennent des données du jeu (Dof
   (« Si équipé (au lieu de Coiffe Bouftou) : +12 PV max −4 Agilité »).
 
 ### Mobile
+
 - Cartes de combat horizontales sur téléphone : portrait, barre de PV, PA et résistances lisibles.
 - Tailles de texte minimales relevées partout (étiquettes, puces, indices).
 - Sur écran tactile, toucher un élément à infobulle (objet, Dofus, stat) ouvre son aide.
@@ -108,7 +145,9 @@ des boss, panoplies, reliques et archimonstres viennent des données du jeu (Dof
 ## Nouvelles classes, Dofus et aides
 
 ### 8 classes jouables en plus (19 au total)
+
 Chaque classe a 6 sorts tirés de DOFUS et une mécanique propre :
+
 - **Sadida** (réactivé, refait) : infecte ses cibles ; Contagion se propage aux infectés, Inoculation
   grossit avec leur nombre ; La Bloqueuse provoque les ennemis.
 - **Osamodas** : invoque Tofu, Bouftou (qui provoque) et Crapipou, qui jouent seuls ; Fouet les excite,
@@ -127,6 +166,7 @@ Chaque classe a 6 sorts tirés de DOFUS et une mécanique propre :
 fourchette des classes d'origine.
 
 ### Dofus
+
 - Les 12 Dofus « effet à venir » ont maintenant un effet (Vulbis, Abyssal, Cawotte, Sylvestre,
   Verdoyant, Cacao, Forgelave, Dofoozbz, Dokille, Dom de Pin, Dotruche, Jyfus).
 - **27 Dofus étaient impossibles à obtenir** (seuls 4 avaient un succès) : chacun a maintenant son
@@ -134,24 +174,27 @@ fourchette des classes d'origine.
   ou des soins…).
 
 ### Aides
+
 - Survoler un objet (équipement, HDV, butin, armurerie, forgemage) indique où il tombe.
 - L'infobulle d'un Dofus indique le succès et les quêtes qui le donnent.
 - Nouvelle section des règles « Obtenir équipement, Dofus et reliques », avec les vrais taux.
 
 ### Corrections
+
 - La poupée du Sadida apparaissait sur la case d'un héros (position 0) ; elle prend désormais une
   case libre.
 - Plateau de combat : les cartes passent à la ligne quand un camp a beaucoup d'invocations, au lieu
   de pousser l'autre camp hors de l'écran.
 
 ### Crédits
+
 - Portraits (encyclopédie officielle dofus.com), symboles de classe et icônes de sorts
   (DofusDB) © Ankama Games ; bandeau de crédits sur l'accueil et dans les mentions légales.
-
 
 ## Corrections et améliorations (passe complète)
 
 ### Bugs corrigés
+
 - **Plantage avec une arme équipée** (introduit par la reconstruction du code) : le jeu plantait dès
   qu'un héros portait une arme ou des pièces de panoplie. Trouvé par le test de fuzz.
 - **Tour sauté à tort** : quand un héros n'avait plus assez de PA que pour son attaque d'arme, le
@@ -169,10 +212,12 @@ fourchette des classes d'origine.
   portée » était fausse dès 3 ennemis en ligne avant.
 
 ### Sécurité contre les fausses manipulations
+
 - Confirmation avant **Recommencer** (carte), **Abandonner la run** (accueil) et **Vendre tout**
   (hôtel de vente) : un seul appui suffisait à perdre une run ou tout l'inventaire.
 
 ### Interface
+
 - **Mobile** : les icônes de l'accueil ne chevauchent plus les boutons Règles/Discord ; la barre
   d'icônes de la carte reste lisible ; en combat, plateau sur une colonne (ennemis en haut),
   cartes compactes, ordre de jeu qui ne masque plus les sorts, barre de sorts toujours visible en
@@ -187,4 +232,5 @@ fourchette des classes d'origine.
   (Discord, réseaux) avec titre, description et image.
 
 ### Projet
+
 - Tests automatiques (`npm test`) : cohérence des données et fuzz du moteur de combat.

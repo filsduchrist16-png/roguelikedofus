@@ -49,7 +49,7 @@ function elementsDominants(e) {
   let n = ELEMENTS.map((e) => [e, statElement(t, e)]).sort((e, t) => t[1] - e[1]);
   return [n[0][0], n[1][0]];
 }
-function elementsUtilisables(e) {
+export function elementsUtilisables(e) {
   if (e.elementLibre) {
     return ELEMENTS;
   }

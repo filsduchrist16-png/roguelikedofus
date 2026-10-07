@@ -25,6 +25,7 @@ import {
   IMG_SOIN,
   IMG_TERMINER,
   NOMS_ELEMENTS,
+  attrElementSort,
   cheminAsset,
   echapperHtml,
   ecranTactile,
@@ -33,6 +34,7 @@ import {
   infobulleSort,
   masquerElements,
   parametres,
+  pastilleElementSort,
   pctCritique,
   pctDegatsCritiques,
   pctPuissanceIntel,
@@ -156,7 +158,27 @@ export function journaliser(msg, meta) {
   }
   rafraichirJournal();
 }
+// Défi du combat en cours (challenges façon DOFUS).
+let defiCombat = null;
+export function definirDefiCombat(defi) {
+  defiCombat = defi;
+  const hote = document.getElementById(`cb-defi`);
+  if (hote) {
+    hote.innerHTML = htmlDefi();
+  }
+}
+function htmlDefi() {
+  if (!defiCombat) {
+    return ``;
+  }
+  return `<div class="defi-combat" title="Réussis le défi pour gagner +30 % d'XP et de kamas">
+    <span class="defi-nom">🎯 Défi ${echapperHtml(defiCombat.nom)}</span>
+    <span class="defi-texte">${echapperHtml(defiCombat.texte)}</span>
+    <small class="defi-bonus">+30 % XP et kamas</small>
+  </div>`;
+}
 export function initialiserVueCombat(e, t, n = null) {
+  defiCombat = null;
   combattants = e;
   titreCombat = t;
   resolveurAction = n;
@@ -468,7 +490,7 @@ function htmlCarteCombattant(e, t) {
       .filter(Boolean)
       .join(` `)}" data-ref="${e.ref}">
       <div class="carte-tete">
-        <span class="carte-nom">${echapperHtml(e.nom)}</span>
+        <span class="carte-nom">${defiCombat?.cible === e.ref ? `<span class="badge-defi" title="Cible du défi ${echapperHtml(defiCombat.nom)}">🎯</span>` : ``}${echapperHtml(e.nom)}</span>
         <span class="rang rang-${l}">${l === `avant` ? `AVANT` : `ARR.`}</span>
       </div>
       <div class="portrait-wrap">
@@ -535,6 +557,7 @@ function rendreCombat() {
     ((racine.innerHTML = `
       <div class="combat">
         <h2 class="titre-combat">${echapperHtml(titreCombat)}</h2>
+        <div id="cb-defi"></div>
         <div id="cb-timeline"></div>
         <div class="plateau">
           <div class="colonne">
@@ -558,6 +581,7 @@ function rendreCombat() {
       n.innerHTML = t;
     }
   };
+  r(`cb-defi`, htmlDefi());
   r(`cb-timeline`, htmlTimeline());
   r(`cb-joueur`, n(`joueur`));
   r(`cb-ennemi`, n(`ennemi`));
@@ -620,6 +644,7 @@ function htmlBarreSorts() {
         <span class="sort-touche">1</span>
         <span class="sort-pa-badge"><img src="${IMG_ETOILE}" alt="" onerror="this.remove()" /><b>${coutPA(e_armeSort, e)}</b></span>
         <span class="sort-icon-wrap"><img class="sort-icon" src="${e_armeSort.img ? cheminAsset(e_armeSort.img) : ``}" alt="" onerror="this.closest('.sort-icon-wrap')?.remove()" /></span>
+        ${pastilleElementSort(e_armeSort, e)}
       </button>`
       : `<div class="sort sort-cac" title="Corps à corps, aucune arme équipée">
         <span class="sort-touche">1</span>
@@ -635,7 +660,8 @@ function htmlBarreSorts() {
         return `<button class="sort ${sortChoisi?.id === t.id ? `choisi` : ``} ${r > 0 ? `cooldown` : ``}" data-sort="${t.id}" ${o ? `` : `disabled`} ${i ? `title="Aucune cible valable"` : ``}>
         <span class="sort-touche">${n + 2}</span>
         <span class="sort-pa-badge"><img src="${IMG_ETOILE}" alt="" onerror="this.remove()" /><b>${a}</b></span>
-        <span class="sort-icon-wrap"><span class="sort-nom-fallback">${echapperHtml(t.nom)}</span><img class="sort-icon" src="${iconeSort(t.id)}" alt="" onerror="this.closest('.sort-icon-wrap')?.classList.add('noicon'); this.remove()" /></span>
+        <span class="sort-icon-wrap"${attrElementSort(t, e)}><span class="sort-nom-fallback">${echapperHtml(t.nom)}</span><img class="sort-icon" src="${iconeSort(t.id)}" alt="" onerror="this.closest('.sort-icon-wrap')?.classList.add('noicon'); this.remove()" /></span>
+        ${pastilleElementSort(t, e)}
         ${r > 0 ? `<span class="sort-cd" title="Rechargement : ${r} tour(s)">${r}</span>` : ``}
       </button>`;
       })

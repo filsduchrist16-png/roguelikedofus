@@ -39,6 +39,7 @@ const ICONES_NOEUDS = {
   donjon: `🐉`,
   hdv: `🪙`,
   forgemagie: `🔨`,
+  rencontre: `❓`,
 };
 const NOMS_NOEUDS = {
   combat: `Combat`,
@@ -49,6 +50,7 @@ const NOMS_NOEUDS = {
   donjon: `Donjon`,
   hdv: `Hôtel de vente`,
   forgemagie: `Forgemage`,
+  rencontre: `Rencontre`,
 };
 const IMAGES_NOEUDS = {
   combat: `combat`,
@@ -59,6 +61,7 @@ const IMAGES_NOEUDS = {
   donjon: `donjon`,
   hdv: `hdv`,
   forgemagie: `forgemagie`,
+  rencontre: `rencontre`,
 };
 function imageBossDonjon(e) {
   let t = e.combatId ? COMBATS[e.combatId]?.ennemis : undefined;
@@ -76,7 +79,18 @@ const CARTE_HAUTEUR = 440;
 const CARTE_PAS_X = 116;
 const CARTE_MARGE = 56;
 // onModif : appelé après un changement fait depuis la carte (équipement, formation) pour sauvegarder la run
-export function ecranCarte(e, t, n, r, i = [], a = 0, o = 0, s = 0, onModif = () => {}) {
+export function ecranCarte(
+  e,
+  t,
+  n,
+  r,
+  i = [],
+  a = 0,
+  o = 0,
+  s = 0,
+  onModif = () => {},
+  effets = [],
+) {
   return new Promise((resolve) => {
     let l = () => {
       let d = Math.max(...e.noeuds.map((e) => e.ligne));
@@ -177,6 +191,7 @@ Ennemis : ${o.desc}`)}"`
         <div class="carte-ecran map-layout">
           <header class="map-topbar">
             <h2 class="zone-titre">${echapperHtml(r)}${o >= 1 ? `<span class="asc-badge" title="${echapperHtml(DIFFICULTES[o].desc)}">${etoilesDifficulte(o)}</span>` : ``}${s >= 1 ? `<span class="asc-badge" title="Philtres d'Otomai bus : les archimonstres apparaissent plus souvent">🧪 ×${s}</span>` : ``}</h2>
+            ${effets.length ? `<div class="zone-effets">${effets.map((x) => `<span class="zone-effet" data-tip="${echapperHtml(x.desc)}">${x.icone} ${echapperHtml(x.nom)}</span>`).join(``)}</div>` : ``}
             <div class="topbar-actions">
               <button id="carte-persos" class="aside-icone" title="Caractéristiques"><img src="${IMG_CARACTERISTIQUES}" alt="Caractéristiques" onerror="this.remove()" /><span class="aside-lbl">Stats</span></button>
               <button id="carte-formation" class="aside-icone" title="Formation"><img src="${IMG_FORMATION}" alt="Formation" onerror="this.remove()" /><span class="aside-lbl">Formation</span></button>
