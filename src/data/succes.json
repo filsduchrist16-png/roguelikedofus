@@ -1242,5 +1242,1451 @@
         "nom": "Gagner un monde avec une Eniripsa dans l'équipe."
       }
     ]
+  },
+  "t3_1_donjons": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 3 · Donjons niveaux 101 à 150"
+    },
+    "nom": "Donjons (niveaux 101 à 150)",
+    "quetes": [
+      {
+        "id": "t3_donjon_rat_blanc",
+        "nom": "Vaincre le Rat Blanc dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "rat_blanc"
+        }
+      },
+      {
+        "id": "t3_donjon_rat_noir",
+        "nom": "Vaincre le Rat Noir dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "rat_noir"
+        }
+      },
+      {
+        "id": "t3_donjon_maitre_corbac",
+        "nom": "Vaincre le Maître Corbac dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "maitre_corbac"
+        }
+      },
+      {
+        "id": "t3_donjon_silf_le_rasboul_majeur",
+        "nom": "Vaincre Silf le Rasboul Majeur dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "silf_le_rasboul_majeur"
+        }
+      },
+      {
+        "id": "t3_donjon_blop_multicolore_royal",
+        "nom": "Vaincre le Blop Multicolore Royal dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "blop_multicolore_royal"
+        }
+      },
+      {
+        "id": "t3_donjon_tofu_royal",
+        "nom": "Vaincre le Tofu Royal dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "tofu_royal"
+        }
+      },
+      {
+        "id": "t3_donjon_crocabulia",
+        "nom": "Vaincre Crocabulia dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "crocabulia"
+        }
+      },
+      {
+        "id": "t3_donjon_minotoror",
+        "nom": "Vaincre le Minotoror dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "minotoror"
+        }
+      },
+      {
+        "id": "t3_donjon_nagate",
+        "nom": "Vaincre Nagate la Dame des eaux dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "nagate"
+        }
+      },
+      {
+        "id": "t3_donjon_dojo_du_vent",
+        "nom": "Vaincre Hanshi et Shihan ensemble dans leur donjon.",
+        "critere": {
+          "type": "vaincre",
+          "zone": "dojo_du_vent",
+          "noeud": "donjon"
+        }
+      },
+      {
+        "id": "t3_donjon_laboratoire_tynril",
+        "nom": "Vaincre les Tynrils dans leur donjon.",
+        "critere": {
+          "type": "vaincre",
+          "zone": "laboratoire_tynril",
+          "noeud": "donjon"
+        }
+      },
+      {
+        "id": "t3_donjon_mansot_royal",
+        "nom": "Vaincre le Mansot Royal dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "mansot_royal"
+        }
+      },
+      {
+        "id": "t3_donjon_ben_le_ripate",
+        "nom": "Vaincre  Ben le Ripate dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "ben_le_ripate"
+        }
+      }
+    ]
+  },
+  "t3_2_duo": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 3 · Donjons niveaux 101 à 150"
+    },
+    "nom": "Défis en duo (niveaux 101 à 150)",
+    "quetes": [
+      {
+        "id": "t3_duo_rat_blanc",
+        "nom": "Rat Blanc (Duo) : vaincre le Rat Blanc avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "rat_blanc",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t3_duo_rat_noir",
+        "nom": "Rat Noir (Duo) : vaincre le Rat Noir avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "rat_noir",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t3_duo_maitre_corbac",
+        "nom": "Maître Corbac (Duo) : vaincre le Maître Corbac avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "maitre_corbac",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t3_duo_silf_le_rasboul_majeur",
+        "nom": "Silf le Rasboul Majeur (Duo) : vaincre Silf le Rasboul Majeur avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "silf_le_rasboul_majeur",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t3_duo_blop_multicolore_royal",
+        "nom": "Blop Multicolore Royal (Duo) : vaincre le Blop Multicolore Royal avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "blop_multicolore_royal",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t3_duo_tofu_royal",
+        "nom": "Tofu Royal (Duo) : vaincre le Tofu Royal avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "tofu_royal",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t3_duo_crocabulia",
+        "nom": "Crocabulia (Duo) : vaincre Crocabulia avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "crocabulia",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t3_duo_minotoror",
+        "nom": "Minotoror (Duo) : vaincre le Minotoror avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "minotoror",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t3_duo_mansot_royal",
+        "nom": "Mansot Royal (Duo) : vaincre le Mansot Royal avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "mansot_royal",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t3_duo_ben_le_ripate",
+        "nom": "Ben le Ripate (Duo) : vaincre Ben le Ripate avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "ben_le_ripate",
+          "equipeMax": 2
+        }
+      }
+    ]
+  },
+  "t3_3_exploits": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 3 · Donjons niveaux 101 à 150"
+    },
+    "nom": "Exploits (niveaux 101 à 150)",
+    "quetes": [
+      {
+        "id": "t3_premier_rat_blanc",
+        "nom": "Rat Blanc (Premier) : vaincre le Rat Blanc en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "rat_blanc",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t3_blitzkrieg_rat_noir",
+        "nom": "Rat Noir (Blitzkrieg) : vaincre le Rat Noir en 4 rondes au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "rat_noir",
+          "toursMax": 4
+        }
+      },
+      {
+        "id": "t3_premier_maitre_corbac",
+        "nom": "Maître Corbac (Premier) : vaincre le Maître Corbac en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "maitre_corbac",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t3_premier_silf_le_rasboul_majeur",
+        "nom": "Silf le Rasboul Majeur (Premier) : vaincre Silf le Rasboul Majeur en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "silf_le_rasboul_majeur",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t3_dernier_tofu_royal",
+        "nom": "Tofu Royal (Dernier) : vaincre le Tofu Royal en l'achevant après tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "tofu_royal",
+          "bossDernier": true
+        }
+      },
+      {
+        "id": "t3_dernier_mansot_royal",
+        "nom": "Mansot Royal (Dernier) : vaincre le Mansot Royal en l'achevant après tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "mansot_royal",
+          "bossDernier": true
+        }
+      }
+    ]
+  },
+  "t3_4_reliques": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 3 · Donjons niveaux 101 à 150"
+    },
+    "nom": "Reliques du Monde 3",
+    "quetes": [
+      {
+        "id": "t3_relique_rat_blanc",
+        "nom": "Obtenir la relique « Crinière de Rat Blanc ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "rat_blanc"
+        }
+      },
+      {
+        "id": "t3_relique_rat_noir",
+        "nom": "Obtenir la relique « Crinière de Rat Noir ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "rat_noir"
+        }
+      },
+      {
+        "id": "t3_relique_maitre_corbac",
+        "nom": "Obtenir la relique « Duvet du Maître Corbac ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "maitre_corbac"
+        }
+      },
+      {
+        "id": "t3_relique_silf_le_rasboul_majeur",
+        "nom": "Obtenir la relique « Queue emplumée du Rasboul Majeur ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "silf_le_rasboul_majeur"
+        }
+      },
+      {
+        "id": "t3_relique_blop_multicolore_royal",
+        "nom": "Obtenir la relique « Fleur de Blop Multicolore Royal ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "blop_multicolore_royal"
+        }
+      },
+      {
+        "id": "t3_relique_tofu_royal",
+        "nom": "Obtenir la relique « Plume Vibrante du Tofu Royal ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "tofu_royal"
+        }
+      },
+      {
+        "id": "t3_relique_crocabulia",
+        "nom": "Obtenir la relique « Corne brisée de Crocabulia ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "crocabulia"
+        }
+      },
+      {
+        "id": "t3_relique_minotoror",
+        "nom": "Obtenir la relique « Corne Brûlée du Minotoror ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "minotoror"
+        }
+      },
+      {
+        "id": "t3_relique_nagate",
+        "nom": "Obtenir la relique « Koinkoin de bain de Nagate ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "nagate"
+        }
+      },
+      {
+        "id": "t3_relique_shihan",
+        "nom": "Obtenir la relique « Piques à cheveux de Shihan ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "shihan"
+        }
+      },
+      {
+        "id": "t3_relique_hanshi",
+        "nom": "Obtenir la relique « Fragment d'anomalie ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "hanshi"
+        }
+      },
+      {
+        "id": "t3_relique_tynril_ahuri",
+        "nom": "Obtenir la relique « Pollenectar ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "tynril_ahuri"
+        }
+      },
+      {
+        "id": "t3_relique_tynril_deconcerte",
+        "nom": "Obtenir la relique « Minowang ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "tynril_deconcerte"
+        }
+      },
+      {
+        "id": "t3_relique_tynril_perfide",
+        "nom": "Obtenir la relique « Ambre du Tynril ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "tynril_perfide"
+        }
+      },
+      {
+        "id": "t3_relique_mansot_royal",
+        "nom": "Obtenir la relique « Plume Vibrante de mansot ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "mansot_royal"
+        }
+      },
+      {
+        "id": "t3_relique_ben_le_ripate",
+        "nom": "Obtenir la relique « Scapula de Ben le Ripate ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "ben_le_ripate"
+        }
+      }
+    ]
+  },
+  "t3_5_archis": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 3 · Donjons niveaux 101 à 150"
+    },
+    "nom": "Archimonstres du Monde 3",
+    "quetes": [
+      {
+        "id": "t3_archis",
+        "nom": "Capturer tous les archimonstres du monde 3.",
+        "critere": {
+          "type": "archi_capture",
+          "tranche": "t3"
+        }
+      }
+    ]
+  },
+  "t3_6_conquete": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 3 · Donjons niveaux 101 à 150"
+    },
+    "nom": "Conquête du Monde 3",
+    "quetes": [
+      {
+        "id": "t3_gagne",
+        "nom": "Gagner le monde 3.",
+        "critere": {
+          "type": "run_gagnee",
+          "tranche": "t3"
+        }
+      },
+      {
+        "id": "t3_difficile",
+        "nom": "Gagner le monde 3 en Difficile (★★).",
+        "critere": {
+          "type": "record_ascension",
+          "tranche": "t3",
+          "min": 1
+        }
+      },
+      {
+        "id": "t3_extreme",
+        "nom": "Gagner le monde 3 en Extrême (★★★).",
+        "critere": {
+          "type": "record_ascension",
+          "tranche": "t3",
+          "min": 2
+        }
+      },
+      {
+        "id": "t3_cauchemar",
+        "nom": "Gagner le monde 3 en Cauchemar (★★★★).",
+        "critere": {
+          "type": "record_ascension",
+          "tranche": "t3",
+          "min": 3
+        }
+      }
+    ]
+  },
+  "t4_1_donjons": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 4 · Donjons niveaux 151 à 190"
+    },
+    "nom": "Donjons (niveaux 151 à 190)",
+    "quetes": [
+      {
+        "id": "t4_donjon_kimbo",
+        "nom": "Vaincre le Kimbo dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kimbo"
+        }
+      },
+      {
+        "id": "t4_donjon_obsidiantre",
+        "nom": "Vaincre l'Obsidiantre dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "obsidiantre"
+        }
+      },
+      {
+        "id": "t4_donjon_minotot",
+        "nom": "Vaincre le Minotot dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "minotot"
+        }
+      },
+      {
+        "id": "t4_donjon_shogun_tofugawa",
+        "nom": "Vaincre le Shogun Tofugawa dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "shogun_tofugawa"
+        }
+      },
+      {
+        "id": "t4_donjon_tengu_givrefoux",
+        "nom": "Vaincre Tengu Givrefoux dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "tengu_givrefoux"
+        }
+      },
+      {
+        "id": "t4_donjon_fuji_givrefoux_nourriciere",
+        "nom": "Vaincre la Fuji Givrefoux Nourricière dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "fuji_givrefoux_nourriciere"
+        }
+      },
+      {
+        "id": "t4_donjon_xlii",
+        "nom": "Vaincre XLII dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "xlii"
+        }
+      },
+      {
+        "id": "t4_donjon_korriandre",
+        "nom": "Vaincre le Korriandre dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "korriandre"
+        }
+      },
+      {
+        "id": "t4_donjon_kralamoure_geant",
+        "nom": "Vaincre le Kralamoure Géant dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kralamoure_geant"
+        }
+      },
+      {
+        "id": "t4_donjon_bworker",
+        "nom": "Vaincre le Bworker dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "bworker"
+        }
+      },
+      {
+        "id": "t4_donjon_ougah",
+        "nom": "Vaincre Ougah dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "ougah"
+        }
+      },
+      {
+        "id": "t4_donjon_glourseleste",
+        "nom": "Vaincre le Glourséleste dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "glourseleste"
+        }
+      },
+      {
+        "id": "t4_donjon_ombre",
+        "nom": "Vaincre Ombre dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "ombre"
+        }
+      }
+    ]
+  },
+  "t4_2_duo": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 4 · Donjons niveaux 151 à 190"
+    },
+    "nom": "Défis en duo (niveaux 151 à 190)",
+    "quetes": [
+      {
+        "id": "t4_duo_kimbo",
+        "nom": "Kimbo (Duo) : vaincre le Kimbo avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kimbo",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t4_duo_obsidiantre",
+        "nom": "Obsidiantre (Duo) : vaincre l'Obsidiantre avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "obsidiantre",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t4_duo_minotot",
+        "nom": "Minotot (Duo) : vaincre le Minotot avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "minotot",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t4_duo_shogun_tofugawa",
+        "nom": "Shogun Tofugawa (Duo) : vaincre le Shogun Tofugawa avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "shogun_tofugawa",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t4_duo_tengu_givrefoux",
+        "nom": "Tengu Givrefoux (Duo) : vaincre Tengu Givrefoux avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "tengu_givrefoux",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t4_duo_fuji_givrefoux_nourriciere",
+        "nom": "Fuji Givrefoux Nourricière (Duo) : vaincre la Fuji Givrefoux Nourricière avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "fuji_givrefoux_nourriciere",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t4_duo_xlii",
+        "nom": "XLII (Duo) : vaincre XLII avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "xlii",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t4_duo_korriandre",
+        "nom": "Korriandre (Duo) : vaincre le Korriandre avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "korriandre",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t4_duo_kralamoure_geant",
+        "nom": "Kralamoure Géant (Duo) : vaincre le Kralamoure Géant avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kralamoure_geant",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t4_duo_bworker",
+        "nom": "Bworker (Duo) : vaincre le Bworker avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "bworker",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t4_duo_ougah",
+        "nom": "Ougah (Duo) : vaincre Ougah avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "ougah",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t4_duo_glourseleste",
+        "nom": "Glourséleste (Duo) : vaincre le Glourséleste avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "glourseleste",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t4_duo_ombre",
+        "nom": "Ombre (Duo) : vaincre Ombre avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "ombre",
+          "equipeMax": 2
+        }
+      }
+    ]
+  },
+  "t4_3_exploits": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 4 · Donjons niveaux 151 à 190"
+    },
+    "nom": "Exploits (niveaux 151 à 190)",
+    "quetes": [
+      {
+        "id": "t4_premier_kimbo",
+        "nom": "Kimbo (Premier) : vaincre le Kimbo en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kimbo",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t4_premier_obsidiantre",
+        "nom": "Obsidiantre (Premier) : vaincre l'Obsidiantre en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "obsidiantre",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t4_premier_minotot",
+        "nom": "Minotot (Premier) : vaincre le Minotot en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "minotot",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t4_premier_shogun_tofugawa",
+        "nom": "Shogun Tofugawa (Premier) : vaincre le Shogun Tofugawa en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "shogun_tofugawa",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t4_premier_tengu_givrefoux",
+        "nom": "Tengu Givrefoux (Premier) : vaincre Tengu Givrefoux en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "tengu_givrefoux",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t4_dernier_fuji_givrefoux_nourriciere",
+        "nom": "Fuji Givrefoux Nourricière (Dernier) : vaincre la Fuji Givrefoux Nourricière en l'achevant après tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "fuji_givrefoux_nourriciere",
+          "bossDernier": true
+        }
+      },
+      {
+        "id": "t4_blitzkrieg_kralamoure_geant",
+        "nom": "Kralamoure Géant (Blitzkrieg) : vaincre le Kralamoure Géant en 4 rondes au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "kralamoure_geant",
+          "toursMax": 4
+        }
+      },
+      {
+        "id": "t4_blitzkrieg_bworker",
+        "nom": "Bworker (Blitzkrieg) : vaincre le Bworker en 4 rondes au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "bworker",
+          "toursMax": 4
+        }
+      },
+      {
+        "id": "t4_dernier_ougah",
+        "nom": "Ougah (Dernier) : vaincre Ougah en l'achevant après tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "ougah",
+          "bossDernier": true
+        }
+      },
+      {
+        "id": "t4_premier_glourseleste",
+        "nom": "Glourséleste (Premier) : vaincre le Glourséleste en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "glourseleste",
+          "bossPremier": true
+        }
+      },
+      {
+        "id": "t4_premier_ombre",
+        "nom": "Ombre (Premier) : vaincre Ombre en l'achevant avant tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "ombre",
+          "bossPremier": true
+        }
+      }
+    ]
+  },
+  "t4_4_reliques": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 4 · Donjons niveaux 151 à 190"
+    },
+    "nom": "Reliques du Monde 4",
+    "quetes": [
+      {
+        "id": "t4_relique_kimbo",
+        "nom": "Obtenir la relique « Sphénoïde du Kimbo ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "kimbo"
+        }
+      },
+      {
+        "id": "t4_relique_obsidiantre",
+        "nom": "Obtenir la relique « Vertèbre d'Obsidiantre ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "obsidiantre"
+        }
+      },
+      {
+        "id": "t4_relique_minotot",
+        "nom": "Obtenir la relique « Sabot du Minotot ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "minotot"
+        }
+      },
+      {
+        "id": "t4_relique_shogun_tofugawa",
+        "nom": "Obtenir la relique « Moustache du Shogun Tofugawa ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "shogun_tofugawa"
+        }
+      },
+      {
+        "id": "t4_relique_tengu_givrefoux",
+        "nom": "Obtenir la relique « Cuir de Tengu Givrefoux ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "tengu_givrefoux"
+        }
+      },
+      {
+        "id": "t4_relique_fuji_givrefoux_nourriciere",
+        "nom": "Obtenir la relique « Condyle de Fuji Givrefoux ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "fuji_givrefoux_nourriciere"
+        }
+      },
+      {
+        "id": "t4_relique_xlii",
+        "nom": "Obtenir la relique « Corne de XLII ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "xlii"
+        }
+      },
+      {
+        "id": "t4_relique_korriandre",
+        "nom": "Obtenir la relique « Œil de Korriandre ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "korriandre"
+        }
+      },
+      {
+        "id": "t4_relique_kralamoure_geant",
+        "nom": "Obtenir la relique « Encre du Kralamoure géant ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "kralamoure_geant"
+        }
+      },
+      {
+        "id": "t4_relique_bworker",
+        "nom": "Obtenir la relique « Peau du Bworker ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "bworker"
+        }
+      },
+      {
+        "id": "t4_relique_ougah",
+        "nom": "Obtenir la relique « Épine d'Ougah ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "ougah"
+        }
+      },
+      {
+        "id": "t4_relique_glourseleste",
+        "nom": "Obtenir la relique « Hamatum de Glourséleste ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "glourseleste"
+        }
+      },
+      {
+        "id": "t4_relique_ombre",
+        "nom": "Obtenir la relique « Corne d'Ombre ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "ombre"
+        }
+      }
+    ]
+  },
+  "t4_5_archis": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 4 · Donjons niveaux 151 à 190"
+    },
+    "nom": "Archimonstres du Monde 4",
+    "quetes": [
+      {
+        "id": "t4_archis",
+        "nom": "Capturer tous les archimonstres du monde 4.",
+        "critere": {
+          "type": "archi_capture",
+          "tranche": "t4"
+        }
+      }
+    ]
+  },
+  "t4_6_conquete": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 4 · Donjons niveaux 151 à 190"
+    },
+    "nom": "Conquête du Monde 4",
+    "quetes": [
+      {
+        "id": "t4_gagne",
+        "nom": "Gagner le monde 4.",
+        "critere": {
+          "type": "run_gagnee",
+          "tranche": "t4"
+        }
+      },
+      {
+        "id": "t4_difficile",
+        "nom": "Gagner le monde 4 en Difficile (★★).",
+        "critere": {
+          "type": "record_ascension",
+          "tranche": "t4",
+          "min": 1
+        }
+      },
+      {
+        "id": "t4_extreme",
+        "nom": "Gagner le monde 4 en Extrême (★★★).",
+        "critere": {
+          "type": "record_ascension",
+          "tranche": "t4",
+          "min": 2
+        }
+      },
+      {
+        "id": "t4_cauchemar",
+        "nom": "Gagner le monde 4 en Cauchemar (★★★★).",
+        "critere": {
+          "type": "record_ascension",
+          "tranche": "t4",
+          "min": 3
+        }
+      }
+    ]
+  },
+  "t5_1_donjons": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 5 · Donjons niveaux 191 à 200"
+    },
+    "nom": "Donjons (niveaux 191 à 200)",
+    "quetes": [
+      {
+        "id": "t5_donjon_missiz_frizz",
+        "nom": "Vaincre Missiz Frizz dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "missiz_frizz"
+        }
+      },
+      {
+        "id": "t5_donjon_sylargh",
+        "nom": "Vaincre Sylargh dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "sylargh"
+        }
+      },
+      {
+        "id": "t5_donjon_klime",
+        "nom": "Vaincre Klime dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "klime"
+        }
+      },
+      {
+        "id": "t5_donjon_nileza",
+        "nom": "Vaincre Nileza dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "nileza"
+        }
+      },
+      {
+        "id": "t5_donjon_comte_harebourg",
+        "nom": "Vaincre le Comte Harebourg dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "comte_harebourg"
+        }
+      },
+      {
+        "id": "t5_donjon_merkator",
+        "nom": "Vaincre Merkator dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "merkator"
+        }
+      },
+      {
+        "id": "t5_donjon_capitaine_meno",
+        "nom": "Vaincre le Capitaine Meno dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "capitaine_meno"
+        }
+      },
+      {
+        "id": "t5_donjon_larve_de_koutoulou",
+        "nom": "Vaincre la Larve de Koutoulou dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "larve_de_koutoulou"
+        }
+      },
+      {
+        "id": "t5_donjon_dantinea",
+        "nom": "Vaincre Dantinéa dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "dantinea"
+        }
+      },
+      {
+        "id": "t5_donjon_corruption",
+        "nom": "Vaincre Corruption dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "corruption"
+        }
+      },
+      {
+        "id": "t5_donjon_guerre",
+        "nom": "Vaincre Guerre dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "guerre"
+        }
+      },
+      {
+        "id": "t5_donjon_servitude",
+        "nom": "Vaincre Servitude dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "servitude"
+        }
+      },
+      {
+        "id": "t5_donjon_misere",
+        "nom": "Vaincre Misère dans son donjon.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "misere"
+        }
+      },
+      {
+        "id": "t5_donjon_tempete_eliocalypse",
+        "nom": "Vaincre les Cavaliers de l'Eliocalypse ensemble dans leur donjon.",
+        "critere": {
+          "type": "vaincre",
+          "zone": "tempete_eliocalypse",
+          "noeud": "donjon"
+        }
+      }
+    ]
+  },
+  "t5_2_duo": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 5 · Donjons niveaux 191 à 200"
+    },
+    "nom": "Défis en duo (niveaux 191 à 200)",
+    "quetes": [
+      {
+        "id": "t5_duo_missiz_frizz",
+        "nom": "Missiz Frizz (Duo) : vaincre Missiz Frizz avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "missiz_frizz",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t5_duo_sylargh",
+        "nom": "Sylargh (Duo) : vaincre Sylargh avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "sylargh",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t5_duo_klime",
+        "nom": "Klime (Duo) : vaincre Klime avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "klime",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t5_duo_nileza",
+        "nom": "Nileza (Duo) : vaincre Nileza avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "nileza",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t5_duo_comte_harebourg",
+        "nom": "Comte Harebourg (Duo) : vaincre le Comte Harebourg avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "comte_harebourg",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t5_duo_merkator",
+        "nom": "Merkator (Duo) : vaincre Merkator avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "merkator",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t5_duo_capitaine_meno",
+        "nom": "Capitaine Meno (Duo) : vaincre le Capitaine Meno avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "capitaine_meno",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t5_duo_larve_de_koutoulou",
+        "nom": "Larve de Koutoulou (Duo) : vaincre la Larve de Koutoulou avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "larve_de_koutoulou",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t5_duo_dantinea",
+        "nom": "Dantinéa (Duo) : vaincre Dantinéa avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "dantinea",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t5_duo_corruption",
+        "nom": "Corruption (Duo) : vaincre Corruption avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "corruption",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t5_duo_guerre",
+        "nom": "Guerre (Duo) : vaincre Guerre avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "guerre",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t5_duo_servitude",
+        "nom": "Servitude (Duo) : vaincre Servitude avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "servitude",
+          "equipeMax": 2
+        }
+      },
+      {
+        "id": "t5_duo_misere",
+        "nom": "Misère (Duo) : vaincre Misère avec 2 héros au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "misere",
+          "equipeMax": 2
+        }
+      }
+    ]
+  },
+  "t5_3_exploits": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 5 · Donjons niveaux 191 à 200"
+    },
+    "nom": "Exploits (niveaux 191 à 200)",
+    "quetes": [
+      {
+        "id": "t5_dernier_nileza",
+        "nom": "Nileza (Dernier) : vaincre Nileza en l'achevant après tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "nileza",
+          "bossDernier": true
+        }
+      },
+      {
+        "id": "t5_dernier_merkator",
+        "nom": "Merkator (Dernier) : vaincre Merkator en l'achevant après tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "merkator",
+          "bossDernier": true
+        }
+      },
+      {
+        "id": "t5_blitzkrieg_capitaine_meno",
+        "nom": "Capitaine Meno (Blitzkrieg) : vaincre le Capitaine Meno en 4 rondes au plus.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "capitaine_meno",
+          "toursMax": 4
+        }
+      },
+      {
+        "id": "t5_dernier_dantinea",
+        "nom": "Dantinéa (Dernier) : vaincre Dantinéa en l'achevant après tous ses alliés.",
+        "critere": {
+          "type": "vaincre",
+          "boss": "dantinea",
+          "bossDernier": true
+        }
+      }
+    ]
+  },
+  "t5_4_reliques": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 5 · Donjons niveaux 191 à 200"
+    },
+    "nom": "Reliques du Monde 5",
+    "quetes": [
+      {
+        "id": "t5_relique_missiz_frizz",
+        "nom": "Obtenir la relique « Poil d'aisselle de Missiz Frizz ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "missiz_frizz"
+        }
+      },
+      {
+        "id": "t5_relique_sylargh",
+        "nom": "Obtenir la relique « Incisive de Sylargh ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "sylargh"
+        }
+      },
+      {
+        "id": "t5_relique_klime",
+        "nom": "Obtenir la relique « Scalp de Klime ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "klime"
+        }
+      },
+      {
+        "id": "t5_relique_nileza",
+        "nom": "Obtenir la relique « Porte-signe de la Riktus Ensorceleuse ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "nileza"
+        }
+      },
+      {
+        "id": "t5_relique_comte_harebourg",
+        "nom": "Obtenir la relique « Bandelette du Comte Harebourg ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "comte_harebourg"
+        }
+      },
+      {
+        "id": "t5_relique_merkator",
+        "nom": "Obtenir la relique « Cœur de Merkator ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "merkator"
+        }
+      },
+      {
+        "id": "t5_relique_capitaine_meno",
+        "nom": "Obtenir la relique « Poil de Meno ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "capitaine_meno"
+        }
+      },
+      {
+        "id": "t5_relique_larve_de_koutoulou",
+        "nom": "Obtenir la relique « Aile de Larve de Koutoulou ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "larve_de_koutoulou"
+        }
+      },
+      {
+        "id": "t5_relique_dantinea",
+        "nom": "Obtenir la relique « Dentier de Dantinéa ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "dantinea"
+        }
+      },
+      {
+        "id": "t5_relique_corruption",
+        "nom": "Obtenir la relique « Corne de Corruption ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "corruption"
+        }
+      },
+      {
+        "id": "t5_relique_guerre",
+        "nom": "Obtenir la relique « Lagon-dinde ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "guerre"
+        }
+      },
+      {
+        "id": "t5_relique_servitude",
+        "nom": "Obtenir la relique « Verrou de Servitude ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "servitude"
+        }
+      },
+      {
+        "id": "t5_relique_misere",
+        "nom": "Obtenir la relique « Plume de Misère ».",
+        "critere": {
+          "type": "relique_obtenue",
+          "boss": "misere"
+        }
+      }
+    ]
+  },
+  "t5_6_conquete": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 5 · Donjons niveaux 191 à 200"
+    },
+    "nom": "Conquête du Monde 5",
+    "quetes": [
+      {
+        "id": "t5_gagne",
+        "nom": "Gagner le monde 5.",
+        "critere": {
+          "type": "run_gagnee",
+          "tranche": "t5"
+        }
+      },
+      {
+        "id": "t5_difficile",
+        "nom": "Gagner le monde 5 en Difficile (★★).",
+        "critere": {
+          "type": "record_ascension",
+          "tranche": "t5",
+          "min": 1
+        }
+      },
+      {
+        "id": "t5_extreme",
+        "nom": "Gagner le monde 5 en Extrême (★★★).",
+        "critere": {
+          "type": "record_ascension",
+          "tranche": "t5",
+          "min": 2
+        }
+      },
+      {
+        "id": "t5_cauchemar",
+        "nom": "Gagner le monde 5 en Cauchemar (★★★★).",
+        "critere": {
+          "type": "record_ascension",
+          "tranche": "t5",
+          "min": 3
+        }
+      }
+    ]
   }
 }

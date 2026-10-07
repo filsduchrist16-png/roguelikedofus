@@ -24,6 +24,12 @@ function consignesVaincre(c) {
   if (c.toursMax !== undefined) {
     conditions.push(`gagne en ${c.toursMax} ronde${c.toursMax > 1 ? `s` : ``} au plus`);
   }
+  if (c.bossPremier) {
+    conditions.push(`achève le boss avant tous ses alliés`);
+  }
+  if (c.bossDernier) {
+    conditions.push(`achève le boss après tous ses alliés`);
+  }
   if (!conditions.length) {
     return c.boss ? `Bats-le pour valider la quête.` : `Gagne ce combat pour valider la quête.`;
   }
@@ -68,6 +74,7 @@ export function objectifsDuCombat(p) {
           (c.noeud === undefined || c.noeud === p.noeud) &&
           (c.zone === undefined || c.zone === p.zoneId) &&
           (c.classe === undefined || p.classes.includes(c.classe)) &&
+          (c.equipeMax === undefined || p.classes.length <= c.equipeMax) &&
           p.ascension >= (c.ascensionMin ?? 0);
         // Une quête « gagner n'importe quel combat » n'a rien de propre à ce combat.
         const cible = c.boss || c.combat || c.noeud || c.zone;

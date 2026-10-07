@@ -1,5 +1,26 @@
 # Journal des modifications
 
+## Mondes 3, 4 et 5
+
+Les trois derniers mondes sont jouables. Leurs boss sont répartis comme les succès « Donjons » de
+Dofus 3 : niveaux 101 à 150 (Monde 3), 151 à 190 (Monde 4) et 191 à 200 (Monde 5). Monstres, sorts
+des boss, panoplies, reliques et archimonstres viennent des données du jeu (DofusDB).
+
+- **Monde 3 (niveaux 100-150)** : Rats de Bonta et Brâkmar, Maître Corbac, Rasboul, Blop Multicolore
+  Royal, Tofu Royal, Crocabulia, Minotoror, Nagate, Dojo du Vent (Hanshi et Shihan), Tynrils,
+  Mansot Royal, Ben le Ripate.
+- **Monde 4 (niveaux 150-199)** : Kimbo, Obsidiantre, Minotot, Shogun Tofugawa, Tengu et Fuji
+  Givrefoux, XLII, Korriandre, Kralamoure Géant, Bworker, Ougah, Glourséleste, Ombre.
+- **Monde 5 (niveau 200)** : l'arc de Frigost III (Missiz Frizz, Sylargh, Klime, Nileza, puis le
+  Comte Harebourg), Sufokia (Merkator, Capitaine Meno, Koutoulou, Dantinéa), puis l'Eliocalypse :
+  Corruption, Guerre, Servitude, Misère, et les quatre Cavaliers réunis pour le dernier combat.
+- 243 monstres, 288 équipements (panoplies des donjons), 42 reliques, des archimonstres dans les
+  mondes 3 et 4. Chaque boss a une attaque signature tirée de ses vrais sorts.
+- Difficulté réglée par simulation pour suivre la courbe du Monde 2.
+- **Succès** rangés par monde, comme dans Dofus 3 : un succès par donjon, les défis **Duo**
+  (2 héros au plus), **Premier**, **Dernier** et **Blitzkrieg**, les reliques, les archimonstres et
+  la conquête de chaque monde (jusqu'en Cauchemar).
+
 ## Inventaire et lisibilité
 
 ### Inventaire (écran Équipement)

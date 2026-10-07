@@ -2355,5 +2355,1178 @@
     "id": "soin_gardienne",
     "nom": "Soin de la Gardienne",
     "type": "soin"
+  },
+  "toxine_t3": {
+    "id": "toxine_t3",
+    "nom": "Crachat toxique",
+    "desc": "Dégâts et poison (16 par tour, 2 tours).",
+    "baseMin": 14,
+    "baseMax": 20,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "poison": {
+      "degats": 16,
+      "duree": 2
+    }
+  },
+  "drain_vital_t3": {
+    "id": "drain_vital_t3",
+    "nom": "Drain vital",
+    "desc": "Dégâts ; récupère la moitié des dégâts infligés en PV.",
+    "baseMin": 14,
+    "baseMax": 20,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "vampirismeRatio": 0.5
+  },
+  "sape_t3": {
+    "id": "sape_t3",
+    "nom": "Sape",
+    "desc": "Dégâts ; 50 % de chance de retirer 1 PA à la cible au prochain tour.",
+    "baseMin": 13,
+    "baseMax": 19,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "retraitPA": 1,
+    "retraitPAChance": 0.5
+  },
+  "coup_repoussant_t3": {
+    "id": "coup_repoussant_t3",
+    "nom": "Coup repoussant",
+    "desc": "Dégâts ; la cible est repoussée en ligne arrière.",
+    "baseMin": 14,
+    "baseMax": 20,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "deplaceCible": "arriere",
+    "cooldownTours": 2
+  },
+  "attraction_t3": {
+    "id": "attraction_t3",
+    "nom": "Attraction",
+    "desc": "Dégâts ; la cible change de rangée.",
+    "baseMin": 13,
+    "baseMax": 19,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "deplaceCible": "toggle",
+    "cooldownTours": 2
+  },
+  "blindage_t3": {
+    "id": "blindage_t3",
+    "nom": "Blindage",
+    "desc": "Dégâts ; gagne un bouclier de 40 % des dégâts infligés.",
+    "baseMin": 14,
+    "baseMax": 20,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "bouclierRatioDegats": 0.4,
+    "cooldownTours": 2
+  },
+  "affaiblissement_t3": {
+    "id": "affaiblissement_t3",
+    "nom": "Affaiblissement",
+    "desc": "Dégâts ; la cible inflige −15 % de dégâts (1 tour).",
+    "baseMin": 14,
+    "baseMax": 20,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "effet": {
+      "duree": 1,
+      "stat": "degatsInfliges",
+      "valeur": -0.15
+    }
+  },
+  "entrave_t3": {
+    "id": "entrave_t3",
+    "nom": "Entrave",
+    "desc": "Dégâts ; la cible ne peut plus viser la ligne arrière (1 tour).",
+    "baseMin": 13,
+    "baseMax": 19,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "effet": {
+      "duree": 1,
+      "stat": "tetanise",
+      "valeur": 1
+    },
+    "cooldownTours": 2
+  },
+  "soin_t3": {
+    "id": "soin_t3",
+    "nom": "Soin des ombres",
+    "desc": "Rend des PV à l'allié le plus blessé.",
+    "baseMin": 38,
+    "baseMax": 53,
+    "coutPA": 4,
+    "type": "soin",
+    "cible": "allie"
+  },
+  "peste_blanche": {
+    "id": "peste_blanche",
+    "nom": "Peste Blanche",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "poison": {
+      "degats": 22,
+      "duree": 3
+    },
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Le Rat Blanc répand la peste sur toute la rangée ciblée : dégâts et poison (22 par tour, 3 tours)."
+  },
+  "peste_noire": {
+    "id": "peste_noire",
+    "nom": "Peste Noire",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "vampirismeRatio": 0.5,
+    "cooldownTours": 2,
+    "desc": "Le Rat Noir mord et se nourrit : il récupère la moitié des dégâts infligés."
+  },
+  "invocation_de_corbac": {
+    "id": "invocation_de_corbac",
+    "nom": "Invocation de Corbac",
+    "coutPA": 6,
+    "cible": "soi",
+    "type": "invocation",
+    "baseMin": 0,
+    "baseMax": 0,
+    "invoqueMonstre": {
+      "max": 2,
+      "pool": [
+        "rono_le_renarbo",
+        "horace_le_corbac_apprivoise",
+        "kapotie_le_buveur"
+      ]
+    },
+    "cooldownTours": 3,
+    "desc": "Le Maître Corbac appelle un Corbac de sa bibliothèque (2 au plus)."
+  },
+  "sanction_tenebreuse": {
+    "id": "sanction_tenebreuse",
+    "nom": "Sanction Ténébreuse",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "cooldownTours": 2,
+    "desc": "Le Maître Corbac frappe n'importe quel héros, même en ligne arrière."
+  },
+  "rasage": {
+    "id": "rasage",
+    "nom": "Rasage",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "procAleatoire": [
+      {
+        "dissipePositifs": true
+      }
+    ],
+    "cooldownTours": 2,
+    "desc": "Silf rase sa cible de près : dégâts et perte de tous ses boucliers et bonus."
+  },
+  "blopagation": {
+    "id": "blopagation",
+    "nom": "Blopagation",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "procAleatoire": [
+      {
+        "effet": {
+          "stat": "poison",
+          "valeur": 16,
+          "duree": 2
+        }
+      },
+      {
+        "effet": {
+          "stat": "degatsInfliges",
+          "valeur": -0.15,
+          "duree": 1
+        }
+      },
+      {
+        "effet": {
+          "stat": "friction",
+          "valeur": 1,
+          "duree": 1
+        }
+      }
+    ],
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Le Blop Multicolore Royal éclabousse toute la rangée ; une couleur au hasard : brûlure, encre (−15 % de dégâts) ou pomme (soins bloqués)."
+  },
+  "invocation_royale_de_tofu": {
+    "id": "invocation_royale_de_tofu",
+    "nom": "Invocation Royale de Tofu",
+    "coutPA": 6,
+    "cible": "soi",
+    "type": "invocation",
+    "baseMin": 0,
+    "baseMax": 0,
+    "invoqueMonstre": {
+      "max": 2,
+      "pool": [
+        "tofuzmo",
+        "vilain_petit_tofu",
+        "tofutoflamme"
+      ]
+    },
+    "cooldownTours": 3,
+    "desc": "Le Tofu Royal fait éclore un Tofu de sa basse-cour (2 au plus)."
+  },
+  "ecrasement_royal": {
+    "id": "ecrasement_royal",
+    "nom": "Écrasement Royal",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Le Tofu Royal plonge sur toute la ligne avant."
+  },
+  "souffle_de_crocabulia": {
+    "id": "souffle_de_crocabulia",
+    "nom": "Souffle",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Crocabulia crache un souffle draconique sur toute une rangée, même en ligne arrière."
+  },
+  "lancer_de_tofu": {
+    "id": "lancer_de_tofu",
+    "nom": "Lancer de Tofu",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "retraitPA": 1,
+    "retraitPAChance": 1,
+    "cooldownTours": 2,
+    "desc": "Le Minotoror lance un Tofu sur n'importe quel héros : dégâts et −1 PA au prochain tour."
+  },
+  "hatsunamiku": {
+    "id": "hatsunamiku",
+    "nom": "Hatsunamiku",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "effet": {
+      "stat": "degatsInfliges",
+      "valeur": -0.15,
+      "duree": 2
+    },
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Nagate déchaîne une vague sur toute la rangée ciblée : ses héros infligent −15 % de dégâts (2 tours)."
+  },
+  "grande_lame_du_vent": {
+    "id": "grande_lame_du_vent",
+    "nom": "Grande Lame du Vent",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "cooldownTours": 2,
+    "desc": "Shihan tranche l'air : la lame atteint n'importe quel héros."
+  },
+  "source_des_vents": {
+    "id": "source_des_vents",
+    "nom": "Source des vents",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "effetLanceur": {
+      "stat": "esquive",
+      "valeur": 0.25,
+      "duree": 2
+    },
+    "cooldownTours": 2,
+    "desc": "Hanshi frappe et devient insaisissable : +25 % d'esquive (2 tours)."
+  },
+  "forque_ahurie": {
+    "id": "forque_ahurie",
+    "nom": "Forque",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "effetLanceur": {
+      "stat": "resAll",
+      "valeur": 0.3,
+      "duree": 1
+    },
+    "cooldownTours": 2,
+    "desc": "Le Tynril frappe puis se durcit : +30 % de résistances (1 tour)."
+  },
+  "helse": {
+    "id": "helse",
+    "nom": "Helse",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "poison": {
+      "degats": 22,
+      "duree": 3
+    },
+    "cooldownTours": 2,
+    "desc": "Le Tynril projette ses spores : poison (22 par tour, 3 tours)."
+  },
+  "hiffe": {
+    "id": "hiffe",
+    "nom": "Hiffe",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "retraitPA": 1,
+    "retraitPAChance": 1,
+    "cooldownTours": 2,
+    "desc": "Le Tynril embrouille sa cible : −1 PA au prochain tour."
+  },
+  "bisouille": {
+    "id": "bisouille",
+    "nom": "Bisouille",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "vampirismeRatio": 0.5,
+    "cooldownTours": 2,
+    "desc": "Le Tynril embrasse sa victime et lui vole la moitié des dégâts en PV."
+  },
+  "mansolenoide": {
+    "id": "mansolenoide",
+    "nom": "Mansolénoïde",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "effet": {
+      "stat": "tetanise",
+      "valeur": 1,
+      "duree": 1
+    },
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Le Mansot Royal glisse sur la banquise et frappe la rangée : plus d'accès à la ligne arrière (1 tour)."
+  },
+  "frere_de_la_cote": {
+    "id": "frere_de_la_cote",
+    "nom": "Frère de la côte",
+    "coutPA": 6,
+    "cible": "soi",
+    "type": "invocation",
+    "baseMin": 0,
+    "baseMax": 0,
+    "invoqueMonstre": {
+      "max": 2,
+      "pool": [
+        "fancrome",
+        "fantomalamere",
+        "vigie_pirate"
+      ]
+    },
+    "cooldownTours": 3,
+    "desc": "Ben le Ripate appelle un membre de l'équipage fantôme (2 au plus)."
+  },
+  "tore_tue": {
+    "id": "tore_tue",
+    "nom": "Tore tue",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "retraitPA": 1,
+    "retraitPAChance": 1,
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Ben le Ripate fait tournoyer son ancre sur toute la ligne avant : −1 PA au prochain tour."
+  },
+  "toxine_t4": {
+    "id": "toxine_t4",
+    "nom": "Crachat toxique",
+    "desc": "Dégâts et poison (21 par tour, 2 tours).",
+    "baseMin": 14,
+    "baseMax": 20,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "poison": {
+      "degats": 21,
+      "duree": 2
+    }
+  },
+  "drain_vital_t4": {
+    "id": "drain_vital_t4",
+    "nom": "Drain vital",
+    "desc": "Dégâts ; récupère la moitié des dégâts infligés en PV.",
+    "baseMin": 14,
+    "baseMax": 20,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "vampirismeRatio": 0.5
+  },
+  "sape_t4": {
+    "id": "sape_t4",
+    "nom": "Sape",
+    "desc": "Dégâts ; 50 % de chance de retirer 1 PA à la cible au prochain tour.",
+    "baseMin": 13,
+    "baseMax": 19,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "retraitPA": 1,
+    "retraitPAChance": 0.5
+  },
+  "coup_repoussant_t4": {
+    "id": "coup_repoussant_t4",
+    "nom": "Coup repoussant",
+    "desc": "Dégâts ; la cible est repoussée en ligne arrière.",
+    "baseMin": 14,
+    "baseMax": 20,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "deplaceCible": "arriere",
+    "cooldownTours": 2
+  },
+  "attraction_t4": {
+    "id": "attraction_t4",
+    "nom": "Attraction",
+    "desc": "Dégâts ; la cible change de rangée.",
+    "baseMin": 13,
+    "baseMax": 19,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "deplaceCible": "toggle",
+    "cooldownTours": 2
+  },
+  "blindage_t4": {
+    "id": "blindage_t4",
+    "nom": "Blindage",
+    "desc": "Dégâts ; gagne un bouclier de 40 % des dégâts infligés.",
+    "baseMin": 14,
+    "baseMax": 20,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "bouclierRatioDegats": 0.4,
+    "cooldownTours": 2
+  },
+  "affaiblissement_t4": {
+    "id": "affaiblissement_t4",
+    "nom": "Affaiblissement",
+    "desc": "Dégâts ; la cible inflige −15 % de dégâts (1 tour).",
+    "baseMin": 14,
+    "baseMax": 20,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "effet": {
+      "duree": 1,
+      "stat": "degatsInfliges",
+      "valeur": -0.15
+    }
+  },
+  "entrave_t4": {
+    "id": "entrave_t4",
+    "nom": "Entrave",
+    "desc": "Dégâts ; la cible ne peut plus viser la ligne arrière (1 tour).",
+    "baseMin": 13,
+    "baseMax": 19,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "effet": {
+      "duree": 1,
+      "stat": "tetanise",
+      "valeur": 1
+    },
+    "cooldownTours": 2
+  },
+  "soin_t4": {
+    "id": "soin_t4",
+    "nom": "Soin des ombres",
+    "desc": "Rend des PV à l'allié le plus blessé.",
+    "baseMin": 49,
+    "baseMax": 70,
+    "coutPA": 4,
+    "type": "soin",
+    "cible": "allie"
+  },
+  "furie_du_kimbo": {
+    "id": "furie_du_kimbo",
+    "nom": "Furie du Kimbo",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "effetLanceur": {
+      "stat": "resAll",
+      "valeur": 0.3,
+      "duree": 1
+    },
+    "procAleatoire": [
+      {
+        "effet": {
+          "stat": "degatsInfliges",
+          "valeur": -0.2,
+          "duree": 1
+        }
+      },
+      {
+        "dissipePositifs": true
+      }
+    ],
+    "cooldownTours": 2,
+    "desc": "Le Kimbo frappe et se protège (+30 % de résistances, 1 tour) ; au hasard, sa cible perd ses bonus ou inflige −20 % de dégâts."
+  },
+  "scie_lisse": {
+    "id": "scie_lisse",
+    "nom": "Scie lisse",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "bouclierRatioDegats": 0.4,
+    "cooldownTours": 2,
+    "desc": "L'Obsidiantre tranche avec son éclat d'obsidienne et gagne un bouclier de 40 % des dégâts infligés."
+  },
+  "destinos": {
+    "id": "destinos",
+    "nom": "Destinos",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Le Minotot scelle le destin de toute une rangée, même en ligne arrière."
+  },
+  "hageshi_kaze": {
+    "id": "hageshi_kaze",
+    "nom": "Hageshī Kaze",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "deplaceCible": "toggle",
+    "cooldownTours": 2,
+    "desc": "Le Shogun Tofugawa invoque un vent violent : la cible bascule dans l'autre rangée."
+  },
+  "torgnole_givree": {
+    "id": "torgnole_givree",
+    "nom": "Torgnole givrée",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "retraitPA": 2,
+    "retraitPAChance": 1,
+    "cooldownTours": 2,
+    "desc": "Le Tengu Givrefoux gifle avec une main de glace : −2 PA au prochain tour."
+  },
+  "progeniture": {
+    "id": "progeniture",
+    "nom": "Progéniture",
+    "coutPA": 6,
+    "cible": "soi",
+    "type": "invocation",
+    "baseMin": 0,
+    "baseMax": 0,
+    "invoqueMonstre": {
+      "max": 2,
+      "pool": [
+        "yokai_givrefoux",
+        "maho_givrefoux",
+        "soryo_givrefoux"
+      ]
+    },
+    "cooldownTours": 3,
+    "desc": "Fuji appelle un de ses petits Givrefoux (2 au plus)."
+  },
+  "lait_maternel": {
+    "id": "lait_maternel",
+    "nom": "Lait Maternel",
+    "coutPA": 4,
+    "cible": "allie",
+    "type": "soin",
+    "baseMin": 73,
+    "baseMax": 98,
+    "desc": "Fuji soigne le Givrefoux le plus blessé."
+  },
+  "dereglement": {
+    "id": "dereglement",
+    "nom": "Dérèglement",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "retraitPA": 1,
+    "retraitPAChance": 1,
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "XLII dérègle le temps de toute la rangée : −1 PA au prochain tour."
+  },
+  "hairpay": {
+    "id": "hairpay",
+    "nom": "Hairpay",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "poison": {
+      "degats": 29,
+      "duree": 3
+    },
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Le Korriandre libère des spores sur la rangée : poison (29 par tour, 3 tours)."
+  },
+  "invocation_de_tentacule": {
+    "id": "invocation_de_tentacule",
+    "nom": "Invocation de Tentacule",
+    "coutPA": 6,
+    "cible": "soi",
+    "type": "invocation",
+    "baseMin": 0,
+    "baseMax": 0,
+    "invoqueMonstre": {
+      "max": 2,
+      "pool": [
+        "roissingue",
+        "tourbassingue",
+        "bourbassingue"
+      ]
+    },
+    "cooldownTours": 3,
+    "desc": "Le Kralamoure Géant fait surgir une créature de la tourbière (2 au plus)."
+  },
+  "kraken": {
+    "id": "kraken",
+    "nom": "Kraken",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "cooldownTours": 2,
+    "desc": "Le Kralamoure Géant fouette n'importe quel héros de ses tentacules."
+  },
+  "fauchoir": {
+    "id": "fauchoir",
+    "nom": "Fauchoir",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Le Bworker fauche toute la ligne avant d'un grand coup de hache."
+  },
+  "sirop_spore": {
+    "id": "sirop_spore",
+    "nom": "Sirop Spore",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "effet": {
+      "stat": "friction",
+      "valeur": 1,
+      "duree": 2
+    },
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Ougah englue toute la rangée de spores : plus aucun soin ni bouclier (2 tours)."
+  },
+  "gloursombre": {
+    "id": "gloursombre",
+    "nom": "Gloursombre",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "effet": {
+      "stat": "degatsInfliges",
+      "valeur": -0.2,
+      "duree": 1
+    },
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Le Glourséleste écrase la rangée ciblée, même en ligne arrière : −20 % de dégâts (1 tour)."
+  },
+  "paranoia": {
+    "id": "paranoia",
+    "nom": "Paranoïa",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "deplaceCible": "toggle",
+    "cooldownTours": 2,
+    "desc": "Ombre trouble l'esprit de sa cible, qui change de rangée."
+  },
+  "penombre": {
+    "id": "penombre",
+    "nom": "Pénombre",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "effet": {
+      "stat": "tetanise",
+      "valeur": 1,
+      "duree": 1
+    },
+    "zoneLigne": true,
+    "cooldownTours": 3,
+    "desc": "Ombre plonge la rangée dans la pénombre : dégâts, et plus d'accès à la ligne arrière (1 tour)."
+  },
+  "toxine_t5": {
+    "id": "toxine_t5",
+    "nom": "Crachat toxique",
+    "desc": "Dégâts et poison (26 par tour, 2 tours).",
+    "baseMin": 14,
+    "baseMax": 20,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "poison": {
+      "degats": 26,
+      "duree": 2
+    }
+  },
+  "drain_vital_t5": {
+    "id": "drain_vital_t5",
+    "nom": "Drain vital",
+    "desc": "Dégâts ; récupère la moitié des dégâts infligés en PV.",
+    "baseMin": 14,
+    "baseMax": 20,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "vampirismeRatio": 0.5
+  },
+  "sape_t5": {
+    "id": "sape_t5",
+    "nom": "Sape",
+    "desc": "Dégâts ; 50 % de chance de retirer 1 PA à la cible au prochain tour.",
+    "baseMin": 13,
+    "baseMax": 19,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "retraitPA": 1,
+    "retraitPAChance": 0.5
+  },
+  "coup_repoussant_t5": {
+    "id": "coup_repoussant_t5",
+    "nom": "Coup repoussant",
+    "desc": "Dégâts ; la cible est repoussée en ligne arrière.",
+    "baseMin": 14,
+    "baseMax": 20,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "deplaceCible": "arriere",
+    "cooldownTours": 2
+  },
+  "attraction_t5": {
+    "id": "attraction_t5",
+    "nom": "Attraction",
+    "desc": "Dégâts ; la cible change de rangée.",
+    "baseMin": 13,
+    "baseMax": 19,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "deplaceCible": "toggle",
+    "cooldownTours": 2
+  },
+  "blindage_t5": {
+    "id": "blindage_t5",
+    "nom": "Blindage",
+    "desc": "Dégâts ; gagne un bouclier de 40 % des dégâts infligés.",
+    "baseMin": 14,
+    "baseMax": 20,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "bouclierRatioDegats": 0.4,
+    "cooldownTours": 2
+  },
+  "affaiblissement_t5": {
+    "id": "affaiblissement_t5",
+    "nom": "Affaiblissement",
+    "desc": "Dégâts ; la cible inflige −15 % de dégâts (1 tour).",
+    "baseMin": 14,
+    "baseMax": 20,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "effet": {
+      "duree": 1,
+      "stat": "degatsInfliges",
+      "valeur": -0.15
+    }
+  },
+  "entrave_t5": {
+    "id": "entrave_t5",
+    "nom": "Entrave",
+    "desc": "Dégâts ; la cible ne peut plus viser la ligne arrière (1 tour).",
+    "baseMin": 13,
+    "baseMax": 19,
+    "coutPA": 4,
+    "type": "degats",
+    "cible": "ennemi_ligne",
+    "effet": {
+      "duree": 1,
+      "stat": "tetanise",
+      "valeur": 1
+    },
+    "cooldownTours": 2
+  },
+  "soin_t5": {
+    "id": "soin_t5",
+    "nom": "Soin des ombres",
+    "desc": "Rend des PV à l'allié le plus blessé.",
+    "baseMin": 59,
+    "baseMax": 84,
+    "coutPA": 4,
+    "type": "soin",
+    "cible": "allie"
+  },
+  "cristallisation": {
+    "id": "cristallisation",
+    "nom": "Cristallisation",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "effetLanceur": {
+      "stat": "armure",
+      "valeur": 45,
+      "duree": 2
+    },
+    "cooldownTours": 2,
+    "desc": "Missiz Frizz frappe et se cristallise : +armure pendant 2 tours."
+  },
+  "mortier": {
+    "id": "mortier",
+    "nom": "Mortier",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Sylargh pilonne toute une rangée, même en ligne arrière."
+  },
+  "cuir_a_feu_doux": {
+    "id": "cuir_a_feu_doux",
+    "nom": "Cuir à feu doux",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "poison": {
+      "degats": 36,
+      "duree": 3
+    },
+    "cooldownTours": 2,
+    "desc": "Klime fait mijoter sa cible : brûlure (36 par tour, 3 tours)."
+  },
+  "glace_seche": {
+    "id": "glace_seche",
+    "nom": "Glace sèche",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "retraitPA": 1,
+    "retraitPAChance": 1,
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Nileza projette de la glace sèche sur la rangée : −1 PA au prochain tour."
+  },
+  "contretemps": {
+    "id": "contretemps",
+    "nom": "Contretemps",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "procAleatoire": [
+      {
+        "dissipePositifs": true
+      }
+    ],
+    "retraitPA": 2,
+    "retraitPAChance": 1,
+    "cooldownTours": 2,
+    "desc": "Le Comte Harebourg remonte le temps de sa cible : il lui retire boucliers et bonus, et 2 PA au prochain tour."
+  },
+  "jaquemart": {
+    "id": "jaquemart",
+    "nom": "Jaquemart",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "cooldownTours": 2,
+    "desc": "Le Comte frappe n'importe quel héros au son de l'horloge."
+  },
+  "torpillage_de_glace": {
+    "id": "torpillage_de_glace",
+    "nom": "Torpillage de glace",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Merkator torpille toute une rangée, même en ligne arrière."
+  },
+  "crystalisation_meno": {
+    "id": "crystalisation_meno",
+    "nom": "Crystalisation",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "bouclierRatioDegats": 0.4,
+    "cooldownTours": 2,
+    "desc": "Le Capitaine Meno se couvre de cristaux : bouclier de 40 % des dégâts infligés."
+  },
+  "permutation_inquietante": {
+    "id": "permutation_inquietante",
+    "nom": "Permutation Inquiétante",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "effet": {
+      "stat": "degatsInfliges",
+      "valeur": -0.2,
+      "duree": 2
+    },
+    "deplaceCible": "toggle",
+    "cooldownTours": 2,
+    "desc": "La Larve de Koutoulou distord l'espace : la cible change de rangée et inflige −20 % de dégâts (2 tours)."
+  },
+  "siphon_d_ame": {
+    "id": "siphon_d_ame",
+    "nom": "Siphon d'Âme",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "vampirismeRatio": 0.6,
+    "cooldownTours": 2,
+    "desc": "Dantinéa aspire l'âme de sa cible et récupère 60 % des dégâts en PV."
+  },
+  "putrefaction": {
+    "id": "putrefaction",
+    "nom": "Putréfaction",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "poison": {
+      "degats": 36,
+      "duree": 3
+    },
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Corruption fait pourrir toute la rangée : poison (36 par tour, 3 tours)."
+  },
+  "magmalefice": {
+    "id": "magmalefice",
+    "nom": "Magmaléfice",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "effetLanceur": {
+      "stat": "force",
+      "valeur": 30,
+      "duree": 99
+    },
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Guerre embrase la ligne avant et s'en galvanise : +Force jusqu'à la fin du combat."
+  },
+  "asservissement": {
+    "id": "asservissement",
+    "nom": "Asservissement",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "effet": {
+      "stat": "tetanise",
+      "valeur": 1,
+      "duree": 1
+    },
+    "retraitPA": 2,
+    "retraitPAChance": 1,
+    "cooldownTours": 2,
+    "desc": "Servitude enchaîne sa cible : −2 PA au prochain tour, et plus d'accès à la ligne arrière (1 tour)."
+  },
+  "balance_fleau": {
+    "id": "balance_fleau",
+    "nom": "Balance-Fléau",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "effet": {
+      "stat": "degatsInfliges",
+      "valeur": -0.25,
+      "duree": 2
+    },
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Misère pèse les âmes de toute une rangée, même en ligne arrière : −25 % de dégâts (2 tours)."
+  },
+  "magmalefice_2": {
+    "id": "magmalefice_2",
+    "nom": "Magmaléfice",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "effetLanceur": {
+      "stat": "force",
+      "valeur": 30,
+      "duree": 99
+    },
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Guerre embrase la ligne avant et s'en galvanise : +Force jusqu'à la fin du combat."
+  },
+  "asservissement_2": {
+    "id": "asservissement_2",
+    "nom": "Asservissement",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "effet": {
+      "stat": "tetanise",
+      "valeur": 1,
+      "duree": 1
+    },
+    "retraitPA": 2,
+    "retraitPAChance": 1,
+    "cooldownTours": 2,
+    "desc": "Servitude enchaîne sa cible : −2 PA au prochain tour, et plus d'accès à la ligne arrière (1 tour)."
+  },
+  "balance_fleau_2": {
+    "id": "balance_fleau_2",
+    "nom": "Balance-Fléau",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "effet": {
+      "stat": "degatsInfliges",
+      "valeur": -0.25,
+      "duree": 2
+    },
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Misère pèse les âmes de toute une rangée, même en ligne arrière : −25 % de dégâts (2 tours)."
+  },
+  "putrefaction_2": {
+    "id": "putrefaction_2",
+    "nom": "Putréfaction",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "poison": {
+      "degats": 36,
+      "duree": 3
+    },
+    "zoneLigne": true,
+    "cooldownTours": 2,
+    "desc": "Corruption fait pourrir toute la rangée : poison (36 par tour, 3 tours)."
   }
 }

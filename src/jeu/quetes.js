@@ -52,7 +52,10 @@ function critereVaincreRempli(e, t) {
     (e.sansKO && t.herosKO) ||
     (e.toursMax !== undefined && t.rondes > e.toursMax) ||
     t.ascension < (e.ascensionMin ?? 0) ||
-    (e.classe !== undefined && !t.classes.includes(e.classe))
+    (e.classe !== undefined && !t.classes.includes(e.classe)) ||
+    (e.equipeMax !== undefined && (t.nbHeros ?? Infinity) > e.equipeMax) ||
+    (e.bossPremier && t.ordreVaincus?.[0] !== e.boss) ||
+    (e.bossDernier && t.ordreVaincus?.at(-1) !== e.boss)
   );
 }
 function valeurCompteur(e, t) {

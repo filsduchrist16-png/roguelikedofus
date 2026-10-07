@@ -35,6 +35,13 @@ export function resumeCombat(e, t) {
     gagne: t.gagne,
     rondes: e.rondes,
     herosKO: r.some(n),
+    // héros présents au début du combat (défis « Duo »)
+    nbHeros: r.length,
+    // monstres achevés, dans l'ordre (défis « Premier » et « Dernier »)
+    ordreVaincus: [...e.morts]
+      .map((ref) => t.combattants.find((c) => c.ref === ref))
+      .filter((c) => c && c.camp === `ennemi` && c.monstreId && !c.estLance)
+      .map((c) => c.monstreId),
     classes: t.classes,
     ascension: t.ascension,
     vaincus: t.combattants

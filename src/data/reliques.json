@@ -134,5 +134,173 @@
   "wa_wobot": {
     "dofusdb": 14468,
     "nom": "Barbe du Wa Wobot"
+  },
+  "rat_blanc": {
+    "dofusdb": 8486,
+    "nom": "Crinière de Rat Blanc"
+  },
+  "rat_noir": {
+    "dofusdb": 8485,
+    "nom": "Crinière de Rat Noir"
+  },
+  "maitre_corbac": {
+    "dofusdb": 13165,
+    "nom": "Duvet du Maître Corbac"
+  },
+  "silf_le_rasboul_majeur": {
+    "dofusdb": 8798,
+    "nom": "Queue emplumée du Rasboul Majeur"
+  },
+  "blop_multicolore_royal": {
+    "dofusdb": 9391,
+    "nom": "Fleur de Blop Multicolore Royal"
+  },
+  "tofu_royal": {
+    "dofusdb": 8387,
+    "nom": "Plume Vibrante du Tofu Royal"
+  },
+  "crocabulia": {
+    "dofusdb": 8365,
+    "nom": "Corne brisée de Crocabulia"
+  },
+  "minotoror": {
+    "dofusdb": 1680,
+    "nom": "Corne Brûlée du Minotoror"
+  },
+  "nagate": {
+    "dofusdb": 8399,
+    "nom": "Koinkoin de bain de Nagate"
+  },
+  "shihan": {
+    "dofusdb": 8400,
+    "nom": "Piques à cheveux de Shihan"
+  },
+  "hanshi": {
+    "dofusdb": 26870,
+    "nom": "Fragment d'anomalie"
+  },
+  "tynril_ahuri": {
+    "dofusdb": 21171,
+    "nom": "Pollenectar"
+  },
+  "tynril_deconcerte": {
+    "dofusdb": 20052,
+    "nom": "Minowang"
+  },
+  "tynril_perfide": {
+    "dofusdb": 8916,
+    "nom": "Ambre du Tynril"
+  },
+  "mansot_royal": {
+    "dofusdb": 11133,
+    "nom": "Plume Vibrante de mansot"
+  },
+  "ben_le_ripate": {
+    "dofusdb": 11322,
+    "nom": "Scapula de Ben le Ripate"
+  },
+  "kimbo": {
+    "dofusdb": 13164,
+    "nom": "Sphénoïde du Kimbo"
+  },
+  "obsidiantre": {
+    "dofusdb": 11334,
+    "nom": "Vertèbre d'Obsidiantre"
+  },
+  "minotot": {
+    "dofusdb": 8408,
+    "nom": "Sabot du Minotot"
+  },
+  "shogun_tofugawa": {
+    "dofusdb": 7393,
+    "nom": "Moustache du Shogun Tofugawa"
+  },
+  "tengu_givrefoux": {
+    "dofusdb": 11342,
+    "nom": "Cuir de Tengu Givrefoux"
+  },
+  "fuji_givrefoux_nourriciere": {
+    "dofusdb": 11883,
+    "nom": "Condyle de Fuji Givrefoux"
+  },
+  "xlii": {
+    "dofusdb": 15721,
+    "nom": "Corne de XLII"
+  },
+  "korriandre": {
+    "dofusdb": 11896,
+    "nom": "Œil de Korriandre"
+  },
+  "kralamoure_geant": {
+    "dofusdb": 8812,
+    "nom": "Encre du Kralamoure géant"
+  },
+  "bworker": {
+    "dofusdb": 9401,
+    "nom": "Peau du Bworker"
+  },
+  "ougah": {
+    "dofusdb": 9280,
+    "nom": "Épine d'Ougah"
+  },
+  "glourseleste": {
+    "dofusdb": 11944,
+    "nom": "Hamatum de Glourséleste"
+  },
+  "ombre": {
+    "dofusdb": 14928,
+    "nom": "Corne d'Ombre"
+  },
+  "missiz_frizz": {
+    "dofusdb": 13935,
+    "nom": "Poil d'aisselle de Missiz Frizz"
+  },
+  "sylargh": {
+    "dofusdb": 13983,
+    "nom": "Incisive de Sylargh"
+  },
+  "klime": {
+    "dofusdb": 13924,
+    "nom": "Scalp de Klime"
+  },
+  "nileza": {
+    "dofusdb": 27965,
+    "nom": "Porte-signe de la Riktus Ensorceleuse"
+  },
+  "comte_harebourg": {
+    "dofusdb": 13995,
+    "nom": "Bandelette du Comte Harebourg"
+  },
+  "merkator": {
+    "dofusdb": 14865,
+    "nom": "Cœur de Merkator"
+  },
+  "capitaine_meno": {
+    "dofusdb": 17976,
+    "nom": "Poil de Meno"
+  },
+  "larve_de_koutoulou": {
+    "dofusdb": 17989,
+    "nom": "Aile de Larve de Koutoulou"
+  },
+  "dantinea": {
+    "dofusdb": 17982,
+    "nom": "Dentier de Dantinéa"
+  },
+  "corruption": {
+    "dofusdb": 22204,
+    "nom": "Corne de Corruption"
+  },
+  "guerre": {
+    "dofusdb": 21147,
+    "nom": "Lagon-dinde"
+  },
+  "servitude": {
+    "dofusdb": 22219,
+    "nom": "Verrou de Servitude"
+  },
+  "misere": {
+    "dofusdb": 22046,
+    "nom": "Plume de Misère"
   }
 }

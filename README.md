@@ -6,6 +6,9 @@ jusqu'au donjon, et on collectionne Dofus, archimonstres, reliques et succès d'
 
 Fangame non officiel. Les illustrations DOFUS appartiennent à Ankama.
 
+Les mondes 3 à 5 (donjons des niveaux 101 à 200) reprennent les monstres, boss, objets et
+reliques de DOFUS d'après DofusDB, répartis selon les catégories de succès « Donjons » de Dofus 3.
+
 ## Lancer le jeu
 
 ```bash
@@ -78,8 +81,9 @@ src/
 - `tests/donnees.test.js` : chaque sort, monstre, combat, objet, succès et image référencé existe.
   À lancer après chaque modification des JSON.
 - `tests/classes.test.js`, `tests/dofus.test.js`, `tests/succes.test.js`, `tests/objectifs.test.js`,
-  `tests/inventaire.test.js` :
-  mécaniques des classes ajoutées, effets des Dofus, quêtes qui les débloquent, objectifs et indices.
+  `tests/inventaire.test.js`, `tests/mondes.test.js` :
+  mécaniques des classes ajoutées, effets des Dofus, quêtes qui les débloquent, objectifs et indices,
+  contenu des mondes 3 à 5 et défis Duo / Premier / Dernier.
 - `tests/fuzz-combat.test.js` : joue des centaines de combats complets avec des équipes, niveaux,
   équipements, difficultés et Dofus tirés au hasard, et vérifie qu'aucun plantage, boucle infinie
   ou état incohérent (PV négatifs, PA invalides…) ne se produit.

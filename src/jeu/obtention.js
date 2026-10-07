@@ -159,6 +159,15 @@ export function indiceQuete(quete) {
   if (c.toursMax !== undefined) {
     conditions.push(`finis en ${c.toursMax} rondes au plus : vise les dégâts`);
   }
+  if (c.equipeMax !== undefined) {
+    conditions.push(`${c.equipeMax} héros au plus dans l'équipe (avant d'en recruter d'autres)`);
+  }
+  if (c.bossPremier) {
+    conditions.push(`le boss doit tomber avant tous ses alliés`);
+  }
+  if (c.bossDernier) {
+    conditions.push(`le boss doit tomber après tous ses alliés`);
+  }
   if (c.classe !== undefined) {
     conditions.push(`un ${nomClasse(c.classe)} doit être dans l'équipe`);
   }
@@ -173,6 +182,10 @@ export function indiceQuete(quete) {
       }
       if (c.noeud === `combat_dur`) {
         return `N'importe quel combat dur (case rouge de la carte, ennemis renforcés).${suite}`;
+      }
+      if (c.zone && c.noeud === `donjon`) {
+        const monde = MONDES.find((m) => m.zones.includes(c.zone));
+        return `Le donjon (dernière case) de la zone « ${nomZone(c.zone)} »${monde ? ` (${monde.nom}, zone ${monde.zones.indexOf(c.zone) + 1})` : ``}.${suite}`;
       }
       if (c.zone) {
         return `Un combat de la zone « ${nomZone(c.zone)} ».${suite}`;

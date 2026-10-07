@@ -273,6 +273,150 @@ export const ZONES = [
     id: `arbre_de_moon`,
     nom: `Arbre de Moon`,
   },
+  {
+    id: `egouts_bonta_brakmar`,
+    nom: `Garde-manger du Rat Blanc & Sousouricière du Rat Noir`,
+  },
+  {
+    id: `bibliotheque_corbac`,
+    nom: `Bibliothèque du Maître Corbac`,
+  },
+  {
+    id: `goulet_rasboul`,
+    nom: `Goulet du Rasboul`,
+  },
+  {
+    id: `antre_blop_multicolore`,
+    nom: `Antre du Blop Multicolore Royal`,
+  },
+  {
+    id: `tofulailler_royal`,
+    nom: `Tofulailler Royal`,
+  },
+  {
+    id: `antre_crocabulia`,
+    nom: `Antre de Crocabulia`,
+  },
+  {
+    id: `labyrinthe_minotoror`,
+    nom: `Centre du Labyrinthe du Minotoror`,
+  },
+  {
+    id: `vallee_dame_des_eaux`,
+    nom: `Vallée de la Dame des eaux`,
+  },
+  {
+    id: `dojo_du_vent`,
+    nom: `Dojo du Vent`,
+  },
+  {
+    id: `laboratoire_tynril`,
+    nom: `Laboratoire du Tynril`,
+  },
+  {
+    id: `excavation_mansot`,
+    nom: `Excavation du Mansot Royal`,
+  },
+  {
+    id: `epave_grolandais`,
+    nom: `Épave du Grolandais violent`,
+  },
+  {
+    id: `canopee_kimbo`,
+    nom: `Canopée du Kimbo`,
+  },
+  {
+    id: `hypogee_obsidiantre`,
+    nom: `Hypogée de l'Obsidiantre`,
+  },
+  {
+    id: `salle_minotot`,
+    nom: `Salle du Minotot`,
+  },
+  {
+    id: `tombe_tofugawa`,
+    nom: `Tombe du Shogun Tofugawa`,
+  },
+  {
+    id: `cavernes_givrefoux`,
+    nom: `Cavernes Givrefoux`,
+  },
+  {
+    id: `horologium_xlii`,
+    nom: `Horologium de XLII`,
+  },
+  {
+    id: `antre_korriandre`,
+    nom: `Antre du Korriandre`,
+  },
+  {
+    id: `antre_kralamoure`,
+    nom: `Antre du Kralamoure Géant`,
+  },
+  {
+    id: `grotte_bworker`,
+    nom: `Grotte du Bworker`,
+  },
+  {
+    id: `temple_ougah`,
+    nom: `Temple du Grand Ougah`,
+  },
+  {
+    id: `antichambre_glourseleste`,
+    nom: `Antichambre du Glourséleste`,
+  },
+  {
+    id: `pyramide_ombre`,
+    nom: `Pyramide d'Ombre`,
+  },
+  {
+    id: `forgefroide_frizz`,
+    nom: `Forgefroide de Missiz Frizz`,
+  },
+  {
+    id: `transporteur_sylargh`,
+    nom: `Transporteur de Sylargh`,
+  },
+  {
+    id: `salons_klime`,
+    nom: `Salons privés de Klime`,
+  },
+  {
+    id: `laboratoire_nileza`,
+    nom: `Laboratoire de Nileza`,
+  },
+  {
+    id: `donjon_harebourg`,
+    nom: `Donjon du Comte Harebourg`,
+  },
+  {
+    id: `aquadome_merkator`,
+    nom: `Aquadôme de Merkator`,
+  },
+  {
+    id: `vaisseau_meno`,
+    nom: `Vaisseau du Capitaine Meno`,
+  },
+  {
+    id: `temple_koutoulou`,
+    nom: `Temple de Koutoulou`,
+  },
+  {
+    id: `palais_dantinea`,
+    nom: `Palais de Dantinéa`,
+  },
+  {
+    id: `arbre_mort_trone_sang`,
+    nom: `Arbre de Mort & Trône de Sang`,
+  },
+  {
+    id: `fers_tyrannie_balance`,
+    nom: `Fers de la Tyrannie & Sentence de la Balance`,
+  },
+  {
+    id: `tempete_eliocalypse`,
+    nom: `Tempête de l'Eliocalypse`,
+  },
 ].map((e) => ({
   ...e,
   pools: POOLS_ZONES[e.id],
@@ -321,19 +465,60 @@ export const MONDES = [
     id: `t3`,
     nom: `Monde 3`,
     niveaux: [100, 150],
-    zones: [],
+    xpMult: 2.2,
+    zones: [
+      `egouts_bonta_brakmar`,
+      `bibliotheque_corbac`,
+      `goulet_rasboul`,
+      `antre_blop_multicolore`,
+      `tofulailler_royal`,
+      `antre_crocabulia`,
+      `labyrinthe_minotoror`,
+      `vallee_dame_des_eaux`,
+      `dojo_du_vent`,
+      `laboratoire_tynril`,
+      `excavation_mansot`,
+      `epave_grolandais`,
+    ],
   },
   {
     id: `t4`,
     nom: `Monde 4`,
     niveaux: [150, 199],
-    zones: [],
+    xpMult: 3.2,
+    zones: [
+      `canopee_kimbo`,
+      `hypogee_obsidiantre`,
+      `salle_minotot`,
+      `tombe_tofugawa`,
+      `cavernes_givrefoux`,
+      `horologium_xlii`,
+      `antre_korriandre`,
+      `antre_kralamoure`,
+      `grotte_bworker`,
+      `temple_ougah`,
+      `antichambre_glourseleste`,
+      `pyramide_ombre`,
+    ],
   },
   {
     id: `t5`,
     nom: `Monde 5`,
     niveaux: [200, 200],
-    zones: [],
+    zones: [
+      `forgefroide_frizz`,
+      `transporteur_sylargh`,
+      `salons_klime`,
+      `laboratoire_nileza`,
+      `donjon_harebourg`,
+      `aquadome_merkator`,
+      `vaisseau_meno`,
+      `temple_koutoulou`,
+      `palais_dantinea`,
+      `arbre_mort_trone_sang`,
+      `fers_tyrannie_balance`,
+      `tempete_eliocalypse`,
+    ],
   },
 ];
 export { SORTS, CLASSES, MONSTRES, COMBATS, EQUIPEMENTS, BUTIN_ZONES, SUCCES, RELIQUES, CREATURES };

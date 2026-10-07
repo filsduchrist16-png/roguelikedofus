@@ -25,6 +25,17 @@ function succesParDofus() {
   }
   return e;
 }
+// Succès sans Dofus, regroupés par rubrique (Général, puis les donjons de chaque monde).
+function rubriques(ids) {
+  const groupes = new Map();
+  for (const id of ids) {
+    const titre = SUCCES[id].categorie?.rubrique ?? `Général`;
+    groupes.set(titre, [...(groupes.get(titre) ?? []), id]);
+  }
+  return [...groupes].sort(([a], [b]) =>
+    a === `Général` ? -1 : b === `Général` ? 1 : a.localeCompare(b),
+  );
+}
 export function ecranSucces(e) {
   return new Promise((resolve) => {
     let n = e.quetes ?? nouvelEtatQuetes();
@@ -118,12 +129,12 @@ export function ecranSucces(e) {
         <div class="succes-vue">
           <div class="succes-galerie">
             <div class="succes-cartes">${o.map(m).join(``)}</div>
-            ${
-              s.length
-                ? `<h2 class="succes-rubrique">Général</h2>
-            <div class="succes-generaux">${s.map(h).join(``)}</div>`
-                : ``
-            }
+            ${rubriques(s)
+              .map(
+                ([titre, ids]) => `<h2 class="succes-rubrique">${echapperHtml(titre)}</h2>
+            <div class="succes-generaux">${ids.map(h).join(``)}</div>`,
+              )
+              .join(``)}
           </div>
           <aside class="succes-panneau">${v()}</aside>
         </div>

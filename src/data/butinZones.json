@@ -378,5 +378,581 @@
       "fourballiance",
       "fourbaton"
     ]
+  },
+  "25": {
+    "normales": [
+      "couvre_chef_du_rat_blanc",
+      "cape_du_rat_blanc",
+      "gant_du_rat_blanc",
+      "rapiere_du_rat_blanc"
+    ],
+    "elites": [
+      "dagues_du_rat_noir",
+      "gant_du_rat_noir"
+    ],
+    "boss": [
+      "masque_du_rat_noir",
+      "cape_du_rat_noir"
+    ]
+  },
+  "26": {
+    "normales": [
+      "corbacoiffe",
+      "corbacape",
+      "bracelet_tmotiv_2",
+      "corbalame"
+    ],
+    "elites": [
+      "cape_du_gorgouille_2",
+      "le_baton_cloutay"
+    ],
+    "boss": [
+      "casque_de_maitre_nabur_2",
+      "chapokipik"
+    ]
+  },
+  "27": {
+    "normales": [
+      "coiffe_du_draguaindrop",
+      "cape_du_krokilleur",
+      "anneau_poli",
+      "kidorteau"
+    ],
+    "elites": [
+      "marteau_rehadaure",
+      "baguette_nah"
+    ],
+    "boss": [
+      "crocobur",
+      "baton_de_marie_aigue_2"
+    ]
+  },
+  "28": {
+    "normales": [
+      "casque_de_fleche_mauve",
+      "cape_de_fleche_mauve",
+      "blopanneau_coco_royal",
+      "katana_de_la_flamme"
+    ],
+    "elites": [
+      "blopanneau_griotte_royal",
+      "blopanneau_indigo_royal"
+    ],
+    "boss": [
+      "blopanneau_multicolore_royal",
+      "bague_des_ecaflipuces"
+    ]
+  },
+  "29": {
+    "normales": [
+      "solomonk",
+      "cape_des_ecaflipuces",
+      "anneau_du_rat_brakmarien",
+      "la_hache_ticot"
+    ],
+    "elites": [
+      "pelle_du_mineur_sombre",
+      "dagues_rhumes"
+    ],
+    "boss": [
+      "coiffe_du_bimd_oule",
+      "marteau_r_ticolis"
+    ]
+  },
+  "30": {
+    "normales": [
+      "casque_dragoeuf",
+      "cape_dragoeuf",
+      "anneau_du_dragoeuf",
+      "epee_du_dragoeuf"
+    ],
+    "elites": [
+      "arc_du_dragoeuf",
+      "baguette_du_dragoeuf"
+    ],
+    "boss": [
+      "hache_du_dragoeuf",
+      "marteau_du_dragoeuf"
+    ]
+  },
+  "31": {
+    "normales": [
+      "coiffe_du_mominotor",
+      "cape_du_mominotor",
+      "alliance_du_mominotor",
+      "marteau_du_mominotor"
+    ],
+    "elites": [
+      "minotokorno",
+      "cape_du_minotoror"
+    ],
+    "boss": [
+      "anneau_du_minotoror",
+      "hache_du_minotoror"
+    ]
+  },
+  "32": {
+    "normales": [
+      "kwaflaque",
+      "kwarapace",
+      "anneau_du_wabbit_cephale",
+      "kwache"
+    ],
+    "elites": [
+      "baguette_gyver",
+      "kelinobranche"
+    ],
+    "boss": [
+      "masse_du_corailleur_magistral",
+      "gruchape"
+    ]
+  },
+  "33": {
+    "normales": [
+      "masque_de_panteroz",
+      "caparavent",
+      "gant_du_capitaine_ekarlatte",
+      "nun_charang"
+    ],
+    "elites": [
+      "sac_a_croquer",
+      "arc_lavoine"
+    ],
+    "boss": [
+      "baton_de_hanshi",
+      "eventails_de_shihan"
+    ]
+  },
+  "34": {
+    "normales": [
+      "coiffe_du_tynril",
+      "cape_du_meulou_2",
+      "anneau_du_chene_mou",
+      "rhizome_du_tynril"
+    ],
+    "elites": [
+      "racine_de_floribonde",
+      "doro_le_blak"
+    ],
+    "boss": [
+      "tige_du_brouture",
+      "racine_de_fecorce"
+    ]
+  },
+  "35": {
+    "normales": [
+      "coiffe_medusoide",
+      "cape_du_mansot_royal",
+      "anneau_de_frigostine",
+      "baguette_de_frigostine"
+    ],
+    "elites": [
+      "kalypsoton",
+      "baton_du_shamansot"
+    ],
+    "boss": [
+      "couronne_du_mansot_royal",
+      "anneau_du_mansot_royal"
+    ]
+  },
+  "36": {
+    "normales": [
+      "fantomasque",
+      "cape_de_cantile",
+      "anneau_de_cantile",
+      "hache_du_fancrome"
+    ],
+    "elites": [
+      "marteau_de_la_vigie_pirate",
+      "sabre_de_ben_le_ripate"
+    ],
+    "boss": [
+      "chapeau_de_ben_le_ripate",
+      "crochet_de_ben_le_ripate"
+    ]
+  },
+  "37": {
+    "normales": [
+      "kaskargo",
+      "voile_de_fantomayte",
+      "anneau_skargo",
+      "kask_arc_go"
+    ],
+    "elites": [
+      "poolache",
+      "branche_de_l_abrakleur_clair"
+    ],
+    "boss": [
+      "le_kim",
+      "perruque_du_poolay"
+    ]
+  },
+  "38": {
+    "normales": [
+      "casque_de_l_obsidiantre",
+      "cape_de_l_obsidiantre",
+      "anneau_des_prophetes",
+      "baton_des_prophetes"
+    ],
+    "elites": [
+      "cape_d_hell_mina",
+      "cape_du_nowel_cauchemardesque"
+    ],
+    "boss": [
+      "bague_de_l_obsidiantre",
+      "masque_du_frelon_noir"
+    ]
+  },
+  "39": {
+    "normales": [
+      "coiffe_du_minotot",
+      "cape_du_minotot",
+      "bracelet_du_minotot",
+      "sceptre_du_minotot"
+    ],
+    "elites": [
+      "masque_vaudou_sarbak",
+      "bague_hera"
+    ],
+    "boss": [
+      "anneau_frage",
+      "marteau_bleuronne"
+    ]
+  },
+  "40": {
+    "normales": [
+      "bandeau_de_spiritueur",
+      "sac_mortuaire_de_jiangshi_nobi",
+      "anneau_nos",
+      "katana_de_spiritueur"
+    ],
+    "elites": [
+      "mitaine_aibre",
+      "anneau_stalgik"
+    ],
+    "boss": [
+      "fut_d_aspiratueur",
+      "masque_vaudou_eth"
+    ]
+  },
+  "41": {
+    "normales": [
+      "coiffe_de_tengu_givrefoux",
+      "cape_de_tengu_givrefoux",
+      "anneau_de_guten_tak",
+      "arc_de_guten_tak"
+    ],
+    "elites": [
+      "alliance_de_guten_tak",
+      "anneau_de_la_fuji_givrefoux"
+    ],
+    "boss": [
+      "cape_de_la_fuji_givrefoux",
+      "coiffe_de_la_fuji_givrefoux"
+    ]
+  },
+  "42": {
+    "normales": [
+      "coiffe_de_soissanth",
+      "cape_du_bretteur_celeste",
+      "anneau_de_xlii",
+      "canne_hassukre"
+    ],
+    "elites": [
+      "hache_harnee",
+      "dagues_ruik"
+    ],
+    "boss": [
+      "katar_strophe",
+      "anneau_des_matougarous"
+    ]
+  },
+  "43": {
+    "normales": [
+      "chapeau_tiche_troue",
+      "cape_peupret",
+      "anneau_du_korriandre",
+      "baguette_nolog"
+    ],
+    "elites": [
+      "le_thanos",
+      "carapace_ailee_du_superviz_uf"
+    ],
+    "boss": [
+      "hache_du_korriandre",
+      "cape_du_korriandre"
+    ]
+  },
+  "44": {
+    "normales": [
+      "capuche_souveraine_du_roissingue",
+      "cape_souveraine_du_roissingue",
+      "sceau_souverain_du_roissingue",
+      "epee_d_otomai"
+    ],
+    "elites": [
+      "kralano",
+      "annolamour"
+    ],
+    "boss": [
+      "cape_de_la_ouassingue",
+      "capuche_de_la_ouassingue"
+    ]
+  },
+  "45": {
+    "normales": [
+      "casque_harnage",
+      "cape_erforee",
+      "bracelet_ventre",
+      "lame_assacre"
+    ],
+    "elites": [
+      "veranneau",
+      "brassard_de_vengeuse_masquee"
+    ],
+    "boss": [
+      "anneau_blitere",
+      "dagues_imauve"
+    ]
+  },
+  "46": {
+    "normales": [
+      "chapignon",
+      "caprin",
+      "anneau_colerette",
+      "hache_a_lamelles"
+    ],
+    "elites": [
+      "couteaux_a_champignons",
+      "anneau_chevelu"
+    ],
+    "boss": [
+      "ougalurette",
+      "ougarteau"
+    ]
+  },
+  "47": {
+    "normales": [
+      "masque_du_glourseleste",
+      "cape_hiculteur",
+      "alliance_gloursonne",
+      "epee_gloursonne"
+    ],
+    "elites": [
+      "marteau_du_glouragan",
+      "bague_gloursonne"
+    ],
+    "boss": [
+      "cape_du_glourseleste",
+      "coiffe_du_glourseleste"
+    ]
+  },
+  "48": {
+    "normales": [
+      "casqnoar",
+      "carapace_d_entrainement_du_maitre_torte_hou",
+      "anneau_kturne",
+      "lame_de_danaba"
+    ],
+    "elites": [
+      "pelle_dorado",
+      "dagues_acantes"
+    ],
+    "boss": [
+      "grelots_de_barberyl",
+      "mitaine_du_yech_ti"
+    ]
+  },
+  "49": {
+    "normales": [
+      "casque_de_missiz_frizz",
+      "cape_glaciale",
+      "anneau_glacial",
+      "arc_du_karkanik"
+    ],
+    "elites": [
+      "griffes_de_la_dechireuse",
+      "bathon"
+    ],
+    "boss": [
+      "alliance_de_missiz_frizz",
+      "capuche_de_moum_ra"
+    ]
+  },
+  "50": {
+    "normales": [
+      "coiffe_du_kanimate",
+      "cape_du_kanimate",
+      "gelano_ankarton",
+      "epee_toche"
+    ],
+    "elites": [
+      "coiffe_de_la_reine_des_voleurs",
+      "parure_du_vautour"
+    ],
+    "boss": [
+      "capuche_de_sylargh",
+      "cape_de_sylargh"
+    ]
+  },
+  "51": {
+    "normales": [
+      "bonnet_vicieux",
+      "cape_de_klime",
+      "anneau_vicieux",
+      "potence_d_ephedrya"
+    ],
+    "elites": [
+      "criniere_de_la_dechireuse",
+      "pelle_vice"
+    ],
+    "boss": [
+      "masque_de_klime",
+      "masquegel"
+    ]
+  },
+  "52": {
+    "normales": [
+      "chapeau_de_gein",
+      "cape_de_nileza",
+      "bague_instable",
+      "kanji_jirark"
+    ],
+    "elites": [
+      "tonfas_de_barberyl",
+      "dagues_erhy"
+    ],
+    "boss": [
+      "anneau_instable",
+      "baton_brelle"
+    ]
+  },
+  "53": {
+    "normales": [
+      "masque_du_granduk",
+      "cape_du_sinistrofu",
+      "anneau_cryochrone",
+      "epee_du_granduk"
+    ],
+    "elites": [
+      "coiffe_cryochrone",
+      "anneau_du_cycloide"
+    ],
+    "boss": [
+      "coiffe_du_comte_harebourg",
+      "anneau_du_comte_harebourg"
+    ]
+  },
+  "54": {
+    "normales": [
+      "casquipik",
+      "cape_parition",
+      "pikano",
+      "claymomore"
+    ],
+    "elites": [
+      "bandeau_culaire",
+      "anneau_en_grithril"
+    ],
+    "boss": [
+      "dorabysses",
+      "anneau_tique"
+    ]
+  },
+  "55": {
+    "normales": [
+      "casquette_de_meno",
+      "cape_luminescente",
+      "derniere_aube",
+      "batonnet_ronien"
+    ],
+    "elites": [
+      "baguette_imologie",
+      "cape_reski"
+    ],
+    "boss": [
+      "cape_de_meno",
+      "cape_de_mantaze"
+    ]
+  },
+  "56": {
+    "normales": [
+      "casque_cyclopeen",
+      "cape_d_aermyne",
+      "anneau_rifique",
+      "arc_de_koutoulou"
+    ],
+    "elites": [
+      "maskrobe",
+      "hachoir_de_ravageur"
+    ],
+    "boss": [
+      "masque_de_koutoulou",
+      "rouleau_de_mama_ayuto"
+    ]
+  },
+  "57": {
+    "normales": [
+      "masque_trithon",
+      "cape_de_diondin",
+      "bague_trithon",
+      "arc_du_chal_il"
+    ],
+    "elites": [
+      "chapeau_de_tournoye",
+      "coiffe_d_aermyne"
+    ],
+    "boss": [
+      "chapoulpe",
+      "diademe_de_wulan"
+    ]
+  },
+  "58": {
+    "normales": [
+      "heaume_de_guerre",
+      "pestilence_de_corruption",
+      "ceste_de_guerre",
+      "beche_de_corruption"
+    ],
+    "elites": [
+      "hachebarde_de_guerre",
+      "mort_du_centoror"
+    ],
+    "boss": [
+      "bague_de_corruption",
+      "alliance_de_corruption"
+    ]
+  },
+  "59": {
+    "normales": [
+      "dora_de_servitude",
+      "manteau_de_servitude",
+      "convoitise_de_misere",
+      "balance_fleau_de_misere"
+    ],
+    "elites": [
+      "gresilosceptre",
+      "zarbappeau"
+    ],
+    "boss": [
+      "bracelet_du_minotoboule",
+      "ecrou_de_mekamouth"
+    ]
+  },
+  "60": {
+    "normales": [
+      "perruque_de_predagob",
+      "cape_indescriptible",
+      "ceste_de_ravageur",
+      "harpelle"
+    ],
+    "elites": [
+      "anneau_dore_du_docteur_eggob",
+      "sceptre_du_roi_joueur"
+    ],
+    "boss": [
+      "masque_brulame",
+      "cape_martegel"
+    ]
   }
 }

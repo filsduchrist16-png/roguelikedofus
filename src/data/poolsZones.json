@@ -320,5 +320,480 @@
       "tof_2",
       "tof_3"
     ]
+  },
+  "egouts_bonta_brakmar": {
+    "normales": [
+      "egouts_bonta_brakmar_1",
+      "egouts_bonta_brakmar_2",
+      "egouts_bonta_brakmar_3"
+    ],
+    "elite": [
+      "egouts_bonta_brakmar_elite"
+    ],
+    "boss": [
+      "egouts_bonta_brakmar_boss_1",
+      "egouts_bonta_brakmar_boss_2"
+    ]
+  },
+  "bibliotheque_corbac": {
+    "normales": [
+      "bibliotheque_corbac_1",
+      "bibliotheque_corbac_2",
+      "bibliotheque_corbac_3"
+    ],
+    "elite": [
+      "bibliotheque_corbac_elite"
+    ],
+    "boss": [
+      "bibliotheque_corbac_boss"
+    ]
+  },
+  "goulet_rasboul": {
+    "normales": [
+      "goulet_rasboul_1",
+      "goulet_rasboul_2",
+      "goulet_rasboul_3"
+    ],
+    "elite": [
+      "goulet_rasboul_elite"
+    ],
+    "boss": [
+      "goulet_rasboul_boss"
+    ]
+  },
+  "antre_blop_multicolore": {
+    "normales": [
+      "antre_blop_multicolore_1",
+      "antre_blop_multicolore_2",
+      "antre_blop_multicolore_3"
+    ],
+    "elite": [
+      "antre_blop_multicolore_elite"
+    ],
+    "boss": [
+      "antre_blop_multicolore_boss"
+    ]
+  },
+  "tofulailler_royal": {
+    "normales": [
+      "tofulailler_royal_1",
+      "tofulailler_royal_2",
+      "tofulailler_royal_3"
+    ],
+    "elite": [
+      "tofulailler_royal_elite"
+    ],
+    "boss": [
+      "tofulailler_royal_boss"
+    ]
+  },
+  "antre_crocabulia": {
+    "normales": [
+      "antre_crocabulia_1",
+      "antre_crocabulia_2",
+      "antre_crocabulia_3"
+    ],
+    "elite": [
+      "antre_crocabulia_elite"
+    ],
+    "boss": [
+      "antre_crocabulia_boss"
+    ]
+  },
+  "labyrinthe_minotoror": {
+    "normales": [
+      "labyrinthe_minotoror_1",
+      "labyrinthe_minotoror_2",
+      "labyrinthe_minotoror_3"
+    ],
+    "elite": [
+      "labyrinthe_minotoror_elite"
+    ],
+    "boss": [
+      "labyrinthe_minotoror_boss"
+    ]
+  },
+  "vallee_dame_des_eaux": {
+    "normales": [
+      "vallee_dame_des_eaux_1",
+      "vallee_dame_des_eaux_2",
+      "vallee_dame_des_eaux_3"
+    ],
+    "elite": [
+      "vallee_dame_des_eaux_elite"
+    ],
+    "boss": [
+      "vallee_dame_des_eaux_boss"
+    ]
+  },
+  "dojo_du_vent": {
+    "normales": [
+      "dojo_du_vent_1",
+      "dojo_du_vent_2",
+      "dojo_du_vent_3"
+    ],
+    "elite": [
+      "dojo_du_vent_elite"
+    ],
+    "boss": [
+      "dojo_du_vent_boss"
+    ]
+  },
+  "laboratoire_tynril": {
+    "normales": [
+      "laboratoire_tynril_1",
+      "laboratoire_tynril_2",
+      "laboratoire_tynril_3"
+    ],
+    "elite": [
+      "laboratoire_tynril_elite"
+    ],
+    "boss": [
+      "laboratoire_tynril_boss_1",
+      "laboratoire_tynril_boss_2",
+      "laboratoire_tynril_boss_3",
+      "laboratoire_tynril_boss_4"
+    ]
+  },
+  "excavation_mansot": {
+    "normales": [
+      "excavation_mansot_1",
+      "excavation_mansot_2",
+      "excavation_mansot_3"
+    ],
+    "elite": [
+      "excavation_mansot_elite"
+    ],
+    "boss": [
+      "excavation_mansot_boss"
+    ]
+  },
+  "epave_grolandais": {
+    "normales": [
+      "epave_grolandais_1",
+      "epave_grolandais_2",
+      "epave_grolandais_3"
+    ],
+    "elite": [
+      "epave_grolandais_elite"
+    ],
+    "boss": [
+      "epave_grolandais_boss"
+    ]
+  },
+  "canopee_kimbo": {
+    "normales": [
+      "canopee_kimbo_1",
+      "canopee_kimbo_2",
+      "canopee_kimbo_3"
+    ],
+    "elite": [
+      "canopee_kimbo_elite"
+    ],
+    "boss": [
+      "canopee_kimbo_boss"
+    ]
+  },
+  "hypogee_obsidiantre": {
+    "normales": [
+      "hypogee_obsidiantre_1",
+      "hypogee_obsidiantre_2",
+      "hypogee_obsidiantre_3"
+    ],
+    "elite": [
+      "hypogee_obsidiantre_elite"
+    ],
+    "boss": [
+      "hypogee_obsidiantre_boss"
+    ]
+  },
+  "salle_minotot": {
+    "normales": [
+      "salle_minotot_1",
+      "salle_minotot_2",
+      "salle_minotot_3"
+    ],
+    "elite": [
+      "salle_minotot_elite"
+    ],
+    "boss": [
+      "salle_minotot_boss"
+    ]
+  },
+  "tombe_tofugawa": {
+    "normales": [
+      "tombe_tofugawa_1",
+      "tombe_tofugawa_2",
+      "tombe_tofugawa_3"
+    ],
+    "elite": [
+      "tombe_tofugawa_elite"
+    ],
+    "boss": [
+      "tombe_tofugawa_boss"
+    ]
+  },
+  "cavernes_givrefoux": {
+    "normales": [
+      "cavernes_givrefoux_1",
+      "cavernes_givrefoux_2",
+      "cavernes_givrefoux_3"
+    ],
+    "elite": [
+      "cavernes_givrefoux_elite"
+    ],
+    "boss": [
+      "cavernes_givrefoux_boss_1",
+      "cavernes_givrefoux_boss_2"
+    ]
+  },
+  "horologium_xlii": {
+    "normales": [
+      "horologium_xlii_1",
+      "horologium_xlii_2",
+      "horologium_xlii_3"
+    ],
+    "elite": [
+      "horologium_xlii_elite"
+    ],
+    "boss": [
+      "horologium_xlii_boss"
+    ]
+  },
+  "antre_korriandre": {
+    "normales": [
+      "antre_korriandre_1",
+      "antre_korriandre_2",
+      "antre_korriandre_3"
+    ],
+    "elite": [
+      "antre_korriandre_elite"
+    ],
+    "boss": [
+      "antre_korriandre_boss"
+    ]
+  },
+  "antre_kralamoure": {
+    "normales": [
+      "antre_kralamoure_1",
+      "antre_kralamoure_2",
+      "antre_kralamoure_3"
+    ],
+    "elite": [
+      "antre_kralamoure_elite"
+    ],
+    "boss": [
+      "antre_kralamoure_boss"
+    ]
+  },
+  "grotte_bworker": {
+    "normales": [
+      "grotte_bworker_1",
+      "grotte_bworker_2",
+      "grotte_bworker_3"
+    ],
+    "elite": [
+      "grotte_bworker_elite"
+    ],
+    "boss": [
+      "grotte_bworker_boss"
+    ]
+  },
+  "temple_ougah": {
+    "normales": [
+      "temple_ougah_1",
+      "temple_ougah_2",
+      "temple_ougah_3"
+    ],
+    "elite": [
+      "temple_ougah_elite"
+    ],
+    "boss": [
+      "temple_ougah_boss"
+    ]
+  },
+  "antichambre_glourseleste": {
+    "normales": [
+      "antichambre_glourseleste_1",
+      "antichambre_glourseleste_2",
+      "antichambre_glourseleste_3"
+    ],
+    "elite": [
+      "antichambre_glourseleste_elite"
+    ],
+    "boss": [
+      "antichambre_glourseleste_boss"
+    ]
+  },
+  "pyramide_ombre": {
+    "normales": [
+      "pyramide_ombre_1",
+      "pyramide_ombre_2",
+      "pyramide_ombre_3"
+    ],
+    "elite": [
+      "pyramide_ombre_elite"
+    ],
+    "boss": [
+      "pyramide_ombre_boss"
+    ]
+  },
+  "forgefroide_frizz": {
+    "normales": [
+      "forgefroide_frizz_1",
+      "forgefroide_frizz_2",
+      "forgefroide_frizz_3"
+    ],
+    "elite": [
+      "forgefroide_frizz_elite"
+    ],
+    "boss": [
+      "forgefroide_frizz_boss"
+    ]
+  },
+  "transporteur_sylargh": {
+    "normales": [
+      "transporteur_sylargh_1",
+      "transporteur_sylargh_2",
+      "transporteur_sylargh_3"
+    ],
+    "elite": [
+      "transporteur_sylargh_elite"
+    ],
+    "boss": [
+      "transporteur_sylargh_boss"
+    ]
+  },
+  "salons_klime": {
+    "normales": [
+      "salons_klime_1",
+      "salons_klime_2",
+      "salons_klime_3"
+    ],
+    "elite": [
+      "salons_klime_elite"
+    ],
+    "boss": [
+      "salons_klime_boss"
+    ]
+  },
+  "laboratoire_nileza": {
+    "normales": [
+      "laboratoire_nileza_1",
+      "laboratoire_nileza_2",
+      "laboratoire_nileza_3"
+    ],
+    "elite": [
+      "laboratoire_nileza_elite"
+    ],
+    "boss": [
+      "laboratoire_nileza_boss"
+    ]
+  },
+  "donjon_harebourg": {
+    "normales": [
+      "donjon_harebourg_1",
+      "donjon_harebourg_2",
+      "donjon_harebourg_3"
+    ],
+    "elite": [
+      "donjon_harebourg_elite"
+    ],
+    "boss": [
+      "donjon_harebourg_boss"
+    ]
+  },
+  "aquadome_merkator": {
+    "normales": [
+      "aquadome_merkator_1",
+      "aquadome_merkator_2",
+      "aquadome_merkator_3"
+    ],
+    "elite": [
+      "aquadome_merkator_elite"
+    ],
+    "boss": [
+      "aquadome_merkator_boss"
+    ]
+  },
+  "vaisseau_meno": {
+    "normales": [
+      "vaisseau_meno_1",
+      "vaisseau_meno_2",
+      "vaisseau_meno_3"
+    ],
+    "elite": [
+      "vaisseau_meno_elite"
+    ],
+    "boss": [
+      "vaisseau_meno_boss"
+    ]
+  },
+  "temple_koutoulou": {
+    "normales": [
+      "temple_koutoulou_1",
+      "temple_koutoulou_2",
+      "temple_koutoulou_3"
+    ],
+    "elite": [
+      "temple_koutoulou_elite"
+    ],
+    "boss": [
+      "temple_koutoulou_boss"
+    ]
+  },
+  "palais_dantinea": {
+    "normales": [
+      "palais_dantinea_1",
+      "palais_dantinea_2",
+      "palais_dantinea_3"
+    ],
+    "elite": [
+      "palais_dantinea_elite"
+    ],
+    "boss": [
+      "palais_dantinea_boss"
+    ]
+  },
+  "arbre_mort_trone_sang": {
+    "normales": [
+      "arbre_mort_trone_sang_1",
+      "arbre_mort_trone_sang_2",
+      "arbre_mort_trone_sang_3"
+    ],
+    "elite": [
+      "arbre_mort_trone_sang_elite"
+    ],
+    "boss": [
+      "arbre_mort_trone_sang_boss_1",
+      "arbre_mort_trone_sang_boss_2"
+    ]
+  },
+  "fers_tyrannie_balance": {
+    "normales": [
+      "fers_tyrannie_balance_1",
+      "fers_tyrannie_balance_2",
+      "fers_tyrannie_balance_3"
+    ],
+    "elite": [
+      "fers_tyrannie_balance_elite"
+    ],
+    "boss": [
+      "fers_tyrannie_balance_boss_1",
+      "fers_tyrannie_balance_boss_2"
+    ]
+  },
+  "tempete_eliocalypse": {
+    "normales": [
+      "tempete_eliocalypse_1",
+      "tempete_eliocalypse_2",
+      "tempete_eliocalypse_3"
+    ],
+    "elite": [
+      "tempete_eliocalypse_elite"
+    ],
+    "boss": [
+      "tempete_eliocalypse_boss"
+    ]
   }
 }
