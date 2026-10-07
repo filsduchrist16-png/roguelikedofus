@@ -3,6 +3,7 @@ import { CLASSES, DOFUS, EQUIPEMENTS } from "../data/index.js";
 import { DIFFICULTES, DIFFICULTE_MAX, DOSSIER_ICONE_SORT, RARETES_INFO } from "../jeu/config.js";
 import {
   GAINS_ARCHETYPE,
+  STAT_PAR_ELEMENT,
   bonusDegatsIntelligence,
   multiplicateurSoin,
   multiplicateurStat,
@@ -17,6 +18,7 @@ import {
   statsEffectives,
 } from "../combat/stats.js";
 import { chargerParametres } from "../sauvegarde/parametres.js";
+import { bonusEquipement, pvMaxPerso } from "../jeu/run.js";
 export let racine;
 export function definirRacine(e) {
   racine = e;
@@ -226,6 +228,26 @@ export function infobulleSort(e, t) {
     .filter(Boolean)
     .join(``);
 }
+// Écran tactile : pas de survol, les infobulles s'ouvrent au toucher.
+export const ecranTactile = () => window.matchMedia?.(`(hover: none)`).matches ?? false;
+function ouvrirAuToucher(selecteur, montrer, bulle) {
+  document.addEventListener(
+    `click`,
+    (ev) => {
+      if (!ecranTactile()) {
+        return;
+      }
+      const cible = ev.target.closest?.(selecteur);
+      // Un bouton agit déjà au toucher : on n'ouvre pas sa bulle par-dessus.
+      if (cible && !cible.matches(`button:not(.dofus-slot)`)) {
+        montrer(cible);
+      } else {
+        bulle.style.display = `none`;
+      }
+    },
+    true,
+  );
+}
 export function installerInfobulleDofus() {
   let e = document.createElement(`div`);
   e.className = `dofus-tip`;
@@ -266,6 +288,7 @@ export function installerInfobulleDofus() {
       e.style.display = `none`;
     }
   });
+  ouvrirAuToucher(`.dofus-slot`, t, e);
 }
 const LIBELLES_CIBLE = {
   ennemi_ligne: `Ennemi (ligne avant)`,
@@ -312,6 +335,7 @@ export function installerInfobulleAide() {
       e.style.display = `none`;
     }
   });
+  ouvrirAuToucher(`[data-tip]`, t, e);
 }
 export const NOMS_ELEMENTS = {
   terre: `Terre`,
@@ -407,15 +431,26 @@ export const NOMS_SLOTS = {
   cape: `Cape`,
   anneau: `Anneau`,
 };
+// Noms complets des caractéristiques d'objets, et ce qu'elles font.
 const ABREV_STATS = {
-  vitalite: `Vita`,
-  force: `For`,
-  intelligence: `Int`,
-  agilite: `Agi`,
-  chance: `Cha`,
+  vitalite: `Vitalité`,
+  force: `Force`,
+  intelligence: `Intelligence`,
+  agilite: `Agilité`,
+  chance: `Chance`,
   soin: `Soin`,
-  prospection: `PP`,
-  crit: `% Crit`,
+  prospection: `Prospection`,
+  crit: `% Critique`,
+};
+const ROLE_STATS = {
+  vitalite: `+1 PV max par point`,
+  force: `dégâts Terre +3 % par point`,
+  intelligence: `dégâts Feu +3 % par point, et tous les dégâts +0,1 % par point`,
+  agilite: `dégâts Air +3 % par point, critique et esquive`,
+  chance: `dégâts Eau +3 % par point`,
+  soin: `soins donnés +0,5 % par point`,
+  prospection: `plus de chances de butin`,
+  crit: `chance de coup critique en plus`,
 };
 export function resumeBonus(e, t = 0, n = {}) {
   let r = [];
@@ -452,10 +487,12 @@ export function htmlNomObjet(e) {
   }
   return n;
 }
-export function htmlChipsObjet(e) {
+// classeId (facultatif) : la classe du porteur, pour dire où va la stat adaptative.
+export function htmlChipsObjet(e, classeId) {
   let t = EQUIPEMENTS[e.id];
   let n = [];
-  let r = (e, t) => n.push(`<span class="ichip ${e}">${t}</span>`);
+  let r = (e, t, titre) =>
+    n.push(`<span class="ichip ${e}"${titre ? ` title="${titre}"` : ``}>${t}</span>`);
   let i = (e) => {
     if (e > 0) {
       return `+${e}`;
@@ -463,9 +500,19 @@ export function htmlChipsObjet(e) {
     return `${e}`;
   };
   if (e.adaptatif) {
-    n.push(
-      `<span class="ichip ichip-adapt" title="Stat adaptative : s'ajoute à la carac de ta voie (élément choisi)">+${e.adaptatif} ★ Adapt.</span>`,
-    );
+    let elements = CLASSES[classeId]?.elements;
+    if (elements) {
+      for (let el of elements) {
+        let stat = STAT_PAR_ELEMENT[el];
+        n.push(
+          `<span class="ichip ichip-${stat}${e.adaptatif < 0 ? ` malus` : ``}" title="Stat adaptative : s'applique aux 2 caractéristiques d'élément de ta classe">${i(e.adaptatif)} ${ABREV_STATS[stat]} ★</span>`,
+        );
+      }
+    } else {
+      n.push(
+        `<span class="ichip ichip-adapt${e.adaptatif < 0 ? ` malus` : ``}" title="Stat adaptative : s'applique aux 2 caractéristiques d'élément du porteur (ex. Force et Chance pour un Feca)">${i(e.adaptatif)} aux 2 caracs d'élément ★</span>`,
+      );
+    }
   }
   if (t?.pvBonus) {
     r(`ichip-vitalite`, `+${t.pvBonus} PV`);
@@ -473,7 +520,11 @@ export function htmlChipsObjet(e) {
   for (let t of Object.keys(e.stats)) {
     let n = e.stats[t];
     if (n) {
-      r(`ichip-${t}${n < 0 ? ` malus` : ``}`, `${i(n)} ${ABREV_STATS[t] ?? t}`);
+      r(
+        `ichip-${t}${n < 0 ? ` malus` : ``}`,
+        `${i(n)} ${ABREV_STATS[t] ?? t}`,
+        ROLE_STATS[t] && `${ABREV_STATS[t]} : ${ROLE_STATS[t]}`,
+      );
     }
   }
   if (e.pa) {
@@ -496,7 +547,7 @@ export function htmlChipsObjet(e) {
   if (o) {
     r(
       `ichip-arme`,
-      `⚔ ${o.baseMin}–${o.baseMax} (${o.coutPA} PA)${o.cible === `ennemi_tous` ? ` · ligne arrière` : ``}${o.vampirisme ? ` · vol ${Math.round(o.vampirisme * 100)} %` : ``}`,
+      `⚔ Attaque d'arme : ${o.baseMin}–${o.baseMax} dégâts, ${o.coutPA} PA${o.cible === `ennemi_tous` ? ` · atteint la ligne arrière` : ``}${o.vampirisme ? ` · rend ${Math.round(o.vampirisme * 100)} % en PV` : ``}`,
     );
   }
   if (t?.paGamble) {
@@ -622,7 +673,7 @@ const STATS_NULLES = {
   agilite: 0,
   vitalite: 0,
 };
-const arrondiPct = (e) => Math.round(e * 1000) / 10;
+const arrondiPct = (e) => String(Math.round(e * 1000) / 10).replace(`.`, `,`);
 const PCT_INTEL_PAR_POINT = arrondiPct(
   bonusDegatsIntelligence({
     ...STATS_NULLES,
@@ -667,3 +718,38 @@ export const AIDE_STATS = {
 };
 export const AIDE_NOTE_ELEMENT = `<br><i class="aide-note">L'élément de frappe est l'un des 2 éléments déclarés par ta classe.</i>`;
 export const AIDE_PIEGE = `Piège du Sram : si un adversaire est déplacé sur cette rangée, il le déclenche. Un seul piège part par déplacement. Le premier posé part le premier.`;
+
+// Ce que changerait le fait d'équiper cet objet sur ce héros, par rapport à ce qu'il porte.
+export function htmlComparaisonObjet(inst, perso) {
+  const slot = EQUIPEMENTS[inst.id]?.slot;
+  if (!slot) {
+    return ``;
+  }
+  const actuel = perso.equipement[slot];
+  const avant = bonusEquipement(perso);
+  const essai = { ...perso, equipement: { ...perso.equipement, [slot]: inst } };
+  const apres = bonusEquipement(essai);
+  const deltas = [];
+  const ajouter = (valeur, libelle) => {
+    if (valeur) {
+      deltas.push(
+        `<span class="${valeur > 0 ? `delta-plus` : `delta-moins`}">${valeur > 0 ? `+` : `−`}${Math.abs(valeur)}${libelle}</span>`,
+      );
+    }
+  };
+  ajouter(pvMaxPerso(essai) - pvMaxPerso(perso), ` PV max`);
+  ajouter(apres.paBonus - avant.paBonus, ` PA`);
+  for (const stat of Object.keys(ABREV_STATS)) {
+    if (stat !== `vitalite`) {
+      ajouter((apres.stats[stat] ?? 0) - (avant.stats[stat] ?? 0), ` ${ABREV_STATS[stat]}`);
+    }
+  }
+  for (const el of Object.keys(NOMS_ELEMENTS)) {
+    const d = Math.round(((apres.resistances[el] ?? 0) - (avant.resistances[el] ?? 0)) * 100);
+    ajouter(d, ` % rés. ${NOMS_ELEMENTS[el]}`);
+  }
+  const ref = actuel
+    ? `au lieu de ${echapperHtml(EQUIPEMENTS[actuel.id]?.nom ?? actuel.id)}`
+    : `emplacement vide`;
+  return `<span class="item-delta"><span class="delta-ref">Si équipé (${ref}) :</span> ${deltas.join(` `) || `<span class="muet">aucun changement de stats</span>`}</span>`;
+}

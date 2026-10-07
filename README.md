@@ -53,7 +53,8 @@ src/
     economie.js          kamas, hôtel de vente, forgemagie
     quetes.js            quêtes et succès
     suiviCombat.js       statistiques d'un combat (pour les quêtes)
-    obtention.js         textes d'aide : où trouver un objet, comment obtenir un Dofus
+    obtention.js         textes d'aide : où trouver un objet, un boss, comment faire une quête
+    objectifs.js         objectifs de succès réalisables dans le combat qui commence
   combat/                moteur de combat (sans affichage)
     stats.js             calculs : cibles valides, esquive, critique, résistances, dégâts
     effets.js            dégâts infligés, soins, boucliers, effets de début/fin de tour, invocations
@@ -66,6 +67,7 @@ src/
   ui/                    affichage
     commun.js            utilitaires d'affichage, images, infobulles, fiches d'objets
     combat.js            écran de combat
+    objectifs.js         fenêtre « Objectifs dans ce combat »
     collection.js        aides pour le bestiaire et l'armurerie
     ecrans/              un fichier par écran (accueil, carte, taverne, HDV, succès…)
 ```
@@ -74,8 +76,8 @@ src/
 
 - `tests/donnees.test.js` : chaque sort, monstre, combat, objet, succès et image référencé existe.
   À lancer après chaque modification des JSON.
-- `tests/classes.test.js`, `tests/dofus.test.js`, `tests/succes.test.js` : mécaniques des classes
-  ajoutées, effets des Dofus, quêtes qui les débloquent.
+- `tests/classes.test.js`, `tests/dofus.test.js`, `tests/succes.test.js`, `tests/objectifs.test.js` :
+  mécaniques des classes ajoutées, effets des Dofus, quêtes qui les débloquent, objectifs et indices.
 - `tests/fuzz-combat.test.js` : joue des centaines de combats complets avec des équipes, niveaux,
   équipements, difficultés et Dofus tirés au hasard, et vérifie qu'aucun plantage, boucle infinie
   ou état incohérent (PV négatifs, PA invalides…) ne se produit.

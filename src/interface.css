@@ -453,3 +453,408 @@ button,
 .bandeau-credits a {
   color: inherit;
 }
+
+/* ---------- barre de PV (affichée seulement sur téléphone) ---------- */
+.pv-barre {
+  display: none;
+}
+
+/* ---------- combat sur téléphone : cartes horizontales lisibles ---------- */
+@media (width<=700px) {
+  .combat .camp-lignes {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .combat .ligne-sep {
+    display: none;
+  }
+  .combat .camp-lignes .ligne-col,
+  .combat .camp-lignes .ligne-col:has(.ligne-vide) {
+    flex: none;
+    width: 100%;
+    max-width: none;
+  }
+  .combat .ligne-col:has(.ligne-vide) {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .combat .ligne-label {
+    margin: 0 0 4px 2px;
+    font-size: 0.78rem;
+  }
+  .combat .ligne-cards {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+    display: grid;
+  }
+  .combat .ligne-cards .carte {
+    container-type: normal;
+    grid-template-columns: 58px minmax(0, 1fr);
+    grid-template-areas:
+      "portrait tete"
+      "portrait pv"
+      "res res"
+      "badges badges";
+    column-gap: 10px;
+    row-gap: 4px;
+    width: 100%;
+    max-width: none;
+    padding: 8px 10px;
+    display: grid;
+  }
+  .combat .carte .carte-tete {
+    grid-area: tete;
+    min-width: 0;
+  }
+  .combat .carte .carte-nom {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 1rem;
+  }
+  .combat .carte .rang {
+    padding: 2px 7px;
+    font-size: 0.7rem;
+  }
+  .combat .carte .portrait-wrap {
+    grid-area: portrait;
+    align-self: center;
+    width: 58px;
+    margin: 0;
+  }
+  .combat .carte .portrait {
+    width: 58px;
+    height: 58px;
+    margin: 0;
+  }
+  .combat .carte .pa-gem,
+  .combat .carte .pv-gem {
+    display: none;
+  }
+  .combat .carte .pv-barre {
+    grid-area: pv;
+    background: linear-gradient(90deg, #c0392b var(--pv-pct), #5a3a2a40 var(--pv-pct));
+    border: 1px solid #6b2a1f;
+    border-radius: 8px;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    min-height: 26px;
+    padding: 2px 8px;
+    display: flex;
+  }
+  .combat .carte .pv-barre.ko {
+    background: #8a7a6a;
+  }
+  .combat .carte .pv-barre-txt,
+  .combat .carte .pa-txt {
+    color: #fff;
+    text-shadow: 0 1px 2px #000;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    font-size: 0.85rem;
+    font-weight: 900;
+  }
+  .combat .carte .res-row {
+    grid-area: res;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: 2px;
+  }
+  .combat .carte .res-chip {
+    padding: 2px 4px;
+    font-size: 0.78rem;
+  }
+  .combat .carte .res-chip img {
+    width: 16px;
+    height: 16px;
+  }
+  .combat .carte .badges {
+    grid-area: badges;
+    justify-content: flex-start;
+  }
+  .combat .carte .badges:empty {
+    display: none;
+  }
+  .combat .carte .badge {
+    padding: 2px 6px;
+    font-size: 0.76rem;
+  }
+  .combat .carte .ko-label {
+    grid-area: pv;
+  }
+  .combat .hint {
+    font-size: 0.78rem;
+  }
+  .combat .archi-badge {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* ---------- tailles minimales sur téléphone ---------- */
+@media (width<=700px) {
+  .res-chip.faible {
+    color: #a8261a;
+  }
+  .res-chip.zero {
+    color: #6b5a40;
+  }
+  .classe-archetype {
+    font-size: 0.74rem;
+  }
+  .classe-role {
+    font-size: 0.8rem;
+  }
+  .aside-niv,
+  .mn-lbl,
+  .xp-txt,
+  .equip-tri,
+  .tri-btn,
+  .slot-nom,
+  .equip-total,
+  .mention-ankama,
+  .btn-lien,
+  .bandeau-credits {
+    font-size: 0.8rem;
+  }
+  .pv-gem-aside .pv-num span {
+    font-size: 0.7rem;
+  }
+  .ichip {
+    font-size: 0.76rem;
+  }
+  .item-nom small,
+  .drop-nom small,
+  .armu-objet small {
+    font-size: 0.78rem;
+  }
+  .quete-nom,
+  .succes-carte-progres {
+    font-size: 0.85rem;
+  }
+}
+@media (width<=700px) {
+  .res-chip.zero {
+    opacity: 0.75;
+  }
+  .colonne h3 .hint {
+    font-size: 0.78rem;
+  }
+}
+
+/* ---------- Indices de quêtes ---------- */
+.quete-indice {
+  display: block;
+  margin-top: 3px;
+  color: var(--muet);
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+/* ---------- Objectifs de succès en combat ---------- */
+.objectifs-combat {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 900;
+  max-width: min(360px, calc(100vw - 24px));
+  font-size: 0.92rem;
+}
+.objectifs-pastille {
+  display: none;
+  margin-left: auto;
+  padding: 6px 12px;
+  border: 2px solid var(--or);
+  border-radius: 999px;
+  background: #3a2c1aee;
+  color: #f7e6c0;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #0006;
+}
+.objectifs-combat:not(.ouvert) .objectifs-pastille {
+  display: block;
+}
+.objectifs-combat:not(.ouvert) .objectifs-panneau {
+  display: none;
+}
+.objectifs-panneau {
+  overflow: auto;
+  max-height: min(60vh, 460px);
+  border: 2px solid var(--or);
+  border-radius: 12px;
+  background: linear-gradient(#433220, #2c2014);
+  color: #f3e5c5;
+  box-shadow: 0 6px 22px #000a;
+  animation: objectifs-entree 0.35s ease-out;
+}
+@keyframes objectifs-entree {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+.objectifs-tete {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px 8px 12px;
+  border-bottom: 1px solid #eaa12a66;
+  background: #3a2c1a;
+  color: var(--or-clair);
+  font-weight: 900;
+}
+.objectifs-fermer {
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: #ffffff1a;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.objectifs-panneau ul {
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+}
+.objectifs-panneau li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 7px 6px;
+  border-radius: 8px;
+}
+.objectifs-panneau li + li {
+  border-top: 1px solid #ffffff14;
+}
+.objectif-img {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(#f7c44f55, transparent 70%);
+  font-size: 1.4rem;
+}
+.objectif-img img {
+  max-width: 100%;
+  max-height: 100%;
+}
+.objectif-texte {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.3;
+}
+.objectif-texte b {
+  color: #fff3d6;
+}
+.objectif-consigne {
+  color: #f7c44f;
+  font-weight: 700;
+}
+.objectif-texte small {
+  color: #d7c39b;
+  font-size: 0.8rem;
+}
+@media (width<=700px) {
+  .objectifs-combat {
+    top: 8px;
+    right: 8px;
+    left: 8px;
+    max-width: none;
+    font-size: 0.88rem;
+  }
+  .objectifs-combat:not(.ouvert) {
+    left: auto;
+  }
+  .objectifs-panneau {
+    max-height: 52vh;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .objectifs-panneau {
+    animation: none;
+  }
+}
+
+/* ---------- Fiche de caractéristiques : effets chiffrés ---------- */
+.stat-effet {
+  grid-column: 1 / -1;
+  margin: -2px 0 4px;
+  color: var(--muet);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+.stat-effet b {
+  color: var(--txt);
+}
+.stat-inutile {
+  font-style: italic;
+  opacity: 0.8;
+}
+.stats-combat-titre {
+  margin: 12px 0 6px;
+  font-size: 0.95rem;
+}
+.stats-combat-titre small {
+  color: var(--muet);
+  font-weight: 600;
+}
+.stats-combat {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 6px;
+}
+.stat-puce {
+  display: flex;
+  flex-direction: column;
+  padding: 5px 8px;
+  border: 1px solid var(--bord-clair);
+  border-radius: 8px;
+  background: #f3ead2;
+  cursor: help;
+  line-height: 1.2;
+}
+.stat-puce small {
+  color: var(--muet);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+.stat-puce b {
+  font-size: 1rem;
+}
+
+/* ---------- Comparaison d'équipement ---------- */
+.item-delta {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.delta-ref {
+  color: var(--muet);
+  font-weight: 600;
+}
+.delta-plus,
+.delta-moins {
+  display: inline-block;
+  margin-right: 6px;
+  white-space: nowrap;
+}
+.delta-plus {
+  color: #2f6b12;
+}
+.delta-moins {
+  color: #a8261a;
+}

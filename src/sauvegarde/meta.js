@@ -135,7 +135,7 @@ export function enregistrerToileMax(e, t, n) {
   let r = statsMondeModifiable(e, t);
   r.toileMax = Math.max(r.toileMax, n);
 }
-function chanceRelique(e, t) {
+export function chanceRelique(e, t) {
   return (
     (CONFIG_RELIQUES.base + CONFIG_RELIQUES.parCran * e) *
     (1 + Math.max(0, t - 100) / CONFIG_RELIQUES.diviseurProspection)

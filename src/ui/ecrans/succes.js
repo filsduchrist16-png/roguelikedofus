@@ -7,6 +7,7 @@ import {
   progressionSucces,
   trouverQuete,
 } from "../../jeu/quetes.js";
+import { indiceQuete } from "../../jeu/obtention.js";
 import {
   afficherEcran,
   barreContinuer,
@@ -84,7 +85,7 @@ export function ecranSucces(e) {
             : ``;
           return `<li class="quete-ligne${t.faite ? ` faite` : ``}">
         <span class="quete-coche" aria-label="${t.faite ? `faite` : `à faire`}">${t.faite ? `✓` : ``}</span>
-        <span class="quete-nom">${echapperHtml(e.nom)}</span>${i}
+        <span class="quete-nom">${echapperHtml(e.nom)}${t.faite ? `` : `<small class="quete-indice">${echapperHtml(indiceQuete(e))}</small>`}</span>${i}
       </li>`;
         })
         .join(``)}</ul>`;
@@ -136,6 +137,12 @@ export function ecranSucces(e) {
           let n = document.querySelector(`.succes-galerie`);
           if (n) {
             n.scrollTop = t;
+          }
+          // Sur téléphone, le détail est sous la galerie : on l'amène à l'écran.
+          if (window.matchMedia(`(max-width: 900px)`).matches) {
+            document
+              .querySelector(`.succes-panneau`)
+              ?.scrollIntoView({ behavior: `smooth`, block: `start` });
           }
         }),
       );

@@ -27,6 +27,7 @@ import {
   NOMS_ELEMENTS,
   cheminAsset,
   echapperHtml,
+  ecranTactile,
   elementsAMasquer,
   iconeSort,
   infobulleSort,
@@ -268,7 +269,6 @@ function jouerAnimationsFx() {
 }
 // Écran tactile : pas de survol, donc pas d'infobulle. Un premier appui sur un sort l'affiche
 // (description + bouton « Lancer ») au lieu de le lancer directement.
-const ecranTactile = () => window.matchMedia?.(`(hover: none)`).matches ?? false;
 const sansCibleAChoisir = (sort) => sort.cible === `soi` || sort.cible === `allie_tous`;
 export function controleurJoueur(e, t) {
   combattants = t;
@@ -481,6 +481,10 @@ function htmlCarteCombattant(e, t) {
           <b class="pv-num">${r}<span>/${e.pvMax}</span></b>
           ${a > 0 ? `<span class="pv-bouclier" title="Bouclier">${a}</span>` : ``}
         </span>
+      </div>
+      <div class="pv-barre${n ? ` ko` : ``}" style="--pv-pct:${i}%" title="${r} / ${e.pvMax} PV">
+        <span class="pv-barre-txt">❤ ${r} / ${e.pvMax}${a > 0 ? ` · 🛡 ${a}` : ``}</span>
+        <span class="pa-txt">★ ${e.paActuels} PA</span>
       </div>
       ${(() => {
         if (e.estEgide) {

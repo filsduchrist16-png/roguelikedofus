@@ -1,7 +1,19 @@
 import { CLASSES } from "../../data/index.js";
-import { statsDeNiveau, xpPourNiveau } from "../../jeu/progression.js";
-import { bonusEquipement, pvMaxPerso } from "../../jeu/run.js";
-import { bonusDofus } from "../../sauvegarde/meta.js";
+import {
+  bonusDegatsIntelligence,
+  multiplicateurStat,
+  statsDeNiveau,
+  xpPourNiveau,
+} from "../../jeu/progression.js";
+import { bonusEquipement, creerCombattantPerso, pvMaxPerso } from "../../jeu/run.js";
+import { appliquerBonusDofus, bonusDofus } from "../../sauvegarde/meta.js";
+import {
+  bonusDegatsCritiques,
+  chanceCritique,
+  chanceEsquive,
+  multiplicateurSoinDe,
+  statsEffectives,
+} from "../../combat/stats.js";
 import {
   AIDE_NOTE_ELEMENT,
   AIDE_STATS,
@@ -15,7 +27,86 @@ import {
 } from "../commun.js";
 const STATS_ELEMENTAIRES_SET = new Set([`force`, `intelligence`, `agilite`, `chance`]);
 const STATS_AFFICHEES = [`force`, `intelligence`, `agilite`, `chance`, `vitalite`];
-function htmlFichePerso(e) {
+const ELEMENT_DE_STAT = { force: `terre`, intelligence: `feu`, agilite: `air`, chance: `eau` };
+const NOMS_ELEMENTS = { terre: `Terre`, feu: `Feu`, eau: `Eau`, air: `Air` };
+const pct = (x) =>
+  `${String(Math.round(x * 1000) / 10)
+    .replace(`.`, `,`)
+    .replace(`-`, `−`)} %`;
+const plusPct = (x) => (x < 0 ? pct(x) : `+${pct(x)}`);
+// Ce que la valeur actuelle de chaque caractéristique apporte concrètement.
+function effetsStat(stat, valeur, base, classe, combattant) {
+  const element = ELEMENT_DE_STAT[stat];
+  const effets = [];
+  if (element) {
+    const utilise = classe.elements.includes(element);
+    effets.push(
+      utilise
+        ? `Dégâts ${NOMS_ELEMENTS[element]} <b>${plusPct(multiplicateurStat(valeur) - 1)}</b>`
+        : `<span class="stat-inutile">${NOMS_ELEMENTS[element]} : pas un élément du ${echapperHtml(classe.nom)}</span>`,
+    );
+  }
+  const stats = statsEffectives(combattant);
+  if (stat === `force` && base >= 5) {
+    effets.push(`+${Math.floor(base / 5)} Vitalité (Force de niveau ÷ 5)`);
+  }
+  if (stat === `intelligence`) {
+    effets.push(`Tous les dégâts <b>${plusPct(bonusDegatsIntelligence(stats) - 1)}</b>`);
+  }
+  if (stat === `agilite`) {
+    effets.push(
+      `Critique <b>${pct(chanceCritique(stats))}</b> · dégâts critiques <b>+${pct(bonusDegatsCritiques(stats))}</b> · esquive <b>${pct(Math.max(0, chanceEsquive(combattant, { sansBonusPosition: true })))}</b>`,
+    );
+  }
+  if (stat === `chance` && base >= 3) {
+    effets.push(`+${Math.floor(base / 3)} Prospection (Chance de niveau ÷ 3)`);
+  }
+  if (stat === `vitalite`) {
+    effets.push(`<b>+${valeur} PV</b> max`);
+  }
+  return effets.join(` · `);
+}
+function htmlCombatPerso(c) {
+  const res = Object.entries(c.resistances ?? {}).filter(([, v]) => v);
+  const puces = [
+    [`★ PA`, c.paMax, `Points d'action par tour : chaque sort en coûte.`],
+    [`Initiative`, c.initiative, `Plus elle est haute, plus le héros joue tôt dans la ronde.`],
+    [
+      `Critique`,
+      pct(chanceCritique(statsEffectives(c))),
+      `Chance de coup critique : 5 % + 0,1 % par Agilité + bonus de critique.`,
+    ],
+    [
+      `Dégâts crit.`,
+      `+${pct(bonusDegatsCritiques(statsEffectives(c)))}`,
+      `Bonus de dégâts d'un coup critique : 25 % + 0,1 % par Agilité.`,
+    ],
+    [
+      `Esquive`,
+      pct(Math.max(0, chanceEsquive(c))),
+      `Chance d'éviter une attaque : 0,2 % par Agilité (+ bonus d'équipement), 50 % au plus.`,
+    ],
+    [
+      `Soins`,
+      plusPct(multiplicateurSoinDe(c) - 1),
+      `Bonus aux soins donnés : 0,5 % par point de Soin et de l'élément principal, 50 % au plus.`,
+    ],
+    [
+      `Prospection`,
+      c.stats.prospection ?? 0,
+      `Chance de butin : la prospection de toute l'équipe s'additionne.`,
+    ],
+    ...res.map(([el, v]) => [
+      `Rés. ${NOMS_ELEMENTS[el] ?? el}`,
+      pct(v),
+      `Dégâts ${NOMS_ELEMENTS[el] ?? el} subis réduits d'autant.`,
+    ]),
+  ];
+  return `<div class="stats-combat" aria-label="En combat">
+    ${puces.map(([nom, val, aide]) => `<span class="stat-puce" data-tip="${echapperHtml(aide)}"><small>${nom}</small><b>${val}</b></span>`).join(``)}
+  </div>`;
+}
+function htmlFichePerso(e, meta) {
   let t = CLASSES[e.classeId];
   let e_progression = e.progression;
   let r = statsDeNiveau(t, e_progression);
@@ -23,13 +114,20 @@ function htmlFichePerso(e) {
   let a = pvMaxPerso(e);
   let o = xpPourNiveau(e_progression.niveau);
   let s = Math.min(100, Math.round((e_progression.xp / o) * 100));
+  let combattant = creerCombattantPerso(e);
+  if (meta) {
+    appliquerBonusDofus([combattant], bonusDofus(meta));
+  }
+  let classe = t;
   let c = STATS_AFFICHEES.map((e) => {
     let t = i.stats[e] ?? 0;
     let n = (r[e] ?? 0) + t;
+    let total = e === `vitalite` ? n : (combattant.stats[e] ?? n);
     return `
       <div class="stat-ligne">
         <span class="stat-nom" tabindex="0">${NOMS_STATS[e]}<span class="stat-info">ⓘ</span><span class="stat-aide">${AIDE_STATS[e]}${STATS_ELEMENTAIRES_SET.has(e) ? AIDE_NOTE_ELEMENT : ``}</span></span>
         <span class="stat-val"><b class="stat-total stat-c-${e}">${n}</b>${t ? ` + <span class="stat-part-equip" title="Équipement">(${t})</span>` : ``}</span>
+        <span class="stat-effet">${effetsStat(e, total, r[e] ?? 0, classe, combattant)}</span>
       </div>`;
   }).join(``);
   return `
@@ -44,6 +142,8 @@ function htmlFichePerso(e) {
       </div>
       <div class="prog-pv">PV max : <b>${a}</b> · PV actuels : ${Math.max(0, Math.round(e.pvActuels))}</div>
       <div class="stats-grille">${c}</div>
+      <h4 class="stats-combat-titre">En combat${meta ? ` <small>(Dofus compris)</small>` : ``}</h4>
+      ${htmlCombatPerso(combattant)}
     </div>`;
 }
 function resumeBonusDofus(e) {
@@ -97,7 +197,7 @@ export function ecranCaracteristiques(
       <h1>${echapperHtml(t)}</h1>
       <p class="sous-titre">${echapperHtml(n)}</p>
       ${resumeBonusDofus(i)}
-      <div class="prog-grille">${e.map(htmlFichePerso).join(``)}</div>
+      <div class="prog-grille">${e.map((perso) => htmlFichePerso(perso, i)).join(``)}</div>
       <div class="boutons-ecran">${r ? boutonRetour(`prog-fermer`, `Retour au plateau`) : boutonContinuer(`prog-fermer`)}</div>
     `);
     document.getElementById(`prog-fermer`)?.addEventListener(`click`, () => resolve());

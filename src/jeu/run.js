@@ -240,7 +240,7 @@ export function pvMaxPerso(e) {
     pvMaxDeNiveau(CLASSES[e.classeId], e.progression) + t.pvBonus + (t.stats.vitalite ?? 0) * 1
   );
 }
-function creerCombattantPerso(e) {
+export function creerCombattantPerso(e) {
   let t = CLASSES[e.classeId];
   let n = bonusEquipement(e);
   let r = statsDeNiveau(t, e.progression);

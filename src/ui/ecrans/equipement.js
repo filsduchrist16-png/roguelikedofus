@@ -17,6 +17,7 @@ import {
   classeRarete,
   echapperHtml,
   htmlChipsObjet,
+  htmlComparaisonObjet,
   htmlNomObjet,
   imgObjet,
   imgSymboleClasse,
@@ -58,7 +59,7 @@ export function ecranEquipement(e, t) {
         let n = t ? EQUIPEMENTS[t.id] : undefined;
         return `<div class="equip-slot ${n ? `rempli` : `vide`}${classeRarete(t)}" data-slot="${e}" ${n ? `data-desequip="${e}" draggable="true"` : ``}>
           <span class="slot-nom">${NOMS_SLOTS[e]}</span>
-          ${n && t ? `<img class="slot-img" src="${imgObjet(n.id)}" alt="" onerror="this.remove()" /><span class="slot-item">${htmlNomObjet(t)}<small>${htmlChipsObjet(t)}</small></span>` : `<span class="slot-vide-txt">— vide —</span>`}
+          ${n && t ? `<img class="slot-img" src="${imgObjet(n.id)}" alt="" onerror="this.remove()" /><span class="slot-item">${htmlNomObjet(t)}<small>${htmlChipsObjet(t, s.classeId)}</small></span>` : `<span class="slot-vide-txt">— vide —</span>`}
         </div>`;
       }).join(``);
       let d = t.length
@@ -68,7 +69,7 @@ export function ecranEquipement(e, t) {
               let r = peutEquiper(s, inst.id);
               return `<button class="item-carte${classeRarete(inst)}${r ? `` : ` inequipable`}" data-index="${i}" draggable="true"${r ? attrTipObjet(inst.id) : ` title="Équipable uniquement sur un personnage de la ligne avant"`}>
               <img src="${imgObjet(inst.id)}" alt="" loading="lazy" onerror="this.remove()" />
-              <span class="item-nom">${htmlNomObjet(inst)}<small>T${numeroZoneObjet(inst.id)} · ${NOMS_SLOTS[n.slot]} ${htmlChipsObjet(inst)}</small></span>
+              <span class="item-nom">${htmlNomObjet(inst)}<small>T${numeroZoneObjet(inst.id)} · ${NOMS_SLOTS[n.slot]} ${htmlChipsObjet(inst, s.classeId)}</small>${r ? htmlComparaisonObjet(inst, s) : ``}</span>
             </button>`;
             })
             .join(``)

@@ -39,6 +39,7 @@ import {
   appliquerBonusDofus,
   bonusDofus,
   capturerArchi,
+  chanceRelique,
   chargerMeta,
   dofusAGagner,
   dofusPossedes,
@@ -71,6 +72,8 @@ import {
   rafraichirCombat,
 } from "./ui/combat.js";
 import { ecranButin } from "./ui/ecrans/butin.js";
+import { afficherObjectifsCombat, retirerObjectifsCombat } from "./ui/objectifs.js";
+import { objectifsDuCombat } from "./jeu/objectifs.js";
 import { ecranCaptureArchi, ecranReliques } from "./ui/ecrans/recompenses.js";
 import { afficherBandeauQuete, ecranSuccesObtenu } from "./ui/ecrans/succes.js";
 import { ecranAccueil } from "./ui/ecrans/accueil.js";
@@ -173,6 +176,26 @@ async function jouerCombat(e, combatId, n) {
   appliquerBonusDofus(i, s);
   let c = [...i, ...a];
   initialiserVueCombat(c, r, meta);
+  afficherObjectifsCombat(
+    objectifsDuCombat({
+      quetes: quetesMeta(),
+      combattants: c,
+      combatId,
+      noeud: n.type,
+      zoneId: n.zone?.id,
+      classes: e.persos.map((e) => e.classeId),
+      ascension: e.ascension,
+      archis: meta.archis,
+      reliques: meta.reliques ?? [],
+      chanceRelique: chanceRelique(
+        e.ascension,
+        prospectionMoyenne(e, bonusDofus(meta).prospection),
+      ),
+      dernierDonjon: n.type === `donjon` && getMonde(e.trancheId).zones.at(-1) === n.zone?.id,
+      runSiVictoire: contexteRun(e, e.trancheId, true),
+    }),
+    { replierApres: parametres.combatRapide ? 5000 : 9000 },
+  );
   let l = nouveauSuiviCombat();
   let herosVivantsAuDepart = i.filter((e) => e.pvActuels > 0).map((e) => e.ref);
   let gagne = await executerCombat(c, {
@@ -198,6 +221,7 @@ async function jouerCombat(e, combatId, n) {
     enemyDamageBonus: effetsDifficulte(e.ascension).degatsMult ?? 1,
     reliquesActives: dofusPossedes(meta),
   });
+  retirerObjectifsCombat();
   synchroniserPv(e, c);
   if (
     gagne &&

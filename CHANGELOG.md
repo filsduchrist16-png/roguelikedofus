@@ -1,5 +1,38 @@
 # Journal des modifications
 
+## Lisibilité mobile, objectifs de combat et aides
+
+### Objectifs de succès en combat
+- Au début d'un combat, une fenêtre « 🏆 Objectifs dans ce combat » (façon suivi de succès de DOFUS)
+  liste ce qu'on peut y gagner : quêtes de Dofus en jeu (boss présent, combat dur, donjon de fin de
+  zone, dernier donjon du monde) avec la consigne exacte (« aucun héros ne doit tomber », « gagne en
+  2 rondes au plus »…), reliques possibles avec leur chance, archimonstres à capturer.
+- Elle se replie toute seule en bouton 🏆, qu'on touche pour la rouvrir.
+
+### Quêtes et succès
+- Chaque quête non faite affiche un indice : où trouver le boss (zone, monde, type de case),
+  quelles classes font avancer un compteur, quelle difficulté choisir, quelles règles respecter.
+- Sur téléphone, choisir un Dofus fait défiler jusqu'à ses quêtes.
+
+### Caractéristiques
+- Chaque caractéristique montre ce qu'elle apporte vraiment (« Dégâts Feu +36 % », « Critique 8 % »,
+  « +12 Prospection »…) et signale un élément que la classe n'utilise pas.
+- Nouveau bloc « En combat » : PA, initiative, critique, dégâts critiques, esquive, soins,
+  prospection et résistances, Dofus compris. Chaque valeur a son aide.
+
+### Équipement
+- Noms complets des caractéristiques (Force, Intelligence… au lieu de For, Int…), avec leur effet
+  au survol.
+- Les stats adaptatives sont résolues pour le héros (« +12 Force ★ +12 Chance ★ » sur un Feca).
+- L'attaque d'arme est expliquée (« Attaque d'arme : 14–18 dégâts, 4 PA »).
+- Dans l'inventaire, chaque objet indique ce qu'il change par rapport à l'objet porté
+  (« Si équipé (au lieu de Coiffe Bouftou) : +12 PV max −4 Agilité »).
+
+### Mobile
+- Cartes de combat horizontales sur téléphone : portrait, barre de PV, PA et résistances lisibles.
+- Tailles de texte minimales relevées partout (étiquettes, puces, indices).
+- Sur écran tactile, toucher un élément à infobulle (objet, Dofus, stat) ouvre son aide.
+
 ## Nouvelles classes, Dofus et aides
 
 ### 8 classes jouables en plus (19 au total)
