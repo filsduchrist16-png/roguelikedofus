@@ -1,5 +1,37 @@
 # Journal des modifications
 
+## Dofus débloqués, archimonstres moins répétitifs, nouvel habillage
+
+**Bug des Dofus corrigé.** La Couronne du Wa Wabbit, demandée par le Dofus Cawotte (niv. 80), ne
+tombait plus depuis la refonte des panoplies. Comme les Dofus s'obtiennent dans l'ordre, tous ceux
+de niveau 80 et plus étaient bloqués. Elle retombe au Terrier du Wa Wabbit ; un nouveau test vérifie
+que **chaque quête de succès est faisable** (boss rencontrés, zones, objets qui tombent, reliques).
+
+**Prochain Dofus sur l'accueil.** Un encart montre le Dofus suivant dans l'ordre, ses quêtes (faites
+ou non, avec compteur) et les Dofus « en attente » ; il ouvre l'écran Succès.
+
+**Archimonstres.** Avant, compléter les archis d'un monde demandait des centaines de runs (estimation
+par simulation : 200 à 400). Désormais :
+
+- un archimonstre **jamais capturé** apparaît **5 fois plus souvent** ;
+- la **jauge de traque** : chaque combat qui pouvait en contenir un sans en faire apparaître
+  augmente de 2 % la chance d'un archi inédit (jusqu'à +40 %). Elle se garde d'une run à l'autre
+  et se vide quand un archi inédit apparaît ; elle est affichée dans le Bestiaire ;
+- l'avis de recherche (case Rencontre) vise d'abord un archi qui te manque.
+
+Il faut encore plusieurs runs par monde (de l'ordre de 20 à 40 pour tout capturer), c'est voulu :
+le Dofus Ocre et le Dokille restent des objectifs de fin de jeu.
+
+**Nouvel habillage.**
+
+- Écrans en parchemin chaud et opaque, double cadre brun et doré (fini l'aspect gris délavé
+  sur les décors) ; titres bruns avec filets dorés ; boutons orange en relief.
+- Carte : plateau parchemin, cases atteignables et donjons mis en valeur, cases visitées estompées.
+- Combat : vrai bouton « Fin du tour » (texte lisible), combattant actif bien cerné.
+- Accueil : légende sous chaque icône du menu ; mentions et crédits sortis de la barre du bas
+  (le bouton Jouer prend moins de place sur téléphone).
+- Bandeaux de quête et fiches d'objet au même style.
+
 ## 8 emplacements d'équipement et vraies panoplies de Dofus
 
 **Huit emplacements, comme dans Dofus** : arme, coiffe, cape, **amulette**, **deux anneaux**,

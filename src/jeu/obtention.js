@@ -113,7 +113,10 @@ export const AIDE_OBTENTION = `
     niveau 200 (Glaces, Abyssal, Ivoire, Ébène, Cauchemar…) dans le Monde 5. Ils restent acquis pour toutes les runs.</p>
   <p><b>Archimonstres.</b> Un monstre a ${pct(CONFIG_ARCHI.chance)} de chance d'apparaître sous sa forme d'archimonstre,
     plus ${pct(CONFIG_ARCHI.philtre)} par philtre d'Otomai bu pendant la run (${CONFIG_ARCHI.philtresMax} au maximum).
-    Bats-le pour capturer son âme.</p>
+    Un archimonstre <b>jamais capturé</b> apparaît ${CONFIG_ARCHI.multNouveau} fois plus souvent, et chaque combat sans
+    archi inédit remplit la <b>jauge de traque</b> (+${pct(CONFIG_ARCHI.bonusParCombatSansNouveau)} par combat, jusqu'à
+    +${pct(CONFIG_ARCHI.bonusSansNouveauMax)}, gardée d'une run à l'autre). Un avis de recherche vise d'abord un archi
+    qui te manque. Bats-le pour capturer son âme : le Bestiaire montre ceux qui manquent et où les trouver.</p>
   <p><b>Reliques.</b> Les boss de donjon lâchent rarement une relique ; la difficulté et la prospection de l'équipe augmentent
     la chance. Le Bestiaire indique quel boss lâche quoi.</p>`;
 

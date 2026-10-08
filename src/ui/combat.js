@@ -24,7 +24,6 @@ import {
   IMG_PP,
   IMG_PUISSANCE,
   IMG_SOIN,
-  IMG_TERMINER,
   NOMS_ELEMENTS,
   attrElementSort,
   cheminAsset,
@@ -777,7 +776,7 @@ function htmlBarreSorts() {
   return `
     <div class="sorts-rangee">
       <div class="sorts-zone"><div class="sorts-liste">${n}</div></div>
-      <div class="barre-actions-fin"><button id="fin-tour" class="fin-tour primaire" title="Terminer le tour"><img src="${IMG_TERMINER}" alt="Terminer le tour" onerror="this.replaceWith('Terminer le tour')" /> <kbd>${echapperHtml(nomTouche(parametres.toucheFinTour))}</kbd></button></div>
+      <div class="barre-actions-fin"><button id="fin-tour" class="fin-tour primaire" title="Terminer le tour"><span class="fin-tour-txt">Fin du tour</span> <kbd>${echapperHtml(nomTouche(parametres.toucheFinTour))}</kbd></button></div>
     </div>
     ${r}`;
 }

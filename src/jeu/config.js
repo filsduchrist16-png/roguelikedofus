@@ -166,6 +166,12 @@ export const CONFIG_ARCHI = {
   chance: 0.008,
   philtre: 0.004,
   philtresMax: 4,
+  // un archimonstre jamais capturé apparaît 5 fois plus souvent…
+  multNouveau: 5,
+  // … et chaque combat sans nouvel archi remplit la « jauge de traque » (gardée d'une run à
+  // l'autre, vidée quand un archi inédit apparaît)
+  bonusParCombatSansNouveau: 0.02,
+  bonusSansNouveauMax: 0.4,
   pvMult: 2,
   statMult: 1.5,
 };

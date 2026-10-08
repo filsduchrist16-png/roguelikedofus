@@ -22,6 +22,8 @@ import { tirerRencontre } from "../src/jeu/rencontres.js";
 import {
   appliquerPuissanceZone,
   bonusEquipement,
+  chanceArchi,
+  chanceArchiNouveau,
   emplacementCible,
   emplacementPossible,
   equiperObjet,
@@ -30,6 +32,7 @@ import {
   nouvelleRun,
   pvMaxPerso,
   recupererApresVictoire,
+  tirerArchis,
 } from "../src/jeu/run.js";
 import { monstresSecrets, recompensesSecret } from "../src/jeu/secret.js";
 
@@ -217,5 +220,23 @@ describe(`donjons secrets`, () => {
     const tirages = new Set(Array.from({ length: 400 }, () => tirerRencontre(rng, [`cle`])));
     expect(tirages.has(`cle`)).toBe(false);
     expect(tirages.size).toBe(5);
+  });
+});
+
+describe(`archimonstres`, () => {
+  it(`un archi jamais capturé sort plus souvent, et la jauge de traque monte`, () => {
+    const run = nouvelleRun([`iop`], 0, `t1`);
+    expect(chanceArchiNouveau(run, 0)).toBeGreaterThan(chanceArchi(run) * 4);
+    expect(chanceArchiNouveau(run, 10)).toBeGreaterThan(chanceArchiNouveau(run, 0));
+    expect(chanceArchiNouveau(run, 10000)).toBeLessThanOrEqual(0.6);
+    const z = zone(`astrub`);
+    const mons = monstresDuCombat(z.pools.normales[0]).filter((m) => m.archiNom);
+    expect(mons.length).toBeGreaterThan(0);
+    // déjà capturés : chance de base (ici nulle) ; inédits : chance « nouveau » (ici certaine)
+    const captures = new Set(mons.map((m) => m.monstreId));
+    expect(tirerArchis(mons, () => 0.5, 0, captures, 1)).toBe(false);
+    expect(mons.some((m) => m.archi)).toBe(false);
+    expect(tirerArchis(mons, () => 0.5, 0, new Set(), 1)).toBe(true);
+    expect(mons.every((m) => m.archi)).toBe(true);
   });
 });

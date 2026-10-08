@@ -37,6 +37,7 @@ src/
   main.js                point d'entrée : boucle du jeu, déroulé d'une run, d'une zone, d'un nœud
   style.css              styles d'origine
   interface.css          mise en page mobile, boîte de confirmation, aide du sort choisi
+  visuel.css             habillage (parchemin, cadres, boutons), chargé en dernier
   data/                  contenu du jeu (à modifier pour équilibrer / ajouter du contenu)
     sorts.json           sorts des classes et des monstres
     classes.json         classes jouables (stats, éléments, sorts)
@@ -81,6 +82,7 @@ src/
     combat.js            écran de combat
     objectifs.js         fenêtre « Objectifs dans ce combat »
     collection.js        aides pour le bestiaire et l'armurerie
+    prochainDofus.js     encart « Prochain Dofus » de l'accueil
     ecrans/              un fichier par écran (accueil, carte, rencontre, taverne, HDV, succès…)
 ```
 

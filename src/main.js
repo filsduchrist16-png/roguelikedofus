@@ -37,6 +37,7 @@ import {
   soignerEquipe,
   synchroniserPv,
   tirerArchis,
+  chanceArchiNouveau,
   tirerButin,
   tirerMonstreRare,
   tirerObjet,
@@ -130,6 +131,7 @@ import { ecranHdv } from "./ui/ecrans/hdv.js";
 import { ecranForgemagie } from "./ui/ecrans/forgemagie.js";
 import "./style.css";
 import "./interface.css";
+import "./visuel.css";
 function initialiserInterface(elementApp) {
   definirRacine(elementApp);
   fondDuMonde(null);
@@ -238,20 +240,40 @@ async function jouerCombat(e, combatId, n) {
       m.pvBase = m.pvMax = m.pvActuels = Math.round(m.pvMax * pvMult);
     }
   }
-  tirerArchis(a, Math.random, chanceArchi(e));
+  const captures = new Set(meta.archis);
+  let nouvelArchi = tirerArchis(
+    a,
+    Math.random,
+    chanceArchi(e),
+    captures,
+    chanceArchiNouveau(e, meta.jaugeArchi),
+  );
   let prime = false;
   if (traque) {
-    let candidats = a.filter((m) => m.archiNom && !m.archi);
+    // la traque vise d'abord une espèce encore jamais capturée
+    let libres = a.filter((m) => m.archiNom && !m.archi);
+    let candidats = libres.filter((m) => !captures.has(m.monstreId));
+    if (!candidats.length) {
+      candidats = libres;
+    }
     if (!traque.archi) {
       prime = true;
       e.traque = null;
     } else if (a.some((m) => m.archi) || candidats.length) {
       if (!a.some((m) => m.archi)) {
-        tirerArchis([candidats[Math.floor(Math.random() * candidats.length)]], () => 0, 1);
+        const cible = candidats[Math.floor(Math.random() * candidats.length)];
+        tirerArchis([cible], () => 0, 1);
+        nouvelArchi ||= !captures.has(cible.monstreId);
       }
       r = `${r} · 📜 Traque`;
       e.traque = null;
     }
+  }
+  // jauge de traque : seuls les combats qui pouvaient contenir un archi inédit la font monter
+  if (nouvelArchi) {
+    meta.jaugeArchi = 0;
+  } else if (a.some((m) => m.archiNom && !captures.has(m.monstreId))) {
+    meta.jaugeArchi = (meta.jaugeArchi ?? 0) + 1;
   }
   let o = tirerMonstreRare(a, Math.random, {
     type: n.type,

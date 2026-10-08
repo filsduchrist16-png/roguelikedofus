@@ -22707,52 +22707,50 @@
     "slot": "coiffe",
     "tiers": {
       "commun": {
-        "adaptatif": 3,
+        "adaptatif": 2,
         "resistances": {
           "eau": 0.01,
           "terre": 0.01
         },
         "stats": {
           "prospection": 2,
-          "vitalite": 17
+          "vitalite": 11
         }
       },
       "epique": {
-        "adaptatif": 9,
-        "resistances": {
-          "eau": 0.01,
-          "terre": 0.01
-        },
-        "stats": {
-          "prospection": 6,
-          "vitalite": 26
-        }
-      },
-      "legendaire": {
-        "adaptatif": 11,
-        "resistances": {
-          "eau": 0.02,
-          "terre": 0.02
-        },
-        "stats": {
-          "prospection": 8,
-          "vitalite": 32
-        }
-      },
-      "rare": {
         "adaptatif": 6,
         "resistances": {
           "eau": 0.01,
           "terre": 0.01
         },
         "stats": {
+          "prospection": 6,
+          "vitalite": 16
+        }
+      },
+      "legendaire": {
+        "adaptatif": 7,
+        "resistances": {
+          "eau": 0.01,
+          "terre": 0.01
+        },
+        "stats": {
+          "prospection": 8,
+          "vitalite": 20
+        }
+      },
+      "rare": {
+        "adaptatif": 4,
+        "resistances": {
+          "eau": 0.01,
+          "terre": 0.01
+        },
+        "stats": {
           "prospection": 4,
-          "vitalite": 21
+          "vitalite": 13
         }
       }
-    },
-    "retire": true,
-    "toile": 17
+    }
   },
   "couronne_du_wa_wobot": {
     "id": "couronne_du_wa_wobot",

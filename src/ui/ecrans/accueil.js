@@ -33,6 +33,7 @@ import { ecranSucces } from "./succes.js";
 import { ecranRegles } from "./regles.js";
 import { ecranMentionsLegales } from "./mentions.js";
 import { ecranDofus } from "./dofus.js";
+import { htmlProchainDofus } from "../prochainDofus.js";
 const LIEN_DISCORD = `https://discord.gg/jxfWpRB7Rp`;
 export function ecranAccueil(e, onReset, n = null) {
   return new Promise((resolve) => {
@@ -83,12 +84,12 @@ export function ecranAccueil(e, onReset, n = null) {
           </a>
         </div>
         <div class="coin-menu">
-          <button id="btn-dofus" class="coin-param" title="Dofus"><img src="${IMG_DOFUS}" alt="Dofus" onerror="this.remove()" /></button>
-          <button id="btn-bestiaire" class="coin-param" title="Bestiaire"><img src="${IMG_BESTIAIRE}" alt="Bestiaire" onerror="this.remove()" /></button>
-          <button id="btn-encyclopedie" class="coin-param" title="Encyclopédie des classes"><img src="${IMG_ENCYCLOPEDIE}" alt="Encyclopédie" onerror="this.parentElement.textContent='📖'" /></button>
-          <button id="btn-armurerie" class="coin-param" title="Armurerie"><img src="${IMG_ARMURERIE}" alt="Armurerie" onerror="this.parentElement.textContent='🛡️'" /></button>
-          <button id="btn-succes" class="coin-param" title="Succès"><img src="${IMG_SUCCES}" alt="Succès" onerror="this.remove()" /></button>
-          <button id="btn-settings" class="coin-param" title="Paramètres"><img src="${IMG_PARAMETRES}" alt="Paramètres" onerror="this.remove()" /></button>
+          <button id="btn-dofus" class="coin-param" data-lbl="Dofus" title="Dofus"><img src="${IMG_DOFUS}" alt="Dofus" onerror="this.remove()" /></button>
+          <button id="btn-bestiaire" class="coin-param" data-lbl="Bestiaire" title="Bestiaire"><img src="${IMG_BESTIAIRE}" alt="Bestiaire" onerror="this.remove()" /></button>
+          <button id="btn-encyclopedie" class="coin-param" data-lbl="Classes" title="Encyclopédie des classes"><img src="${IMG_ENCYCLOPEDIE}" alt="Encyclopédie" onerror="this.parentElement.textContent='📖'" /></button>
+          <button id="btn-armurerie" class="coin-param" data-lbl="Armurerie" title="Armurerie"><img src="${IMG_ARMURERIE}" alt="Armurerie" onerror="this.parentElement.textContent='🛡️'" /></button>
+          <button id="btn-succes" class="coin-param" data-lbl="Succès" title="Succès"><img src="${IMG_SUCCES}" alt="Succès" onerror="this.remove()" /></button>
+          <button id="btn-settings" class="coin-param" data-lbl="Réglages" title="Paramètres"><img src="${IMG_PARAMETRES}" alt="Paramètres" onerror="this.remove()" /></button>
         </div>
         <img class="logo-accueil" src="${IMG_LOGO}" alt="Roguefus Lite" onerror="this.remove()" />
         <div class="mondes-rack">
@@ -148,9 +149,13 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
             </div>`;
           }).join(``)}
         </div>
+        ${htmlProchainDofus(e)}
         ${u}
         <div class="boutons-ecran">
           ${c}
+          
+        </div>
+        <div class="accueil-mentions">
           <p class="mention-ankama">Fangame non officiel. Les illustrations DOFUS appartiennent à Ankama. <button id="btn-disclaimer" class="btn-lien">Mentions légales</button> · Fait avec passion par Cora, Daaye et T.</p>
           <p class="bandeau-credits">🎨 Crédits : illustrations, icônes de sorts et symboles de classe © <b>Ankama Games</b> — DOFUS (<a href="https://www.dofus.com" target="_blank" rel="noopener noreferrer">dofus.com</a>), icônes récupérées via <a href="https://dofusdb.fr" target="_blank" rel="noopener noreferrer">DofusDB</a>.</p>
         </div>
@@ -188,6 +193,9 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
         await ecranArmurerie(e);
         o();
       });
+      document
+        .querySelector(`.prochain-dofus`)
+        ?.addEventListener(`click`, () => document.getElementById(`btn-succes`)?.click());
       document.getElementById(`btn-dofus`)?.addEventListener(`click`, async () => {
         await ecranDofus(e);
         o();

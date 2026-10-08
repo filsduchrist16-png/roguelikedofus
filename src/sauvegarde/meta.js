@@ -69,6 +69,7 @@ export function chargerMeta() {
         reliques: normaliserReliques(t.reliques),
         dofusSuspendus: Array.isArray(t.dofusSuspendus) ? t.dofusSuspendus : [],
         secrets: Array.isArray(t.secrets) ? t.secrets : [],
+        jaugeArchi: Number.isFinite(t.jaugeArchi) ? Math.max(0, t.jaugeArchi) : 0,
       };
     }
   } catch {}

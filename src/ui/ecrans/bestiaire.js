@@ -8,6 +8,8 @@ import {
   zoneSecrete,
 } from "../../jeu/config.js";
 import { numeroZone } from "../../jeu/economie.js";
+import { CONFIG_ARCHI } from "../../jeu/config.js";
+import { bonusJaugeArchi } from "../../jeu/run.js";
 import { afficherEcran, barreRetour, cheminAsset, echapperHtml, racine } from "../commun.js";
 import { pastilleReliques, rendreEnGardantScroll } from "../collection.js";
 export function ecranBestiaire(e) {
@@ -120,6 +122,7 @@ export function ecranBestiaire(e) {
       }
       afficherEcran(`
         <h1>Bestiaire</h1>
+        <p class="best-jauge" title="Chaque combat sans archimonstre inédit remplit la jauge ; elle se vide quand un archi jamais capturé apparaît.">🎯 Jauge de traque : <b>+${Math.round(bonusJaugeArchi(e.jaugeArchi) * 100)} %</b> de chance d'archi inédit${e.jaugeArchi ? ` (${e.jaugeArchi} combat${e.jaugeArchi > 1 ? `s` : ``} sans nouvel archi)` : ``} · les archis jamais capturés apparaissent ${CONFIG_ARCHI.multNouveau}× plus souvent</p>
         <div class="best-onglets" role="tablist">${g}</div>
         <div class="best-vue">
           <nav class="best-zones" aria-label="Zones du monde">${_}</nav>

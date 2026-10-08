@@ -700,6 +700,17 @@ export function chanceArchi(e) {
     CONFIG_ARCHI.chance + CONFIG_ARCHI.philtre * Math.min(e.philtres ?? 0, CONFIG_ARCHI.philtresMax)
   );
 }
+// Bonus de la jauge de traque après `n` combats sans archimonstre inédit.
+export const bonusJaugeArchi = (n) =>
+  Math.min(CONFIG_ARCHI.bonusSansNouveauMax, CONFIG_ARCHI.bonusParCombatSansNouveau * (n ?? 0));
+// Chance qu'un archimonstre encore jamais capturé apparaisse : bien plus haute, et grandit à chaque
+// combat sans nouvel archi (jauge de traque, gardée d'une run à l'autre).
+export function chanceArchiNouveau(e, combatsSansNouveau = 0) {
+  return Math.min(
+    0.6,
+    chanceArchi(e) * CONFIG_ARCHI.multNouveau + bonusJaugeArchi(combatsSansNouveau),
+  );
+}
 function transformerEnArchi(e) {
   if (e.archi || !e.archiNom) {
     return;
@@ -716,10 +727,24 @@ function transformerEnArchi(e) {
     chance: Math.round((e_stats.chance ?? 0) * CONFIG_ARCHI.statMult),
   };
 }
-export function tirerArchis(e, t, n = CONFIG_ARCHI.chance) {
+/**
+ * Transforme au hasard des monstres en archimonstres. `captures` (facultatif) : espèces déjà
+ * capturées ; les autres utilisent `chanceNouveau`. Renvoie true si un archi encore jamais capturé
+ * est apparu.
+ */
+export function tirerArchis(e, t, n = CONFIG_ARCHI.chance, captures, chanceNouveau = n) {
+  let nouveau = false;
   for (let r of e) {
-    r.archiNom && (t() >= n || transformerEnArchi(r));
+    if (!r.archiNom) {
+      continue;
+    }
+    const inedit = captures !== undefined && !captures.has(r.monstreId);
+    if (t() < (inedit ? chanceNouveau : n)) {
+      transformerEnArchi(r);
+      nouveau ||= inedit;
+    }
   }
+  return nouveau;
 }
 export function tirerMonstreRare(e, t, n) {
   if (n.type !== `combat`) {
