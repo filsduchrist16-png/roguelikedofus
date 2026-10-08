@@ -2,6 +2,7 @@ import { CLASSES } from "../../data/index.js";
 import { nomTouche, rangOrdre, sauverParametres } from "../../sauvegarde/parametres.js";
 import { classesJouables } from "../../jeu/run.js";
 import { exporterSauvegarde, importerSauvegarde } from "../../sauvegarde/export.js";
+import { telechargerTexte } from "../../sauvegarde/telechargement.js";
 import {
   afficherEcran,
   barreRetour,
@@ -36,10 +37,19 @@ export function ecranParametres(e) {
             <span class="setting-actions">
               <button id="set-export" class="secondaire">Exporter</button>
               <button id="set-import" class="secondaire">Importer…</button>
+              <button id="set-texte" class="secondaire" title="Copier ou coller la sauvegarde sous forme de texte">Texte…</button>
               <input id="set-import-file" type="file" accept=".json,application/json" style="display:none" />
             </span>
           </div>
           <p id="set-import-msg" class="muet settings-sous" style="display:none"></p>
+          <div id="set-texte-zone" class="sauvegarde-texte" style="display:none">
+            <p class="muet">Copie ce texte et garde-le (notes, mail…) ; pour récupérer ta partie, colle-le ici puis « Importer le texte ».</p>
+            <textarea id="set-texte-champ" rows="6" spellcheck="false" aria-label="Sauvegarde en texte"></textarea>
+            <span class="setting-actions">
+              <button id="set-texte-copier" class="secondaire">Copier</button>
+              <button id="set-texte-importer" class="secondaire">Importer le texte</button>
+            </span>
+          </div>
           ${
             e
               ? (() => {
@@ -150,15 +160,56 @@ export function ecranParametres(e) {
         sauverParametres(parametres);
         i();
       });
-      document.getElementById(`set-export`)?.addEventListener(`click`, () => {
-        let e = new Blob([exporterSauvegarde()], {
-          type: `application/json`,
-        });
-        let t = document.createElement(`a`);
-        t.href = URL.createObjectURL(e);
-        t.download = `roguefus-sauvegarde-${new Date().toISOString().slice(0, 10)}.json`;
-        t.click();
-        URL.revokeObjectURL(t.href);
+      let message = (texte) => {
+        let m = document.getElementById(`set-import-msg`);
+        if (m) {
+          m.textContent = texte;
+          m.style.display = ``;
+        }
+      };
+      let zoneTexte = () => {
+        let z = document.getElementById(`set-texte-zone`);
+        let champ = document.getElementById(`set-texte-champ`);
+        if (z && champ) {
+          z.style.display = ``;
+          champ.value = exporterSauvegarde();
+          champ.focus();
+          champ.select();
+        }
+      };
+      document.getElementById(`set-export`)?.addEventListener(`click`, async () => {
+        let nom = `roguefus-sauvegarde-${new Date().toISOString().slice(0, 10)}.json`;
+        let r = await telechargerTexte(nom, exporterSauvegarde());
+        if (r === `saved`) {
+          message(`✓ Sauvegarde exportée (${nom}).`);
+        } else if (r === `declined`) {
+          message(`Export annulé.`);
+        } else {
+          message(
+            `Le téléchargement n'est pas possible ici : copie plutôt la sauvegarde en texte ci-dessous.`,
+          );
+          zoneTexte();
+        }
+      });
+      document.getElementById(`set-texte`)?.addEventListener(`click`, zoneTexte);
+      document.getElementById(`set-texte-copier`)?.addEventListener(`click`, async () => {
+        let champ = document.getElementById(`set-texte-champ`);
+        try {
+          await navigator.clipboard.writeText(champ.value);
+          message(`✓ Sauvegarde copiée dans le presse-papiers.`);
+        } catch {
+          champ.select();
+          message(`Sélectionne le texte et copie-le (appui long ou Ctrl+C).`);
+        }
+      });
+      document.getElementById(`set-texte-importer`)?.addEventListener(`click`, () => {
+        let champ = document.getElementById(`set-texte-champ`);
+        if (importerSauvegarde(champ.value)) {
+          message(`✓ Sauvegarde importée, rechargement…`);
+          setTimeout(() => location.reload(), 600);
+        } else {
+          message(`✗ Ce texte n'est pas une sauvegarde Roguefus Lite.`);
+        }
       });
       let o = document.getElementById(`set-import-file`);
       document.getElementById(`set-import`)?.addEventListener(`click`, () => o?.click());

@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## Export de la sauvegarde sur claude.ai
+
+- Sur la page claude.ai, « Exporter » passe par le téléchargement de claude.ai (tu confirmes
+  l'enregistrement) : l'ancien lien de téléchargement y était bloqué.
+- Nouveau bouton « Texte… » : la sauvegarde s'affiche en texte à copier (ou est copiée d'un clic), et
+  on peut la recoller pour l'importer. Ça marche partout, même là où les fichiers sont bloqués.
+
 ## Donjons secrets, panoplies et équilibrage
 
 **Donjons secrets.** Chaque monde cache un vrai donjon optionnel de DOFUS : le Château Ensablé (Mob
