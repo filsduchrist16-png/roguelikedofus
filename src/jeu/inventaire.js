@@ -1,7 +1,7 @@
 // Aides à la gestion de l'inventaire : comparer un objet à celui porté, regrouper les doublons.
 import { CLASSES, EQUIPEMENTS } from "../data/index.js";
 import { STAT_PAR_ELEMENT } from "./progression.js";
-import { bonusEquipement, peutEquiper, pvMaxPerso } from "./run.js";
+import { bonusEquipement, emplacementCible, peutEquiper, pvMaxPerso } from "./run.js";
 
 const STATS = [`force`, `intelligence`, `agilite`, `chance`, `soin`, `prospection`, `crit`];
 const ELEMENTS = [`terre`, `feu`, `eau`, `air`];
@@ -15,6 +15,8 @@ const CLES_BASE = new Set([
   `panoplie`,
   `ligneAvant`,
   `secret`,
+  `retire`,
+  `toile`,
 ]);
 export const effetsSpeciaux = (id) =>
   Object.keys(EQUIPEMENTS[id] ?? {}).filter((k) => !CLES_BASE.has(k));
@@ -40,12 +42,12 @@ function statUtile(stat, classe) {
  * verdict : `mieux` (que des gains utiles), `moins` (que des pertes), `mitige`, `egal`
  * ou `impossible` (le héros ne peut pas le porter).
  */
-export function comparerObjet(inst, perso) {
+export function comparerObjet(inst, perso, emplacement) {
   const def = EQUIPEMENTS[inst.id];
-  const slot = def?.slot;
+  const slot = emplacement ?? (def ? emplacementCible(perso, inst) : undefined);
   const actuel = slot ? perso.equipement[slot] : undefined;
   if (!slot || !peutEquiper(perso, inst.id)) {
-    return { actuel, deltas: [], verdict: `impossible` };
+    return { actuel, deltas: [], verdict: `impossible`, emplacement: slot };
   }
   const classe = CLASSES[perso.classeId];
   const essai = { ...perso, equipement: { ...perso.equipement, [slot]: inst } };
@@ -83,7 +85,7 @@ export function comparerObjet(inst, perso) {
   if ((verdict === `mieux` && perdus) || ((verdict === `moins` || verdict === `egal`) && gagnes)) {
     verdict = `mitige`;
   }
-  return { actuel, deltas, verdict };
+  return { actuel, deltas, verdict, emplacement: slot };
 }
 
 // Les héros pour qui cet objet est une nette amélioration.

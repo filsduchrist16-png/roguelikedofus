@@ -19,7 +19,7 @@ import {
 const PUBLIC = join(import.meta.dirname, "..", "public");
 const image = (chemin) => existsSync(join(PUBLIC, chemin));
 const RARETES = ["commun", "rare", "epique", "legendaire"];
-const SLOTS = ["arme", "coiffe", "cape", "anneau"];
+const SLOTS = ["arme", "coiffe", "cape", "amulette", "anneau", "ceinture", "bottes"];
 
 describe("contenu du jeu", () => {
   it("classes : sorts connus, portraits et icônes de sorts présents", () => {

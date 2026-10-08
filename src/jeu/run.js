@@ -20,6 +20,7 @@ import {
 } from "./progression.js";
 import { etatCombatInitial } from "../combat/stats.js";
 import { bonusPanoplie, compterPanoplies } from "./panoplies.js";
+import { PA_MAX_EQUIPEMENT, PA_MAX_PANOPLIES, emplacementsDuType } from "./emplacements.js";
 export { compterPanoplies };
 import { chargerParametres, rangOrdre } from "../sauvegarde/parametres.js";
 export const nouvellesStatsRun = () => ({
@@ -217,7 +218,8 @@ export function bonusEquipement(e) {
       additionner(resistances, o.resistances);
     }
   }
-  // bonus de panoplie (palier atteint)
+  // bonus de panoplie (palier atteint) ; leurs PA ne se cumulent pas
+  let paPanoplies = 0;
   for (let [nom, nb] of Object.entries(compterPanoplies(e))) {
     let b = bonusPanoplie(nom, nb);
     if (!b) {
@@ -231,8 +233,9 @@ export function bonusEquipement(e) {
       }
     }
     additionner(resistances, b.resistances);
-    paBonus += b.pa ?? 0;
+    paPanoplies += b.pa ?? 0;
   }
+  paBonus = Math.min(PA_MAX_EQUIPEMENT, paBonus + Math.min(PA_MAX_PANOPLIES, paPanoplies));
   return {
     stats: t,
     pvBonus,
@@ -463,7 +466,7 @@ export function tirerButin(e, t, n, r, i = n, a = 0) {
     return [];
   }
   let l_normales = l.normales;
-  for (let t = 0; t < Math.min(Math.max(l_normales.length, 1), 4); t++) {
+  for (let t = 0; t < Math.min(Math.max(l_normales.length, 1), TAUX_BUTIN.tiragesMax); t++) {
     if (r() < s) {
       let i = l_normales;
       t === 0 &&
@@ -485,18 +488,82 @@ export function peutEquiper(e, t) {
   let n = EQUIPEMENTS[t];
   return !(!n || (n.ligneAvant && e.position >= 4));
 }
-export function equiperObjet(e, t, n) {
+// Valeur approximative de l'équipement d'un héros, pour choisir quel anneau remplacer.
+function valeurEquipement(perso) {
+  const b = bonusEquipement(perso);
+  const el = CLASSES[perso.classeId].elements.map((x) => b.stats[STAT_PAR_ELEMENT[x]] ?? 0);
+  const res = Object.values(b.resistances).reduce((a, v) => a + v, 0);
+  return (
+    Math.max(0, ...el) +
+    (b.stats.vitalite ?? 0) * 0.5 +
+    (b.stats.crit ?? 0) * 2 +
+    (b.stats.soin ?? 0) * 0.5 +
+    res * 100 +
+    b.paBonus * 60
+  );
+}
+/**
+ * Emplacement où irait l'objet `inst` sur `perso` : celui de son type, ou pour un anneau, un
+ * emplacement libre, sinon celui qui fait le moins perdre. Deux anneaux identiques d'une même
+ * panoplie ne se portent pas ensemble (comme dans Dofus) : on remplace alors celui déjà porté.
+ */
+export function emplacementCible(perso, inst) {
+  const def = EQUIPEMENTS[inst?.id];
+  const choix = emplacementsDuType(def?.slot);
+  if (choix.length <= 1) {
+    return choix[0];
+  }
+  if (def.panoplie) {
+    const double = choix.find((k) => perso.equipement[k]?.id === inst.id);
+    if (double) {
+      return double;
+    }
+  }
+  const libre = choix.find((k) => !perso.equipement[k]);
+  if (libre) {
+    return libre;
+  }
+  let meilleur = choix[0];
+  let max = -Infinity;
+  for (const k of choix) {
+    const v = valeurEquipement({ ...perso, equipement: { ...perso.equipement, [k]: inst } });
+    if (v > max) {
+      max = v;
+      meilleur = k;
+    }
+  }
+  return meilleur;
+}
+/** Peut-on mettre `inst` dans cet emplacement précis ? */
+export function emplacementPossible(perso, inst, emplacement) {
+  const def = EQUIPEMENTS[inst?.id];
+  if (!def || !emplacementsDuType(def.slot).includes(emplacement)) {
+    return false;
+  }
+  // pas deux anneaux identiques d'une même panoplie
+  return !(
+    def.panoplie &&
+    emplacementsDuType(def.slot).some(
+      (k) => k !== emplacement && perso.equipement[k]?.id === inst.id,
+    )
+  );
+}
+export function equiperObjet(e, t, n, emplacement) {
   let r = e[n];
   let i = r ? EQUIPEMENTS[r.id] : undefined;
   if (!r || !i || !peutEquiper(t, r.id)) {
     return;
   }
+  let k = emplacement ?? emplacementCible(t, r);
+  if (!k || !emplacementPossible(t, r, k)) {
+    return;
+  }
   e.splice(n, 1);
-  let a = t.equipement[i.slot];
+  let a = t.equipement[k];
   if (a) {
     e.push(a);
   }
-  t.equipement[i.slot] = r;
+  t.equipement[k] = r;
   t.pvActuels = Math.min(t.pvActuels, pvMaxPerso(t));
 }
 export function desequiper(e, t, n) {

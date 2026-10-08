@@ -122,7 +122,7 @@ export const ECONOMIE = {
   },
   prixParToile: 0.3,
   tauxRevente: 0.5,
-  tailleStock: 5,
+  tailleStock: 7,
   forgeCoef: 0.6,
   forgeTemeraire: {
     coef: 0.3,
@@ -137,6 +137,8 @@ export const TAUX_BUTIN = {
   },
   coefProspection: 0.001,
   capProspection: 0.75,
+  // tirages par victoire : 6 depuis le passage à 8 emplacements (4 avant)
+  tiragesMax: 6,
 };
 export const AFFIXES_GROUPE = [
   {

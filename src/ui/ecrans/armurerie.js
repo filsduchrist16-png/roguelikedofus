@@ -1,4 +1,6 @@
-import { EQUIPEMENTS, MONDES, MONSTRES } from "../../data/index.js";
+import { EQUIPEMENTS, MONDES, MONSTRES, PANOPLIES } from "../../data/index.js";
+
+const OU_PANOPLIE = { combats: `combats`, elites: `combats durs`, boss: `boss` };
 import { RARETES_INFO, bossDeZone, zonesDuMonde, zoneSecrete } from "../../jeu/config.js";
 import { numeroZone } from "../../jeu/economie.js";
 import { descriptionPanoplie } from "../../jeu/panoplies.js";
@@ -22,7 +24,7 @@ export function ecranArmurerie(e) {
   return new Promise((resolve) => {
     let n = e.collection ?? {};
     let r = (e) => [
-      ...(e.panoplie?.ids ?? []),
+      ...e.panoplies.flatMap((p) => p.ids),
       ...e.combats,
       ...e.elites,
       ...e.boss.map((e) => e.id),
@@ -70,12 +72,15 @@ export function ecranArmurerie(e) {
         .map((e, t) => {
           let i = butinParCategorie(e.id);
           let a = r(i);
-          let o = pastilleCollection(i.panoplie?.ids ?? [], n);
+          let o = pastilleCollection(
+            i.panoplies.flatMap((p) => p.ids),
+            n,
+          );
           let c = MONSTRES[bossDeZone(e)[0]]?.img;
           return `<button class="best-zone${t === s ? ` actif` : ``}" data-zone="${t}">
             ${c ? `<img src="${cheminAsset(c)}" alt="" onerror="this.remove()" />` : `<span></span>`}
             <span class="best-zone-txt"><b>${echapperHtml(e.nom)}</b><small>Objets ${a.filter((e) => n[e]).length}/${a.length}</small></span>
-            ${o ? `<span class="best-pastille${o.complete ? ` complete` : ``}" title="Pièces de la panoplie de la zone">${o.texte}</span>` : ``}
+            ${o ? `<span class="best-pastille${o.complete ? ` complete` : ``}" title="Pièces des panoplies de la zone">${o.texte}</span>` : ``}
           </button>`;
         })
         .join(``);
@@ -90,15 +95,15 @@ export function ecranArmurerie(e) {
         h = `<div class="best-titre"><h2>${echapperHtml(g.nom)}</h2>
             <small>${g.secret ? `Donjon secret (il s'ouvre avec une clé)` : `Toile ${numeroZone(g.id)}`} · Objets ${t.filter((e) => n[e]).length}/${t.length}</small>
             <span class="armu-legende"><span class="armu-r-texte-commun">Commun</span><span class="armu-r-texte-rare">Rare</span><span class="armu-r-texte-epique">Épique</span><span class="armu-r-texte-legendaire">Légendaire</span></span></div>
-          ${
-            e.panoplie
-              ? l(
-                  e.panoplie.nom,
-                  descriptionPanoplie(e.panoplie.nom) || `Panoplie`,
-                  e.panoplie.ids.map((e) => c(e)),
-                )
-              : ``
-          }
+          ${e.panoplies
+            .map((p) =>
+              l(
+                `${p.nom} · ${OU_PANOPLIE[p.ou]}${PANOPLIES[p.nom]?.niveau ? ` · niv. ${PANOPLIES[p.nom].niveau} dans Dofus` : ``}`,
+                descriptionPanoplie(p.nom) || `Panoplie`,
+                p.ids.map((e) => c(e)),
+              ),
+            )
+            .join(``)}
           ${l(
             `Butin des combats`,
             `Tombe dans les combats de la zone`,

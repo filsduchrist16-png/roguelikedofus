@@ -1,3 +1,4 @@
+import { EMPLACEMENTS, TYPES_OBJETS } from "../jeu/emplacements.js";
 import { numeroZoneObjet } from "../jeu/economie.js";
 import { descriptionPanoplie } from "../jeu/panoplies.js";
 import { texteObtentionDofus, texteObtentionObjet } from "../jeu/obtention.js";
@@ -480,13 +481,19 @@ export function htmlCarteClasse(e, t, n) {
     <span class="classe-role">${echapperHtml(ROLES_CLASSES[e] ?? ``)}</span>
   </button>`;
 }
-export const SLOTS = [`arme`, `coiffe`, `cape`, `anneau`];
+// Types d'objets (filtres, tri) et emplacements d'un héros (deux anneaux).
+export const SLOTS = TYPES_OBJETS;
+export { EMPLACEMENTS };
 export const NOMS_SLOTS = {
   arme: `Arme`,
   coiffe: `Coiffe`,
   cape: `Cape`,
+  amulette: `Amulette`,
   anneau: `Anneau`,
+  ceinture: `Ceinture`,
+  bottes: `Bottes`,
 };
+export const NOMS_EMPLACEMENTS = { ...NOMS_SLOTS, anneau: `Anneau 1`, anneau2: `Anneau 2` };
 // Noms complets des caractéristiques d'objets, et ce qu'elles font.
 const ABREV_STATS = {
   vitalite: `Vitalité`,

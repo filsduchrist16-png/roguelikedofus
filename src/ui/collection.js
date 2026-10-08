@@ -18,43 +18,52 @@ export function pastilleReliques(e, t) {
     complete: false,
   };
 }
+// Butin d'une zone rangé pour l'Armurerie : ses panoplies (toutes leurs pièces, et où elles
+// tombent), puis les autres objets par catégorie de combat.
 export function butinParCategorie(e) {
-  // donjon secret : sa panoplie, et ses autres objets comme butin du boss
-  if (e.startsWith(`secret:`)) {
-    let ids = SECRETS[e.slice(7)]?.butin ?? [];
-    let nom = ids.map((id) => EQUIPEMENTS[id]?.panoplie).find(Boolean) ?? null;
-    let pano = ids.filter((id) => nom && EQUIPEMENTS[id].panoplie === nom);
-    return {
-      panoplie: nom ? { nom, ids: pano } : null,
-      combats: [],
-      elites: [],
-      boss: ids.filter((id) => !pano.includes(id)).map((id) => ({ id, aussiElite: false })),
-    };
-  }
-  let t = butinDeZone(e);
-  if (!t) {
-    return {
-      panoplie: null,
-      combats: [],
-      elites: [],
-      boss: [],
-    };
-  }
-  let n = (e) => e.filter((e) => EQUIPEMENTS[e]);
-  let r = n(t.normales);
-  let i = r.filter((e) => EQUIPEMENTS[e].panoplie);
-  let nom = i.length ? EQUIPEMENTS[i[0]].panoplie : null;
-  let o = n(t.boss);
-  return {
-    panoplie: nom
-      ? {
-          nom,
-          ids: i.filter((e) => EQUIPEMENTS[e].panoplie === nom),
+  const vide = { panoplies: [], panoplie: null, combats: [], elites: [], boss: [] };
+  const grouper = (listes) => {
+    const noms = [];
+    for (const [ids, ou] of listes) {
+      for (const id of ids) {
+        const nom = EQUIPEMENTS[id]?.panoplie;
+        if (nom && !noms.some((p) => p.nom === nom)) {
+          noms.push({ nom, ids: [], ou });
         }
-      : null,
-    combats: r.filter((e) => EQUIPEMENTS[e].panoplie !== nom),
-    elites: n(t.elites).filter((e) => !o.includes(e)),
-    boss: o.map((id) => ({
+        noms.find((p) => p.nom === nom)?.ids.push(id);
+      }
+    }
+    return noms;
+  };
+  // donjon secret : ses panoplies, et ses autres objets comme butin du boss
+  if (e.startsWith(`secret:`)) {
+    const ids = (SECRETS[e.slice(7)]?.butin ?? []).filter((id) => EQUIPEMENTS[id]);
+    const panoplies = grouper([[ids, `boss`]]);
+    return {
+      ...vide,
+      panoplies,
+      panoplie: panoplies[0] ?? null,
+      boss: ids.filter((id) => !EQUIPEMENTS[id].panoplie).map((id) => ({ id, aussiElite: false })),
+    };
+  }
+  const t = butinDeZone(e);
+  if (!t) {
+    return vide;
+  }
+  const n = (l) => l.filter((id) => EQUIPEMENTS[id]);
+  const libre = (id) => !EQUIPEMENTS[id].panoplie;
+  const boss = n(t.boss);
+  const panoplies = grouper([
+    [n(t.normales), `combats`],
+    [n(t.elites), `elites`],
+    [boss, `boss`],
+  ]);
+  return {
+    panoplies,
+    panoplie: panoplies[0] ?? null,
+    combats: n(t.normales).filter(libre),
+    elites: n(t.elites).filter((id) => libre(id) && !boss.includes(id)),
+    boss: boss.filter(libre).map((id) => ({
       id,
       aussiElite: t.elites.includes(id),
     })),

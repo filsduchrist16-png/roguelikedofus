@@ -1,6 +1,7 @@
 import { CLASSES, EQUIPEMENTS } from "../data/index.js";
 import { DIFFICULTE_MAX } from "../jeu/config.js";
 import { nouvellesStatsRun } from "../jeu/run.js";
+import { EMPLACEMENTS, emplacementsDuType } from "../jeu/emplacements.js";
 const CLE_RUN = `rld_run_v0`;
 export function sauverRun(zoneIdx, run) {
   try {
@@ -27,7 +28,6 @@ const STATS_VALIDES = [
   `crit`,
 ];
 const ELEMENTS_VALIDES = [`terre`, `feu`, `eau`, `air`];
-const SLOTS_VALIDES = [`arme`, `coiffe`, `cape`, `anneau`];
 const nombre = (x) => (typeof x === `number` && Number.isFinite(x) ? x : undefined);
 function assainirObjet(inst) {
   const tiers = EQUIPEMENTS[inst.id].tiers ?? {};
@@ -76,11 +76,18 @@ export function chargerRun() {
       .filter((e) => EQUIPEMENTS[e?.id])
       .map(assainirObjet);
     for (let e of t.run.persos) {
-      for (let t of Object.keys(e.equipement ?? {})) {
-        if (!SLOTS_VALIDES.includes(t) || !EQUIPEMENTS[e.equipement[t]?.id]) {
-          delete e.equipement[t];
+      e.equipement ??= {};
+      for (let k of Object.keys(e.equipement)) {
+        const inst = e.equipement[k];
+        const def = EQUIPEMENTS[inst?.id];
+        if (!EMPLACEMENTS.includes(k) || !def) {
+          delete e.equipement[k];
+        } else if (!emplacementsDuType(def.slot).includes(k)) {
+          // objet dont l'emplacement a changé : il retourne dans l'inventaire
+          t.run.inventaire.push(assainirObjet(inst));
+          delete e.equipement[k];
         } else {
-          e.equipement[t] = assainirObjet(e.equipement[t]);
+          e.equipement[k] = assainirObjet(inst);
         }
       }
     }

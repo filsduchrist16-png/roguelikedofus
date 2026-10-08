@@ -15,7 +15,18 @@ export function numeroZone(e, t = MONDES) {
   }
   return 1;
 }
+// Le Tier d'un objet ne change pas en cours de partie : on le garde en mémoire.
+const cacheTier = new Map();
 export function numeroZoneObjet(e, t = MONDES) {
+  if (t !== MONDES) {
+    return calculerTier(e, t);
+  }
+  if (!cacheTier.has(e)) {
+    cacheTier.set(e, calculerTier(e, t));
+  }
+  return cacheTier.get(e);
+}
+function calculerTier(e, t) {
   for (let n of t) {
     for (let r = 0; r < n.zones.length; r++) {
       if (listerButin(butinDeZone(n.zones[r])).includes(e)) {
@@ -27,7 +38,8 @@ export function numeroZoneObjet(e, t = MONDES) {
       return indexDebutMonde(n.id, t) + Math.min(10, n.zones.length);
     }
   }
-  return 1;
+  // objet retiré du butin (ancienne version) : sa toile d'origine
+  return EQUIPEMENTS[e]?.toile ?? 1;
 }
 export function gainKamas(e, t, n) {
   let r = ECONOMIE.gain[e] ?? 0;

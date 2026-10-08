@@ -68,7 +68,9 @@ export function texteObtentionObjet(id) {
     lignes.push(
       secret
         ? `Récompense du donjon secret ${secret[1].nom} (${MONDES.find((m) => m.id === secret[0])?.nom}) : il s'ouvre avec une clé trouvée dans un coffre, chez un contrebandier (case Rencontre) ou sur un monstre de combat dur.`
-        : `Ne tombe dans aucune zone actuelle.`,
+        : EQUIPEMENTS[id]?.retire
+          ? `Pièce d'une ancienne version du jeu : elle ne tombe plus, mais reste utilisable (Tier ${EQUIPEMENTS[id].toile ?? 1}).`
+          : `Ne tombe dans aucune zone actuelle.`,
     );
   }
   const paliers = Object.keys(EQUIPEMENTS[id]?.tiers ?? {}).length;
@@ -100,7 +102,7 @@ export function texteObtentionDofus(dofusId) {
 // Règles d'obtention, avec les chiffres réels du jeu.
 const pct = (x) => `${Math.round(x * 1000) / 10} %`;
 export const AIDE_OBTENTION = `
-  <p><b>Équipement.</b> Après chaque victoire, jusqu'à 4 tirages de butin : ${pct(TAUX_BUTIN.taux.combat)} de chance par tirage
+  <p><b>Équipement.</b> Après chaque victoire, jusqu'à ${TAUX_BUTIN.tiragesMax} tirages de butin : ${pct(TAUX_BUTIN.taux.combat)} de chance par tirage
     en combat, et ${pct(TAUX_BUTIN.taux.donjon)} en combat dur comme au donjon. La prospection de
     l'équipe augmente ces chances (jusqu'à +${Math.round(TAUX_BUTIN.capProspection * 100)} %). Chaque zone a ses objets ; les
     combats durs et les donjons donnent aussi les objets d'élite et de boss. Survole un objet pour voir où il tombe.</p>
@@ -241,7 +243,9 @@ export function indiceQuete(quete) {
         extra.push(`pas plus de ${c.equipeMax} héros`);
       }
       if (c.quatreHerosEquipes) {
-        extra.push(`4 héros avec arme, coiffe, cape et anneau à la fin`);
+        extra.push(
+          `4 héros avec leurs 8 emplacements remplis à la fin (arme, coiffe, cape, amulette, 2 anneaux, ceinture, bottes)`,
+        );
       }
       return `${lieu}.${suite}${extra.length ? ` À respecter : ${extra.join(`, `)}.` : ``}`;
     }

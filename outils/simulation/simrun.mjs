@@ -64,11 +64,13 @@ function sEquiper(run) {
       for (const p of run.persos) {
         if (!run_.peutEquiper(p, inst.id)) continue;
         const avant = scoreHeros(p);
-        const ancien = p.equipement[def.slot];
-        p.equipement[def.slot] = inst;
+        const emp = run_.emplacementCible(p, inst);
+        if (!emp) continue;
+        const ancien = p.equipement[emp];
+        p.equipement[emp] = inst;
         const gain = scoreHeros(p) / avant - 1;
-        p.equipement[def.slot] = ancien;
-        if (!ancien) delete p.equipement[def.slot];
+        p.equipement[emp] = ancien;
+        if (!ancien) delete p.equipement[emp];
         if (gain > 0.001 && (!meilleur || gain > meilleur.gain)) meilleur = { p, gain };
       }
       if (meilleur) {

@@ -59,10 +59,15 @@ const SECTIONS_REGLES = [
   },
   {
     titre: `Équipement et kamas`,
-    corps: `<p>Chaque héros porte une arme, une coiffe, une cape et un anneau. Les objets tombent en combat,
-      en quatre raretés : commun, rare, épique et légendaire. Porter plusieurs pièces d'une même
-      panoplie donne un bonus qui grandit avec le nombre de pièces (2, 3 puis 4) ; les 4 pièces donnent
-      aussi +1 PA, et une petite panoplie complète donne des résistances.</p>
+    corps: `<p>Chaque héros a 8 emplacements, comme dans Dofus : arme, coiffe, cape, amulette, deux
+      anneaux, ceinture et bottes. Les objets tombent en combat, en quatre raretés : commun, rare,
+      épique et légendaire.</p>
+      <p>Les panoplies sont celles du jeu : mêmes pièces, et chacune tombe dans la zone de sa famille de
+      monstres (Bouftous à Tainéla, Tofus au donjon des Tofus, Minos au Labyrinthe…), à un niveau
+      proche du sien. Porter plusieurs pièces d'une panoplie donne un bonus à chaque palier, jusqu'à la
+      panoplie complète ; beaucoup donnent +1 PA à partir de 3 pièces, mais les PA de panoplie ne se
+      cumulent pas (+1 au plus, et +2 PA au plus venant de tout l'équipement). Deux anneaux identiques
+      d'une même panoplie ne se portent pas ensemble.</p>
       <p>Les kamas se gagnent en combat et en revendant des objets. Ils servent à l'hôtel de vente et chez
       le forgemage.</p>`,
   },

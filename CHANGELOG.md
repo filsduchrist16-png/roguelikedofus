@@ -1,5 +1,53 @@
 # Journal des modifications
 
+## 8 emplacements d'équipement et vraies panoplies de Dofus
+
+**Huit emplacements, comme dans Dofus** : arme, coiffe, cape, **amulette**, **deux anneaux**,
+**ceinture** et **bottes**.
+
+- Un anneau va dans l'emplacement libre, sinon à la place du moins utile ; la fiche propose aussi
+  « À la place de … » pour choisir l'autre anneau, et on peut le déposer sur l'emplacement voulu.
+- Comme dans Dofus, deux anneaux identiques d'une même panoplie ne se portent pas ensemble.
+- L'écran Équipement montre les 8 emplacements en grille compacte (icône, emplacement, Tier) : tout
+  tient sans défiler sur téléphone. Un ▲ vert signale un emplacement qu'un objet de l'inventaire
+  améliorerait. Touche un emplacement pour la fiche détaillée.
+- Plus de butin pour remplir tout ça : jusqu'à 6 tirages par victoire (4 avant), et 7 objets à
+  l'hôtel de vente (5 avant).
+
+**Les panoplies sont celles du vrai jeu.** 173 panoplies reprises de Dofus (données DofusDB) :
+
+- **Toutes leurs pièces** (Panoplie du Bouftou : marteau, coiffe, cape, amulette, anneau, ceinture,
+  bottes…) et leur nom réel.
+- **La bonne famille de monstres** : chaque panoplie tombe dans la zone des monstres qui lâchent ses
+  pièces ou ses ressources de craft — Bouftous et Bouftou Royal à Tainéla, Tofus au donjon des Tofus,
+  Scarafeuilles, Larves, Kwaks, Blops, Gelées, Wabbits, Craqueleurs, Mulous, Rats de Bonta et
+  Brâkmar, Corbacs, Dragoeufs, Minotoror et Mominotor au Labyrinthe, Givrefoux, Bworks, Gloursons,
+  Harebourg, Wukin et Wukang…
+- **Le bon niveau** : une panoplie reste dans la tranche de niveaux de son monde (niveau Dofus affiché
+  dans l'Armurerie), au plus près de sa zone. Les pièces lâchées par le boss restent au butin du boss.
+- **Les bonus par palier suivent ceux du jeu**, de 2 pièces à la panoplie complète (jusqu'à 7) : même
+  forme (élément, vitalité, résistances, critique, soins…) et **+1 PA au palier où Dofus en donne**
+  (souvent 3 pièces). Les PA de panoplie ne se cumulent pas (+1 au plus) et l'équipement donne +2 PA
+  au maximum.
+- Les objets uniques à effet spécial (Kwakwanneau, Abracape…) sont gardés. Une zone sans pièce pour un
+  emplacement reçoit un objet réel lâché par ses monstres.
+- Les panoplies des donjons secrets (en Mousse, Boufcoul, Professeur Xa, Kolosso, Tal Kasha) ont
+  aussi toutes leurs pièces.
+- La puissance d'un objet dépend toujours de son Tier (toile), de sa rareté et de sa source ; chaque
+  emplacement a son poids, et 8 objets complets valent un peu plus que les 4 d'avant.
+- L'Armurerie liste toutes les panoplies d'une zone, avec où elles tombent (combats, combats durs,
+  boss) et leur niveau dans Dofus.
+
+**Anciennes sauvegardes** : les objets équipés restent en place (l'ancien anneau devient l'anneau 1).
+Les quelques pièces d'anciennes panoplies qui n'existent plus restent dans l'inventaire (sans bonus de
+panoplie) et gardent leur Tier.
+
+Les icônes d'objets sont compressées (même rendu, 4 fois plus légères).
+
+**Équilibrage vérifié par simulation** (24 runs par monde, joueur automatique) : victoires Monde 1
+42 %, Monde 2 29 %, Monde 3 42 % (71 % avant d'avoir renforcé ses monstres de 7 %), Monde 4 33 %
+(puis monstres −3 %), Monde 5 25 %. Les héros remplissent leurs 8 emplacements vers la 4e zone.
+
 ## Ordre des Dofus, refonte du combat et de l'inventaire, chasse aux bugs
 
 **Les Dofus s'obtiennent dans l'ordre de Dofus 3.** Chaque Dofus a son vrai niveau de succès dans

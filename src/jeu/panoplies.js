@@ -1,6 +1,7 @@
-// Bonus de panoplie par palier : 2 pièces, 3 pièces, puis 4 pièces (+1 PA). Une panoplie de 2 ou
-// 3 pièces complète donne aussi des résistances. Les valeurs (src/data/panoplies.json) suivent le
-// niveau de la zone où tombe la panoplie.
+// Bonus de panoplie par palier, de 2 pièces à la panoplie complète (jusqu'à 7 pièces), comme dans
+// Dofus : les pièces, le niveau et la forme des bonus (élément, vitalité, résistances, PA au palier
+// où le vrai jeu en donne) viennent des vraies panoplies ; les valeurs (src/data/panoplies.json)
+// suivent la zone où tombe la panoplie. Les PA de panoplie ne se cumulent pas (+1 au plus).
 import { EQUIPEMENTS, PANOPLIES } from "../data/index.js";
 
 const NOMS_ELEMENTS_RES = { terre: `Terre`, feu: `Feu`, eau: `Eau`, air: `Air` };
@@ -8,17 +9,19 @@ const NOMS_ELEMENTS_RES = { terre: `Terre`, feu: `Feu`, eau: `Eau`, air: `Air` }
 /** Nombre de pièces de chaque panoplie portées par un héros. */
 export function compterPanoplies(perso) {
   const t = {};
+  const vus = new Set();
   for (const inst of Object.values(perso.equipement)) {
     const nom = inst && EQUIPEMENTS[inst.id]?.panoplie;
-    if (nom) {
+    // une même pièce portée deux fois (deux anneaux identiques) ne compte qu'une fois
+    if (nom && !vus.has(inst.id)) {
+      vus.add(inst.id);
       t[nom] = (t[nom] ?? 0) + 1;
     }
   }
   return t;
 }
 
-export const taillePanoplie = (nom) =>
-  new Set((PANOPLIES[nom]?.pieces ?? []).map((id) => EQUIPEMENTS[id]?.slot)).size;
+export const taillePanoplie = (nom) => PANOPLIES[nom]?.pieces.length ?? 0;
 
 export const paliersPanoplie = (nom) =>
   Object.keys(PANOPLIES[nom]?.paliers ?? {})

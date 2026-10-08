@@ -2204,3 +2204,96 @@ button,
   border-radius: 6px;
   background: #0005;
 }
+
+/* ---------- 8 emplacements : grille compacte façon fiche de personnage ---------- */
+.equip-slots.grille {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+.equip-slots.grille .equip-slot,
+.equip-slots.grille .equip-slot.rempli {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+  min-height: 0;
+  padding: 6px 4px 5px;
+  text-align: center;
+  position: relative;
+}
+.equip-slots.grille .equip-slot.vide {
+  opacity: 0.75;
+  border-style: dashed;
+}
+.equip-slots.grille .ic-visuel {
+  width: 52px;
+  height: 52px;
+  position: relative;
+}
+.equip-slots.grille .ic-visuel img {
+  width: 44px;
+  height: 44px;
+}
+.equip-slots.grille .slot-nom {
+  width: auto;
+  font-size: 0.62rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+.equip-slots.grille .slot-objet {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 0.72rem;
+  line-height: 1.15;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.equip-slots.grille .slot-vide-txt {
+  font-size: 0.7rem;
+}
+.equip-slots.grille .ic-tier {
+  position: absolute;
+  top: 3px;
+  right: 4px;
+  font-size: 0.62rem;
+}
+.slot-mieux {
+  position: absolute;
+  left: -4px;
+  top: -4px;
+  color: #2f9e44;
+  font-size: 0.8rem;
+  line-height: 1;
+  text-shadow: 0 0 2px #fff;
+}
+.fiche-heros-boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: flex-end;
+}
+.fiche-heros-boutons .petit {
+  font-size: 0.72rem;
+  padding: 4px 8px;
+}
+@media (width<=420px) {
+  .equip-slots.grille {
+    gap: 4px;
+  }
+  .equip-slots.grille .ic-visuel {
+    width: 44px;
+    height: 44px;
+  }
+  .equip-slots.grille .ic-visuel img {
+    width: 36px;
+    height: 36px;
+  }
+  .equip-slots.grille .slot-objet {
+    font-size: 0.66rem;
+  }
+}

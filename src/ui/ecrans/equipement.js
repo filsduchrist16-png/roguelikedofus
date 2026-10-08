@@ -10,14 +10,18 @@ import {
   bonusEquipement,
   compterPanoplies,
   desequiper,
+  emplacementPossible,
   equiperObjet,
   pvMaxPerso,
 } from "../../jeu/run.js";
+import { emplacementsDuType, typeDeEmplacement } from "../../jeu/emplacements.js";
 import { numeroZoneObjet } from "../../jeu/economie.js";
 import { RARETES, RARETES_INFO } from "../../jeu/config.js";
 import { comparerObjet, grouperInventaire } from "../../jeu/inventaire.js";
 import { texteObtentionObjet } from "../../jeu/obtention.js";
 import {
+  EMPLACEMENTS,
+  NOMS_EMPLACEMENTS,
   NOMS_SLOTS,
   SLOTS,
   VERDICTS,
@@ -72,11 +76,20 @@ function htmlVerdict(verdict) {
   return `<span class="verdict verdict-${verdict}">${v.icone} ${v.texte}</span>`;
 }
 // Fiche d'un objet : tout ce qu'il donne, d'où il vient, et ce qu'il changerait pour chaque héros.
-function htmlFicheObjet(inst, persos, perso, porteePar, quantite) {
+function htmlFicheObjet(inst, persos, perso, porteePar, quantite, emplacementPorte) {
   const def = EQUIPEMENTS[inst.id];
+  // pour un anneau : proposer aussi de remplacer l'autre anneau porté
+  const autreAnneau = (p, c) => {
+    const autre = emplacementsDuType(def.slot).find((k) => k !== c.emplacement);
+    if (!autre || !p.equipement[c.emplacement] || !emplacementPossible(p, inst, autre)) {
+      return ``;
+    }
+    const porte = p.equipement[autre];
+    return `<button class="secondaire petit" data-equiper-sur="${persos.indexOf(p)}" data-emplacement="${autre}">À la place de ${echapperHtml(EQUIPEMENTS[porte?.id]?.nom ?? NOMS_EMPLACEMENTS[autre])}</button>`;
+  };
   const lignesHeros = porteePar
-    ? `<p class="fiche-porte">Porté par <b>${echapperHtml(nomClasse(porteePar))}</b>.</p>
-       <div class="fiche-actions"><button class="secondaire" data-retirer="${def.slot}">Retirer (retourne dans l'inventaire)</button></div>`
+    ? `<p class="fiche-porte">Porté par <b>${echapperHtml(nomClasse(porteePar))}</b>${emplacementPorte && emplacementPorte !== def.slot ? ` (${NOMS_EMPLACEMENTS[emplacementPorte]})` : ``}.</p>
+       <div class="fiche-actions"><button class="secondaire" data-retirer="${emplacementPorte ?? def.slot}">Retirer (retourne dans l'inventaire)</button></div>`
     : `<h4 class="fiche-sous-titre">Sur quel héros ?</h4>
        <ul class="fiche-heros">${persos
          .map((p, i) => {
@@ -88,7 +101,7 @@ function htmlFicheObjet(inst, persos, perso, porteePar, quantite) {
              <span class="fiche-heros-nom"><img src="${imgSymboleClasse(p.classeId)}" alt="" onerror="this.remove()" />${echapperHtml(nomClasse(p))}</span>
              ${htmlVerdict(c.verdict)}
              <span class="fiche-heros-detail">${c.verdict === `impossible` ? `Équipable seulement en ligne avant.` : `${actuel} : ${htmlDeltas(c.deltas) || `aucun changement de stats`}`}</span>
-             <button class="primaire" data-equiper-sur="${i}" ${c.verdict === `impossible` ? `disabled` : ``}>Équiper</button>
+             <span class="fiche-heros-boutons"><button class="primaire" data-equiper-sur="${i}" data-emplacement="${c.emplacement ?? ``}" ${c.verdict === `impossible` ? `disabled` : ``}>Équiper</button>${c.verdict === `impossible` ? `` : autreAnneau(p, c)}</span>
            </li>`;
          })
          .join(``)}</ul>`;
@@ -122,21 +135,41 @@ export function ecranEquipement(e, t) {
       }));
       let c = e
         .map((p, idx) => {
-          const portes = SLOTS.filter((slot) => p.equipement[slot]).length;
+          const portes = EMPLACEMENTS.filter((slot) => p.equipement[slot]).length;
           const ameliorations = groupes.filter(
             (g) => comparerObjet(g.inst, p).verdict === `mieux`,
           ).length;
           return `<button class="equip-onglet ${idx === r ? `sel` : ``}" data-perso="${idx}" aria-pressed="${idx === r}">
           <img src="${imgSymboleClasse(p.classeId)}" alt="" onerror="this.remove()" />
-          <span class="onglet-texte">${echapperHtml(nomClasse(p))}<small>${portes}/4 équipés${ameliorations ? ` · <b class="onglet-mieux">▲ ${ameliorations}</b>` : ``}</small></span></button>`;
+          <span class="onglet-texte">${echapperHtml(nomClasse(p))}<small>${portes}/${EMPLACEMENTS.length} équipés${ameliorations ? ` · <b class="onglet-mieux">▲ ${ameliorations}</b>` : ``}</small></span></button>`;
         })
         .join(``);
-      let l = SLOTS.map((slot) => {
+      // les 8 emplacements en grille compacte : icône, emplacement, Tier ; la fiche donne le détail
+      let l = EMPLACEMENTS.map((slot) => {
         let inst = s.equipement[slot];
         let n = inst ? EQUIPEMENTS[inst.id] : undefined;
-        return `<div class="equip-slot ${n ? `rempli` : `vide`}${classeRarete(inst)}" data-slot="${slot}" ${n ? `data-desequip="${slot}" draggable="true" role="button" tabindex="0" aria-label="${echapperHtml(n.nom)} : voir la fiche"` : ``}>
-          ${n && inst ? `<span class="ic-visuel"><img src="${imgObjet(n.id)}" alt="" onerror="this.remove()" /></span><span class="slot-item ic-corps"><span class="slot-nom">${NOMS_SLOTS[slot]}</span><span class="ic-nom">${htmlNomObjet(inst)}</span><span class="ic-meta">${htmlMetaObjet(inst)}</span><span class="ic-stats">${htmlChipsObjet(inst, s.classeId)}</span></span>` : `<span class="slot-nom">${NOMS_SLOTS[slot]}</span><span class="slot-vide-txt">— vide —${groupes.some((g) => EQUIPEMENTS[g.inst.id]?.slot === slot && g.comparaison.verdict !== `impossible`) ? ` <small>(objet dispo dans l'inventaire)</small>` : ``}</span>`}
-        </div>`;
+        const type = typeDeEmplacement(slot);
+        const dispo = groupes.some(
+          (g) => EQUIPEMENTS[g.inst.id]?.slot === type && g.comparaison.verdict !== `impossible`,
+        );
+        const mieux = groupes.some(
+          (g) =>
+            EQUIPEMENTS[g.inst.id]?.slot === type &&
+            g.comparaison.verdict === `mieux` &&
+            g.comparaison.emplacement === slot,
+        );
+        return n && inst
+          ? `<div class="equip-slot rempli${classeRarete(inst)}" data-slot="${slot}" data-desequip="${slot}" draggable="true" role="button" tabindex="0" aria-label="${NOMS_EMPLACEMENTS[slot]} : ${echapperHtml(n.nom)}, voir la fiche" title="${echapperHtml(n.nom)}">
+              <span class="ic-visuel"><img src="${imgObjet(n.id)}" alt="" onerror="this.remove()" />${mieux ? `<b class="slot-mieux" title="Un objet de l'inventaire ferait mieux">▲</b>` : ``}</span>
+              <span class="slot-nom">${NOMS_EMPLACEMENTS[slot]}</span>
+              <span class="slot-objet ic-nom">${htmlNomObjet(inst)}</span>
+              <b class="ic-tier">T${numeroZoneObjet(inst.id)}</b>
+            </div>`
+          : `<div class="equip-slot vide" data-slot="${slot}" role="button" tabindex="0" aria-label="${NOMS_EMPLACEMENTS[slot]} vide${dispo ? ` : objets disponibles` : ``}">
+              <span class="ic-visuel">${dispo ? `<b class="slot-mieux" title="Objet disponible dans l'inventaire">▲</b>` : ``}</span>
+              <span class="slot-nom">${NOMS_EMPLACEMENTS[slot]}</span>
+              <span class="slot-vide-txt">${dispo ? `à équiper` : `vide`}</span>
+            </div>`;
       }).join(``);
       const compteSlot = (slot) => t.filter((inst) => EQUIPEMENTS[inst.id]?.slot === slot).length;
       let filtres = [
@@ -183,7 +216,7 @@ export function ecranEquipement(e, t) {
           groupes.find((g) => g.indices.some((x) => t[x] === selection.inst))?.indices.length ?? 1,
         );
       } else if (selection?.slot && s.equipement[selection.slot]) {
-        fiche = htmlFicheObjet(s.equipement[selection.slot], e, s, s, 1);
+        fiche = htmlFicheObjet(s.equipement[selection.slot], e, s, s, 1, selection.slot);
       } else {
         selection = null;
       }
@@ -193,7 +226,7 @@ export function ecranEquipement(e, t) {
         <div class="equip-corps">
           <div class="equip-col">
             <h3>${echapperHtml(nomClasse(s))} · PV max ${pvMaxPerso(s)}</h3>
-            <div class="equip-slots">${l}</div>
+            <div class="equip-slots grille">${l}</div>
             ${Object.entries(compterPanoplies(s))
               .map(([nom, nb]) => {
                 const b = bonusPanoplie(nom, nb);
@@ -228,9 +261,9 @@ export function ecranEquipement(e, t) {
         conteneur.innerHTML = fiche;
         document.body.appendChild(conteneur);
       }
-      let m = (e) => {
+      let m = (e, emplacement) => {
         if (e >= 0 && e < t.length) {
-          equiperObjet(t, s, e);
+          equiperObjet(t, s, e, emplacement);
           selection = null;
           i();
         }
@@ -261,7 +294,7 @@ export function ecranEquipement(e, t) {
       // emplacement vide : on filtre l'inventaire sur cet emplacement et on y descend
       racine.querySelectorAll(`.equip-slot.vide`).forEach((b) =>
         b.addEventListener(`click`, () => {
-          filtreSlot = b.dataset.slot;
+          filtreSlot = typeDeEmplacement(b.dataset.slot);
           i();
           racine
             .querySelector(`.equip-outils`)
@@ -316,7 +349,9 @@ export function ecranEquipement(e, t) {
           e.classList.remove(`drop-cible`);
           let n = t.dataTransfer.getData(`text/plain`);
           if (n.startsWith(`inv:`)) {
-            m(Number(n.slice(4)));
+            // déposé sur un emplacement précis (utile pour choisir l'anneau à remplacer)
+            const idx = Number(n.slice(4));
+            m(idx, emplacementPossible(s, t[idx], slot) ? slot : undefined);
           }
         });
       });
@@ -350,7 +385,7 @@ export function ecranEquipement(e, t) {
           const idx = Number(b.dataset.equiperSur);
           const index = t.indexOf(selection.inst);
           if (index >= 0) {
-            equiperObjet(t, e[idx], index);
+            equiperObjet(t, e[idx], index, b.dataset.emplacement || undefined);
           }
           r = idx;
           selection = null;

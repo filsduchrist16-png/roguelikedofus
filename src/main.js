@@ -42,6 +42,7 @@ import {
   tirerObjet,
   tirerRecrues,
 } from "./jeu/run.js";
+import { EMPLACEMENTS } from "./jeu/emplacements.js";
 import { chargerRun, effacerRun, sauverRun } from "./sauvegarde/run.js";
 import {
   CHANCES_CLE,
@@ -191,7 +192,6 @@ async function donnerDofusEnAttente(e) {
   await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta()));
 }
 function contexteRun(e, trancheId, victoire) {
-  let r = [`arme`, `coiffe`, `cape`, `anneau`];
   return {
     trancheId,
     victoire,
@@ -201,7 +201,7 @@ function contexteRun(e, trancheId, victoire) {
     tailleEquipe: e.persos.length,
     classes: e.persos.map((e) => e.classeId),
     quatreHerosEquipes:
-      e.persos.length === 4 && e.persos.every((e) => r.every((t) => e.equipement[t])),
+      e.persos.length === 4 && e.persos.every((e) => EMPLACEMENTS.every((t) => e.equipement[t])),
   };
 }
 const quetesDeLaRun = (e) =>
