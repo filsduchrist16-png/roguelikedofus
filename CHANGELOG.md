@@ -2,14 +2,10 @@
 
 ## Tier des objets
 
-- Chaque objet affiche son **Tier** (pastille « T54 ») : sa puissance théorique, la même pour tous les
-  héros. Il additionne ses statistiques converties selon ce qu'elles valent en combat (1 point
-  d'élément ≈ 1 Vitalité, 1 % de résistance ≈ 3, 1 % de critique ≈ 1,8, 1 PA ≈ 60, plus les dégâts
-  de l'arme). Les effets spéciaux et les bonus de panoplie n'y sont pas comptés.
-- La pastille est partout : inventaire, objets portés, butin, hôtel de vente, fiche d'objet. La forgemagie
-  fait monter le Tier.
-- Nouveau tri « Tier » dans l'inventaire (les plus puissants d'abord).
-- La fiche d'un objet compare son Tier à celui de l'objet porté par chaque héros (▲ T5 → T13).
+- Le tri « Toile » de l'inventaire devient « Tier » : les objets du Tier le plus haut d'abord (puis
+  les plus rares).
+- Le Tier (« T13 ») s'affiche aussi sur les objets portés et dans la fiche d'objet, à gauche de
+  l'emplacement, comme dans l'inventaire.
 
 ## Export de la sauvegarde sur claude.ai
 

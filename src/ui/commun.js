@@ -1,5 +1,4 @@
 import { descriptionPanoplie } from "../jeu/panoplies.js";
-import { AIDE_TIER, tierObjet } from "../jeu/tier.js";
 import { texteObtentionDofus, texteObtentionObjet } from "../jeu/obtention.js";
 import { CLASSES, DOFUS, EQUIPEMENTS } from "../data/index.js";
 import { DIFFICULTES, DIFFICULTE_MAX, DOSSIER_ICONE_SORT, RARETES_INFO } from "../jeu/config.js";
@@ -523,10 +522,6 @@ export const classeRarete = (e) => {
 };
 // infobulle « où trouver cet objet » (à mettre sur la carte d'un objet)
 export const attrTipObjet = (id) => ` data-tip="${echapperHtml(texteObtentionObjet(id))}"`;
-/** Pastille « Tier » d'un objet (puissance théorique). */
-export function htmlTier(inst) {
-  return `<span class="ichip ichip-tier" title="${echapperHtml(AIDE_TIER)}">T${tierObjet(inst)}</span>`;
-}
 export function htmlNomObjet(e) {
   let t = EQUIPEMENTS[e.id];
   let n = echapperHtml(t?.nom ?? e.id);
@@ -539,9 +534,6 @@ export function htmlNomObjet(e) {
 export function htmlChipsObjet(e, classeId) {
   let t = EQUIPEMENTS[e.id];
   let n = [];
-  if (e.rarete) {
-    n.push(htmlTier(e));
-  }
   let r = (e, t, titre) =>
     n.push(`<span class="ichip ${e}"${titre ? ` title="${titre}"` : ``}>${t}</span>`);
   let i = (e) => {
