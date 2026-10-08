@@ -1772,3 +1772,24 @@ button,
     monospace;
   resize: vertical;
 }
+
+/* ---------- Tier (puissance théorique) d'un objet ---------- */
+.ichip-tier {
+  border-color: #5a3a8a;
+  background: #3a2c1a;
+  color: #f7e6c0;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+.tier-ecart {
+  margin-left: 6px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.tier-ecart.plus {
+  color: #2f7d32;
+}
+.tier-ecart.moins {
+  color: #a8261a;
+}

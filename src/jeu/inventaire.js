@@ -6,7 +6,16 @@ import { bonusEquipement, peutEquiper, pvMaxPerso } from "./run.js";
 const STATS = [`force`, `intelligence`, `agilite`, `chance`, `soin`, `prospection`, `crit`];
 const ELEMENTS = [`terre`, `feu`, `eau`, `air`];
 // Propriétés d'objet qui ne sont pas des stats chiffrées (effets spéciaux).
-const CLES_BASE = new Set([`id`, `nom`, `slot`, `source`, `tiers`, `panoplie`, `ligneAvant`]);
+const CLES_BASE = new Set([
+  `id`,
+  `nom`,
+  `slot`,
+  `source`,
+  `tiers`,
+  `panoplie`,
+  `ligneAvant`,
+  `secret`,
+]);
 export const effetsSpeciaux = (id) =>
   Object.keys(EQUIPEMENTS[id] ?? {}).filter((k) => !CLES_BASE.has(k));
 

@@ -16,6 +16,7 @@ import {
 import { numeroZoneObjet } from "../../jeu/economie.js";
 import { RARETES, RARETES_INFO } from "../../jeu/config.js";
 import { comparerObjet, grouperInventaire } from "../../jeu/inventaire.js";
+import { tierObjet } from "../../jeu/tier.js";
 import { texteObtentionObjet } from "../../jeu/obtention.js";
 import {
   NOMS_SLOTS,
@@ -42,6 +43,7 @@ const ORDRE_VERDICT = [`mieux`, `mitige`, `egal`, `moins`, `impossible`];
 const TRIS = [
   [`toile`, `Toile`, `Trier par toile d'obtention`],
   [`type`, `Type`, `Trier par emplacement`],
+  [`tier`, `Tier`, `Les objets les plus puissants d'abord (Tier)`],
   [`rarete`, `Rareté`, `Légendaires d'abord`],
   [`interet`, `Intérêt`, `Les améliorations pour le héros choisi d'abord`],
 ];
@@ -51,9 +53,11 @@ function trierGroupes(groupes, perso) {
   const toile = (inst) => numeroZoneObjet(inst.id);
   const rarete = (inst) => -RARETES.indexOf(inst.rarete);
   const interet = (g) => ORDRE_VERDICT.indexOf(g.comparaison.verdict);
+  const tier = (inst) => tierObjet(inst);
   const criteres = {
     toile: (a, b) => [toile(a.inst) - toile(b.inst), slot(a.inst) - slot(b.inst)],
     type: (a, b) => [slot(a.inst) - slot(b.inst), toile(a.inst) - toile(b.inst)],
+    tier: (a, b) => [tier(b.inst) - tier(a.inst), slot(a.inst) - slot(b.inst)],
     rarete: (a, b) => [rarete(a.inst) - rarete(b.inst), toile(b.inst) - toile(a.inst)],
     interet: (a, b) => [interet(a) - interet(b), toile(b.inst) - toile(a.inst)],
   }[triArmurerie];
@@ -79,9 +83,13 @@ function htmlFicheObjet(inst, persos, perso, porteePar, quantite) {
            const actuel = c.actuel
              ? `remplace ${echapperHtml(EQUIPEMENTS[c.actuel.id]?.nom ?? c.actuel.id)}`
              : `emplacement vide`;
+           const ecart = tierObjet(inst) - tierObjet(c.actuel);
+           const tierCompare = c.actuel
+             ? `<span class="tier-ecart ${ecart > 0 ? `plus` : ecart < 0 ? `moins` : ``}" title="Tier de cet objet comparé à celui porté (T${tierObjet(c.actuel)})">${ecart > 0 ? `▲` : ecart < 0 ? `▼` : `=`} T${tierObjet(c.actuel)} → T${tierObjet(inst)}</span>`
+             : ``;
            return `<li class="${p === perso ? `courant` : ``}">
              <span class="fiche-heros-nom"><img src="${imgSymboleClasse(p.classeId)}" alt="" onerror="this.remove()" />${echapperHtml(nomClasse(p))}</span>
-             ${htmlVerdict(c.verdict)}
+             ${htmlVerdict(c.verdict)}${tierCompare}
              <span class="fiche-heros-detail">${c.verdict === `impossible` ? `Équipable seulement en ligne avant.` : `${actuel} : ${htmlDeltas(c.deltas) || `aucun changement de stats`}`}</span>
              <button class="primaire" data-equiper-sur="${i}" ${c.verdict === `impossible` ? `disabled` : ``}>Équiper</button>
            </li>`;

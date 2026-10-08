@@ -1,5 +1,16 @@
 # Journal des modifications
 
+## Tier des objets
+
+- Chaque objet affiche son **Tier** (pastille « T54 ») : sa puissance théorique, la même pour tous les
+  héros. Il additionne ses statistiques converties selon ce qu'elles valent en combat (1 point
+  d'élément ≈ 1 Vitalité, 1 % de résistance ≈ 3, 1 % de critique ≈ 1,8, 1 PA ≈ 60, plus les dégâts
+  de l'arme). Les effets spéciaux et les bonus de panoplie n'y sont pas comptés.
+- La pastille est partout : inventaire, objets portés, butin, hôtel de vente, fiche d'objet. La forgemagie
+  fait monter le Tier.
+- Nouveau tri « Tier » dans l'inventaire (les plus puissants d'abord).
+- La fiche d'un objet compare son Tier à celui de l'objet porté par chaque héros (▲ T5 → T13).
+
 ## Export de la sauvegarde sur claude.ai
 
 - Sur la page claude.ai, « Exporter » passe par le téléchargement de claude.ai (tu confirmes
