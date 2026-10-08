@@ -78,6 +78,13 @@ describe(`rencontres`, () => {
     let a = 1;
     const rng = () => (a = (a * 16807) % 2147483647) / 2147483647;
     const vus = new Set(Array.from({ length: 500 }, () => tirerRencontre(rng)));
-    expect([...vus].sort()).toEqual([`coffre`, `idoles`, `marchand`, `sanctuaire`, `traque`]);
+    expect([...vus].sort()).toEqual([
+      `cle`,
+      `coffre`,
+      `idoles`,
+      `marchand`,
+      `sanctuaire`,
+      `traque`,
+    ]);
   });
 });

@@ -5,6 +5,7 @@ import {
   monstresDeZone,
   reliquesDuMonde,
   zonesDuMonde,
+  zoneSecrete,
 } from "../../jeu/config.js";
 import { numeroZone } from "../../jeu/economie.js";
 import { afficherEcran, barreRetour, cheminAsset, echapperHtml, racine } from "../commun.js";
@@ -71,7 +72,7 @@ export function ecranBestiaire(e) {
     };
     let m = () => {
       let e = r.find((e) => e.id === c) ?? r[0];
-      let o = e ? zonesDuMonde(e) : [];
+      let o = e ? [...zonesDuMonde(e), zoneSecrete(e.id)].filter(Boolean) : [];
       let h = (MONSTRES_RARES[e?.id ?? ``]?.especes ?? []).filter((e) => MONSTRES[e]);
       let g = r
         .map((t) => {
@@ -108,7 +109,7 @@ export function ecranBestiaire(e) {
         let t = bossDeZone(e);
         let n = monstresDeZone(e).filter((e) => !t.includes(e));
         v = `<div class="best-titre"><h2>${echapperHtml(e.nom)}</h2>
-            <small>Toile ${numeroZone(e.id)} · ${p(a(e))}</small></div>
+            <small>${e.secret ? `Donjon secret (il s'ouvre avec une clé, après le boss d'une zone)` : `Toile ${numeroZone(e.id)}`} · ${p(a(e))}</small></div>
           <div class="best-boss-liste">${t.map(f).join(``)}</div>
           <h3 class="best-rubrique">Habitants</h3>
           <div class="best-especes">${n.map(u).join(``)}</div>`;

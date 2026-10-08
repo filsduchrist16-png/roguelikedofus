@@ -8,6 +8,9 @@ import BUTIN_ZONES from "./butinZones.json";
 import SUCCES from "./succes.json";
 import CREATURES from "./creatures.json";
 import RELIQUES from "./reliques.json";
+import PANOPLIES from "./panoplies.json";
+import SECRETS from "./secrets.json";
+import AJUSTEMENTS_ZONES from "./ajustementsZones.json";
 export const CONFIG_RELIQUES = {
   base: 0.01,
   parCran: 0.01,
@@ -468,7 +471,7 @@ export const MONDES = [
     id: `t3`,
     nom: `Monde 3`,
     niveaux: [100, 150],
-    xpMult: 2.2,
+    xpMult: 1.3,
     zones: [
       `egouts_bonta_brakmar`,
       `bibliotheque_corbac`,
@@ -488,7 +491,7 @@ export const MONDES = [
     id: `t4`,
     nom: `Monde 4`,
     niveaux: [150, 199],
-    xpMult: 3.2,
+    xpMult: 1.45,
     zones: [
       `canopee_kimbo`,
       `hypogee_obsidiantre`,
@@ -524,4 +527,17 @@ export const MONDES = [
     ],
   },
 ];
-export { SORTS, CLASSES, MONSTRES, COMBATS, EQUIPEMENTS, BUTIN_ZONES, SUCCES, RELIQUES, CREATURES };
+export {
+  SORTS,
+  CLASSES,
+  MONSTRES,
+  COMBATS,
+  EQUIPEMENTS,
+  BUTIN_ZONES,
+  SUCCES,
+  RELIQUES,
+  CREATURES,
+  PANOPLIES,
+  SECRETS,
+  AJUSTEMENTS_ZONES,
+};

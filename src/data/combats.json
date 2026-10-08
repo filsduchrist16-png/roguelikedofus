@@ -5938,5 +5938,130 @@
         "position": 5
       }
     ]
+  },
+  "secret_t1": {
+    "nom": "Donjon secret : Château Ensablé",
+    "ennemis": [
+      {
+        "monstre": "mob_l_eponge",
+        "position": 0
+      },
+      {
+        "monstre": "pichon_orange",
+        "position": 1
+      },
+      {
+        "monstre": "pichon_bleu",
+        "position": 2
+      },
+      {
+        "monstre": "pichon_kloune",
+        "position": 4
+      },
+      {
+        "monstre": "pichon_vert",
+        "position": 5
+      }
+    ]
+  },
+  "secret_t2": {
+    "nom": "Donjon secret : Caverne du Koulosse",
+    "ennemis": [
+      {
+        "monstre": "koulosse",
+        "position": 0
+      },
+      {
+        "monstre": "drakoalak",
+        "position": 1
+      },
+      {
+        "monstre": "mama_koalak",
+        "position": 2
+      },
+      {
+        "monstre": "warko_marron",
+        "position": 4
+      },
+      {
+        "monstre": "koalak_coco",
+        "position": 5
+      }
+    ]
+  },
+  "secret_t3": {
+    "nom": "Donjon secret : Repaire de Skeunk",
+    "ennemis": [
+      {
+        "monstre": "skeunk",
+        "position": 0
+      },
+      {
+        "monstre": "emeraude",
+        "position": 1
+      },
+      {
+        "monstre": "rubise",
+        "position": 2
+      },
+      {
+        "monstre": "saphira",
+        "position": 4
+      },
+      {
+        "monstre": "diamantine",
+        "position": 5
+      }
+    ]
+  },
+  "secret_t4": {
+    "nom": "Donjon secret : Cavernes du Kolosso",
+    "ennemis": [
+      {
+        "monstre": "kolosso",
+        "position": 0
+      },
+      {
+        "monstre": "professeur_xa",
+        "position": 1
+      },
+      {
+        "monstre": "blerom",
+        "position": 2
+      },
+      {
+        "monstre": "wolvero",
+        "position": 4
+      },
+      {
+        "monstre": "fleuro",
+        "position": 5
+      }
+    ]
+  },
+  "secret_t5": {
+    "nom": "Donjon secret : Chambre de Tal Kasha",
+    "ennemis": [
+      {
+        "monstre": "tal_kasha",
+        "position": 0
+      },
+      {
+        "monstre": "chakanoubis",
+        "position": 1
+      },
+      {
+        "monstre": "rykaon",
+        "position": 2
+      },
+      {
+        "monstre": "momistik",
+        "position": 4
+      },
+      {
+        "monstre": "griffotep",
+        "position": 5
+      }
+    ]
   }
 }

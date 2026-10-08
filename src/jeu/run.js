@@ -1,4 +1,4 @@
-import { CLASSES, COMBATS, EQUIPEMENTS, MONSTRES } from "../data/index.js";
+import { AJUSTEMENTS_ZONES, CLASSES, COMBATS, EQUIPEMENTS, MONSTRES } from "../data/index.js";
 import {
   AFFIXES_GROUPE,
   CONFIG_ARCHI,
@@ -6,6 +6,7 @@ import {
   MONSTRES_RARES,
   RARETES,
   RARETES_INFO,
+  RECUPERATION,
   TAUX_BUTIN,
   butinDeZone,
   getMonde,
@@ -18,6 +19,8 @@ import {
   statsDeNiveau,
 } from "./progression.js";
 import { etatCombatInitial } from "../combat/stats.js";
+import { bonusPanoplie, compterPanoplies } from "./panoplies.js";
+export { compterPanoplies };
 import { chargerParametres, rangOrdre } from "../sauvegarde/parametres.js";
 export const nouvellesStatsRun = () => ({
   degats: {},
@@ -192,16 +195,6 @@ function multiplierPv(e, pvMult) {
   e.pvBase = e.pvMax;
   e.pvActuels = e.pvMax;
 }
-export function compterPanoplies(e) {
-  let t = {};
-  for (let n of Object.values(e.equipement)) {
-    let e = n && EQUIPEMENTS[n.id]?.panoplie;
-    if (e) {
-      t[e] = (t[e] ?? 0) + 1;
-    }
-  }
-  return t;
-}
 export function bonusEquipement(e) {
   let t = statsVides();
   let pvBonus = 0;
@@ -224,8 +217,21 @@ export function bonusEquipement(e) {
       additionner(resistances, o.resistances);
     }
   }
-  if (Object.values(compterPanoplies(e)).some((e) => e >= 4)) {
-    paBonus += 1;
+  // bonus de panoplie (palier atteint)
+  for (let [nom, nb] of Object.entries(compterPanoplies(e))) {
+    let b = bonusPanoplie(nom, nb);
+    if (!b) {
+      continue;
+    }
+    additionner(t, b.stats);
+    if (b.adaptatif) {
+      for (let el of CLASSES[e.classeId].elements) {
+        let st = STAT_PAR_ELEMENT[el];
+        t[st] = (t[st] ?? 0) + b.adaptatif;
+      }
+    }
+    additionner(resistances, b.resistances);
+    paBonus += b.pa ?? 0;
   }
   return {
     stats: t,
@@ -369,6 +375,15 @@ export function soignerEquipe(e, t) {
     }
     let e = pvMaxPerso(r);
     r.pvActuels = Math.min(e, r.pvActuels + Math.round(e * t));
+  }
+}
+// Récupération après une victoire : seuls les héros debout en profitent.
+export function recupererApresVictoire(e) {
+  for (let p of e.persos) {
+    if (p.pvActuels > 0) {
+      let max = pvMaxPerso(p);
+      p.pvActuels = Math.min(max, p.pvActuels + Math.round(max * RECUPERATION.victoire));
+    }
   }
 }
 function tirerRarete(e, t = RARETES) {
@@ -589,6 +604,24 @@ export function appliquerDifficulteMonstres(e, t, n) {
   if (t.pvMult) {
     for (let n of e) {
       multiplierPv(n, t.pvMult);
+    }
+  }
+}
+// Puissance des monstres d'une zone (src/data/ajustementsZones.json, réglée par simulation) : PV et
+// dégâts multipliés par le même facteur.
+export const puissanceZone = (zoneId) => AJUSTEMENTS_ZONES[zoneId] ?? 1;
+export function appliquerPuissanceZone(monstres, zoneId) {
+  let f = puissanceZone(zoneId);
+  if (f === 1) {
+    return;
+  }
+  for (let m of monstres) {
+    multiplierPv(m, f);
+    for (let st of [`force`, `intelligence`, `agilite`, `chance`]) {
+      if (m.stats[st] !== undefined) {
+        // dégâts ∝ (1 + 0,03 × stat) : on multiplie ce terme par f
+        m.stats[st] = Math.max(0, Math.round(((1 + 0.03 * m.stats[st]) * f - 1) / 0.03));
+      }
     }
   }
 }

@@ -1,4 +1,11 @@
-import { CLASSES, EQUIPEMENTS } from "../../data/index.js";
+import { CLASSES, EQUIPEMENTS, PANOPLIES } from "../../data/index.js";
+import {
+  bonusPanoplie,
+  descriptionPanoplie,
+  paliersPanoplie,
+  taillePanoplie,
+  texteBonusPanoplie,
+} from "../../jeu/panoplies.js";
 import {
   bonusEquipement,
   compterPanoplies,
@@ -181,11 +188,13 @@ export function ecranEquipement(e, t) {
             <h3>${echapperHtml(nomClasse(s))} · PV max ${pvMaxPerso(s)}</h3>
             <div class="equip-slots">${l}</div>
             ${Object.entries(compterPanoplies(s))
-              .map(([e, t]) => {
-                if (t >= 4) {
-                  return `<p class="equip-pano complete">${echapperHtml(e)} 4/4 : +1 PA</p>`;
-                }
-                return `<p class="equip-pano muet">${echapperHtml(e)} ${t}/4 (4 pièces : +1 PA)</p>`;
+              .map(([nom, nb]) => {
+                const b = bonusPanoplie(nom, nb);
+                const prochain = paliersPanoplie(nom).find((k) => k > nb);
+                const suite = prochain
+                  ? ` · à ${prochain} pièces : ${texteBonusPanoplie(PANOPLIES[nom].paliers[prochain])}`
+                  : ``;
+                return `<p class="equip-pano${b ? ` complete` : ` muet`}" title="${echapperHtml(descriptionPanoplie(nom))}">⬡ ${echapperHtml(nom)} ${nb}/${taillePanoplie(nom)}${b ? ` : ${texteBonusPanoplie(b)}` : ``}${suite}</p>`;
               })
               .join(``)}
             <p class="equip-total">Bonus total : ${p}</p>
@@ -240,6 +249,16 @@ export function ecranEquipement(e, t) {
         b.addEventListener(`click`, () => {
           filtreSlot = b.dataset.filtre;
           i();
+        }),
+      );
+      // emplacement vide : on filtre l'inventaire sur cet emplacement et on y descend
+      racine.querySelectorAll(`.equip-slot.vide`).forEach((b) =>
+        b.addEventListener(`click`, () => {
+          filtreSlot = b.dataset.slot;
+          i();
+          racine
+            .querySelector(`.equip-outils`)
+            ?.scrollIntoView({ block: `start`, behavior: `smooth` });
         }),
       );
       racine.querySelectorAll(`.item-carte`).forEach((e) => {

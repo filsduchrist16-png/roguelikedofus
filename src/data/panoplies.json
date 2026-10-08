@@ -1,0 +1,2263 @@
+{
+  "Panoplibou": {
+    "pieces": [
+      "chapibou",
+      "capibou"
+    ],
+    "toile": 55,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie Akwadala": {
+    "pieces": [
+      "chapeau_akwadala",
+      "cape_akwadala",
+      "alliance_akwadala",
+      "baton_akwadala"
+    ],
+    "toile": 11,
+    "paliers": {
+      "2": {
+        "adaptatif": 7,
+        "stats": {
+          "vitalite": 5
+        }
+      },
+      "3": {
+        "adaptatif": 13,
+        "stats": {
+          "vitalite": 10
+        }
+      },
+      "4": {
+        "adaptatif": 13,
+        "stats": {
+          "vitalite": 10
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie Ardente": {
+    "pieces": [
+      "masque_ardent",
+      "cape_ardente"
+    ],
+    "toile": 56,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie Baveuse": {
+    "pieces": [
+      "kaskargo",
+      "anneau_skargo",
+      "kask_arc_go"
+    ],
+    "toile": 37,
+    "paliers": {
+      "2": {
+        "adaptatif": 13,
+        "stats": {
+          "vitalite": 11
+        }
+      },
+      "3": {
+        "adaptatif": 26,
+        "stats": {
+          "vitalite": 23
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie Brûlâme": {
+    "pieces": [
+      "masque_brulame",
+      "alliance_brulame"
+    ],
+    "toile": 58,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie Cancrelune": {
+    "pieces": [
+      "casque_noix",
+      "cape_lumette",
+      "anneau_bille",
+      "baguette_cetera"
+    ],
+    "toile": 6,
+    "paliers": {
+      "2": {
+        "adaptatif": 4,
+        "stats": {
+          "vitalite": 4
+        }
+      },
+      "3": {
+        "adaptatif": 8,
+        "stats": {
+          "vitalite": 7
+        }
+      },
+      "4": {
+        "adaptatif": 8,
+        "stats": {
+          "vitalite": 7
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie Champ Champ": {
+    "pieces": [
+      "coiffe_champ_champ",
+      "cape_champ_champ",
+      "anneau_champ_champ",
+      "baton_carnivore"
+    ],
+    "toile": 2,
+    "paliers": {
+      "2": {
+        "adaptatif": 2,
+        "stats": {
+          "vitalite": 2
+        }
+      },
+      "3": {
+        "adaptatif": 3,
+        "stats": {
+          "vitalite": 5
+        }
+      },
+      "4": {
+        "adaptatif": 3,
+        "stats": {
+          "vitalite": 5
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie Cristalline": {
+    "pieces": [
+      "chapeau_lithique",
+      "la_mokette",
+      "bague_cristalline",
+      "baguette_larvesque"
+    ],
+    "toile": 10,
+    "paliers": {
+      "2": {
+        "adaptatif": 6,
+        "stats": {
+          "vitalite": 5
+        }
+      },
+      "3": {
+        "adaptatif": 12,
+        "stats": {
+          "vitalite": 10
+        }
+      },
+      "4": {
+        "adaptatif": 12,
+        "stats": {
+          "vitalite": 10
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie Cryochrone": {
+    "pieces": [
+      "coiffe_cryochrone",
+      "anneau_cryochrone"
+    ],
+    "toile": 51,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie Engloutie": {
+    "pieces": [
+      "coiffe_medusoide",
+      "kalypsoton"
+    ],
+    "toile": 35,
+    "paliers": {
+      "2": {
+        "adaptatif": 13,
+        "stats": {
+          "vitalite": 11
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie Fantomatique": {
+    "pieces": [
+      "shako",
+      "cape_du_boostache",
+      "anneau_du_boostache",
+      "pelle_du_bois_dormant"
+    ],
+    "toile": 7,
+    "paliers": {
+      "2": {
+        "adaptatif": 4,
+        "stats": {
+          "vitalite": 4
+        }
+      },
+      "3": {
+        "adaptatif": 9,
+        "stats": {
+          "vitalite": 8
+        }
+      },
+      "4": {
+        "adaptatif": 9,
+        "stats": {
+          "vitalite": 8
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie Fourbe": {
+    "pieces": [
+      "fourbacoiffe",
+      "fourbacape",
+      "fourballiance",
+      "fourbaton"
+    ],
+    "toile": 24,
+    "paliers": {
+      "2": {
+        "adaptatif": 11,
+        "stats": {
+          "vitalite": 9
+        }
+      },
+      "3": {
+        "adaptatif": 21,
+        "stats": {
+          "vitalite": 17
+        }
+      },
+      "4": {
+        "adaptatif": 21,
+        "stats": {
+          "vitalite": 17
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie Gelée": {
+    "pieces": [
+      "gelocoiffe",
+      "gelocape",
+      "gelano_rouille",
+      "canne_de_mamie_bonbon"
+    ],
+    "toile": 15,
+    "paliers": {
+      "2": {
+        "adaptatif": 8,
+        "stats": {
+          "vitalite": 6
+        }
+      },
+      "3": {
+        "adaptatif": 16,
+        "stats": {
+          "vitalite": 12
+        }
+      },
+      "4": {
+        "adaptatif": 16,
+        "stats": {
+          "vitalite": 12
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie Glaciale": {
+    "pieces": [
+      "cape_glaciale",
+      "anneau_glacial"
+    ],
+    "toile": 49,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie Gloursonne": {
+    "pieces": [
+      "alliance_gloursonne",
+      "bague_gloursonne",
+      "epee_gloursonne"
+    ],
+    "toile": 47,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie Kozaru": {
+    "pieces": [
+      "caparavent",
+      "nun_charang"
+    ],
+    "toile": 33,
+    "paliers": {
+      "2": {
+        "adaptatif": 13,
+        "stats": {
+          "vitalite": 11
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie Kwapa": {
+    "pieces": [
+      "kwaflaque",
+      "kwarapace",
+      "kwache"
+    ],
+    "toile": 31,
+    "paliers": {
+      "2": {
+        "adaptatif": 12,
+        "stats": {
+          "vitalite": 10
+        }
+      },
+      "3": {
+        "adaptatif": 24,
+        "stats": {
+          "vitalite": 21
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie Ripate": {
+    "pieces": [
+      "chapeau_de_barbroussa",
+      "cape_irate",
+      "annopirate",
+      "pelle_ripate"
+    ],
+    "toile": 14,
+    "paliers": {
+      "2": {
+        "adaptatif": 8,
+        "stats": {
+          "vitalite": 6
+        }
+      },
+      "3": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 11
+        }
+      },
+      "4": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 11
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie Scarafeuille": {
+    "pieces": [
+      "scaracoiffe_noire",
+      "scaracape_noire",
+      "scaranneau_noir",
+      "baguette_scafeuille"
+    ],
+    "toile": 8,
+    "paliers": {
+      "2": {
+        "adaptatif": 5,
+        "stats": {
+          "vitalite": 4
+        }
+      },
+      "3": {
+        "adaptatif": 10,
+        "stats": {
+          "vitalite": 8
+        }
+      },
+      "4": {
+        "adaptatif": 10,
+        "stats": {
+          "vitalite": 8
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie Souveraine": {
+    "pieces": [
+      "capuche_souveraine_du_roissingue",
+      "cape_souveraine_du_roissingue",
+      "sceau_souverain_du_roissingue"
+    ],
+    "toile": 44,
+    "paliers": {
+      "2": {
+        "adaptatif": 14,
+        "stats": {
+          "vitalite": 12
+        }
+      },
+      "3": {
+        "adaptatif": 29,
+        "stats": {
+          "vitalite": 25
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie Tissée": {
+    "pieces": [
+      "coiffe_tissee",
+      "capraignee",
+      "anneau_tisse",
+      "racine_istre"
+    ],
+    "toile": 23,
+    "paliers": {
+      "2": {
+        "adaptatif": 10,
+        "stats": {
+          "vitalite": 8
+        }
+      },
+      "3": {
+        "adaptatif": 21,
+        "stats": {
+          "vitalite": 17
+        }
+      },
+      "4": {
+        "adaptatif": 21,
+        "stats": {
+          "vitalite": 17
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie Trithon": {
+    "pieces": [
+      "masque_trithon",
+      "bague_trithon"
+    ],
+    "toile": 53,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie Truche": {
+    "pieces": [
+      "chapeau_truche",
+      "anneau_truche"
+    ],
+    "toile": 32,
+    "paliers": {
+      "2": {
+        "adaptatif": 12,
+        "stats": {
+          "vitalite": 11
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie Vassale": {
+    "pieces": [
+      "capuche_de_la_ouassingue",
+      "cape_de_la_ouassingue"
+    ],
+    "toile": 44,
+    "paliers": {
+      "2": {
+        "adaptatif": 14,
+        "stats": {
+          "vitalite": 12
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie Vicieuse": {
+    "pieces": [
+      "bonnet_vicieux",
+      "anneau_vicieux"
+    ],
+    "toile": 50,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie Véga": {
+    "pieces": [
+      "vegacoiffe",
+      "vegacape",
+      "veganneau",
+      "vegaton"
+    ],
+    "toile": 9,
+    "paliers": {
+      "2": {
+        "adaptatif": 6,
+        "stats": {
+          "vitalite": 5
+        }
+      },
+      "3": {
+        "adaptatif": 11,
+        "stats": {
+          "vitalite": 9
+        }
+      },
+      "4": {
+        "adaptatif": 11,
+        "stats": {
+          "vitalite": 9
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie d'Ombre": {
+    "pieces": [
+      "casqnoar",
+      "anneau_kturne"
+    ],
+    "toile": 48,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie de Ben le Ripate": {
+    "pieces": [
+      "chapeau_de_ben_le_ripate",
+      "crochet_de_ben_le_ripate",
+      "sabre_de_ben_le_ripate"
+    ],
+    "toile": 36,
+    "paliers": {
+      "2": {
+        "adaptatif": 13,
+        "stats": {
+          "vitalite": 11
+        }
+      },
+      "3": {
+        "adaptatif": 26,
+        "stats": {
+          "vitalite": 23
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie de Cantile": {
+    "pieces": [
+      "cape_de_cantile",
+      "anneau_de_cantile"
+    ],
+    "toile": 36,
+    "paliers": {
+      "2": {
+        "adaptatif": 13,
+        "stats": {
+          "vitalite": 11
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie de Frigostine": {
+    "pieces": [
+      "anneau_de_frigostine",
+      "baguette_de_frigostine"
+    ],
+    "toile": 35,
+    "paliers": {
+      "2": {
+        "adaptatif": 13,
+        "stats": {
+          "vitalite": 11
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie de Guten Tak": {
+    "pieces": [
+      "anneau_de_guten_tak",
+      "alliance_de_guten_tak",
+      "arc_de_guten_tak"
+    ],
+    "toile": 41,
+    "paliers": {
+      "2": {
+        "adaptatif": 14,
+        "stats": {
+          "vitalite": 12
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie de Klime": {
+    "pieces": [
+      "masque_de_klime",
+      "cape_de_klime"
+    ],
+    "toile": 50,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie de Meno": {
+    "pieces": [
+      "casquette_de_meno",
+      "cape_de_meno"
+    ],
+    "toile": 52,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie de Missiz Frizz": {
+    "pieces": [
+      "casque_de_missiz_frizz",
+      "alliance_de_missiz_frizz"
+    ],
+    "toile": 49,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie de Nidas": {
+    "pieces": [
+      "couronne_de_nidas",
+      "anneau_de_nidas"
+    ],
+    "toile": 54,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie de R'lyugluglu": {
+    "pieces": [
+      "casque_cyclopeen",
+      "anneau_rifique"
+    ],
+    "toile": 53,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie de Wulan": {
+    "pieces": [
+      "diademe_de_wulan",
+      "arc_de_wulan"
+    ],
+    "toile": 57,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie de l'Aventurier": {
+    "pieces": [
+      "chapeau_de_l_aventurier",
+      "cape_de_l_aventurier",
+      "anneau_de_l_aventurier",
+      "epee_de_l_aventurier"
+    ],
+    "toile": 1,
+    "paliers": {
+      "2": {
+        "adaptatif": 1,
+        "stats": {
+          "vitalite": 2
+        }
+      },
+      "3": {
+        "adaptatif": 2,
+        "stats": {
+          "vitalite": 4
+        }
+      },
+      "4": {
+        "adaptatif": 2,
+        "stats": {
+          "vitalite": 4
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie de l'Obsidiantre": {
+    "pieces": [
+      "casque_de_l_obsidiantre",
+      "cape_de_l_obsidiantre",
+      "bague_de_l_obsidiantre"
+    ],
+    "toile": 38,
+    "paliers": {
+      "2": {
+        "adaptatif": 13,
+        "stats": {
+          "vitalite": 12
+        }
+      },
+      "3": {
+        "adaptatif": 26,
+        "stats": {
+          "vitalite": 23
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie de la Fournaise": {
+    "pieces": [
+      "heaume_oplate",
+      "massier"
+    ],
+    "toile": 56,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie de la Fuji Givrefoux": {
+    "pieces": [
+      "coiffe_de_la_fuji_givrefoux",
+      "cape_de_la_fuji_givrefoux",
+      "anneau_de_la_fuji_givrefoux"
+    ],
+    "toile": 41,
+    "paliers": {
+      "2": {
+        "adaptatif": 14,
+        "stats": {
+          "vitalite": 12
+        }
+      },
+      "3": {
+        "adaptatif": 28,
+        "stats": {
+          "vitalite": 24
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie des Herboricoles": {
+    "pieces": [
+      "anneau_poli",
+      "kidorteau"
+    ],
+    "toile": 27,
+    "paliers": {
+      "2": {
+        "adaptatif": 11,
+        "stats": {
+          "vitalite": 9
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie des Kabombz": {
+    "pieces": [
+      "panier_de_zoeufs",
+      "dagues_de_kabombz"
+    ],
+    "toile": 42,
+    "paliers": {
+      "2": {
+        "adaptatif": 14,
+        "stats": {
+          "vitalite": 12
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie des Prophètes": {
+    "pieces": [
+      "anneau_des_prophetes",
+      "baton_des_prophetes"
+    ],
+    "toile": 38,
+    "paliers": {
+      "2": {
+        "adaptatif": 13,
+        "stats": {
+          "vitalite": 12
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie des Spiritueurs": {
+    "pieces": [
+      "bandeau_de_spiritueur",
+      "fut_d_aspiratueur",
+      "katana_de_spiritueur"
+    ],
+    "toile": 40,
+    "paliers": {
+      "2": {
+        "adaptatif": 14,
+        "stats": {
+          "vitalite": 12
+        }
+      },
+      "3": {
+        "adaptatif": 27,
+        "stats": {
+          "vitalite": 24
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie des égarés": {
+    "pieces": [
+      "casque_des_egares",
+      "anneau_des_egares"
+    ],
+    "toile": 55,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie du Bouftou": {
+    "pieces": [
+      "coiffe_bouftou",
+      "cape_du_bouftou",
+      "anneau_bouftou",
+      "marteau_bouftou"
+    ],
+    "toile": 3,
+    "paliers": {
+      "2": {
+        "adaptatif": 2,
+        "stats": {
+          "vitalite": 3
+        }
+      },
+      "3": {
+        "adaptatif": 5,
+        "stats": {
+          "vitalite": 6
+        }
+      },
+      "4": {
+        "adaptatif": 5,
+        "stats": {
+          "vitalite": 6
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Bworker Berserker": {
+    "pieces": [
+      "cape_erforee",
+      "bracelet_ventre",
+      "lame_assacre"
+    ],
+    "toile": 45,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        }
+      },
+      "3": {
+        "adaptatif": 29,
+        "stats": {
+          "vitalite": 25
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie du Bworker Gladiateur": {
+    "pieces": [
+      "casque_harnage",
+      "anneau_blitere"
+    ],
+    "toile": 45,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie du Capitaine": {
+    "pieces": [
+      "coiffe_du_capitaine_pirate",
+      "cape_du_capitaine_pirate",
+      "alliance_du_capitaine_pirate",
+      "dagues_du_pirate"
+    ],
+    "toile": 19,
+    "paliers": {
+      "2": {
+        "adaptatif": 9,
+        "stats": {
+          "vitalite": 7
+        }
+      },
+      "3": {
+        "adaptatif": 19,
+        "stats": {
+          "vitalite": 14
+        }
+      },
+      "4": {
+        "adaptatif": 19,
+        "stats": {
+          "vitalite": 14
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Cartographe": {
+    "pieces": [
+      "bandeau_culaire",
+      "cape_parition"
+    ],
+    "toile": 52,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie du Commandant": {
+    "pieces": [
+      "casque_du_commandant_dragoeuf",
+      "cape_du_commandant_dragoeuf",
+      "anneau_du_commandant_dragoeuf",
+      "lame_du_commandant_dragoeuf"
+    ],
+    "toile": 21,
+    "paliers": {
+      "2": {
+        "adaptatif": 10,
+        "stats": {
+          "vitalite": 8
+        }
+      },
+      "3": {
+        "adaptatif": 20,
+        "stats": {
+          "vitalite": 16
+        }
+      },
+      "4": {
+        "adaptatif": 20,
+        "stats": {
+          "vitalite": 16
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Comte Harebourg": {
+    "pieces": [
+      "coiffe_du_comte_harebourg",
+      "anneau_du_comte_harebourg"
+    ],
+    "toile": 51,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie du Corbac": {
+    "pieces": [
+      "corbacoiffe",
+      "corbacape",
+      "corbalame"
+    ],
+    "toile": 26,
+    "paliers": {
+      "2": {
+        "adaptatif": 11,
+        "stats": {
+          "vitalite": 9
+        }
+      },
+      "3": {
+        "adaptatif": 22,
+        "stats": {
+          "vitalite": 18
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie du Craqueleur": {
+    "pieces": [
+      "coiffe_du_craqueleur",
+      "cape_du_craqueleur",
+      "anneau_du_craqueleur",
+      "lame_du_craqueleur"
+    ],
+    "toile": 18,
+    "paliers": {
+      "2": {
+        "adaptatif": 9,
+        "stats": {
+          "vitalite": 7
+        }
+      },
+      "3": {
+        "adaptatif": 18,
+        "stats": {
+          "vitalite": 14
+        }
+      },
+      "4": {
+        "adaptatif": 18,
+        "stats": {
+          "vitalite": 14
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Directeur": {
+    "pieces": [
+      "chapeau_du_directeur_grunob",
+      "cape_ricefini",
+      "bague_rafe",
+      "faux_du_directeur_grunob"
+    ],
+    "toile": 5,
+    "paliers": {
+      "2": {
+        "adaptatif": 3,
+        "stats": {
+          "vitalite": 3
+        }
+      },
+      "3": {
+        "adaptatif": 7,
+        "stats": {
+          "vitalite": 7
+        }
+      },
+      "4": {
+        "adaptatif": 7,
+        "stats": {
+          "vitalite": 7
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Dragoeuf Cuirassé": {
+    "pieces": [
+      "casque_dragoeuf",
+      "cape_dragoeuf",
+      "anneau_du_dragoeuf",
+      "epee_du_dragoeuf",
+      "hache_du_dragoeuf",
+      "marteau_du_dragoeuf"
+    ],
+    "toile": 29,
+    "paliers": {
+      "2": {
+        "adaptatif": 12,
+        "stats": {
+          "vitalite": 10
+        }
+      },
+      "3": {
+        "adaptatif": 24,
+        "stats": {
+          "vitalite": 20
+        }
+      },
+      "4": {
+        "adaptatif": 24,
+        "stats": {
+          "vitalite": 20
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Dragon Cochon": {
+    "pieces": [
+      "coiffe_dragon_cochon",
+      "cape_du_dragon_cochon",
+      "anneau_du_dragon_cochon",
+      "kaiser"
+    ],
+    "toile": 20,
+    "paliers": {
+      "2": {
+        "adaptatif": 10,
+        "stats": {
+          "vitalite": 7
+        }
+      },
+      "3": {
+        "adaptatif": 19,
+        "stats": {
+          "vitalite": 15
+        }
+      },
+      "4": {
+        "adaptatif": 19,
+        "stats": {
+          "vitalite": 15
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Glourséleste": {
+    "pieces": [
+      "masque_du_glourseleste",
+      "cape_du_glourseleste"
+    ],
+    "toile": 47,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie du Granduk": {
+    "pieces": [
+      "masque_du_granduk",
+      "epee_du_granduk"
+    ],
+    "toile": 51,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie du Grolandais": {
+    "pieces": [
+      "fantomasque",
+      "hache_du_fancrome",
+      "marteau_de_la_vigie_pirate"
+    ],
+    "toile": 36,
+    "paliers": {
+      "2": {
+        "adaptatif": 13,
+        "stats": {
+          "vitalite": 11
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie du Kanimate": {
+    "pieces": [
+      "coiffe_du_kanimate",
+      "cape_du_kanimate"
+    ],
+    "toile": 49,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie du Korriandre": {
+    "pieces": [
+      "cape_du_korriandre",
+      "anneau_du_korriandre",
+      "hache_du_korriandre"
+    ],
+    "toile": 43,
+    "paliers": {
+      "2": {
+        "adaptatif": 14,
+        "stats": {
+          "vitalite": 12
+        }
+      },
+      "3": {
+        "adaptatif": 28,
+        "stats": {
+          "vitalite": 25
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie du Kwak": {
+    "pieces": [
+      "kwakoiffe_de_flammes",
+      "kwape_de_glace",
+      "kwakanneau_de_terre",
+      "kwaklame_de_vent"
+    ],
+    "toile": 12,
+    "paliers": {
+      "2": {
+        "adaptatif": 7,
+        "stats": {
+          "vitalite": 5
+        }
+      },
+      "3": {
+        "adaptatif": 14,
+        "stats": {
+          "vitalite": 11
+        }
+      },
+      "4": {
+        "adaptatif": 14,
+        "stats": {
+          "vitalite": 11
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Mansot Royal": {
+    "pieces": [
+      "couronne_du_mansot_royal",
+      "cape_du_mansot_royal",
+      "anneau_du_mansot_royal"
+    ],
+    "toile": 35,
+    "paliers": {
+      "2": {
+        "adaptatif": 13,
+        "stats": {
+          "vitalite": 11
+        }
+      },
+      "3": {
+        "adaptatif": 26,
+        "stats": {
+          "vitalite": 23
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie du Minotoror": {
+    "pieces": [
+      "minotokorno",
+      "cape_du_minotoror",
+      "anneau_du_minotoror",
+      "hache_du_minotoror"
+    ],
+    "toile": 30,
+    "paliers": {
+      "2": {
+        "adaptatif": 12,
+        "stats": {
+          "vitalite": 10
+        }
+      },
+      "3": {
+        "adaptatif": 24,
+        "stats": {
+          "vitalite": 20
+        }
+      },
+      "4": {
+        "adaptatif": 24,
+        "stats": {
+          "vitalite": 20
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Minotot": {
+    "pieces": [
+      "coiffe_du_minotot",
+      "cape_du_minotot",
+      "bracelet_du_minotot",
+      "sceptre_du_minotot"
+    ],
+    "toile": 39,
+    "paliers": {
+      "2": {
+        "adaptatif": 13,
+        "stats": {
+          "vitalite": 12
+        }
+      },
+      "3": {
+        "adaptatif": 27,
+        "stats": {
+          "vitalite": 23
+        }
+      },
+      "4": {
+        "adaptatif": 27,
+        "stats": {
+          "vitalite": 23
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Mominotor": {
+    "pieces": [
+      "coiffe_du_mominotor",
+      "cape_du_mominotor",
+      "alliance_du_mominotor",
+      "marteau_du_mominotor"
+    ],
+    "toile": 30,
+    "paliers": {
+      "2": {
+        "adaptatif": 12,
+        "stats": {
+          "vitalite": 10
+        }
+      },
+      "3": {
+        "adaptatif": 24,
+        "stats": {
+          "vitalite": 20
+        }
+      },
+      "4": {
+        "adaptatif": 24,
+        "stats": {
+          "vitalite": 20
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Muloubard": {
+    "pieces": [
+      "coiffe_du_muloubard",
+      "cape_du_muloubard",
+      "anneau_du_muloubard",
+      "griffe_du_muloubard"
+    ],
+    "toile": 22,
+    "paliers": {
+      "2": {
+        "adaptatif": 10,
+        "stats": {
+          "vitalite": 8
+        }
+      },
+      "3": {
+        "adaptatif": 20,
+        "stats": {
+          "vitalite": 16
+        }
+      },
+      "4": {
+        "adaptatif": 20,
+        "stats": {
+          "vitalite": 16
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Ougah": {
+    "pieces": [
+      "ougalurette",
+      "ougarteau"
+    ],
+    "toile": 46,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie du Poolay": {
+    "pieces": [
+      "perruque_du_poolay",
+      "poolache"
+    ],
+    "toile": 37,
+    "paliers": {
+      "2": {
+        "adaptatif": 13,
+        "stats": {
+          "vitalite": 11
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie du Rat Blanc": {
+    "pieces": [
+      "couvre_chef_du_rat_blanc",
+      "cape_du_rat_blanc",
+      "gant_du_rat_blanc",
+      "rapiere_du_rat_blanc"
+    ],
+    "toile": 25,
+    "paliers": {
+      "2": {
+        "adaptatif": 11,
+        "stats": {
+          "vitalite": 9
+        }
+      },
+      "3": {
+        "adaptatif": 21,
+        "stats": {
+          "vitalite": 17
+        }
+      },
+      "4": {
+        "adaptatif": 21,
+        "stats": {
+          "vitalite": 17
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Rat Noir": {
+    "pieces": [
+      "masque_du_rat_noir",
+      "cape_du_rat_noir",
+      "gant_du_rat_noir",
+      "dagues_du_rat_noir"
+    ],
+    "toile": 25,
+    "paliers": {
+      "2": {
+        "adaptatif": 11,
+        "stats": {
+          "vitalite": 9
+        }
+      },
+      "3": {
+        "adaptatif": 21,
+        "stats": {
+          "vitalite": 17
+        }
+      },
+      "4": {
+        "adaptatif": 21,
+        "stats": {
+          "vitalite": 17
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Roks'or": {
+    "pieces": [
+      "casque_du_roks_or",
+      "cape_du_roks_or",
+      "anneau_du_roks_or",
+      "pelle_du_roks_or"
+    ],
+    "toile": 13,
+    "paliers": {
+      "2": {
+        "adaptatif": 7,
+        "stats": {
+          "vitalite": 5
+        }
+      },
+      "3": {
+        "adaptatif": 14,
+        "stats": {
+          "vitalite": 11
+        }
+      },
+      "4": {
+        "adaptatif": 14,
+        "stats": {
+          "vitalite": 11
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Scorbute": {
+    "pieces": [
+      "coiffe_du_scorbute",
+      "cape_du_scorbute",
+      "anneau_du_scorbute",
+      "racine_du_scorbute"
+    ],
+    "toile": 16,
+    "paliers": {
+      "2": {
+        "adaptatif": 8,
+        "stats": {
+          "vitalite": 6
+        }
+      },
+      "3": {
+        "adaptatif": 17,
+        "stats": {
+          "vitalite": 13
+        }
+      },
+      "4": {
+        "adaptatif": 17,
+        "stats": {
+          "vitalite": 13
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Supervizœuf": {
+    "pieces": [
+      "casque_du_supervizoeuf",
+      "carapace_ailee_du_supervizoeuf",
+      "poing_du_supervizoeuf"
+    ],
+    "toile": 42,
+    "paliers": {
+      "2": {
+        "adaptatif": 14,
+        "stats": {
+          "vitalite": 12
+        }
+      },
+      "3": {
+        "adaptatif": 28,
+        "stats": {
+          "vitalite": 24
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie du Tengu Givrefoux": {
+    "pieces": [
+      "coiffe_de_tengu_givrefoux",
+      "cape_de_tengu_givrefoux"
+    ],
+    "toile": 41,
+    "paliers": {
+      "2": {
+        "adaptatif": 14,
+        "stats": {
+          "vitalite": 12
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie du Tofu": {
+    "pieces": [
+      "coiffe_du_tofu",
+      "cape_du_tofu",
+      "anneau_du_tofu",
+      "baguette_du_tofu"
+    ],
+    "toile": 4,
+    "paliers": {
+      "2": {
+        "adaptatif": 3,
+        "stats": {
+          "vitalite": 3
+        }
+      },
+      "3": {
+        "adaptatif": 6,
+        "stats": {
+          "vitalite": 6
+        }
+      },
+      "4": {
+        "adaptatif": 6,
+        "stats": {
+          "vitalite": 6
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Tynril": {
+    "pieces": [
+      "coiffe_du_tynril",
+      "rhizome_du_tynril"
+    ],
+    "toile": 34,
+    "paliers": {
+      "2": {
+        "adaptatif": 13,
+        "stats": {
+          "vitalite": 11
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie du Vénérable Endormi": {
+    "pieces": [
+      "cornes_du_venerable_endormi",
+      "manteau_du_venerable_endormi",
+      "malediction_du_venerable_endormi",
+      "arc_du_venerable_endormi"
+    ],
+    "toile": 58,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        }
+      },
+      "3": {
+        "adaptatif": 30,
+        "stats": {
+          "vitalite": 26
+        }
+      },
+      "4": {
+        "adaptatif": 30,
+        "stats": {
+          "vitalite": 26
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Wa Wabbit": {
+    "pieces": [
+      "couronne_du_wa_wabbit",
+      "cape_du_wa_wabbit",
+      "bracelet_du_wa_wabbit",
+      "sceptre_du_wa_wabbit"
+    ],
+    "toile": 17,
+    "paliers": {
+      "2": {
+        "adaptatif": 9,
+        "stats": {
+          "vitalite": 7
+        }
+      },
+      "3": {
+        "adaptatif": 18,
+        "stats": {
+          "vitalite": 13
+        }
+      },
+      "4": {
+        "adaptatif": 18,
+        "stats": {
+          "vitalite": 13
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Panoplie du Wukang": {
+    "pieces": [
+      "casque_onsonne",
+      "cape_ostrophe",
+      "faux_neme"
+    ],
+    "toile": 57,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        }
+      },
+      "3": {
+        "adaptatif": 30,
+        "stats": {
+          "vitalite": 26
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplignon": {
+    "pieces": [
+      "chapignon",
+      "caprin",
+      "anneau_colerette",
+      "couteaux_a_champignons"
+    ],
+    "toile": 46,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        }
+      },
+      "3": {
+        "adaptatif": 29,
+        "stats": {
+          "vitalite": 25
+        }
+      },
+      "4": {
+        "adaptatif": 29,
+        "stats": {
+          "vitalite": 25
+        },
+        "pa": 1
+      }
+    }
+  },
+  "Pikoplie": {
+    "pieces": [
+      "casquipik",
+      "pikano"
+    ],
+    "toile": 52,
+    "paliers": {
+      "2": {
+        "adaptatif": 15,
+        "stats": {
+          "vitalite": 13
+        },
+        "resistances": {
+          "terre": 0.04,
+          "feu": 0.04,
+          "eau": 0.04,
+          "air": 0.04
+        }
+      }
+    }
+  },
+  "Panoplie en Mousse": {
+    "pieces": [
+      "coiffe_en_mousse",
+      "cape_en_mousse",
+      "anneau_en_mousse",
+      "pelle_en_mousse"
+    ],
+    "toile": 10,
+    "paliers": {
+      "2": {
+        "adaptatif": 7,
+        "stats": {
+          "vitalite": 6
+        }
+      },
+      "3": {
+        "adaptatif": 14,
+        "stats": {
+          "vitalite": 11
+        }
+      },
+      "4": {
+        "adaptatif": 14,
+        "stats": {
+          "vitalite": 11
+        },
+        "pa": 1
+      }
+    },
+    "secret": true
+  },
+  "Panoplie du Boufcoul": {
+    "pieces": [
+      "coiffe_du_boufcoul",
+      "cape_du_boufcoul",
+      "anneau_du_boufcoul",
+      "marteau_du_boufcoul"
+    ],
+    "toile": 22,
+    "paliers": {
+      "2": {
+        "adaptatif": 12,
+        "stats": {
+          "vitalite": 9
+        }
+      },
+      "3": {
+        "adaptatif": 23,
+        "stats": {
+          "vitalite": 18
+        }
+      },
+      "4": {
+        "adaptatif": 23,
+        "stats": {
+          "vitalite": 18
+        },
+        "pa": 1
+      }
+    },
+    "secret": true
+  },
+  "Panoplie du Professeur Xa": {
+    "pieces": [
+      "cape_du_professeur_xa",
+      "anneau_du_professeur_xa",
+      "pelle_du_professeur_xa"
+    ],
+    "toile": 46,
+    "paliers": {
+      "2": {
+        "adaptatif": 17,
+        "stats": {
+          "vitalite": 15
+        }
+      },
+      "3": {
+        "adaptatif": 34,
+        "stats": {
+          "vitalite": 29
+        },
+        "resistances": {
+          "terre": 0.05,
+          "feu": 0.05,
+          "eau": 0.05,
+          "air": 0.05
+        }
+      }
+    },
+    "secret": true
+  },
+  "Panoplie de Tal Kasha": {
+    "pieces": [
+      "nemes_de_tal_kasha",
+      "chevelure_de_tal_kasha"
+    ],
+    "toile": 58,
+    "paliers": {
+      "2": {
+        "adaptatif": 17,
+        "stats": {
+          "vitalite": 15
+        },
+        "resistances": {
+          "terre": 0.05,
+          "feu": 0.05,
+          "eau": 0.05,
+          "air": 0.05
+        }
+      }
+    },
+    "secret": true
+  }
+}

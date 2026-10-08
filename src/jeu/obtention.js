@@ -7,6 +7,7 @@ import {
   EQUIPEMENTS,
   MONDES,
   MONSTRES,
+  SECRETS,
   SUCCES,
   ZONES,
 } from "../data/index.js";
@@ -63,7 +64,12 @@ export function texteObtentionObjet(id) {
       `Aussi en vente à l'Hôtel de vente de ces zones (épique et plus) et de la zone précédente (rare et plus).`,
     );
   } else {
-    lignes.push(`Ne tombe dans aucune zone actuelle.`);
+    const secret = Object.entries(SECRETS).find(([, d]) => d.butin.includes(id));
+    lignes.push(
+      secret
+        ? `Récompense du donjon secret ${secret[1].nom} (${MONDES.find((m) => m.id === secret[0])?.nom}) : il s'ouvre avec une clé trouvée dans un coffre, chez un contrebandier (case Rencontre) ou sur un monstre de combat dur.`
+        : `Ne tombe dans aucune zone actuelle.`,
+    );
   }
   const paliers = Object.keys(EQUIPEMENTS[id]?.tiers ?? {}).length;
   if (paliers > 1) {
@@ -136,6 +142,19 @@ function indexerLieux() {
         }
       }
     });
+    // donjon secret du monde (ouvert avec une clé)
+    const secret = SECRETS[monde.id];
+    for (const { monstre } of COMBATS[secret?.combat]?.ennemis ?? []) {
+      const lieux = lieuxParMonstre.get(monstre) ?? [];
+      lieux.push({
+        zoneId: null,
+        zone: secret.nom,
+        monde: monde.nom,
+        secret: true,
+        type: `donjon secret`,
+      });
+      lieuxParMonstre.set(monstre, lieux);
+    }
   }
 }
 export function lieuxMonstre(id) {
@@ -149,7 +168,13 @@ export function texteLieuxMonstre(id) {
   if (!lieux.length) {
     return `n'apparaît dans aucune zone pour l'instant`;
   }
-  return lieux.map((l) => `« ${l.zone} » (${l.monde}, zone ${l.num}), ${l.type}`).join(` ; ou `);
+  return lieux
+    .map((l) =>
+      l.secret
+        ? `« ${l.zone} », donjon secret du ${l.monde} (il s'ouvre avec une clé, après le boss d'une zone)`
+        : `« ${l.zone} » (${l.monde}, zone ${l.num}), ${l.type}`,
+    )
+    .join(` ; ou `);
 }
 const nomZone = (id) => ZONES.find((z) => z.id === id)?.nom ?? id;
 const nomMonde = (id) => MONDES.find((m) => m.id === id)?.nom ?? id;

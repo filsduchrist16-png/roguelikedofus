@@ -6,12 +6,14 @@ const SECTIONS_REGLES = [
     corps: `<p>Une run se joue dans un monde, qui couvre une fourchette de niveaux. Chaque monde enchaîne plusieurs zones, et chaque
       zone est une carte qu'on traverse jusqu'au donjon. Battre le boss du donjon ouvre la
       zone suivante ; battre le dernier boss gagne la run.</p>
-      <p>Tu pars avec deux héros et tu peux en recruter d'autres en taverne, jusqu'à quatre.</p>`,
+      <p>Tu pars avec deux héros et tu peux en recruter d'autres en taverne, jusqu'à quatre. Dans la
+      première zone d'un monde, la rangée qui suit le premier combat est faite de tavernes.</p>`,
   },
   {
     titre: `Les PV`,
-    corps: `<p>Les PV ne remontent pas entre deux combats. Pour se soigner, il y a la taverne (la moitié des
-      PV max) et la victoire contre un boss de zone, qui remet toute l'équipe sur pied.</p>
+    corps: `<p>Après chaque combat gagné, les héros encore debout récupèrent 10 % de leurs PV max ; un héros
+      tombé reste K.O. Pour se soigner davantage, il y a la taverne (la moitié des PV max), certaines
+      rencontres et la victoire contre un boss de zone, qui remet toute l'équipe sur pied.</p>
       <p>Si toute l'équipe tombe, la run s'arrête : tu perds les héros, l'équipement et les kamas.</p>`,
   },
   {
@@ -24,8 +26,16 @@ const SECTIONS_REGLES = [
       <li><b>Zaap</b> : la rencontre n'est révélée qu'en arrivant.</li>
       <li><b>Hôtel de vente</b> : acheter et revendre des objets.</li>
       <li><b>Forgemage</b> : faire monter un objet d'une rareté.</li>
+      <li><b>Rencontre</b> : un événement à choix (sanctuaire, coffre, marchand, idoles, avis de
+        recherche, clé de donjon).</li>
       <li><b>Donjon</b> : le boss de la zone.</li>
-    </ul>`,
+    </ul>
+    <p><b>Donjon secret.</b> Chaque monde cache un donjon secret (Château Ensablé, Caverne du Koulosse,
+      Repaire de Skeunk, Cavernes du Kolosso, Chambre de Tal Kasha). Sa clé se trouve dans un coffre,
+      chez un contrebandier ou sur un monstre de combat dur. Après le boss d'une zone, tu peux l'utiliser :
+      le donjon secret est plus fort que celui de la zone, et d'autant plus que la zone est avancée, mais
+      il donne un objet épique ou légendaire de son butin, beaucoup de kamas et d'XP. Perdre n'arrête pas
+      la run : l'équipe est expulsée et la clé est perdue.</p>`,
   },
   {
     titre: `Le combat`,
@@ -50,8 +60,9 @@ const SECTIONS_REGLES = [
   {
     titre: `Équipement et kamas`,
     corps: `<p>Chaque héros porte une arme, une coiffe, une cape et un anneau. Les objets tombent en combat,
-      en quatre raretés : commun, rare, épique et légendaire. Les quatre pièces d'une même panoplie
-      donnent +1 PA.</p>
+      en quatre raretés : commun, rare, épique et légendaire. Porter plusieurs pièces d'une même
+      panoplie donne un bonus qui grandit avec le nombre de pièces (2, 3 puis 4) ; les 4 pièces donnent
+      aussi +1 PA, et une petite panoplie complète donne des résistances.</p>
       <p>Les kamas se gagnent en combat et en revendant des objets. Ils servent à l'hôtel de vente et chez
       le forgemage.</p>`,
   },

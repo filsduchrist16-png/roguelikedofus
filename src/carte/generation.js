@@ -61,7 +61,9 @@ const colonnesLigne = (e) => {
       return [0];
   }
 };
-export function genererCarte(e, t, n = []) {
+// `premiereZone` : la rangée qui suit le premier combat d'un monde est une rangée de tavernes, pour
+// recruter un troisième héros (ou se soigner) avant d'aller plus loin.
+export function genererCarte(e, t, n = [], { premiereZone = false } = {}) {
   let r = Object.fromEntries(Object.entries(CONFIG_CARTE.poids).filter(([e]) => !n.includes(e)));
   let i = largeursLignes(e);
   let i_length = i.length;
@@ -70,7 +72,14 @@ export function genererCarte(e, t, n = []) {
     let s = colonnesLigne(i[ligne]);
     let c = [];
     s.forEach((colonne, o) => {
-      let type = ligne === 0 ? `combat` : ligne === i_length - 1 ? `donjon` : tirageType(e, r);
+      let type =
+        ligne === 0
+          ? `combat`
+          : ligne === i_length - 1
+            ? `donjon`
+            : ligne === 1 && premiereZone && !n.includes(`taverne`)
+              ? `taverne`
+              : tirageType(e, r);
       let l = {
         id: `n${ligne}_${o}`,
         type,

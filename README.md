@@ -47,6 +47,9 @@ src/
     butinZones.json      objets lâchés dans chaque zone
     succes.json          succès et quêtes
     reliques.json        reliques de boss
+    panoplies.json       paliers de bonus des panoplies
+    secrets.json         donjon secret de chaque monde (combat, butin)
+    ajustementsZones.json puissance des monstres par zone (réglée par simulation)
     creatures.json       créatures et tourelles invoquées par les héros (Osamodas, Steamer)
     index.js             Dofus, zones et mondes (+ ré-export des JSON)
   jeu/                   règles hors combat
@@ -60,7 +63,9 @@ src/
     objectifs.js         objectifs de succès réalisables dans le combat qui commence
     inventaire.js        comparer un objet à celui porté, regrouper les doublons
     defis.js             défis de combat (Premier, Dernier, Blitzkrieg, Survivant…)
-    rencontres.js        cases « Rencontre » : bénédictions, idoles, coffre, marchand, traque
+    rencontres.js        cases « Rencontre » : bénédictions, idoles, coffre, marchand, traque, clé
+    secret.js            donjons secrets : clé, monstres à la puissance de la zone, récompenses
+    panoplies.js         bonus de panoplie par palier (2, 3, 4 pièces)
   combat/                moteur de combat (sans affichage)
     stats.js             calculs : cibles valides, esquive, critique, résistances, dégâts
     effets.js            dégâts infligés, soins, boucliers, effets de début/fin de tour, invocations

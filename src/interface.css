@@ -1343,3 +1343,411 @@ button,
   vertical-align: middle;
   object-fit: contain;
 }
+
+/* ---------- Bandeaux (quêtes, défis) : compacts, 3 au plus ---------- */
+#bandeaux-quete {
+  width: min(92vw, 520px);
+  align-items: center;
+}
+.bandeau-quete {
+  max-width: 100%;
+  border-radius: 14px;
+  padding: 5px 12px;
+  font-size: 0.82rem;
+  line-height: 1.3;
+  text-align: center;
+  transition: opacity 0.4s;
+}
+.bandeau-quete.sortie {
+  opacity: 0;
+}
+@media (max-width: 700px) {
+  .bandeau-quete {
+    font-size: 0.72rem;
+    padding: 4px 10px;
+    background: #3a2c1af2;
+  }
+}
+
+/* ======================================================================
+   Ergonomie téléphone : chaque écran tient (presque) sans défiler, et
+   les actions restent sous le pouce.
+   ====================================================================== */
+@media (width<=700px) {
+  /* ---------- carte de la zone ---------- */
+  .map-layout {
+    gap: 6px;
+    min-height: 0;
+  }
+  .map-topbar {
+    gap: 4px;
+    padding: 0;
+  }
+  .map-topbar .zone-titre {
+    font-size: 1.15rem;
+    line-height: 1.2;
+  }
+  .zone-effets {
+    margin: 0;
+  }
+  /* une seule rangée d'icônes, qui défile au doigt si besoin */
+  .topbar-actions {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    width: 100%;
+    overflow-x: auto;
+    gap: 2px;
+    padding: 4px;
+    scrollbar-width: none;
+  }
+  .topbar-actions::-webkit-scrollbar {
+    display: none;
+  }
+  .topbar-actions .aside-icone {
+    min-width: 50px;
+    padding: 2px;
+  }
+  .topbar-actions .aside-icone img {
+    width: 28px;
+    height: 28px;
+  }
+  .topbar-actions .aside-lbl {
+    font-size: 0.6rem;
+    white-space: nowrap;
+  }
+  .topbar-sep {
+    display: none;
+  }
+  .map-scroll {
+    flex: 1;
+    min-height: 0;
+    max-height: calc(100dvh - 215px);
+  }
+  .map-scroll .map-zone {
+    margin: 0 auto;
+  }
+  .map-equipe-bar {
+    gap: 6px;
+    padding: 6px 8px;
+  }
+  .equipe-bar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px 8px;
+    width: 100%;
+  }
+  .equipe-bar .aside-perso {
+    gap: 4px;
+    min-width: 0;
+  }
+  .equipe-bar .aside-sym {
+    width: 26px;
+    height: 26px;
+  }
+  .equipe-bar .pv-gem-aside {
+    width: 36px;
+    height: 36px;
+  }
+  .equipe-bar .aside-info {
+    min-width: 0;
+  }
+  .equipe-bar .aside-nom {
+    overflow: hidden;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .map-equipe-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .map-equipe-bar .aside-kamas {
+    align-self: flex-end;
+    font-size: 0.8rem;
+  }
+
+  /* ---------- combat ---------- */
+  .titre-combat {
+    margin: 2px 0 4px;
+    font-size: 0.95rem;
+  }
+  .defi-combat {
+    flex-wrap: nowrap;
+    gap: 6px;
+    margin: 0 auto 6px;
+    padding: 3px 10px;
+    border-width: 1px;
+    font-size: 0.68rem;
+    line-height: 1.25;
+  }
+  .defi-combat .defi-bonus {
+    white-space: nowrap;
+  }
+  .timeline {
+    margin-bottom: 6px;
+    padding: 4px 6px;
+  }
+  .tl-pastille {
+    width: 38px;
+    height: 38px;
+  }
+  .plateau {
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .colonne {
+    padding: 6px;
+  }
+  .colonne h3 {
+    margin: 0 0 2px;
+    font-size: 0.7rem;
+  }
+  .colonne h3 .hint {
+    display: none;
+  }
+  .combat .camp-lignes {
+    gap: 4px;
+  }
+  .combat .ligne-label {
+    margin: 0 0 2px 2px;
+    font-size: 0.66rem;
+  }
+  /* ligne avant et ligne arrière côte à côte (avant à gauche dans les deux camps), cartes compactes */
+  .combat .camp-lignes {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .combat .camp-lignes.joueur {
+    flex-direction: row-reverse;
+  }
+  .combat .camp-lignes .ligne-col {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+  }
+  .combat .camp-lignes .ligne-col:has(.ligne-vide) {
+    flex: 0 0 auto;
+    flex-direction: column;
+    width: auto;
+    max-width: 70px;
+  }
+  .combat .ligne-cards {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+  .combat .ligne-cards .carte {
+    grid-template-columns: 34px minmax(0, 1fr);
+    grid-template-areas:
+      "portrait tete"
+      "portrait pv"
+      "res res"
+      "badges badges";
+    column-gap: 5px;
+    row-gap: 2px;
+    padding: 3px 5px;
+  }
+  .combat .carte .rang {
+    display: none;
+  }
+  .combat .carte .carte-nom {
+    font-size: 0.74rem;
+  }
+  .combat .carte .portrait-wrap,
+  .combat .carte .portrait {
+    width: 34px;
+    height: 34px;
+  }
+  .combat .carte .pv-barre {
+    min-height: 18px;
+    padding: 0 5px;
+  }
+  .combat .carte .pv-barre-txt,
+  .combat .carte .pa-txt {
+    font-size: 0.7rem;
+  }
+  .combat .carte .res-row {
+    gap: 2px;
+    margin-top: 0;
+  }
+  .combat .carte .res-chip {
+    gap: 1px;
+    min-width: 0;
+    padding: 0 1px;
+    font-size: 0.6rem;
+    letter-spacing: -0.02em;
+  }
+  .combat .carte .res-chip img {
+    width: 10px;
+    height: 10px;
+  }
+  .combat .carte .badge {
+    padding: 1px 4px;
+    font-size: 0.64rem;
+  }
+  .zone-bas .journal {
+    height: 64px;
+    margin-bottom: 6px;
+    font-size: 0.74rem;
+  }
+  /* les sorts sur une rangée, « Terminer » en fine barre dessous ; le tout collé en bas */
+  .zone-bas .barre-sorts {
+    max-height: 46dvh;
+    padding: 6px;
+  }
+  .sorts-rangee {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .sorts-rangee .sorts-zone {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  .sorts-liste {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2px;
+  }
+  .sort {
+    width: 38px;
+    height: 38px;
+  }
+  .sort .sort-pa-badge {
+    transform: scale(0.85);
+    transform-origin: top right;
+  }
+  .sorts-rangee .barre-actions-fin {
+    flex: 1 1 100%;
+  }
+  .sorts-rangee .fin-tour {
+    width: 100%;
+    min-height: 34px;
+    padding: 2px 8px;
+  }
+  .sorts-rangee .fin-tour img {
+    max-height: 22px;
+  }
+  .sorts-rangee .fin-tour kbd {
+    display: none;
+  }
+  /* PA : seulement pour le combattant qui joue (la barre de PV reste lisible) */
+  .combat .carte:not(.actif) .pa-txt {
+    display: none;
+  }
+  .aide-sort-detail .tip-val {
+    font-size: 0.95rem;
+  }
+  .aide-sort-detail .tip-el {
+    font-size: 0.66rem;
+  }
+  .aide-sort-detail .tip-stat {
+    margin: 3px 0 2px;
+  }
+  .aide-sort-detail .tip-effet {
+    font-size: 0.74rem;
+  }
+  .aide {
+    margin-top: 6px;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+  }
+  .aide-sort-tete {
+    gap: 6px;
+  }
+  .aide-sort-tete .secondaire {
+    padding: 4px 10px;
+  }
+  .aide-sort-detail {
+    max-height: 15dvh;
+    overflow-y: auto;
+    font-size: 0.78rem;
+  }
+  .aide-sort-detail .tip-cible {
+    display: none;
+  }
+  .aide-sort-tete .aide-consigne {
+    font-size: 0.8rem;
+  }
+
+  /* ---------- écrans plus serrés ---------- */
+  h1 {
+    font-size: 1.45rem;
+  }
+  /* équipement : héros en onglets sur une rangée, colonnes sans débordement */
+  .equip-onglets {
+    flex-wrap: nowrap;
+    gap: 4px;
+    margin: 6px 0;
+  }
+  .equip-onglet {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 4px;
+    gap: 3px;
+    font-size: 0.78rem;
+  }
+  .equip-onglet img {
+    width: 30px;
+    height: 30px;
+  }
+  .equip-onglet .onglet-texte {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .equip-onglet small {
+    display: block;
+    font-size: 0.66rem;
+  }
+  .equip-corps {
+    gap: 10px;
+  }
+  .equip-col {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  .equip-col h3 {
+    margin: 4px 0;
+    font-size: 0.95rem;
+  }
+  .equip-slots {
+    gap: 4px;
+  }
+  .equip-slot {
+    gap: 6px;
+    min-height: 38px;
+    padding: 4px 8px;
+  }
+  .slot-nom {
+    width: 52px;
+  }
+  .slot-vide-txt small {
+    display: block;
+  }
+  /* rencontres : illustration et choix plus compacts */
+  .rencontre-img {
+    width: 64px;
+    height: 64px;
+  }
+  .rencontre-texte {
+    margin: 4px auto 8px;
+    font-size: 0.88rem;
+  }
+  .rencontre-choix {
+    gap: 6px;
+  }
+  .rencontre-option {
+    padding: 7px 10px;
+  }
+  .rencontre-option small {
+    font-size: 0.76rem;
+  }
+
+  /* ---------- écrans à choix : le bouton d'action reste visible ---------- */
+  .ecran .boutons-ecran {
+    position: sticky;
+    bottom: 0;
+  }
+}
+.equip-slot.vide {
+  cursor: pointer;
+}

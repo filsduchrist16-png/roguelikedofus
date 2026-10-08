@@ -12428,5 +12428,733 @@
       "charge",
       "morsure"
     ]
+  },
+  "mob_l_eponge": {
+    "id": "mob_l_eponge",
+    "nom": "Mob l'Éponge",
+    "img": "/assets/monstres/mob_l_eponge.png",
+    "pv": 630,
+    "stats": {
+      "force": 8,
+      "intelligence": 8,
+      "chance": 30,
+      "agilite": 8,
+      "vitalite": 346
+    },
+    "initiative": 14,
+    "ia": "soutien",
+    "pa": 10,
+    "resistances": {
+      "terre": 0.15,
+      "feu": 0.3,
+      "eau": 0.3,
+      "air": -0.1
+    },
+    "sorts": [
+      "degraissage",
+      "rincage",
+      "regeneration_spontanee",
+      "charge"
+    ],
+    "secret": true,
+    "boss": true
+  },
+  "pichon_orange": {
+    "id": "pichon_orange",
+    "nom": "Pichon Orange",
+    "img": "/assets/monstres/pichon_orange.png",
+    "pv": 60,
+    "stats": {
+      "force": 8,
+      "intelligence": 34,
+      "chance": 8,
+      "agilite": 8,
+      "vitalite": 33
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "morsure",
+      "tir_courbe"
+    ],
+    "secret": true
+  },
+  "pichon_bleu": {
+    "id": "pichon_bleu",
+    "nom": "Pichon Bleu",
+    "img": "/assets/monstres/pichon_bleu.png",
+    "pv": 60,
+    "stats": {
+      "force": 8,
+      "intelligence": 8,
+      "chance": 34,
+      "agilite": 8,
+      "vitalite": 33
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "morsure",
+      "tir_courbe"
+    ],
+    "secret": true
+  },
+  "pichon_kloune": {
+    "id": "pichon_kloune",
+    "nom": "Pichon Kloune",
+    "img": "/assets/monstres/pichon_kloune.png",
+    "pv": 60,
+    "stats": {
+      "force": 8,
+      "intelligence": 8,
+      "chance": 8,
+      "agilite": 34,
+      "vitalite": 33
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "morsure",
+      "tir_courbe",
+      "tir_courbe"
+    ],
+    "secret": true
+  },
+  "pichon_vert": {
+    "id": "pichon_vert",
+    "nom": "Pichon Vert",
+    "img": "/assets/monstres/pichon_vert.png",
+    "pv": 60,
+    "stats": {
+      "force": 34,
+      "intelligence": 8,
+      "chance": 8,
+      "agilite": 8,
+      "vitalite": 33
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "morsure",
+      "tir_courbe",
+      "tir_courbe"
+    ],
+    "secret": true
+  },
+  "bouftou_des_cavernes": {
+    "id": "bouftou_des_cavernes",
+    "nom": "Bouftou des cavernes",
+    "img": "/assets/monstres/bouftou_des_cavernes.png",
+    "pv": 270,
+    "stats": {
+      "force": 96,
+      "intelligence": 24,
+      "chance": 24,
+      "agilite": 24,
+      "vitalite": 148
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "morsure",
+      "tir_courbe"
+    ],
+    "secret": true
+  },
+  "koulosse": {
+    "id": "koulosse",
+    "nom": "Koulosse",
+    "img": "/assets/monstres/koulosse.png",
+    "pv": 1380,
+    "stats": {
+      "force": 130,
+      "intelligence": 32,
+      "chance": 32,
+      "agilite": 32,
+      "vitalite": 759
+    },
+    "initiative": 14,
+    "ia": "agressif",
+    "pa": 10,
+    "resistances": {
+      "terre": 0.3,
+      "feu": 0.1,
+      "eau": 0.3,
+      "air": 0.1
+    },
+    "sorts": [
+      "invocation_bouftou_des_cavernes",
+      "souffle_du_koulosse",
+      "appel_du_koulosse",
+      "charge"
+    ],
+    "secret": true,
+    "boss": true
+  },
+  "drakoalak": {
+    "id": "drakoalak",
+    "nom": "Drakoalak",
+    "img": "/assets/monstres/drakoalak.png",
+    "pv": 340,
+    "stats": {
+      "force": 24,
+      "intelligence": 96,
+      "chance": 24,
+      "agilite": 24,
+      "vitalite": 187
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "morsure",
+      "tir_courbe"
+    ],
+    "secret": true
+  },
+  "mama_koalak": {
+    "id": "mama_koalak",
+    "nom": "Mama Koalak",
+    "img": "/assets/monstres/mama_koalak.png",
+    "pv": 340,
+    "stats": {
+      "force": 96,
+      "intelligence": 24,
+      "chance": 24,
+      "agilite": 24,
+      "vitalite": 187
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "morsure",
+      "tir_courbe"
+    ],
+    "secret": true
+  },
+  "warko_marron": {
+    "id": "warko_marron",
+    "nom": "Warko Marron",
+    "img": "/assets/monstres/warko_marron.png",
+    "pv": 340,
+    "stats": {
+      "force": 24,
+      "intelligence": 24,
+      "chance": 24,
+      "agilite": 96,
+      "vitalite": 187
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "morsure",
+      "tir_courbe",
+      "tir_courbe"
+    ],
+    "secret": true
+  },
+  "koalak_coco": {
+    "id": "koalak_coco",
+    "nom": "Koalak Coco",
+    "img": "/assets/monstres/koalak_coco.png",
+    "pv": 340,
+    "stats": {
+      "force": 24,
+      "intelligence": 24,
+      "chance": 96,
+      "agilite": 24,
+      "vitalite": 187
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "morsure",
+      "tir_courbe",
+      "tir_courbe"
+    ],
+    "secret": true
+  },
+  "skeunk": {
+    "id": "skeunk",
+    "nom": "Skeunk",
+    "img": "/assets/monstres/skeunk.png",
+    "pv": 1410,
+    "stats": {
+      "force": 50,
+      "intelligence": 199,
+      "chance": 50,
+      "agilite": 50,
+      "vitalite": 776
+    },
+    "initiative": 14,
+    "ia": "soutien",
+    "pa": 10,
+    "resistances": {
+      "terre": 0.2,
+      "feu": 0.35,
+      "eau": 0.2,
+      "air": 0.1
+    },
+    "sorts": [
+      "chant_foudroyant",
+      "chant_immobilisant",
+      "chant_regenerant",
+      "charge"
+    ],
+    "secret": true,
+    "boss": true
+  },
+  "emeraude": {
+    "id": "emeraude",
+    "nom": "Émeraude",
+    "img": "/assets/monstres/emeraude.png",
+    "pv": 650,
+    "stats": {
+      "force": 164,
+      "intelligence": 41,
+      "chance": 41,
+      "agilite": 41,
+      "vitalite": 358
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "toxine_t3",
+      "morsure"
+    ],
+    "secret": true
+  },
+  "rubise": {
+    "id": "rubise",
+    "nom": "Rubise",
+    "img": "/assets/monstres/rubise.png",
+    "pv": 650,
+    "stats": {
+      "force": 41,
+      "intelligence": 164,
+      "chance": 41,
+      "agilite": 41,
+      "vitalite": 358
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "toxine_t3",
+      "morsure"
+    ],
+    "secret": true
+  },
+  "saphira": {
+    "id": "saphira",
+    "nom": "Saphira",
+    "img": "/assets/monstres/saphira.png",
+    "pv": 560,
+    "stats": {
+      "force": 41,
+      "intelligence": 41,
+      "chance": 164,
+      "agilite": 41,
+      "vitalite": 308
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "toxine_t3",
+      "morsure",
+      "tir_courbe"
+    ],
+    "secret": true
+  },
+  "diamantine": {
+    "id": "diamantine",
+    "nom": "Diamantine",
+    "img": "/assets/monstres/diamantine.png",
+    "pv": 560,
+    "stats": {
+      "force": 41,
+      "intelligence": 41,
+      "chance": 41,
+      "agilite": 164,
+      "vitalite": 308
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "toxine_t3",
+      "morsure",
+      "tir_courbe"
+    ],
+    "secret": true
+  },
+  "kolosso": {
+    "id": "kolosso",
+    "nom": "Kolosso",
+    "img": "/assets/monstres/kolosso.png",
+    "pv": 1250,
+    "stats": {
+      "force": 250,
+      "intelligence": 62,
+      "chance": 62,
+      "agilite": 62,
+      "vitalite": 688
+    },
+    "initiative": 14,
+    "ia": "agressif",
+    "pa": 10,
+    "resistances": {
+      "terre": 0.35,
+      "feu": 0.2,
+      "eau": 0.2,
+      "air": 0.1
+    },
+    "sorts": [
+      "xalactite",
+      "razepoutine",
+      "charge"
+    ],
+    "secret": true,
+    "boss": true
+  },
+  "professeur_xa": {
+    "id": "professeur_xa",
+    "nom": "Professeur Xa",
+    "img": "/assets/monstres/professeur_xa.png",
+    "pv": 1170,
+    "stats": {
+      "force": 62,
+      "intelligence": 62,
+      "chance": 62,
+      "agilite": 250,
+      "vitalite": 644
+    },
+    "initiative": 14,
+    "ia": "agressif",
+    "pa": 10,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.2,
+      "eau": 0.2,
+      "air": 0.35
+    },
+    "sorts": [
+      "cerebro",
+      "kirbili",
+      "charge"
+    ],
+    "secret": true,
+    "boss": true
+  },
+  "blerom": {
+    "id": "blerom",
+    "nom": "Blérom",
+    "img": "/assets/monstres/blerom.png",
+    "pv": 560,
+    "stats": {
+      "force": 202,
+      "intelligence": 50,
+      "chance": 50,
+      "agilite": 50,
+      "vitalite": 308
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "sape_t4",
+      "morsure"
+    ],
+    "secret": true
+  },
+  "wolvero": {
+    "id": "wolvero",
+    "nom": "Wolvero",
+    "img": "/assets/monstres/wolvero.png",
+    "pv": 560,
+    "stats": {
+      "force": 50,
+      "intelligence": 202,
+      "chance": 50,
+      "agilite": 50,
+      "vitalite": 308
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "sape_t4",
+      "morsure",
+      "tir_courbe"
+    ],
+    "secret": true
+  },
+  "fleuro": {
+    "id": "fleuro",
+    "nom": "Fleuro",
+    "img": "/assets/monstres/fleuro.png",
+    "pv": 560,
+    "stats": {
+      "force": 50,
+      "intelligence": 50,
+      "chance": 202,
+      "agilite": 50,
+      "vitalite": 308
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "sape_t4",
+      "morsure",
+      "tir_courbe"
+    ],
+    "secret": true
+  },
+  "tal_kasha": {
+    "id": "tal_kasha",
+    "nom": "Tal Kasha",
+    "img": "/assets/monstres/tal_kasha.png",
+    "pv": 2350,
+    "stats": {
+      "force": 70,
+      "intelligence": 278,
+      "chance": 70,
+      "agilite": 70,
+      "vitalite": 1292
+    },
+    "initiative": 14,
+    "ia": "agressif",
+    "pa": 10,
+    "resistances": {
+      "terre": 0.25,
+      "feu": 0.35,
+      "eau": 0.2,
+      "air": 0.25
+    },
+    "sorts": [
+      "transe_perse",
+      "filature",
+      "cheveux_partir_de_la",
+      "charge"
+    ],
+    "secret": true,
+    "boss": true
+  },
+  "chakanoubis": {
+    "id": "chakanoubis",
+    "nom": "Chakanoubis",
+    "img": "/assets/monstres/chakanoubis.png",
+    "pv": 600,
+    "stats": {
+      "force": 234,
+      "intelligence": 58,
+      "chance": 58,
+      "agilite": 58,
+      "vitalite": 330
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "drain_vital_t5",
+      "morsure"
+    ],
+    "secret": true
+  },
+  "rykaon": {
+    "id": "rykaon",
+    "nom": "Rykaon",
+    "img": "/assets/monstres/rykaon.png",
+    "pv": 600,
+    "stats": {
+      "force": 58,
+      "intelligence": 58,
+      "chance": 58,
+      "agilite": 234,
+      "vitalite": 330
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "drain_vital_t5",
+      "morsure"
+    ],
+    "secret": true
+  },
+  "momistik": {
+    "id": "momistik",
+    "nom": "Momistik",
+    "img": "/assets/monstres/momistik.png",
+    "pv": 600,
+    "stats": {
+      "force": 58,
+      "intelligence": 234,
+      "chance": 58,
+      "agilite": 58,
+      "vitalite": 330
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "drain_vital_t5",
+      "morsure",
+      "tir_courbe"
+    ],
+    "secret": true
+  },
+  "griffotep": {
+    "id": "griffotep",
+    "nom": "Griffotep",
+    "img": "/assets/monstres/griffotep.png",
+    "pv": 600,
+    "stats": {
+      "force": 58,
+      "intelligence": 58,
+      "chance": 234,
+      "agilite": 58,
+      "vitalite": 330
+    },
+    "initiative": 12,
+    "ia": "agressif",
+    "pa": 5,
+    "resistances": {
+      "terre": 0.1,
+      "feu": 0.1,
+      "eau": 0.1,
+      "air": 0.1
+    },
+    "sorts": [
+      "drain_vital_t5",
+      "morsure",
+      "tir_courbe"
+    ],
+    "secret": true
   }
 }

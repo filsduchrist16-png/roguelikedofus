@@ -127,6 +127,59 @@
       }
     ]
   },
+  "general_secrets": {
+    "categorie": {
+      "general": true
+    },
+    "nom": "Donjons secrets",
+    "quetes": [
+      {
+        "id": "secret_t1",
+        "nom": "Vaincre Mob l'Éponge dans le Château Ensablé (donjon secret du Monde 1).",
+        "critere": {
+          "type": "vaincre",
+          "boss": "mob_l_eponge",
+          "noeud": "secret"
+        }
+      },
+      {
+        "id": "secret_t2",
+        "nom": "Vaincre le Koulosse dans sa caverne (donjon secret du Monde 2).",
+        "critere": {
+          "type": "vaincre",
+          "boss": "koulosse",
+          "noeud": "secret"
+        }
+      },
+      {
+        "id": "secret_t3",
+        "nom": "Vaincre Skeunk dans son repaire (donjon secret du Monde 3).",
+        "critere": {
+          "type": "vaincre",
+          "boss": "skeunk",
+          "noeud": "secret"
+        }
+      },
+      {
+        "id": "secret_t4",
+        "nom": "Vaincre le Kolosso et le Professeur Xa (donjon secret du Monde 4).",
+        "critere": {
+          "type": "vaincre",
+          "boss": "professeur_xa",
+          "noeud": "secret"
+        }
+      },
+      {
+        "id": "secret_t5",
+        "nom": "Vaincre Tal Kasha dans sa chambre (donjon secret du Monde 5).",
+        "critere": {
+          "type": "vaincre",
+          "boss": "tal_kasha",
+          "noeud": "secret"
+        }
+      }
+    ]
+  },
   "t1_1_donjons": {
     "categorie": {
       "general": true,

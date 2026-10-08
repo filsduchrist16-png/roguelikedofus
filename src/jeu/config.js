@@ -1,6 +1,27 @@
-import { BUTIN_ZONES, CLASSES, COMBATS, MONDES, MONSTRES, RELIQUES, ZONES } from "../data/index.js";
+import {
+  BUTIN_ZONES,
+  CLASSES,
+  COMBATS,
+  MONDES,
+  MONSTRES,
+  RELIQUES,
+  SECRETS,
+  ZONES,
+} from "../data/index.js";
 export function zonesDuMonde(e) {
   return e.zones.map((e) => ZONES.find((t) => t.id === e));
+}
+// Le donjon secret d'un monde, présenté comme une zone (pour le bestiaire et l'armurerie).
+export function zoneSecrete(mondeId) {
+  const s = SECRETS[mondeId];
+  return s
+    ? {
+        id: `secret:${mondeId}`,
+        nom: `🗝️ ${s.nom}`,
+        secret: true,
+        pools: { normales: [], elite: [], boss: [s.combat] },
+      }
+    : null;
 }
 export function getMonde(e, t = MONDES) {
   return t.find((t) => t.id === e) ?? t[0];
@@ -36,6 +57,10 @@ export function calculerXpCombat(e, t, n) {
   let r = 1 + XP_BONUS_PAR_TOILE * (t - 1);
   return Math.round(e * r * (getMonde(n).xpMult ?? 1));
 }
+// Après chaque combat gagné, les héros encore debout récupèrent une part de leurs PV max.
+export const RECUPERATION = {
+  victoire: 0.1,
+};
 export const CONFIG_CARTE = {
   lignesMin: 10,
   lignesMax: 12,

@@ -1,6 +1,7 @@
 import { EQUIPEMENTS, MONDES, MONSTRES } from "../../data/index.js";
-import { RARETES_INFO, bossDeZone, zonesDuMonde } from "../../jeu/config.js";
+import { RARETES_INFO, bossDeZone, zonesDuMonde, zoneSecrete } from "../../jeu/config.js";
 import { numeroZone } from "../../jeu/economie.js";
+import { descriptionPanoplie } from "../../jeu/panoplies.js";
 import {
   NOMS_SLOTS,
   afficherEcran,
@@ -51,7 +52,11 @@ export function ecranArmurerie(e) {
     };
     let u = () => {
       let e = i.find((e) => e.id === o) ?? i[0];
-      let f = e ? zonesDuMonde(e).filter((e) => r(butinParCategorie(e.id)).length) : [];
+      let f = e
+        ? [...zonesDuMonde(e), zoneSecrete(e.id)].filter(
+            (e) => e && r(butinParCategorie(e.id)).length,
+          )
+        : [];
       let p = i
         .map((t) => {
           let r = progressionArmurerie(t, n);
@@ -83,13 +88,13 @@ export function ecranArmurerie(e) {
           .map((e) => MONSTRES[e]?.nom ?? e)
           .join(` et `);
         h = `<div class="best-titre"><h2>${echapperHtml(g.nom)}</h2>
-            <small>Toile ${numeroZone(g.id)} · Objets ${t.filter((e) => n[e]).length}/${t.length}</small>
+            <small>${g.secret ? `Donjon secret (il s'ouvre avec une clé)` : `Toile ${numeroZone(g.id)}`} · Objets ${t.filter((e) => n[e]).length}/${t.length}</small>
             <span class="armu-legende"><span class="armu-r-texte-commun">Commun</span><span class="armu-r-texte-rare">Rare</span><span class="armu-r-texte-epique">Épique</span><span class="armu-r-texte-legendaire">Légendaire</span></span></div>
           ${
             e.panoplie
               ? l(
                   e.panoplie.nom,
-                  `Les ${e.panoplie.ids.length} pièces portées ensemble donnent +1 PA`,
+                  descriptionPanoplie(e.panoplie.nom) || `Panoplie`,
                   e.panoplie.ids.map((e) => c(e)),
                 )
               : ``

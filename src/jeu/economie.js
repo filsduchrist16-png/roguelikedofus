@@ -1,4 +1,4 @@
-import { EQUIPEMENTS, MONDES } from "../data/index.js";
+import { EQUIPEMENTS, MONDES, SECRETS } from "../data/index.js";
 import {
   ECONOMIE,
   RARETES,
@@ -21,6 +21,10 @@ export function numeroZoneObjet(e, t = MONDES) {
       if (listerButin(butinDeZone(n.zones[r])).includes(e)) {
         return indexDebutMonde(n.id, t) + r + 1;
       }
+    }
+    // butin d'un donjon secret : estimé comme un objet de la 10e zone du monde
+    if (SECRETS[n.id]?.butin.includes(e)) {
+      return indexDebutMonde(n.id, t) + Math.min(10, n.zones.length);
     }
   }
   return 1;

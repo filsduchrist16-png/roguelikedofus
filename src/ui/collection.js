@@ -1,4 +1,4 @@
-import { EQUIPEMENTS, RELIQUES } from "../data/index.js";
+import { EQUIPEMENTS, RELIQUES, SECRETS } from "../data/index.js";
 import { butinDeZone, zonesDuMonde } from "../jeu/config.js";
 import { racine } from "./commun.js";
 export function pastilleReliques(e, t) {
@@ -19,6 +19,18 @@ export function pastilleReliques(e, t) {
   };
 }
 export function butinParCategorie(e) {
+  // donjon secret : sa panoplie, et ses autres objets comme butin du boss
+  if (e.startsWith(`secret:`)) {
+    let ids = SECRETS[e.slice(7)]?.butin ?? [];
+    let nom = ids.map((id) => EQUIPEMENTS[id]?.panoplie).find(Boolean) ?? null;
+    let pano = ids.filter((id) => nom && EQUIPEMENTS[id].panoplie === nom);
+    return {
+      panoplie: nom ? { nom, ids: pano } : null,
+      combats: [],
+      elites: [],
+      boss: ids.filter((id) => !pano.includes(id)).map((id) => ({ id, aussiElite: false })),
+    };
+  }
   let t = butinDeZone(e);
   if (!t) {
     return {
@@ -73,6 +85,9 @@ export function progressionArmurerie(e, t) {
         n.add(t);
       }
     }
+  }
+  for (let id of SECRETS[e.id]?.butin ?? []) {
+    n.add(id);
   }
   let r = [...n].filter((e) => t[e]);
   return {

@@ -527,6 +527,25 @@ function htmlCarteCombattant(e, t) {
       ${n ? `<div class="ko-label">K.O.</div>` : ``}
     </div>`;
 }
+// Sur téléphone : si aucune cible du sort choisi n'est visible (cachée par la barre des sorts ou
+// hors de l'écran), on fait défiler jusqu'à elles.
+function montrerCibles() {
+  const cartes = [...racine.querySelectorAll(`.carte.ciblable`)];
+  if (!cartes.length) {
+    return;
+  }
+  const barre = document.getElementById(`cb-barre`)?.getBoundingClientRect();
+  const bas = barre && barre.top > 0 && barre.top < innerHeight ? barre.top : innerHeight;
+  const visible = (c) => {
+    const r = c.getBoundingClientRect();
+    return r.top >= 0 && r.bottom <= bas;
+  };
+  if (cartes.some(visible)) {
+    return;
+  }
+  const r = cartes[0].getBoundingClientRect();
+  window.scrollTo({ top: Math.max(0, scrollY + r.top - Math.max(8, (bas - r.height) / 2)) });
+}
 function rendreCombat() {
   if (!racine) {
     return;
@@ -588,6 +607,7 @@ function rendreCombat() {
   r(`cb-barre`, htmlBarreSorts());
   rafraichirJournal();
   if (combattantActif && sortChoisi) {
+    montrerCibles();
     racine.querySelectorAll(`.carte.ciblable, .tl-pastille.ciblable`).forEach((e) => {
       e.addEventListener(`click`, () => {
         terminerAction({

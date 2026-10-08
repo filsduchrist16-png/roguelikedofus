@@ -1,3 +1,4 @@
+import { descriptionPanoplie } from "../jeu/panoplies.js";
 import { texteObtentionDofus, texteObtentionObjet } from "../jeu/obtention.js";
 import { CLASSES, DOFUS, EQUIPEMENTS } from "../data/index.js";
 import { DIFFICULTES, DIFFICULTE_MAX, DOSSIER_ICONE_SORT, RARETES_INFO } from "../jeu/config.js";
@@ -679,7 +680,7 @@ export function htmlChipsObjet(e, classeId) {
   }
   if (t?.esquiveParPiece) {
     n.push(
-      `<span class="ichip ichip-agilite" title="Bonus de panoplie : +${Math.round(t.esquiveParPiece * 1000) / 10} % d'esquive par pièce de sa panoplie équipée (s'ajoute au +1 PA des 4 pièces)">💨 +${Math.round(t.esquiveParPiece * 1000) / 10} % esquive / pièce</span>`,
+      `<span class="ichip ichip-agilite" title="Bonus de panoplie : +${Math.round(t.esquiveParPiece * 1000) / 10} % d'esquive par pièce de sa panoplie équipée (s'ajoute aux bonus de panoplie)">💨 +${Math.round(t.esquiveParPiece * 1000) / 10} % esquive / pièce</span>`,
     );
   }
   if (t?.elementLibre) {
@@ -694,7 +695,7 @@ export function htmlChipsObjet(e, classeId) {
   }
   if (t?.panoplie) {
     n.push(
-      `<span class="ichip ichip-pano" title="Panoplie ${echapperHtml(t.panoplie)} : +1 PA quand les 4 pièces sont portées par le même héros">⬡ ${echapperHtml(t.panoplie)}</span>`,
+      `<span class="ichip ichip-pano" title="${echapperHtml(`${t.panoplie} (pièces portées par le même héros) : ${descriptionPanoplie(t.panoplie)}`)}">⬡ ${echapperHtml(t.panoplie)}</span>`,
     );
   }
   return `<span class="ichips">${n.join(``)}</span>`;

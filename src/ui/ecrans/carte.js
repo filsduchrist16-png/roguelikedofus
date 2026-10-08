@@ -79,6 +79,29 @@ const CARTE_HAUTEUR = 440;
 const CARTE_PAS_X = 116;
 const CARTE_MARGE = 56;
 // onModif : appelé après un changement fait depuis la carte (équipement, formation) pour sauvegarder la run
+// Caméra : la carte défile pour montrer la case actuelle et les cases atteignables (sinon, on
+// revenait au départ de la zone après chaque combat).
+function centrerCarte() {
+  const sc = racine.querySelector(`.map-scroll`);
+  const cases = [...racine.querySelectorAll(`.map-node.atteignable, .map-node.courant`)];
+  if (!sc || !cases.length) {
+    return;
+  }
+  const box = sc.getBoundingClientRect();
+  const rects = cases.map((c) => c.getBoundingClientRect());
+  const milieuX =
+    (Math.min(...rects.map((r) => r.left)) + Math.max(...rects.map((r) => r.right))) / 2;
+  const milieuY =
+    (Math.min(...rects.map((r) => r.top)) + Math.max(...rects.map((r) => r.bottom))) / 2;
+  // les cases atteignables un peu à droite du centre : on voit d'où l'on vient et où l'on va
+  sc.scrollLeft = Math.max(0, sc.scrollLeft + milieuX - box.left - sc.clientWidth * 0.45);
+  sc.scrollTop = Math.max(0, sc.scrollTop + milieuY - box.top - sc.clientHeight / 2);
+  // sur téléphone, la carte entière dans l'écran plutôt que la barre d'outils
+  const haut = sc.getBoundingClientRect();
+  if (haut.bottom > innerHeight || haut.top < 0) {
+    window.scrollTo({ top: Math.max(0, scrollY + haut.top - 8) });
+  }
+}
 export function ecranCarte(
   e,
   t,
@@ -221,6 +244,7 @@ Ennemis : ${o.desc}`)}"`
             <div class="aside-kamas" title="Kamas de la run (perdus à la mort)">${htmlKamas(a)}</div>
           </footer>
         </div>`;
+      centrerCarte();
       racine.querySelectorAll(`.map-node.atteignable`).forEach((t) => {
         t.addEventListener(`click`, () => {
           let n = trouverNoeud(e, t.dataset.id);

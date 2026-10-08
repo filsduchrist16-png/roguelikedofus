@@ -3,6 +3,7 @@
 import { MONSTRES } from "../data/index.js";
 import { ECONOMIE, monstresDeZone } from "./config.js";
 import { bonusDofus } from "../sauvegarde/meta.js";
+import { nomCle, secretDuMonde } from "./secret.js";
 
 // Bénédictions des dieux du Krosmoz : elles durent toute la run.
 export const BENEDICTIONS = {
@@ -81,12 +82,14 @@ export const IDOLES = {
 };
 
 const CROCHETEURS = new Set([`sram`, `roublard`, `ecaflip`]);
-const POIDS = { sanctuaire: 25, coffre: 25, marchand: 20, idoles: 15, traque: 15 };
+const POIDS = { sanctuaire: 25, coffre: 25, marchand: 20, idoles: 15, traque: 15, cle: 12 };
 
-export function tirerRencontre(rng) {
-  const total = Object.values(POIDS).reduce((a, b) => a + b, 0);
+/** Tire un type de rencontre ; `exclus` retire des types (par ex. la clé quand on en a déjà une). */
+export function tirerRencontre(rng, exclus = []) {
+  const poids = Object.entries(POIDS).filter(([id]) => !exclus.includes(id));
+  const total = poids.reduce((a, [, b]) => a + b, 0);
   let x = rng() * total;
-  for (const [id, p] of Object.entries(POIDS)) {
+  for (const [id, p] of poids) {
     x -= p;
     if (x < 0) {
       return id;
@@ -118,7 +121,12 @@ export const peutCrocheter = (run) => run.persos.some((p) => CROCHETEURS.has(p.c
 
 export function prixMarchand(toile) {
   const g = gainBase(toile);
-  return { potion: g, parchemin: Math.round(g * 1.5), philtre: Math.round(g * 1.2) };
+  return {
+    potion: g,
+    parchemin: Math.round(g * 1.5),
+    philtre: Math.round(g * 1.2),
+    cle: Math.round(g * 2),
+  };
 }
 
 export const zoneAArchis = (zone) => monstresDeZone(zone).some((id) => MONSTRES[id]?.archiNom);
@@ -162,6 +170,13 @@ export function effetsEnCours(run, zoneId) {
       icone: `🗿`,
       nom: idole.nom,
       desc: `Jusqu'à la fin de la zone : ${idole.malus} ; ${idole.bonus}.`,
+    });
+  }
+  if (run.cle && secretDuMonde(run.trancheId)) {
+    out.push({
+      icone: `🗝️`,
+      nom: nomCle(run.trancheId),
+      desc: `Après le boss d'une zone, tu pourras ouvrir le donjon secret : ${secretDuMonde(run.trancheId).nom}. Plus la zone est avancée, plus il est dur… et plus il rapporte.`,
     });
   }
   const traque = traqueActive(run, zoneId);

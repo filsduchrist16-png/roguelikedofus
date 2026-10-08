@@ -176,29 +176,25 @@ export function ecranSuccesObtenu(e, t) {
     document.getElementById(`succes-ok`)?.addEventListener(`click`, () => resolve());
   });
 }
+// Bandeau temporaire (quête accomplie, défi…) : 3 au plus à l'écran, les plus anciens partent.
 export function afficherBandeau(texte) {
   let t = document.getElementById(`bandeaux-quete`);
   if (!t) {
     t = document.createElement(`div`);
     t.id = `bandeaux-quete`;
+    t.setAttribute(`role`, `status`);
     document.body.appendChild(t);
   }
   let n = document.createElement(`div`);
   n.className = `bandeau-quete`;
   n.textContent = texte;
   t.appendChild(n);
+  while (t.children.length > 3) {
+    t.firstElementChild.remove();
+  }
+  setTimeout(() => n.classList.add(`sortie`), 3600);
   setTimeout(() => n.remove(), 4000);
 }
 export function afficherBandeauQuete(e) {
-  let t = document.getElementById(`bandeaux-quete`);
-  if (!t) {
-    t = document.createElement(`div`);
-    t.id = `bandeaux-quete`;
-    document.body.appendChild(t);
-  }
-  let n = document.createElement(`div`);
-  n.className = `bandeau-quete`;
-  n.textContent = `✓ Quête accomplie : ${e}`;
-  t.appendChild(n);
-  setTimeout(() => n.remove(), 4000);
+  afficherBandeau(`✓ Quête accomplie : ${e}`);
 }

@@ -1,5 +1,66 @@
 # Journal des modifications
 
+## Donjons secrets, panoplies et équilibrage
+
+**Donjons secrets.** Chaque monde cache un vrai donjon optionnel de DOFUS : le Château Ensablé (Mob
+l'Éponge et ses Pichons), la Caverne du Koulosse, le Repaire de Skeunk et ses quatre gardiennes, les
+Cavernes du Kolosso (Kolosso et Professeur Xa) et la Chambre de Tal Kasha. Monstres, sorts des boss et
+butin viennent de DofusDB.
+
+- La clé se trouve dans un coffre abandonné, chez un contrebandier (nouvelle rencontre, à acheter ou à
+  jouer aux dés) ou sur un monstre de combat dur. Elle s'affiche sous le titre de la carte.
+- Après le boss d'une zone, on choisit d'entrer ou de garder la clé. Le donjon secret est plus fort que
+  celui de la zone, et grandit avec elle ; la récompense aussi.
+- Victoire : un objet épique ou légendaire de son butin (Panoplie en Mousse, du Boufcoul, du
+  Professeur Xa, de Tal Kasha, trophées de Skeunk), 3 fois les kamas d'un donjon et beaucoup d'XP.
+  Défaite : l'équipe est expulsée et la clé perdue, mais la run continue.
+- Nouveau succès « Donjons secrets » ; les donjons secrets ont leur page dans le bestiaire et
+  l'armurerie.
+
+**Panoplies.** Le bonus ne venait qu'avec 4 pièces (+1 PA), alors que 56 panoplies sur 88 n'avaient que
+2 ou 3 pièces : leur bonus était impossible à obtenir. Les bonus vont maintenant par palier :
+
+- 2 pièces, puis 3 pièces : caractéristiques élémentaires et vitalité, à la mesure du niveau de la zone ;
+- 4 pièces : +1 PA en plus ;
+- une petite panoplie complète (2 ou 3 pièces) donne aussi des résistances.
+
+L'écran d'équipement montre le palier atteint et le suivant ; l'armurerie et les infobulles détaillent
+tous les paliers. Quatre « panoplies » dont les pièces allaient toutes sur le même emplacement (deux
+anneaux, deux armes) ne pouvaient jamais s'activer : leurs objets redeviennent des objets simples.
+
+**Objets.** À rareté égale, la puissance d'un objet variait d'un facteur 10 à 30 selon la zone (une pièce
+épique valait de 1 % à 37 % de puissance pour un héros du bon niveau). Toutes les statistiques sont
+recalées sur une même courbe selon la rareté, la source (combat, élite, boss) et l'emplacement ; les
+pièces de panoplie sont un peu en dessous, puisque leur bonus compense.
+
+**Équilibrage global**, mesuré par simulation de runs complètes (voir `outils/simulation`) :
+
+- La première zone de chaque monde était le vrai mur (60 à 90 % des défaites, avec deux héros sans
+  équipement), puis la suite devenait facile. Désormais la rangée qui suit le premier combat d'un monde
+  est faite de tavernes, et les héros debout récupèrent 10 % de leurs PV max après chaque victoire.
+- La puissance des monstres est réglée zone par zone (`src/data/ajustementsZones.json`) pour une
+  difficulté qui monte régulièrement jusqu'au dernier boss : les débuts sont plus doux, les fins de
+  monde plus exigeantes, et les murs isolés (Terrier du Wa Wabbit, Dojo du Vent, Cavaliers de
+  l'Eliocalypse) sont aplanis.
+- L'XP des Mondes 3 et 4 allait trop vite (niveau maximum dès la zone 6 ou 7) : elle monte maintenant
+  régulièrement jusqu'à la dernière zone.
+- Les bandeaux de quêtes et de défis sont plus compacts (3 au plus à l'écran).
+
+**Ergonomie sur téléphone** : chaque écran de jeu tient (presque) sans défiler.
+
+- **Carte** : la vue suit la progression. Elle se centre sur la case actuelle et les cases atteignables,
+  au lieu de revenir au départ de la zone après chaque combat. La barre d'outils tient sur une rangée,
+  la carte s'adapte à la hauteur de l'écran, et l'équipe reste visible en bas.
+- **Combat** : lignes avant et arrière côte à côte, cartes compactes (les PA ne s'affichent que pour
+  le combattant qui joue), bandeau du défi sur une ligne, journal réduit. Les sorts tiennent sur une
+  rangée avec « Terminer » juste dessous, le tout collé en bas de l'écran. Quand on choisit un sort,
+  l'écran défile jusqu'aux cibles si elles sont cachées. Sur un iPhone 13, tout le combat tient dans
+  l'écran.
+- **Équipement** : les héros en onglets sur une rangée, les colonnes ne débordent plus ; toucher un
+  emplacement vide filtre l'inventaire sur cet emplacement et y descend.
+- **Rencontres et autres écrans** : illustration et choix plus compacts, et le bouton Retour ou
+  Continuer reste visible en bas.
+
 ## Sorts colorés, défis et rencontres
 
 **Icônes de sorts par élément.** Chaque sort de dégâts est teinté de la couleur de l'élément qu'il

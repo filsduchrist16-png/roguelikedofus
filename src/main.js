@@ -20,6 +20,7 @@ import {
 } from "./jeu/quetes.js";
 import {
   appliquerAffixesElite,
+  appliquerPuissanceZone,
   appliquerDifficulteMonstres,
   chanceArchi,
   combattantsEquipe,
@@ -32,6 +33,7 @@ import {
   nouvelleRun,
   pvMaxPerso,
   recruter,
+  recupererApresVictoire,
   soignerEquipe,
   synchroniserPv,
   tirerArchis,
@@ -41,6 +43,14 @@ import {
   tirerRecrues,
 } from "./jeu/run.js";
 import { chargerRun, effacerRun, sauverRun } from "./sauvegarde/run.js";
+import {
+  CHANCES_CLE,
+  monstresSecrets,
+  nomCle,
+  recompensesSecret,
+  secretDuMonde,
+  tirerRareteSecret,
+} from "./jeu/secret.js";
 import { ajouterKamas, gainKamas, genererStockHdv, numeroZone } from "./jeu/economie.js";
 import {
   ajouterDofus,
@@ -180,7 +190,8 @@ const controleurEnnemi = async (e, t) => {
 async function jouerCombat(e, combatId, n) {
   let r = COMBATS[combatId]?.nom ?? `Combat`;
   let i = combattantsEquipe(e);
-  let a = monstresDuCombat(combatId);
+  let a = n.type === `secret` ? monstresSecrets(e.trancheId, n.zone) : monstresDuCombat(combatId);
+  appliquerPuissanceZone(a, n.zone?.id);
   appliquerDifficulteMonstres(a, effetsDifficulte(e.ascension), {
     type: n.type,
     especesZone: n.zone ? especesNormalesZone(n.zone) : undefined,
@@ -395,6 +406,7 @@ async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
       if (!gagne) {
         return `wipe`;
       }
+      recupererApresVictoire(e);
       let c = o ? numeroZone(o) : 1;
       let idole = idoleActive(e, o);
       let bonusDefi = defiOk ? 1 + BONUS_DEFI : 1;
@@ -404,6 +416,18 @@ async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
         Math.round(calculerXpCombat(r, c, e.trancheId) * bonusDefi * (idole?.xpMult ?? 1)),
       );
       await distribuerButin(e, o, type, type === `combat_dur` ? `donjon` : undefined);
+      if (
+        type === `combat_dur` &&
+        !e.cle &&
+        secretDuMonde(e.trancheId) &&
+        Math.random() < CHANCES_CLE.combatDur
+      ) {
+        e.cle = true;
+        await ecranMessage(
+          `🗝️ ${nomCle(e.trancheId)}`,
+          `Un des monstres portait une clé : elle ouvre le donjon secret du monde, ${secretDuMonde(e.trancheId).nom}.`,
+        );
+      }
       await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta()));
       return `continue`;
     }
@@ -469,7 +493,7 @@ async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
 // ---------- Rencontres (case « Rencontre » de la carte) ----------
 async function jouerRencontre(e, zone) {
   let toile = zone ? numeroZone(zone.id) : 1;
-  let type = tirerRencontre(Math.random);
+  let type = tirerRencontre(Math.random, e.cle || !secretDuMonde(e.trancheId) ? [`cle`] : []);
   if (
     (type === `idoles` && idoleActive(e, zone?.id)) ||
     (type === `traque` && traqueActive(e, zone?.id))
@@ -545,7 +569,10 @@ async function jouerRencontre(e, zone) {
     ajouterKamas(e, kamas);
     let texte = `Le coffre contenait ${kamas} kamas.`;
     let butin = zone ? butinDeZone(zone.id) : null;
-    if (butin?.normales.length && Math.random() < 0.45) {
+    if (!e.cle && secretDuMonde(e.trancheId) && Math.random() < CHANCES_CLE.coffre) {
+      e.cle = true;
+      texte += ` Au fond, une clé : la ${nomCle(e.trancheId)} ! Elle ouvre le donjon secret du monde.`;
+    } else if (butin?.normales.length && Math.random() < 0.45) {
       let obj = tirerObjet(
         butin.normales[Math.floor(Math.random() * butin.normales.length)],
         Math.random,
@@ -605,6 +632,52 @@ async function jouerRencontre(e, zone) {
       }
     }
   }
+  if (type === `cle`) {
+    let prix = prixMarchand(toile).cle;
+    let secret = secretDuMonde(e.trancheId);
+    let choix = await ecranRencontre({
+      titre: `🗝️ ${nomCle(e.trancheId)}`,
+      img: `/assets/divers/cle_donjon.png`,
+      texte: `Un contrebandier encapuchonné fait tinter une vieille clé : « Elle ouvre le ${secret.nom}. Pour qui ose y entrer… »`,
+      kamas: e.kamas,
+      choix: [
+        {
+          id: `acheter`,
+          libelle: `Acheter la clé`,
+          prix,
+          detail: `Après le boss d'une zone, tu pourras entrer dans le donjon secret (objet épique ou légendaire garanti).`,
+          desactive: e.kamas < prix ? `Pas assez de kamas.` : ``,
+        },
+        {
+          id: `des`,
+          libelle: `La jouer aux dés`,
+          detail: `Une chance sur deux : la clé gratuite. Sinon, tu perds ${Math.round(prix / 2)} kamas (ou ce qu'il te reste).`,
+        },
+        { id: `partir`, libelle: `Passer son chemin` },
+      ],
+    });
+    if (choix === `acheter`) {
+      e.kamas -= prix;
+      e.cle = true;
+      await ecranMessage(`🗝️ Clé obtenue`, `La ${nomCle(e.trancheId)} est à toi.`);
+    } else if (choix === `des`) {
+      if (Math.random() < 0.5) {
+        e.cle = true;
+        await ecranMessage(
+          `🎲 Gagné !`,
+          `Le contrebandier grommelle et te tend la ${nomCle(e.trancheId)}.`,
+        );
+      } else {
+        let perte = Math.min(e.kamas, Math.round(prix / 2));
+        e.kamas -= perte;
+        await ecranMessage(
+          `🎲 Perdu…`,
+          `Le contrebandier empoche ${perte} kamas et disparaît dans la foule.`,
+        );
+      }
+    }
+    return;
+  }
   if (type === `idoles`) {
     let ids = idolesProposees(Math.random);
     let choix = await ecranRencontre({
@@ -651,6 +724,68 @@ async function jouerRencontre(e, zone) {
     e.traque = { zone: zone?.id, archi };
   }
 }
+// ---------- Donjon secret (ouvert avec une clé, après le boss d'une zone) ----------
+async function jouerDonjonSecret(e, zone) {
+  let secret = secretDuMonde(e.trancheId);
+  if (!e.cle || !secret) {
+    return;
+  }
+  let toile = numeroZone(zone.id);
+  let r = recompensesSecret(toile);
+  let derniere = getMonde(e.trancheId).zones.at(-1) === zone.id;
+  let choix = await ecranRencontre({
+    titre: `🗝️ ${secret.nom}`,
+    img: MONSTRES[secret.bosses[0]]?.img,
+    texte: `${secret.texte} Ta ${nomCle(e.trancheId)} tourne dans la serrure… Tu y entres avec les PV qu'il te reste.`,
+    choix: [
+      {
+        id: `entrer`,
+        libelle: `Entrer dans le donjon secret`,
+        detail: `Plus fort que le donjon de la zone. Victoire : un objet du donjon (épique ou légendaire), ${r.kamas} kamas et de l'XP. Défaite : l'équipe est expulsée, la clé est perdue, mais la run continue.`,
+      },
+      derniere
+        ? {
+            id: `garder`,
+            libelle: `Ne pas entrer`,
+            detail: `La clé sera perdue à la fin de la run.`,
+          }
+        : {
+            id: `garder`,
+            libelle: `Garder la clé pour plus tard`,
+            detail: `Plus tard, le donjon secret sera plus dur, mais rapportera plus.`,
+          },
+    ],
+  });
+  if (choix !== `entrer`) {
+    return;
+  }
+  e.cle = false;
+  e.stats.secrets = (e.stats.secrets ?? 0) + 1;
+  let { gagne } = await jouerCombat(e, secret.combat, { type: `secret`, zone });
+  if (!gagne) {
+    for (let p of e.persos) {
+      p.pvActuels = Math.max(1, p.pvActuels);
+    }
+    await ecranMessage(
+      `🗝️ Expulsés !`,
+      `Les gardiens du ${secret.nom} ont repoussé l'équipe. La clé est perdue, mais l'aventure continue.`,
+    );
+    return;
+  }
+  ajouterKamas(e, Math.round(r.kamas * multiplicateurKamas(e) * bonusEquipeRun(meta, e).multKamas));
+  gagnerXpEquipe(e, calculerXpCombat(r.xp, toile, e.trancheId));
+  let id = secret.butin[Math.floor(Math.random() * secret.butin.length)];
+  let obj = tirerObjet(id, Math.random, [tirerRareteSecret(Math.random)]);
+  if (obj) {
+    e.inventaire.push(obj);
+    enregistrerCollection(meta, [obj]);
+    e.stats.objets += 1;
+    await ecranButin([obj]);
+  }
+  meta.secrets = [...new Set([...(meta.secrets ?? []), e.trancheId])];
+  sauverMeta(meta);
+  await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta()));
+}
 async function resoudreZaap(pools, t) {
   let n = tirerTypeZaap(Math.random, t);
   await ecranZaap(ARTICLES_NOEUDS[n]);
@@ -677,7 +812,7 @@ async function jouerZone(e, t, n) {
   enregistrerToileMax(meta, e.trancheId, n + 1);
   sauverMeta(meta);
   if (!e.carte) {
-    e.carte = genererCarte(Math.random, t.pools, noeudsExclus(e, t));
+    e.carte = genererCarte(Math.random, t.pools, noeudsExclus(e, t), { premiereZone: n === 0 });
     sauverRun(n, e);
   }
   while (true) {
@@ -713,6 +848,7 @@ async function jouerZone(e, t, n) {
     }
     if (s === `victoire`) {
       distribuerKamas(e, `donjon`, numeroZone(t.id));
+      await jouerDonjonSecret(e, t);
       return `clear`;
     }
     sauverRun(n, e);

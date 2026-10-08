@@ -3702,5 +3702,211 @@
     "zoneLigne": true,
     "cooldownTours": 2,
     "desc": "Corruption fait pourrir toute la rangée : poison (36 par tour, 3 tours)."
+  },
+  "degraissage": {
+    "id": "degraissage",
+    "nom": "Dégraissage",
+    "desc": "Mob l'Éponge décape sa cible : dégâts et retire ses bonus.",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 20,
+    "baseMax": 28,
+    "cooldownTours": 2,
+    "procAleatoire": [
+      {
+        "dissipePositifs": true
+      }
+    ]
+  },
+  "rincage": {
+    "id": "rincage",
+    "nom": "Rinçage",
+    "desc": "Une vague savonneuse frappe toute l'équipe.",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 12,
+    "baseMax": 17,
+    "cooldownTours": 3
+  },
+  "regeneration_spontanee": {
+    "id": "regeneration_spontanee",
+    "nom": "Régénération Spontanée",
+    "desc": "Mob l'Éponge se regonfle : il soigne l'allié le plus blessé.",
+    "coutPA": 4,
+    "cible": "allie",
+    "type": "soin",
+    "baseMin": 14,
+    "baseMax": 20,
+    "cooldownTours": 3
+  },
+  "invocation_bouftou_des_cavernes": {
+    "id": "invocation_bouftou_des_cavernes",
+    "nom": "Invocation de Bouftou des cavernes",
+    "desc": "Le Koulosse appelle un Bouftou des cavernes.",
+    "coutPA": 6,
+    "cible": "soi",
+    "type": "invocation",
+    "baseMin": 0,
+    "baseMax": 0,
+    "cooldownTours": 3,
+    "invoqueMonstre": {
+      "max": 2,
+      "pool": [
+        "bouftou_des_cavernes"
+      ]
+    }
+  },
+  "souffle_du_koulosse": {
+    "id": "souffle_du_koulosse",
+    "nom": "Souffle du Koulosse",
+    "desc": "Un souffle glacé frappe toute l'équipe.",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 16,
+    "baseMax": 22,
+    "cooldownTours": 3
+  },
+  "appel_du_koulosse": {
+    "id": "appel_du_koulosse",
+    "nom": "Appel du Koulosse",
+    "desc": "Le Koulosse rugit : il frappe et gagne +30 % de résistances (1 tour).",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 28,
+    "baseMax": 38,
+    "cooldownTours": 2,
+    "effetLanceur": {
+      "stat": "resAll",
+      "valeur": 0.3,
+      "duree": 1
+    }
+  },
+  "chant_foudroyant": {
+    "id": "chant_foudroyant",
+    "nom": "Chant Foudroyant",
+    "desc": "Un chant qui frappe la cible de plein fouet.",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "cooldownTours": 2
+  },
+  "chant_immobilisant": {
+    "id": "chant_immobilisant",
+    "nom": "Chant Immobilisant",
+    "desc": "Dégâts ; la cible perd 2 PA à son prochain tour.",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 34,
+    "baseMax": 46,
+    "cooldownTours": 3,
+    "retraitPA": 2,
+    "retraitPAChance": 1
+  },
+  "chant_regenerant": {
+    "id": "chant_regenerant",
+    "nom": "Chant Régénérant",
+    "desc": "Skeunk soigne l'allié le plus blessé.",
+    "coutPA": 4,
+    "cible": "allie",
+    "type": "soin",
+    "baseMin": 40,
+    "baseMax": 52,
+    "cooldownTours": 3
+  },
+  "xalactite": {
+    "id": "xalactite",
+    "nom": "Xalactite",
+    "desc": "Des stalactites s'abattent sur toute l'équipe.",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 24,
+    "baseMax": 32,
+    "cooldownTours": 3
+  },
+  "razepoutine": {
+    "id": "razepoutine",
+    "nom": "Razepoutine",
+    "desc": "Dégâts ; la cible inflige −20 % de dégâts (1 tour).",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "cooldownTours": 2,
+    "effet": {
+      "stat": "degatsInfliges",
+      "valeur": -0.2,
+      "duree": 1
+    }
+  },
+  "cerebro": {
+    "id": "cerebro",
+    "nom": "Cerebro",
+    "desc": "Dégâts ; la cible perd 2 PA à son prochain tour.",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "cooldownTours": 3,
+    "retraitPA": 2,
+    "retraitPAChance": 1
+  },
+  "kirbili": {
+    "id": "kirbili",
+    "nom": "Kirbili",
+    "desc": "Le Professeur Xa frappe et se protège (bouclier de 40 % des dégâts).",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 40,
+    "baseMax": 54,
+    "cooldownTours": 2,
+    "bouclierRatioDegats": 0.4
+  },
+  "transe_perse": {
+    "id": "transe_perse",
+    "nom": "Transe-Perse",
+    "desc": "Un coup qui transperce : dégâts lourds.",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 54,
+    "baseMax": 72,
+    "cooldownTours": 2
+  },
+  "filature": {
+    "id": "filature",
+    "nom": "Filature",
+    "desc": "Dégâts et poison pendant 3 tours.",
+    "coutPA": 6,
+    "cible": "ennemi_ligne",
+    "type": "degats",
+    "baseMin": 46,
+    "baseMax": 62,
+    "cooldownTours": 2,
+    "poison": {
+      "degats": 30,
+      "duree": 3
+    }
+  },
+  "cheveux_partir_de_la": {
+    "id": "cheveux_partir_de_la",
+    "nom": "Cheveux partir de là",
+    "desc": "Les cheveux de Tal Kasha fouettent toute l'équipe.",
+    "coutPA": 6,
+    "cible": "ennemi_tous",
+    "type": "degats",
+    "baseMin": 26,
+    "baseMax": 36,
+    "cooldownTours": 3
   }
 }
