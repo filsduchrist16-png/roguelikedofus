@@ -14,10 +14,15 @@ async function connexion() {
   pret ??= (async () => {
     const use = globalThis.claude?.use;
     if (typeof use !== `function`) {
+      // le runtime de l'artefact n'est peut-être pas encore là : on retentera plus tard
+      setTimeout(() => (pret = null));
       return null;
     }
     try {
-      const [db, user] = await Promise.all([use(`db`), use(`user`)]);
+      const [db, user] = await Promise.all([
+        use.call(globalThis.claude, `db`),
+        use.call(globalThis.claude, `user`),
+      ]);
       const id = db && user ? await user.id() : null;
       return id ? { db, base: `data/users/${id}` } : null;
     } catch {
