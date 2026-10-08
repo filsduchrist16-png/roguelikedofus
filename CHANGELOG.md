@@ -1,5 +1,56 @@
 # Journal des modifications
 
+## Ordre des Dofus, refonte du combat et de l'inventaire, chasse aux bugs
+
+**Les Dofus s'obtiennent dans l'ordre de Dofus 3.** Chaque Dofus a son vrai niveau de succès dans
+Dofus 3 (Argenté 40, Cawotte 80, Dokoko 100, Émeraude 120, Pourpre 130, Domakuro 140, Dorigami 170,
+Turquoise 180, et les Dofus de niveau 200 : Glaces, Abyssal, Veilleurs, Ivoire, Ébène, Tacheté,
+Forgelave, Nébuleux, Vulbis, Sylvestre, Verdoyant, Cauchemar, Dolmanax, Dokille, Dofoozbz…).
+
+- Un Dofus ne s'obtient qu'une fois possédés **tous les Dofus de niveau inférieur**. Si ses quêtes sont
+  finies avant, il est « en attente » et arrive tout seul dès que ses prérequis sont réunis.
+- Dolmanax, Dokille et Dofoozbz, de niveau 200 dans Dofus 3, passent au Monde 5 (Dolmanax : une
+  année d'offrandes, 50 runs ; Dokille : 100 âmes d'archimonstres ; Dofoozbz : gagner le Monde 4).
+- Anciennes sauvegardes : un Dofus obtenu avant ses prérequis est mis de côté, avec son jet, et revient
+  quand l'ordre est respecté. Un message l'explique au premier lancement.
+- L'écran Succès montre l'état « En attente » et les Dofus qui manquent avant chacun.
+
+**Combat plus lisible.**
+
+- Même carte pour les héros et les monstres : portrait, nom, grande barre de PV, PA du combattant qui
+  joue, états. Les statistiques secondaires (critique, soins…) ne s'affichent plus sur les cartes.
+- Seules les résistances non nulles sont affichées (vert = résiste, rouge = faiblesse), plus l'élément
+  que ton héros va frapper.
+- Quand un sort est choisi, chaque cible affiche les **dégâts prévus** (« 💥 21–33 dégâts », « ☠ » si
+  le coup peut l'achever) ; les cartes qu'on ne peut pas viser s'effacent un peu.
+- L'ordre de jeu est au-dessus du plateau ; l'infobulle du sort choisi ne cache plus les cibles ; sur
+  téléphone, les détails du sort se déplient avec ⓘ.
+
+**Inventaire plus lisible.** Chaque objet : son nom et le verdict (Amélioration…), puis « **T13** ·
+Arme · Épique » (le Tier en évidence), ses statistiques, et la comparaison avec l'objet porté sur une
+ligne à part. Les objets portés ont le même style. Le Tier s'affiche aussi à l'hôtel de vente, au
+butin et chez le forgemage. Sur téléphone, la liste suit la page (plus de défilement dans le
+défilement). Une stat inutile pour la classe est marquée « (inutile) » au lieu d'être barrée.
+
+**Bugs corrigés** (relevés par un audit complet du code) :
+
+- Combat : les protections d'un tour des boss (Tête dans le sable, Furie du Kimbo…) expiraient avant
+  le tour adverse ; les monstres soigneurs ignoraient le rechargement de leur soin ; une riposte
+  ignorait le Dokille et les protections ; la Lance du Forgelance était visée par les créatures et
+  masquait la ligne arrière ; un bouclier temporaire expiré retirait du bouclier déjà consommé ; un
+  désenvoûtement retirait pour de bon les bonus d'état du Pandawa et du Zobal ; le renfort des
+  difficultés n'était pas à la puissance de la zone.
+- Jeu : perdre le donjon secret ressuscitait les héros morts en mode mort définitive ; une traque
+  ajoutait +20 % de PV à des combats sans archimonstre (et au donjon secret) ; en Ultime, les tavernes
+  restaient utilisables équipe complète ; l'aide annonçait un mauvais taux de butin en combat dur.
+- Interface : Échap sur une fiche d'objet quittait tout l'écran d'équipement ; la saisie de la touche
+  de fin de tour acceptait Échap et les chiffres des sorts (et restait active en quittant) ; une touche
+  maintenue pouvait finir plusieurs tours ; l'hôtel de vente et la forgemagie remontaient en haut de
+  la liste après chaque action ; les boutons de sauvegarde débordaient sur téléphone ; numéros des
+  sorts illisibles.
+- Sécurité : une sauvegarde importée est nettoyée (statistiques et raretés connues seulement), pour
+  qu'un fichier piégé ne puisse pas injecter de code.
+
 ## Tier des objets
 
 - Le tri « Toile » de l'inventaire devient « Tier » : les objets du Tier le plus haut d'abord (puis

@@ -713,7 +713,7 @@
     "coutPA": 6,
     "desc": "Coffre des Forgerons happe violemment puis se referme : +30 % de résistances (1t).",
     "effetLanceur": {
-      "duree": 1,
+      "duree": 2,
       "stat": "resAll",
       "valeur": 0.3
     },
@@ -2632,7 +2632,7 @@
     "effetLanceur": {
       "stat": "resAll",
       "valeur": 0.3,
-      "duree": 1
+      "duree": 2
     },
     "cooldownTours": 2,
     "desc": "La Haute Truche frappe puis se cache la tête : +30 % de résistances (1 tour)."
@@ -2675,7 +2675,7 @@
     "effetLanceur": {
       "stat": "resAll",
       "valeur": 0.3,
-      "duree": 1
+      "duree": 2
     },
     "cooldownTours": 2,
     "desc": "Le Tynril frappe puis se durcit : +30 % de résistances (1 tour)."
@@ -2895,7 +2895,7 @@
     "effetLanceur": {
       "stat": "resAll",
       "valeur": 0.3,
-      "duree": 1
+      "duree": 2
     },
     "procAleatoire": [
       {
@@ -3782,7 +3782,7 @@
     "effetLanceur": {
       "stat": "resAll",
       "valeur": 0.3,
-      "duree": 1
+      "duree": 2
     }
   },
   "chant_foudroyant": {

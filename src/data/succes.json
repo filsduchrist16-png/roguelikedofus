@@ -2976,7 +2976,7 @@
   "dolmanax": {
     "categorie": {
       "dofus": "dolmanax",
-      "monde": "t2"
+      "monde": "t5"
     },
     "nom": "Le repos du dragon",
     "quetes": [
@@ -2998,10 +2998,10 @@
       },
       {
         "id": "dl_dolmanax_3",
-        "nom": "Faire 10 offrandes : jouer 10 runs.",
+        "nom": "Faire une année d'offrandes à l'Almanax : jouer 50 runs.",
         "critere": {
           "type": "runs_jouees",
-          "seuil": 10
+          "seuil": 50
         }
       }
     ]
@@ -3042,7 +3042,7 @@
   "dokille": {
     "categorie": {
       "dofus": "dokille",
-      "monde": "t3"
+      "monde": "t5"
     },
     "nom": "Trophée de chasse",
     "quetes": [
@@ -3055,11 +3055,11 @@
         }
       },
       {
-        "id": "dl_dokille_2",
-        "nom": "Capturer tous les archimonstres du monde 3.",
+        "id": "dl_dokille_3",
+        "nom": "« Trophée de chasse » : capturer 100 âmes d'archimonstres.",
         "critere": {
-          "type": "archi_capture",
-          "tranche": "t3"
+          "type": "archis_total",
+          "seuil": 100
         }
       }
     ]
@@ -3266,7 +3266,7 @@
   "dofoozbz": {
     "categorie": {
       "dofus": "dofoozbz",
-      "monde": "t4"
+      "monde": "t5"
     },
     "nom": "Question d'équilibre",
     "quetes": [
@@ -3284,6 +3284,14 @@
         "critere": {
           "type": "vaincre",
           "boss": "kimbo"
+        }
+      },
+      {
+        "id": "dl_dofoozbz_3",
+        "nom": "Gagner le Monde 4.",
+        "critere": {
+          "type": "run_gagnee",
+          "tranche": "t4"
         }
       }
     ]

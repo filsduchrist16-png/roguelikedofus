@@ -33,12 +33,16 @@ function iaAgressive(e, t) {
   return null;
 }
 function iaSoutien(e, t) {
+  // un soin lançable (PA, rechargement, limites) qui a au moins une cible
   let n = e.sorts
     .map((e) => SORTS[e])
-    .find((t) => t.type === `soin` && e.paActuels >= coutPA(t, e));
+    .find(
+      (n) => n.type === `soin` && e.paActuels >= coutPA(n, e) && ciblesValides(e, n, t).length > 0,
+    );
   if (n) {
+    let valides = new Set(ciblesValides(e, n, t).map((c) => c.ref));
     let r = alliesVivants(e, t)
-      .filter((e) => e.pvActuels < e.pvMax)
+      .filter((e) => valides.has(e.ref) && e.pvActuels < e.pvMax)
       .sort((e, t) => e.pvActuels - t.pvActuels);
     if (r.length) {
       return {

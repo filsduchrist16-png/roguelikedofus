@@ -8,6 +8,7 @@ import {
   trouverQuete,
 } from "../../jeu/quetes.js";
 import { indiceQuete, mondeDuDofus } from "../../jeu/obtention.js";
+import { dofusManquantsAvant } from "../../sauvegarde/meta.js";
 import {
   afficherEcran,
   barreContinuer,
@@ -37,6 +38,7 @@ function rubriques(ids) {
   );
 }
 export function ecranSucces(e) {
+  const e_meta = e;
   return new Promise((resolve) => {
     let n = e.quetes ?? nouvelEtatQuetes();
     let r = contexteMeta(e);
@@ -71,7 +73,7 @@ export function ecranSucces(e) {
         <span class="succes-halo">${img ? `<img src="${cheminAsset(img)}" alt="" onerror="this.remove()" />` : ``}</span>
         <span class="succes-carte-nom">${echapperHtml(DOFUS[e].nom)}</span>
         ${r ? p(r.faites, r.total) : ``}
-        <span class="succes-carte-progres">${r ? (r.complet ? `✓ Obtenu` : `${r.faites} / ${r.total} quêtes`) : `Bientôt`}</span>
+        <span class="succes-carte-progres">${c(e) ? `✓ Obtenu` : r ? (r.complet ? `⏳ En attente` : `${r.faites} / ${r.total} quêtes`) : `Bientôt`}</span>
         ${mondeDuDofus(e) ? `<span class="succes-carte-monde">${echapperHtml(mondeDuDofus(e).nom)} · niv. ${DOFUS[e].niveau}</span>` : ``}
       </button>`;
     };
@@ -116,7 +118,11 @@ export function ecranSucces(e) {
           return `${o}<p class="succes-a-venir">Ce Dofus n'a pas encore de groupe de quêtes.</p>`;
         }
         let s = progressionSucces(n, a);
-        return `${o}${c(e) ? `<span class="succes-statut obtenu">Dofus obtenu</span>` : `<span class="succes-statut">${s.faites} / ${s.total} quêtes pour l'obtenir</span>`}${_(a)}`;
+        let manquants = c(e) ? [] : dofusManquantsAvant(e_meta, e);
+        let prerequis = manquants.length
+          ? `<p class="succes-prerequis">🔒 Ordre de Dofus 3 : il faut d'abord ${manquants.map((id) => `${echapperHtml(DOFUS[id].nom)} (niv. ${DOFUS[id].niveau})`).join(`, `)}.${s.complet ? ` Ses quêtes sont faites : il arrivera tout seul ensuite.` : ``}</p>`
+          : ``;
+        return `${o}${c(e) ? `<span class="succes-statut obtenu">Dofus obtenu</span>` : `<span class="succes-statut">${s.faites} / ${s.total} quêtes pour l'obtenir</span>`}${prerequis}${_(a)}`;
       }
       let e = SUCCES[f.slice(2)];
       let t = progressionSucces(n, e);
@@ -164,13 +170,32 @@ export function ecranSucces(e) {
     ee();
   });
 }
-export function ecranSuccesObtenu(e, t) {
+export function ecranSuccesObtenu(e, t, meta) {
   return new Promise((resolve) => {
     let r = dofusDeSucces(e);
     let i = r && t ? DOFUS[r]?.nom : undefined;
+    let manquants = r && !t && meta ? dofusManquantsAvant(meta, r) : [];
+    let texte = i
+      ? `Tu obtiens le ${echapperHtml(i)}.`
+      : manquants.length
+        ? `Le ${echapperHtml(DOFUS[r].nom)} (niv. ${DOFUS[r].niveau}) t'attend : comme dans Dofus 3, il faut d'abord ${manquants.length > 1 ? `les Dofus` : `le Dofus`} de niveau inférieur : ${manquants.map((id) => `${echapperHtml(DOFUS[id].nom)} (niv. ${DOFUS[id].niveau})`).join(`, `)}. Il viendra tout seul ensuite.`
+        : `Toutes ses quêtes sont accomplies.`;
     afficherEcran(`
       <h1>🏆 Succès : ${echapperHtml(e.nom)}</h1>
-      <p class="sous-titre">${i ? `Tu obtiens le ${echapperHtml(i)}.` : `Toutes ses quêtes sont accomplies.`}</p>
+      ${i ? `<img class="succes-dofus-img" src="${cheminAsset(DOFUS[r].img)}" alt="" onerror="this.remove()" />` : ``}
+      <p class="sous-titre">${texte}</p>
+      ${barreContinuer(`succes-ok`)}
+    `);
+    document.getElementById(`succes-ok`)?.addEventListener(`click`, () => resolve());
+  });
+}
+// Un Dofus en attente arrive : ses prérequis viennent d'être obtenus.
+export function ecranDofusDebloque(id) {
+  return new Promise((resolve) => {
+    afficherEcran(`
+      <h1>🥚 ${echapperHtml(DOFUS[id].nom)}</h1>
+      <img class="succes-dofus-img" src="${cheminAsset(DOFUS[id].img)}" alt="" onerror="this.remove()" />
+      <p class="sous-titre">Ses prérequis sont réunis : le ${echapperHtml(DOFUS[id].nom)} rejoint ta collection. ${echapperHtml(DOFUS[id].desc)}</p>
       ${barreContinuer(`succes-ok`)}
     `);
     document.getElementById(`succes-ok`)?.addEventListener(`click`, () => resolve());

@@ -34,6 +34,7 @@ import {
   imgObjet,
   imgSymboleClasse,
   racine,
+  htmlMetaObjet,
   resumeBonus,
 } from "../commun.js";
 let triArmurerie = `toile`;
@@ -97,7 +98,7 @@ function htmlFicheObjet(inst, persos, perso, porteePar, quantite) {
         <img class="fiche-img" src="${imgObjet(inst.id)}" alt="" onerror="this.remove()" />
         <div class="fiche-titre">
           <h3>${htmlNomObjet(inst)}${quantite > 1 ? ` <span class="item-qte">×${quantite}</span>` : ``}</h3>
-          <span class="muet">T${numeroZoneObjet(inst.id)} · ${inst.rarete ? `${RARETES_INFO[inst.rarete].nom} · ` : ``}${NOMS_SLOTS[def.slot]} · trouvé en toile ${numeroZoneObjet(inst.id)}${def.panoplie ? ` · ${echapperHtml(def.panoplie)}` : ``}</span>
+          <span class="muet ic-meta">${htmlMetaObjet(inst)} · trouvé en toile ${numeroZoneObjet(inst.id)}${def.panoplie ? ` · ${echapperHtml(def.panoplie)}` : ``}</span>
         </div>
         <button class="fiche-fermer" data-fermer-fiche aria-label="Fermer">✕</button>
       </div>
@@ -134,8 +135,7 @@ export function ecranEquipement(e, t) {
         let inst = s.equipement[slot];
         let n = inst ? EQUIPEMENTS[inst.id] : undefined;
         return `<div class="equip-slot ${n ? `rempli` : `vide`}${classeRarete(inst)}" data-slot="${slot}" ${n ? `data-desequip="${slot}" draggable="true" role="button" tabindex="0" aria-label="${echapperHtml(n.nom)} : voir la fiche"` : ``}>
-          <span class="slot-nom">${NOMS_SLOTS[slot]}</span>
-          ${n && inst ? `<img class="slot-img" src="${imgObjet(n.id)}" alt="" onerror="this.remove()" /><span class="slot-item">${htmlNomObjet(inst)}<small>T${numeroZoneObjet(inst.id)} · ${NOMS_SLOTS[n.slot]} ${htmlChipsObjet(inst, s.classeId)}</small></span>` : `<span class="slot-vide-txt">— vide —${groupes.some((g) => EQUIPEMENTS[g.inst.id]?.slot === slot && g.comparaison.verdict !== `impossible`) ? ` <small>(objet dispo dans l'inventaire)</small>` : ``}</span>`}
+          ${n && inst ? `<span class="ic-visuel"><img src="${imgObjet(n.id)}" alt="" onerror="this.remove()" /></span><span class="slot-item ic-corps"><span class="slot-nom">${NOMS_SLOTS[slot]}</span><span class="ic-nom">${htmlNomObjet(inst)}</span><span class="ic-meta">${htmlMetaObjet(inst)}</span><span class="ic-stats">${htmlChipsObjet(inst, s.classeId)}</span></span>` : `<span class="slot-nom">${NOMS_SLOTS[slot]}</span><span class="slot-vide-txt">— vide —${groupes.some((g) => EQUIPEMENTS[g.inst.id]?.slot === slot && g.comparaison.verdict !== `impossible`) ? ` <small>(objet dispo dans l'inventaire)</small>` : ``}</span>`}
         </div>`;
       }).join(``);
       const compteSlot = (slot) => t.filter((inst) => EQUIPEMENTS[inst.id]?.slot === slot).length;
@@ -157,11 +157,14 @@ export function ecranEquipement(e, t) {
             .map(({ inst, indices, comparaison }) => {
               let n = EQUIPEMENTS[inst.id];
               let possible = comparaison.verdict !== `impossible`;
-              return `<button class="item-carte${classeRarete(inst)}${possible ? `` : ` inequipable`}" data-index="${indices[0]}" draggable="${possible}" aria-label="${echapperHtml(n.nom)} : voir la fiche">
-              <img src="${imgObjet(inst.id)}" alt="" loading="lazy" onerror="this.remove()" />
-              <span class="item-nom">${htmlNomObjet(inst)}${indices.length > 1 ? ` <span class="item-qte">×${indices.length}</span>` : ``}
-                ${htmlVerdict(comparaison.verdict)}
-                <small>T${numeroZoneObjet(inst.id)} · ${NOMS_SLOTS[n.slot]} ${htmlChipsObjet(inst, s.classeId)}</small>${possible ? htmlComparaisonObjet(inst, s) : ``}${htmlBadgesHeros(inst, e, s)}</span>
+              return `<button class="item-carte ic${classeRarete(inst)}${possible ? `` : ` inequipable`}" data-index="${indices[0]}" draggable="${possible}" aria-label="${echapperHtml(n.nom)} : voir la fiche">
+              <span class="ic-visuel"><img src="${imgObjet(inst.id)}" alt="" loading="lazy" onerror="this.remove()" /></span>
+              <span class="ic-corps">
+                <span class="ic-ligne1"><span class="ic-nom">${htmlNomObjet(inst)}${indices.length > 1 ? ` <span class="item-qte">×${indices.length}</span>` : ``}</span>${htmlVerdict(comparaison.verdict)}</span>
+                <span class="ic-meta">${htmlMetaObjet(inst)}</span>
+                <span class="ic-stats">${htmlChipsObjet(inst, s.classeId)}</span>
+                ${possible ? htmlComparaisonObjet(inst, s) : ``}${htmlBadgesHeros(inst, e, s)}
+              </span>
             </button>`;
             })
             .join(``)
@@ -359,7 +362,7 @@ export function ecranEquipement(e, t) {
         ?.addEventListener(`click`, (ev) => h(ev.currentTarget.dataset.retirer));
       document.querySelector(`.fiche-fermer`)?.focus({ preventScroll: true });
       document.getElementById(`equip-retour`)?.addEventListener(`click`, () => {
-        document.removeEventListener(`keydown`, echap);
+        document.removeEventListener(`keydown`, echap, true);
         document.getElementById(`fiche-equip`)?.remove();
         resolve();
       });
@@ -371,13 +374,16 @@ export function ecranEquipement(e, t) {
         document.scrollingElement.scrollTop = o;
       }
     };
+    // Échap ferme d'abord la fiche ouverte (sans quitter l'écran) : écouté en phase de capture
     const echap = (ev) => {
       if (ev.key === `Escape` && selection) {
+        ev.preventDefault();
+        ev.stopPropagation();
         selection = null;
         i();
       }
     };
-    document.addEventListener(`keydown`, echap);
+    document.addEventListener(`keydown`, echap, true);
     i();
   });
 }

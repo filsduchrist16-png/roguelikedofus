@@ -1,6 +1,6 @@
-import { CONFIG_RELIQUES, DOFUS, MONDES, MONSTRES, RELIQUES } from "../data/index.js";
+import { CONFIG_RELIQUES, DOFUS, MONDES, MONSTRES, RELIQUES, SUCCES } from "../data/index.js";
 import { DIFFICULTES, RARETES, getMonde } from "../jeu/config.js";
-import { dofusDeSucces, nouvelEtatQuetes } from "../jeu/quetes.js";
+import { dofusDeSucces, nouvelEtatQuetes, progressionSucces } from "../jeu/quetes.js";
 import { ajouterResistanceTous, effetsDifficulte, prospectionEquipe } from "../jeu/run.js";
 const CLE_META = `rld_meta_v0`;
 const MIGRATION_SUCCES = {
@@ -60,10 +60,15 @@ export function chargerMeta() {
         runs: t.runs ?? 0,
         victoires: t.victoires ?? 0,
         quetes,
-        collection: t.collection ?? {},
+        // raretés connues seulement (elles finissent dans des classes CSS)
+        collection: Object.fromEntries(
+          Object.entries(t.collection ?? {}).filter(([, r]) => RARETES.includes(r)),
+        ),
         ascension,
         statsMonde: normaliserStatsMonde(t.statsMonde),
         reliques: normaliserReliques(t.reliques),
+        dofusSuspendus: Array.isArray(t.dofusSuspendus) ? t.dofusSuspendus : [],
+        secrets: Array.isArray(t.secrets) ? t.secrets : [],
       };
     }
   } catch {}
@@ -82,7 +87,65 @@ export function sauverMeta(e) {
     localStorage.setItem(CLE_META, JSON.stringify(e));
   } catch {}
 }
+// ---------- Ordre d'obtention (comme dans Dofus 3) ----------
+// Un Dofus ne s'obtient qu'une fois possédés tous les Dofus de niveau inférieur.
+export const prerequisDofus = (id) =>
+  Object.values(DOFUS)
+    .filter((d) => d.niveau < (DOFUS[id]?.niveau ?? 0))
+    .map((d) => d.id);
+export function dofusManquantsAvant(meta, id) {
+  const possedes = new Set(meta.dofus.map((d) => d.id));
+  return prerequisDofus(id).filter((x) => !possedes.has(x));
+}
+const succesDuDofusId = (id) => Object.values(SUCCES).find((s) => dofusDeSucces(s) === id);
+// Dofus dont le succès est terminé mais qui attendent des Dofus de niveau inférieur.
+export function dofusEnAttente(meta) {
+  const possedes = new Set(meta.dofus.map((d) => d.id));
+  return Object.values(DOFUS)
+    .filter((d) => !possedes.has(d.id))
+    .filter((d) => {
+      const s = succesDuDofusId(d.id);
+      return s && meta.quetes && progressionSucces(meta.quetes, s).complet;
+    })
+    .map((d) => d.id);
+}
+// Ceux qui peuvent être remis maintenant (succès terminé et prérequis possédés), par niveau.
+export function dofusDebloquables(meta) {
+  return dofusEnAttente(meta)
+    .filter((id) => dofusManquantsAvant(meta, id).length === 0)
+    .sort((a, b) => DOFUS[a].niveau - DOFUS[b].niveau);
+}
+// Ancienne sauvegarde : un Dofus obtenu avant ses prérequis est mis de côté (avec son jet) ; il
+// revient tout seul quand l'ordre est respecté et que son succès est terminé.
+export function remettreDofusEnOrdre(meta) {
+  const valides = new Set();
+  const suspendus = [];
+  const parNiveau = [...meta.dofus].sort(
+    (a, b) => (DOFUS[a.id]?.niveau ?? 0) - (DOFUS[b.id]?.niveau ?? 0),
+  );
+  for (const d of parNiveau) {
+    if (prerequisDofus(d.id).every((p) => valides.has(p))) {
+      valides.add(d.id);
+    } else {
+      suspendus.push(d);
+    }
+  }
+  if (suspendus.length) {
+    meta.dofus = meta.dofus.filter((d) => !suspendus.includes(d));
+    meta.dofusSuspendus = [...(meta.dofusSuspendus ?? []), ...suspendus];
+    sauverMeta(meta);
+  }
+  return suspendus.map((d) => d.id);
+}
 export function ajouterDofus(e, t, n = Math.random) {
+  // un Dofus mis de côté retrouve son jet
+  let ancien = (e.dofusSuspendus ?? []).find((d) => d.id === t);
+  if (ancien) {
+    e.dofusSuspendus = e.dofusSuspendus.filter((d) => d !== ancien);
+    e.dofus.push(ancien);
+    sauverMeta(e);
+    return;
+  }
   let r = DOFUS[t]?.prospectionJet;
   let jet = r ? r[0] + Math.floor(n() * (r[1] - r[0] + 1)) : undefined;
   e.dofus.push(
@@ -99,7 +162,7 @@ export function ajouterDofus(e, t, n = Math.random) {
 }
 export function dofusAGagner(e, t) {
   let n = dofusDeSucces(t);
-  if (n && !e.dofus.some((e) => e.id === n)) {
+  if (n && !e.dofus.some((e) => e.id === n) && dofusManquantsAvant(e, n).length === 0) {
     return n;
   }
 }

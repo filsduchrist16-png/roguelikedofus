@@ -101,7 +101,7 @@ export function texteObtentionDofus(dofusId) {
 const pct = (x) => `${Math.round(x * 1000) / 10} %`;
 export const AIDE_OBTENTION = `
   <p><b>Équipement.</b> Après chaque victoire, jusqu'à 4 tirages de butin : ${pct(TAUX_BUTIN.taux.combat)} de chance par tirage
-    en combat, ${pct(TAUX_BUTIN.taux.combat_dur)} en combat dur et ${pct(TAUX_BUTIN.taux.donjon)} au donjon. La prospection de
+    en combat, et ${pct(TAUX_BUTIN.taux.donjon)} en combat dur comme au donjon. La prospection de
     l'équipe augmente ces chances (jusqu'à +${Math.round(TAUX_BUTIN.capProspection * 100)} %). Chaque zone a ses objets ; les
     combats durs et les donjons donnent aussi les objets d'élite et de boss. Survole un objet pour voir où il tombe.</p>
   <p><b>Hôtel de vente.</b> Il vend les objets de la zone en cours (épiques et plus) et de la zone suivante (rares et plus),

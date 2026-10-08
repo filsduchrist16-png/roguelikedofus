@@ -1,12 +1,12 @@
 import { EQUIPEMENTS } from "../../data/index.js";
 import { RARETES_INFO } from "../../jeu/config.js";
 import {
-  NOMS_SLOTS,
   afficherEcran,
   attrTipObjet,
   barreContinuer,
   classeRarete,
   htmlChipsObjet,
+  htmlMetaObjet,
   htmlNomObjet,
   imgObjet,
 } from "../commun.js";
@@ -17,7 +17,7 @@ export function ecranButin(e) {
         let t = EQUIPEMENTS[e.id];
         return `<div class="drop-item${classeRarete(e)}"${attrTipObjet(e.id)}>
         <img src="${imgObjet(e.id)}" alt="" loading="lazy" onerror="this.remove()" />
-        <span class="drop-nom">${htmlNomObjet(e)}${e.rarete ? `<span class="drop-rarete inom-${e.rarete}">${RARETES_INFO[e.rarete].nom}</span>` : ``}<small>${NOMS_SLOTS[t.slot]} ${htmlChipsObjet(e)}</small></span>
+        <span class="drop-nom">${htmlNomObjet(e)}${e.rarete ? `<span class="drop-rarete inom-${e.rarete}">${RARETES_INFO[e.rarete].nom}</span>` : ``}<small><span class="ic-meta">${htmlMetaObjet(e)}</span> ${htmlChipsObjet(e)}</small></span>
       </div>`;
       })
       .join(``);

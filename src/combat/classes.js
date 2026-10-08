@@ -120,6 +120,7 @@ export function effetsClasseSurCible(lanceur, sort, cible, coup, ctx) {
     const avant = cible.effets.length;
     cible.effets = cible.effets.filter(
       (e) =>
+        e.source === `etat` ||
         !(
           [`esquive`, `reductionDegats`, `armure`, `resAll`, `hot`].includes(e.stat) ||
           (e.stat === `degatsInfliges` && e.valeur > 0)

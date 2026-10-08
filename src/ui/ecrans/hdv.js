@@ -9,8 +9,7 @@ import {
 import { grouperInventaire } from "../../jeu/inventaire.js";
 import { enregistrerCollection } from "../../sauvegarde/meta.js";
 import {
-  NOMS_SLOTS,
-  afficherEcran,
+  afficherEnGardantScroll,
   attrTipObjet,
   barreRetour,
   classeRarete,
@@ -18,6 +17,7 @@ import {
   htmlBadgesHeros,
   htmlChipsObjet,
   htmlKamas,
+  htmlMetaObjet,
   htmlNomObjet,
   imgObjet,
   racine,
@@ -35,7 +35,7 @@ export function ecranHdv(e, t, n) {
               let r = e.kamas >= t.prix;
               return `<button class="item-carte hdv-achat${classeRarete(t.inst)}" data-achat="${n}" ${r ? `` : `disabled`}${attrTipObjet(t.inst.id)}>
               <img src="${imgObjet(t.inst.id)}" alt="" loading="lazy" onerror="this.remove()" />
-              <span class="item-nom">${htmlNomObjet(t.inst)}<small>${NOMS_SLOTS[EQUIPEMENTS[t.inst.id].slot]} ${htmlChipsObjet(t.inst)}</small>${htmlBadgesHeros(t.inst, e.persos)}</span>
+              <span class="item-nom">${htmlNomObjet(t.inst)}<small><span class="ic-meta">${htmlMetaObjet(t.inst)}</span> ${htmlChipsObjet(t.inst)}</small>${htmlBadgesHeros(t.inst, e.persos)}</span>
               <span class="hdv-prix">${htmlKamas(t.prix)}</span>
             </button>`;
             })
@@ -49,13 +49,13 @@ export function ecranHdv(e, t, n) {
                 indices,
               }) => `<button class="item-carte hdv-vente${classeRarete(e_)}" data-vente="${indices[0]}"${attrTipObjet(e_.id)}>
               <img src="${imgObjet(e_.id)}" alt="" loading="lazy" onerror="this.remove()" />
-              <span class="item-nom">${htmlNomObjet(e_)}${indices.length > 1 ? ` <span class="item-qte">×${indices.length}</span>` : ``}<small>${NOMS_SLOTS[EQUIPEMENTS[e_.id].slot]} ${htmlChipsObjet(e_)}</small>${htmlBadgesHeros(e_, e.persos)}</span>
+              <span class="item-nom">${htmlNomObjet(e_)}${indices.length > 1 ? ` <span class="item-qte">×${indices.length}</span>` : ``}<small><span class="ic-meta">${htmlMetaObjet(e_)}</span> ${htmlChipsObjet(e_)}</small>${htmlBadgesHeros(e_, e.persos)}</span>
               <span class="hdv-prix vente">${htmlKamas(prixRevente(e_))}</span>
             </button>`,
             )
             .join(``)
         : `<p class="muet">Rien à vendre : l'équipement non équipé de l'inventaire se revend ici.</p>`;
-      afficherEcran(`
+      afficherEnGardantScroll(`
         <h1>Hôtel de vente</h1>
         <p class="sous-titre">Tout le catalogue de la zone (exclusifs boss/élite compris) : local en épique+, zone suivante dès le rare. Revente à 50 % du prix.</p>
         <div class="hdv-solde">${htmlKamas(e.kamas)}</div>

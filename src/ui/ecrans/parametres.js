@@ -15,6 +15,8 @@ import {
 export function ecranParametres(e) {
   return new Promise((resolve) => {
     let n = false;
+    // écouteur de la touche en cours de saisie (retiré si on quitte l'écran)
+    let captureTouche = null;
     let r = false;
     let i = () => {
       afficherEcran(`
@@ -141,13 +143,22 @@ export function ecranParametres(e) {
         n = true;
         i();
         let e = (t) => {
+          // touches réservées : Échap annule, les chiffres choisissent les sorts
+          if ([`Shift`, `Control`, `Alt`, `Meta`, `Tab`].includes(t.key) || t.repeat) {
+            return;
+          }
           t.preventDefault();
+          t.stopPropagation();
           document.removeEventListener(`keydown`, e, true);
-          parametres.toucheFinTour = t.key;
-          sauverParametres(parametres);
+          captureTouche = null;
+          if (t.key !== `Escape` && !/^(?:Digit|Numpad)[1-9]$/.test(t.code)) {
+            parametres.toucheFinTour = t.key;
+            sauverParametres(parametres);
+          }
           n = false;
           i();
         };
+        captureTouche = e;
         document.addEventListener(`keydown`, e, true);
       });
       document.getElementById(`set-rapide`)?.addEventListener(`click`, () => {
@@ -240,7 +251,13 @@ export function ecranParametres(e) {
         r = false;
         i();
       });
-      document.getElementById(`set-retour`)?.addEventListener(`click`, () => resolve());
+      document.getElementById(`set-retour`)?.addEventListener(`click`, () => {
+        if (captureTouche) {
+          document.removeEventListener(`keydown`, captureTouche, true);
+          captureTouche = null;
+        }
+        resolve();
+      });
     };
     i();
   });

@@ -9,6 +9,7 @@ import {
   meilleurElement,
   resistanceTotale,
   statsEffectives,
+  calculerDegatsDetail,
 } from "../combat/stats.js";
 import { ordreDeJeu } from "../combat/moteur.js";
 import { ETATS_CLASSE, ICONES_MARQUES } from "../combat/classes.js";
@@ -45,13 +46,22 @@ let combattants = [];
 let journalCombat = [];
 let titreCombat = ``;
 let resolveurAction = null;
+// bonus de dégâts du combat, pour l'aperçu des dégâts sur chaque cible
+let optionsVue = {};
+// détails du sort choisi dépliés (téléphone)
+let aideDepliee = false;
 let combatEnCours = false;
 let combattantActif = null;
 let sortChoisi = null;
 let contexteCombat = null;
 export function installerRaccourcisCombat() {
   document.addEventListener(`keydown`, (e) => {
-    if (!contexteCombat || !combattantActif) {
+    if (!contexteCombat || !combattantActif || e.repeat || e.ctrlKey || e.metaKey || e.altKey) {
+      return;
+    }
+    if (e.key === `Escape` && sortChoisi) {
+      sortChoisi = null;
+      rendreCombat();
       return;
     }
     if (e.key === parametres.toucheFinTour) {
@@ -105,7 +115,8 @@ export function installerInfobulleSorts() {
   };
   document.addEventListener(`mouseover`, (e) => {
     let n = e.target.closest?.(`button.sort[data-sort], button.sort[data-arme]`);
-    if (n) {
+    // le sort choisi est déjà détaillé dans l'aide : pas d'infobulle qui cacherait les cibles
+    if (n && !n.classList.contains(`choisi`)) {
       t(n);
     }
   });
@@ -177,7 +188,8 @@ function htmlDefi() {
     <small class="defi-bonus">+30 % XP et kamas</small>
   </div>`;
 }
-export function initialiserVueCombat(e, t, n = null) {
+export function initialiserVueCombat(e, t, n = null, options = {}) {
+  optionsVue = options;
   defiCombat = null;
   combattants = e;
   titreCombat = t;
@@ -338,6 +350,7 @@ function choisirSort(sort) {
   if (!t || !contexteCombat || !sort) {
     return;
   }
+  document.querySelectorAll(`.sort-tip`).forEach((x) => (x.style.display = `none`));
   // un second clic sur le sort sélectionné l'annule (ou le lance s'il n'a pas de cible à choisir)
   if (sortChoisi?.id === sort.id) {
     if (sansCibleAChoisir(sort)) {
@@ -381,6 +394,34 @@ function compterPieges(e, t) {
   }
   return n;
 }
+// Dégâts prévus du sort choisi sur une cible (sans esquive ni critique) : [min, max], ou null.
+function apercuDegats(cible) {
+  const s = sortChoisi;
+  const lanceur = combattantActif;
+  if (!s || !lanceur || s.type !== `degats` || !(s.baseMax > 0) || cible.camp === lanceur.camp) {
+    return null;
+  }
+  try {
+    const calc = (x) => {
+      const suite = s.sansEsquiveNiCrit ? [x] : [0.999, x, 0.999];
+      let k = 0;
+      const ctx = {
+        rng: () => suite[k++] ?? 0.999,
+        log: () => {},
+        playerDamageBonus: optionsVue.playerDamageBonus ?? 1,
+        enemyDamageBonus: optionsVue.enemyDamageBonus ?? 1,
+        reliquesActives: optionsVue.reliquesActives ?? new Set(),
+      };
+      return calculerDegatsDetail(lanceur, s, cible, { ctx, mult: 1, paAvant: lanceur.paActuels })
+        .dmg;
+    };
+    const min = calc(0);
+    const max = calc(0.999);
+    return Number.isFinite(min) && Number.isFinite(max) ? [min, max] : null;
+  } catch {
+    return null;
+  }
+}
 function htmlCarteCombattant(e, t) {
   let n = e.pvActuels <= 0;
   let r = Math.max(0, Math.round(e.pvActuels));
@@ -394,10 +435,12 @@ function htmlCarteCombattant(e, t) {
     e.pvActuels > 0
       ? choisirElement(combattantActif, e, sortChoisi ?? undefined)
       : null;
-  let s = ELEMENTS.map((t) => {
-    let n = Math.round(resistanceTotale(e, t) * 100);
-    return `<span class="res-chip ${n < 0 ? `faible` : n === 0 ? `zero` : ``}${t === o ? ` vise` : ``}" title="${t === o ? `Résistance ${NOMS_ELEMENTS[t]} · ton élément de frappe contre cette cible` : `Résistance ${NOMS_ELEMENTS[t]}`}"><img src="${IMGS_RESISTANCE[t]}" alt="" onerror="this.remove()" />${n > 0 ? `+` : ``}${n}%</span>`;
-  }).join(``);
+  let s = ELEMENTS.filter((t) => Math.round(resistanceTotale(e, t) * 100) !== 0 || t === o)
+    .map((t) => {
+      let n = Math.round(resistanceTotale(e, t) * 100);
+      return `<span class="res-chip ${n < 0 ? `faible` : n === 0 ? `zero` : ``}${t === o ? ` vise` : ``}" title="${t === o ? `Résistance ${NOMS_ELEMENTS[t]} · ton élément de frappe contre cette cible` : `Résistance ${NOMS_ELEMENTS[t]}`}"><img src="${IMGS_RESISTANCE[t]}" alt="" onerror="this.remove()" />${n > 0 ? `+` : ``}${n}%</span>`;
+    })
+    .join(``);
   let c = [];
   for (let t of e.effets) {
     if (t.stat === `vitalite`) {
@@ -524,6 +567,14 @@ function htmlCarteCombattant(e, t) {
       ${e.camp === `joueur` && !e.estEgide ? `<div class="pp-row" title="Prospection"><img src="${IMG_PP}" alt="" onerror="this.remove()" /><b>${e.stats.prospection ?? 0}</b></div>` : ``}
       ${s && !e.estEgide ? `<div class="res-row">${s}</div>` : ``}
       <div class="badges">${c.map((e) => `<span class="badge">${echapperHtml(e)}</span>`).join(``)}</div>
+      ${(() => {
+        let ap = t ? apercuDegats(e) : null;
+        if (!ap) {
+          return ``;
+        }
+        let mortel = ap[0] >= e.pvActuels + (e.bouclier ?? 0);
+        return `<div class="cc-apercu${mortel ? ` mortel` : ``}" title="Dégâts prévus du sort (hors critique et esquive)${mortel ? ` : la cible tombe` : ``}">${mortel ? `☠` : `💥`} ${ap[0]}${ap[1] !== ap[0] ? `–${ap[1]}` : ``} dégâts</div>`;
+      })()}
       ${n ? `<div class="ko-label">K.O.</div>` : ``}
     </div>`;
 }
@@ -605,6 +656,7 @@ function rendreCombat() {
   r(`cb-joueur`, n(`joueur`));
   r(`cb-ennemi`, n(`ennemi`));
   r(`cb-barre`, htmlBarreSorts());
+  racine.querySelector(`.combat`)?.classList.toggle(`ciblage`, !!(combattantActif && sortChoisi));
   rafraichirJournal();
   if (combattantActif && sortChoisi) {
     montrerCibles();
@@ -701,6 +753,10 @@ function htmlBarreSorts() {
         lancerSurSoi(sortChoisi);
       }
     });
+    document.getElementById(`sort-info`)?.addEventListener(`click`, () => {
+      aideDepliee = !aideDepliee;
+      rendreCombat();
+    });
     document.getElementById(`sort-annuler`)?.addEventListener(`click`, () => {
       sortChoisi = null;
       rendreCombat();
@@ -711,8 +767,8 @@ function htmlBarreSorts() {
     const consigne = sansCibleAChoisir(sortChoisi)
       ? `<button id="sort-lancer" class="primaire">Lancer ${echapperHtml(sortChoisi.nom)}</button>`
       : `<span class="aide-consigne">Choisis une cible pour <b>${echapperHtml(sortChoisi.nom)}</b>.</span>`;
-    r = `<div class="aide aide-sort">
-      <div class="aide-sort-tete">${consigne}<button id="sort-annuler" class="secondaire">Annuler</button></div>
+    r = `<div class="aide aide-sort${aideDepliee ? ` deplie` : ``}">
+      <div class="aide-sort-tete">${consigne}<button id="sort-info" class="secondaire sort-info" aria-label="Détails du sort" aria-pressed="${aideDepliee}">ⓘ</button><button id="sort-annuler" class="secondaire">Annuler</button></div>
       <div class="aide-sort-detail">${infobulleSort(sortChoisi, e)}</div>
     </div>`;
   } else {

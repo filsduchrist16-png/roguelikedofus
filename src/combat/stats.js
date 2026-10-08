@@ -109,10 +109,11 @@ export function ciblesValides(e, t, n) {
       i = alliesVivants(e, r);
       break;
     case `ennemi_tous`:
-      i = ennemisVivants(e, r);
+      i = ennemisVivants(e, r).filter((x) => !x.estLance);
       break;
     case `ennemi_ligne`: {
-      let t = ennemisVivants(e, r);
+      // la Lance du Forgelance n'est pas une cible (et ne masque pas la ligne arrière)
+      let t = ennemisVivants(e, r).filter((x) => !x.estLance);
       i = sommeEffets(e, `ignoreLigne`) > 0 ? t : filtrerLigneAvant(t);
       break;
     }
@@ -449,8 +450,10 @@ export function desenvouter(e, t) {
     `chance`,
   ];
   let length = e.effets.length;
+  // les effets d'un état de classe (Pandawa, Zobal…) restent : ils durent tant que l'état dure
   e.effets = e.effets.filter(
-    (e) => !(n.includes(e.stat) || (e.stat === `degatsInfliges` && e.valeur > 0)),
+    (e) =>
+      e.source === `etat` || !(n.includes(e.stat) || (e.stat === `degatsInfliges` && e.valeur > 0)),
   );
   e.bonusOffensifProchain = 0;
   if (e.effets.length < length) {

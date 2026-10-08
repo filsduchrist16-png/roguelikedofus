@@ -1,3 +1,4 @@
+import { numeroZoneObjet } from "../jeu/economie.js";
 import { descriptionPanoplie } from "../jeu/panoplies.js";
 import { texteObtentionDofus, texteObtentionObjet } from "../jeu/obtention.js";
 import { CLASSES, DOFUS, EQUIPEMENTS } from "../data/index.js";
@@ -27,13 +28,15 @@ export function definirRacine(e) {
 }
 export const parametres = chargerParametres();
 export function echapperHtml(e) {
-  return e.replace(
-    /[&<>]/g,
+  return String(e).replace(
+    /[&<>"']/g,
     (e) =>
       ({
         "&": `&amp;`,
         "<": `&lt;`,
         ">": `&gt;`,
+        '"': `&quot;`,
+        "'": `&#39;`,
       })[e],
   );
 }
@@ -161,6 +164,16 @@ export const imgClasse = (e) => cheminAsset(CLASSES[e]?.img ?? `/assets/classes/
 export const imgObjet = (e) => cheminAsset(`/assets/items/${e}.png`);
 export function boutonRetour(e, t = `Retour`) {
   return `<button id="${e}" class="btn-retour" title="${echapperHtml(t)}"><img src="${IMG_RETOUR}" alt="Retour" onerror="this.remove()" /></button>`;
+}
+// Réaffiche un écran en gardant la position des listes et de la page (HDV, forgemagie…).
+export function afficherEnGardantScroll(html) {
+  const listes = [...racine.querySelectorAll(`.equip-inv`)].map((e) => e.scrollTop);
+  const y = scrollY;
+  afficherEcran(html);
+  racine.querySelectorAll(`.equip-inv`).forEach((e, k) => {
+    e.scrollTop = listes[k] ?? 0;
+  });
+  window.scrollTo(0, y);
 }
 export function barreRetour(e, t = `Retour`) {
   return `<div class="boutons-ecran">${boutonRetour(e, t)}</div>`;
@@ -522,6 +535,11 @@ export const classeRarete = (e) => {
 };
 // infobulle « où trouver cet objet » (à mettre sur la carte d'un objet)
 export const attrTipObjet = (id) => ` data-tip="${echapperHtml(texteObtentionObjet(id))}"`;
+// « T13 · Arme · Épique » : le Tier (toile d'obtention) d'abord, bien visible.
+export function htmlMetaObjet(inst) {
+  const def = EQUIPEMENTS[inst.id];
+  return `<b class="ic-tier" title="Tier : la toile où l'objet s'obtient. Plus il est haut, plus l'objet est puissant.">T${numeroZoneObjet(inst.id)}</b> · ${NOMS_SLOTS[def.slot]}${inst.rarete ? ` · <span class="inom-${inst.rarete}">${RARETES_INFO[inst.rarete].nom}</span>` : ``}`;
+}
 export function htmlNomObjet(e) {
   let t = EQUIPEMENTS[e.id];
   let n = echapperHtml(t?.nom ?? e.id);
@@ -798,9 +816,9 @@ export function htmlComparaisonObjet(inst, perso) {
     return `<span class="item-delta"><span class="delta-ref">Équipable seulement en ligne avant.</span></span>`;
   }
   const ref = actuel
-    ? `au lieu de ${echapperHtml(EQUIPEMENTS[actuel.id]?.nom ?? actuel.id)}`
-    : `emplacement vide`;
-  return `<span class="item-delta"><span class="delta-ref">Si équipé (${ref}) :</span> ${htmlDeltas(deltas) || `<span class="muet">aucun changement de stats</span>`}</span>`;
+    ? `À la place de ${echapperHtml(EQUIPEMENTS[actuel.id]?.nom ?? actuel.id)} (T${numeroZoneObjet(actuel.id)})`
+    : `Emplacement vide`;
+  return `<span class="item-delta"><span class="delta-ref">${ref} :</span> ${htmlDeltas(deltas) || `<span class="muet">aucun changement de stats</span>`}</span>`;
 }
 // Petites pastilles « ▲ Iop » : les héros pour qui l'objet est une amélioration.
 export function htmlBadgesHeros(inst, persos, sauf) {

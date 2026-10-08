@@ -4,13 +4,14 @@ import { instancierObjet, pvMaxPerso } from "../../jeu/run.js";
 import { forgerObjet, prixForge, rareteSuivante } from "../../jeu/economie.js";
 import { enregistrerCollection } from "../../sauvegarde/meta.js";
 import {
-  afficherEcran,
+  afficherEnGardantScroll,
   attrTipObjet,
   barreRetour,
   classeRarete,
   echapperHtml,
   htmlChipsObjet,
   htmlKamas,
+  htmlMetaObjet,
   htmlNomObjet,
   imgObjet,
   racine,
@@ -45,7 +46,7 @@ export function ecranForgemagie(e, t) {
               let s = prixForge(inst, true);
               return `<div class="item-carte forge-carte${classeRarete(inst)}"${attrTipObjet(inst.id)}>
               <img src="${imgObjet(inst.id)}" alt="" loading="lazy" onerror="this.remove()" />
-              <span class="item-nom">${htmlNomObjet(inst)}<small>${ou} ${htmlChipsObjet(inst)}</small>
+              <span class="item-nom">${htmlNomObjet(inst)}<small><span class="ic-meta">${htmlMetaObjet(inst)}</span> · ${ou} ${htmlChipsObjet(inst)}</small>
                 <small class="forge-apercu">→ <span class="inom-${i}">${RARETES_INFO[i].nom}</span> ${htmlChipsObjet(a)}</small>
               </span>
               <span class="forge-boutons">
@@ -56,7 +57,7 @@ export function ecranForgemagie(e, t) {
             })
             .join(``)
         : `<p class="muet">${i ? `Rien à forger parmi les objets équipés.` : `Rien à forger : tout ton équipement à rareté est déjà au maximum.`}</p>`;
-      afficherEcran(`
+      afficherEnGardantScroll(`
         <h1>Forgemagie</h1>
         <p class="sous-titre">Le Forgemage monte un objet au palier de rareté supérieur, même équipé. Son apprenti téméraire fait moitié prix… mais rate ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % de ses forges.</p>
         <div class="hdv-solde">${htmlKamas(e.kamas)}</div>

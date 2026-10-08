@@ -1,4 +1,4 @@
-import { CLASSES, COMBATS, EQUIPEMENTS, MONSTRES } from "./data/index.js";
+import { CLASSES, COMBATS, DOFUS, EQUIPEMENTS, MONSTRES } from "./data/index.js";
 import {
   XP_PAR_COMBAT,
   butinDeZone,
@@ -60,6 +60,7 @@ import {
   chanceRelique,
   chargerMeta,
   dofusAGagner,
+  dofusDebloquables,
   dofusPossedes,
   enregistrerAscension,
   enregistrerCollection,
@@ -68,6 +69,7 @@ import {
   pctSoinTaverne,
   prospectionMoyenne,
   reinitialiserDofus,
+  remettreDofusEnOrdre,
   sauverMeta,
   tirerReliques,
 } from "./sauvegarde/meta.js";
@@ -111,7 +113,12 @@ import {
 } from "./jeu/rencontres.js";
 import { ecranRencontre } from "./ui/ecrans/rencontre.js";
 import { ecranCaptureArchi, ecranReliques } from "./ui/ecrans/recompenses.js";
-import { afficherBandeau, afficherBandeauQuete, ecranSuccesObtenu } from "./ui/ecrans/succes.js";
+import {
+  afficherBandeau,
+  afficherBandeauQuete,
+  ecranDofusDebloque,
+  ecranSuccesObtenu,
+} from "./ui/ecrans/succes.js";
 import { ecranAccueil } from "./ui/ecrans/accueil.js";
 import { ecranChoixEquipe } from "./ui/ecrans/choixEquipe.js";
 import { ecranTaverne } from "./ui/ecrans/taverne.js";
@@ -144,6 +151,7 @@ const ctxMeta = () => contexteMeta(meta);
 async function traiterQuetes(e, t) {
   sauverMeta(meta);
   if (!t.quetes.length) {
+    await donnerDofusEnAttente(e);
     return;
   }
   for (let n of t.quetes) {
@@ -160,12 +168,27 @@ async function traiterQuetes(e, t) {
       ajouterDofus(meta, t);
       n = true;
     }
-    await ecranSuccesObtenu(e.def, r);
+    await ecranSuccesObtenu(e.def, r, meta);
   }
   sauverMeta(meta);
   if (n) {
     await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta()));
+  } else {
+    await donnerDofusEnAttente(e);
   }
+}
+// Dofus en attente dont les prérequis sont maintenant obtenus (ordre de Dofus 3), en cascade.
+async function donnerDofusEnAttente(e) {
+  let ids = dofusDebloquables(meta);
+  if (!ids.length) {
+    return;
+  }
+  for (let id of ids) {
+    ajouterDofus(meta, id);
+    await ecranDofusDebloque(id);
+  }
+  sauverMeta(meta);
+  await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta()));
 }
 function contexteRun(e, trancheId, victoire) {
   let r = [`arme`, `coiffe`, `cape`, `anneau`];
@@ -191,19 +214,24 @@ async function jouerCombat(e, combatId, n) {
   let r = COMBATS[combatId]?.nom ?? `Combat`;
   let i = combattantsEquipe(e);
   let a = n.type === `secret` ? monstresSecrets(e.trancheId, n.zone) : monstresDuCombat(combatId);
-  appliquerPuissanceZone(a, n.zone?.id);
   appliquerDifficulteMonstres(a, effetsDifficulte(e.ascension), {
     type: n.type,
     especesZone: n.zone ? especesNormalesZone(n.zone) : undefined,
     rng: Math.random,
   });
+  // après le renfort d'ascension, pour qu'il soit aussi à la puissance de la zone
+  appliquerPuissanceZone(a, n.zone?.id);
   if (n.elite) {
     let e = appliquerAffixesElite(a, Math.random, n.eliteModifs);
     r = `${r} · ${e.map((e) => `${e.nom} (${e.desc})`).join(` · `)}`;
   }
   // idole de la zone et avis de recherche (rencontres)
   let idole = idoleActive(e, n.zone?.id);
-  let traque = n.type === `donjon` ? null : traqueActive(e, n.zone?.id);
+  let traque = n.type === `donjon` || n.type === `secret` ? null : traqueActive(e, n.zone?.id);
+  // la traque ne se déclenche que sur un combat qui peut contenir un archimonstre (ou pour la prime)
+  if (traque?.archi && !a.some((m) => m.archiNom)) {
+    traque = null;
+  }
   let pvMult = (idole?.pvMult ?? 1) * (traque ? 1.2 : 1);
   if (pvMult !== 1) {
     for (let m of a) {
@@ -235,7 +263,11 @@ async function jouerCombat(e, combatId, n) {
   let s = bonusEquipeRun(meta, e);
   appliquerBonusDofus(i, s);
   let c = [...i, ...a];
-  initialiserVueCombat(c, r, meta);
+  initialiserVueCombat(c, r, meta, {
+    playerDamageBonus: s.damageMult,
+    enemyDamageBonus: (effetsDifficulte(e.ascension).degatsMult ?? 1) * (idole?.degatsMult ?? 1),
+    reliquesActives: dofusPossedes(meta),
+  });
   afficherObjectifsCombat(
     objectifsDuCombat({
       quetes: quetesMeta(),
@@ -432,6 +464,13 @@ async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
       return `continue`;
     }
     case `taverne`: {
+      if (effetsDifficulte(e.ascension).tavernesCoupeesAPlein && e.persos.length >= 4) {
+        await ecranMessage(
+          `🍺 Taverne fermée`,
+          `En difficulté Ultime, plus aucune taverne ne t'accueille une fois ton équipe au complet.`,
+        );
+        return `continue`;
+      }
       e.stats.tavernes = (e.stats.tavernes ?? 0) + 1;
       let t = pctSoinTaverne(e.ascension);
       let n = effetsDifficulte(e.ascension);
@@ -763,8 +802,11 @@ async function jouerDonjonSecret(e, zone) {
   e.stats.secrets = (e.stats.secrets ?? 0) + 1;
   let { gagne } = await jouerCombat(e, secret.combat, { type: `secret`, zone });
   if (!gagne) {
+    let definitive = !!effetsDifficulte(e.ascension).mortDefinitive;
     for (let p of e.persos) {
-      p.pvActuels = Math.max(1, p.pvActuels);
+      if (!(definitive && p.pvActuels <= 0)) {
+        p.pvActuels = Math.max(1, p.pvActuels);
+      }
     }
     await ecranMessage(
       `🗝️ Expulsés !`,
@@ -934,6 +976,14 @@ async function jouerRun(e, t, n = 0, r = `t1`) {
   }
 }
 async function boucleJeu() {
+  // anciennes sauvegardes : les Dofus obtenus hors de l'ordre de Dofus 3 sont mis de côté
+  let suspendus = remettreDofusEnOrdre(meta);
+  if (suspendus.length) {
+    await ecranMessage(
+      `🥚 Dofus remis dans l'ordre`,
+      `Les Dofus s'obtiennent maintenant dans l'ordre de Dofus 3 : un Dofus demande tous ceux de niveau inférieur. Mis de côté : ${suspendus.map((id) => DOFUS[id].nom).join(`, `)}. Ils reviendront tout seuls (avec le même jet) quand leurs prérequis seront obtenus et leur succès terminé.`,
+    );
+  }
   for (await traiterQuetes(null, verifierQuetesMeta(quetesMeta(), ctxMeta())); ;) {
     let e = chargerRun();
     let t = zonesDuMonde(getMonde(e?.run.trancheId ?? `t1`));

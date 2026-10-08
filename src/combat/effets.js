@@ -18,6 +18,21 @@ import {
   vivants,
 } from "./stats.js";
 import { declencherPiege } from "./sorts.js";
+// Libellé lisible d'un renfort de rangée pour le journal (« +10 % de dégâts (1 tour) »).
+const NOMS_EFFETS_RANGEE = {
+  degatsInfliges: [`de dégâts`, true],
+  resAll: [`de résistance`, true],
+  esquive: [`d'esquive`, true],
+  reductionDegats: [`de dégâts subis en moins`, true],
+  vitalite: [`PV max`, false],
+  armure: [`d'armure`, false],
+  initiative: [`d'initiative`, false],
+};
+function libelleEffetRangee(stat, valeur, duree) {
+  const [nom, pct] = NOMS_EFFETS_RANGEE[stat] ?? [stat, false];
+  const v = pct ? `${Math.round(valeur * 100)} %` : `${Math.round(valeur)}`;
+  return `${valeur >= 0 ? `+` : ``}${v} ${nom} (${duree} tour${duree > 1 ? `s` : ``})`;
+}
 export function infligerDegats(e, t, n, ctx, i, a, element) {
   if (e.estLance) {
     if (e.pvActuels <= 0) {
@@ -98,6 +113,13 @@ export function infligerDegats(e, t, n, ctx, i, a, element) {
     let t = Math.min(e.bouclier, c);
     e.bouclier -= t;
     c -= t;
+    // les boucliers temporaires absorbent en premier : à leur expiration, on ne retire que ce qu'il en reste
+    let reste = t;
+    for (let b of e.boucliersTemporaires ?? []) {
+      let pris = Math.min(b.montant, reste);
+      b.montant -= pris;
+      reste -= pris;
+    }
   }
   e.pvActuels = Math.max(0, e.pvActuels - c);
   // Dokille : le premier héros qui tombe sous un coup reste debout, une fois par combat
@@ -146,6 +168,7 @@ export function infligerDegats(e, t, n, ctx, i, a, element) {
   if (
     n &&
     ctx &&
+    !ctx.enRiposte &&
     t > 0 &&
     e.pvActuels > 0 &&
     n.pvActuels > 0 &&
@@ -166,7 +189,13 @@ export function infligerDegats(e, t, n, ctx, i, a, element) {
         ctx,
       },
     );
-    infligerDegats(n, t.dmg);
+    // pas de riposte à une riposte
+    ctx.enRiposte = true;
+    try {
+      infligerDegats(n, t.dmg, e, ctx, undefined, undefined, t.element);
+    } finally {
+      ctx.enRiposte = false;
+    }
     logDegats(ctx, `${e.nom} riposte : `, t.dmg, t.element, ` à ${n.nom}.`);
   }
 }
@@ -538,7 +567,7 @@ export function buffRangee(e, t, n, r) {
   let s = [];
   for (let e of t.effets) {
     let t = o && e.valeurSiDeuxDevant !== undefined ? e.valeurSiDeuxDevant : e.valeur;
-    s.push(`${e.stat} ${t >= 0 ? `+` : ``}${t} (${e.duree}t)`);
+    s.push(libelleEffetRangee(e.stat, t, e.duree));
     for (let n of i) {
       if (e.stat === `maxRoll`) {
         n.maxRollCharges += t;
