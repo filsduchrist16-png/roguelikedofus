@@ -61,3 +61,24 @@ describe(`inventaire`, () => {
     expect(run.inventaire).toEqual([inst]);
   });
 });
+
+describe(`équiper le meilleur / vendre l'inutile`, async () => {
+  const { equiperMeilleur, objetsInutiles } = await import(`../src/jeu/inventaire.js`);
+  const { nouvelleRun, instancierObjet } = await import(`../src/jeu/run.js`);
+  const { EQUIPEMENTS: EQ } = await import(`../src/data/index.js`);
+  it(`équipe les nettes améliorations sur les emplacements vides, puis ne refait rien`, () => {
+    const run = nouvelleRun([`iop`, `cra`], 0, `t1`);
+    const ids = Object.values(EQ)
+      .filter((o) => !o.secret && !o.retire && o.tiers.legendaire && o.slot !== `arme`)
+      .slice(0, 6)
+      .map((o) => o.id);
+    run.inventaire.push(...ids.map((id) => instancierObjet(id, `legendaire`)));
+    const n = equiperMeilleur(run);
+    expect(n).toBeGreaterThan(0);
+    expect(run.inventaire.length).toBe(ids.length - n);
+    expect(equiperMeilleur(run)).toBe(0);
+    for (const inst of objetsInutiles(run)) {
+      expect(run.inventaire).toContain(inst);
+    }
+  });
+});

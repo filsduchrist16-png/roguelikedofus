@@ -13,7 +13,7 @@ import {
 } from "../combat/stats.js";
 import { ordreDeJeu } from "../combat/moteur.js";
 import { ETATS_CLASSE, ICONES_MARQUES } from "../combat/classes.js";
-import { nomTouche } from "../sauvegarde/parametres.js";
+import { nomTouche, sauverParametres } from "../sauvegarde/parametres.js";
 import {
   AIDE_PIEGE,
   IMGS_RESISTANCE,
@@ -168,28 +168,45 @@ export function journaliser(msg, meta) {
   }
   rafraichirJournal();
 }
-// Défi du combat en cours (challenges façon DOFUS).
+// Défi du combat en cours (challenges façon DOFUS), avec son état en direct.
 let defiCombat = null;
-export function definirDefiCombat(defi) {
+let etatDefiCombat = null;
+const ETATS_DEFI = {
+  en_cours: [``, `en cours`],
+  assure: [`✔`, `réussi si tu gagnes`],
+  rate: [`✖`, `raté`],
+};
+export function definirDefiCombat(defi, etat = null) {
   defiCombat = defi;
+  etatDefiCombat = etat;
   const hote = document.getElementById(`cb-defi`);
   if (hote) {
     hote.innerHTML = htmlDefi();
   }
 }
+export function majEtatDefi(etat) {
+  if (etat?.etat === etatDefiCombat?.etat && etat?.detail === etatDefiCombat?.detail) {
+    return;
+  }
+  definirDefiCombat(defiCombat, etat);
+}
 function htmlDefi() {
   if (!defiCombat) {
     return ``;
   }
-  return `<div class="defi-combat" title="Réussis le défi pour gagner +30 % d'XP et de kamas">
+  const e = etatDefiCombat ?? { etat: `en_cours` };
+  const [icone, libelle] = ETATS_DEFI[e.etat] ?? ETATS_DEFI.en_cours;
+  return `<div class="defi-combat defi-${e.etat}" title="Réussis le défi pour gagner +30 % d'XP et de kamas">
     <span class="defi-nom">🎯 Défi ${echapperHtml(defiCombat.nom)}</span>
     <span class="defi-texte">${echapperHtml(defiCombat.texte)}</span>
+    <span class="defi-etat">${icone ? `${icone} ` : ``}${libelle}${e.detail ? ` · ${echapperHtml(e.detail)}` : ``}</span>
     <small class="defi-bonus">+30 % XP et kamas</small>
   </div>`;
 }
 export function initialiserVueCombat(e, t, n = null, options = {}) {
   optionsVue = options;
   defiCombat = null;
+  etatDefiCombat = null;
   combattants = e;
   titreCombat = t;
   resolveurAction = n;
@@ -747,6 +764,12 @@ function htmlBarreSorts() {
       }
     });
     document.getElementById(`fin-tour`)?.addEventListener(`click`, () => terminerAction(null));
+    document.getElementById(`vitesse-combat`)?.addEventListener(`click`, (ev) => {
+      parametres.combatRapide = !parametres.combatRapide;
+      sauverParametres(parametres);
+      ev.currentTarget.classList.toggle(`on`, parametres.combatRapide);
+      ev.currentTarget.setAttribute(`aria-pressed`, String(parametres.combatRapide));
+    });
     document.getElementById(`sort-lancer`)?.addEventListener(`click`, () => {
       if (sortChoisi) {
         lancerSurSoi(sortChoisi);
@@ -776,7 +799,7 @@ function htmlBarreSorts() {
   return `
     <div class="sorts-rangee">
       <div class="sorts-zone"><div class="sorts-liste">${n}</div></div>
-      <div class="barre-actions-fin"><button id="fin-tour" class="fin-tour primaire" title="Terminer le tour"><span class="fin-tour-txt">Fin du tour</span> <kbd>${echapperHtml(nomTouche(parametres.toucheFinTour))}</kbd></button></div>
+      <div class="barre-actions-fin"><button id="vitesse-combat" class="secondaire vitesse-combat${parametres.combatRapide ? ` on` : ``}" title="Tours des monstres rapides (aussi dans les Paramètres)" aria-pressed="${!!parametres.combatRapide}">⏩</button><button id="fin-tour" class="fin-tour primaire" title="Terminer le tour"><span class="fin-tour-txt">Fin du tour</span> <kbd>${echapperHtml(nomTouche(parametres.toucheFinTour))}</kbd></button></div>
     </div>
     ${r}`;
 }

@@ -97,3 +97,48 @@ export function defiReussi(defi, r) {
   }
   return false;
 }
+
+/**
+ * État du défi pendant le combat : `en_cours`, `assure` (réussi si le combat est gagné) ou `rate`,
+ * avec un petit détail (« ronde 2/4 »…).
+ * @param {object} defi
+ * @param {{rondes: number, morts: Set<string>, degats: object, soins: number}} suivi
+ * @param {object[]} combattants
+ */
+export function etatDefi(defi, suivi, combattants) {
+  if (!defi) {
+    return null;
+  }
+  const ennemis = combattants.filter((c) => c.camp === `ennemi` && c.monstreId && !c.estLance);
+  const morts = [...suivi.morts].filter((ref) => ennemis.some((e) => e.ref === ref));
+  switch (defi.id) {
+    case `premier`: {
+      if (!morts.length) {
+        return { etat: `en_cours` };
+      }
+      return morts[0] === defi.cible ? { etat: `assure` } : { etat: `rate` };
+    }
+    case `dernier`: {
+      if (!morts.includes(defi.cible)) {
+        return { etat: `en_cours`, detail: `${morts.length}/${ennemis.length - 1} alliés achevés` };
+      }
+      const restants = ennemis.filter((e) => e.ref !== defi.cible && e.pvActuels > 0);
+      return restants.length ? { etat: `rate` } : { etat: `assure` };
+    }
+    case `blitzkrieg`:
+      return suivi.rondes > defi.rondesMax
+        ? { etat: `rate` }
+        : { etat: `en_cours`, detail: `ronde ${Math.max(1, suivi.rondes)}/${defi.rondesMax}` };
+    case `survivant`:
+      return combattants.some((c) => c.camp === `joueur` && !c.creature && c.pvActuels <= 0)
+        ? { etat: `rate` }
+        : { etat: `en_cours` };
+    case `abnegation`:
+      return (suivi.soins ?? 0) > 0 ? { etat: `rate` } : { etat: `en_cours` };
+    case `elementaire`:
+      return Object.entries(suivi.degats ?? {}).some(([el, v]) => el !== defi.element && v)
+        ? { etat: `rate` }
+        : { etat: `en_cours` };
+  }
+  return { etat: `en_cours` };
+}

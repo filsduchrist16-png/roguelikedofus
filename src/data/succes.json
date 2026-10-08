@@ -3225,7 +3225,7 @@
   "dofus_ocre": {
     "categorie": {
       "dofus": "dofus_ocre",
-      "monde": "t4"
+      "monde": "t5"
     },
     "nom": "L'âme des Archimonstres",
     "quetes": [
@@ -3782,7 +3782,7 @@
   "dofus_argente_scintillant": {
     "categorie": {
       "dofus": "dofus_argente_scintillant",
-      "monde": "t4"
+      "monde": "t5"
     },
     "nom": "Les trophées de Rathrosk",
     "quetes": [
@@ -3897,6 +3897,14 @@
           "type": "relique_obtenue",
           "boss": "ombre"
         }
+      },
+      {
+        "critere": {
+          "type": "run_gagnee",
+          "tranche": "t4"
+        },
+        "id": "argente_scintillant_m4",
+        "nom": "Gagner le Monde 4."
       }
     ]
   }

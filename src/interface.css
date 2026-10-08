@@ -2373,3 +2373,29 @@ button,
   font-size: 0.76rem;
   color: var(--danger);
 }
+.prochain-dofus {
+  display: grid;
+  gap: 8px;
+}
+.pd-entete {
+  margin: 0;
+  font-weight: 900;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muet);
+}
+.pd-entete small {
+  float: right;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.pd-dofus {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.pd-dofus + .pd-dofus {
+  border-top: 1px dashed var(--bord-clair);
+  padding-top: 8px;
+}

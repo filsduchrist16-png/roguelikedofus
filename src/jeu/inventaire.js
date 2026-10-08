@@ -1,7 +1,7 @@
 // Aides à la gestion de l'inventaire : comparer un objet à celui porté, regrouper les doublons.
 import { CLASSES, EQUIPEMENTS } from "../data/index.js";
 import { STAT_PAR_ELEMENT } from "./progression.js";
-import { bonusEquipement, emplacementCible, peutEquiper, pvMaxPerso } from "./run.js";
+import { bonusEquipement, emplacementCible, equiperObjet, peutEquiper, pvMaxPerso } from "./run.js";
 
 const STATS = [`force`, `intelligence`, `agilite`, `chance`, `soin`, `prospection`, `crit`];
 const ELEMENTS = [`terre`, `feu`, `eau`, `air`];
@@ -106,4 +106,43 @@ export function grouperInventaire(inventaire) {
     groupes.get(cle).indices.push(i);
   });
   return [...groupes.values()];
+}
+
+/**
+ * Équipe automatiquement, sur chaque héros, les objets de l'inventaire qui sont une nette
+ * amélioration (verdict « mieux » : que des gains utiles, aucun effet spécial perdu). Le meilleur
+ * gain d'abord, jusqu'à ce qu'il n'y en ait plus. Renvoie le nombre d'objets équipés.
+ */
+export function equiperMeilleur(run, persos = run.persos) {
+  let n = 0;
+  for (let tour = 0; tour < 64; tour++) {
+    let meilleur = null;
+    run.inventaire.forEach((inst, index) => {
+      for (const p of persos) {
+        const c = comparerObjet(inst, p);
+        if (c.verdict !== `mieux`) {
+          continue;
+        }
+        const gain = c.deltas.filter((d) => d.utile).reduce((a, d) => a + Math.max(0, d.valeur), 0);
+        if (!meilleur || gain > meilleur.gain) {
+          meilleur = { index, p, gain, emplacement: c.emplacement };
+        }
+      }
+    });
+    if (!meilleur) {
+      break;
+    }
+    equiperObjet(run.inventaire, meilleur.p, meilleur.index, meilleur.emplacement);
+    n++;
+  }
+  return n;
+}
+
+/** Objets de l'inventaire qui n'améliorent aucun héros (ni nettement, ni en partie). */
+export function objetsInutiles(run) {
+  return run.inventaire.filter((inst) =>
+    run.persos.every((p) =>
+      [`moins`, `egal`, `impossible`].includes(comparerObjet(inst, p).verdict),
+    ),
+  );
 }

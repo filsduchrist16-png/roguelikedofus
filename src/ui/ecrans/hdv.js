@@ -6,7 +6,7 @@ import {
   vendreObjet,
   vendreTout,
 } from "../../jeu/economie.js";
-import { grouperInventaire } from "../../jeu/inventaire.js";
+import { grouperInventaire, objetsInutiles } from "../../jeu/inventaire.js";
 import { enregistrerCollection } from "../../sauvegarde/meta.js";
 import {
   afficherEnGardantScroll,
@@ -66,6 +66,12 @@ export function ecranHdv(e, t, n) {
           </div>
           <div class="equip-col">
             <h3>Ton inventaire (${e.inventaire.length})
+              ${(() => {
+                const inutiles = objetsInutiles(e);
+                return inutiles.length
+                  ? `<button id="hdv-vendre-inutile" class="secondaire hdv-tout" title="Vend les objets qui n'améliorent aucun héros (ni nettement, ni en partie)">Vendre l'inutile (${inutiles.length}) · ${htmlKamas(inutiles.reduce((acc, item) => acc + prixRevente(item), 0))}</button>`
+                  : ``;
+              })()}
               ${e.inventaire.length ? `<button id="hdv-vendre-tout" class="secondaire hdv-tout${confirmerVenteTotale ? ` danger-arme` : ``}" title="Vendre tout l'inventaire (l'équipement porté n'est pas concerné)">${confirmerVenteTotale ? `Confirmer : tout vendre` : `Vendre tout`} · ${htmlKamas(e.inventaire.reduce((acc, item) => acc + prixRevente(item), 0))}</button>` : ``}
             </h3>
             ${derniereVente ? `<div class="hdv-annuler" role="status">Vendu : <b>${echapperHtml(EQUIPEMENTS[derniereVente.inst.id]?.nom ?? ``)}</b> (+${htmlKamas(derniereVente.prix)}) <button id="hdv-annuler" class="secondaire">Annuler</button></div>` : ``}
@@ -109,6 +115,14 @@ export function ecranHdv(e, t, n) {
         confirmerVenteTotale = false;
         derniereVente = null;
         vendreTout(e);
+        i();
+      });
+      document.getElementById(`hdv-vendre-inutile`)?.addEventListener(`click`, () => {
+        for (const inst of objetsInutiles(e)) {
+          vendreObjet(e, e.inventaire.indexOf(inst));
+        }
+        derniereVente = null;
+        confirmerVenteTotale = false;
         i();
       });
       document.getElementById(`hdv-annuler`)?.addEventListener(`click`, () => {

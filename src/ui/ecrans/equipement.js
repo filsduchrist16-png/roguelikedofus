@@ -17,7 +17,7 @@ import {
 import { emplacementsDuType, typeDeEmplacement } from "../../jeu/emplacements.js";
 import { numeroZoneObjet } from "../../jeu/economie.js";
 import { RARETES, RARETES_INFO } from "../../jeu/config.js";
-import { comparerObjet, grouperInventaire } from "../../jeu/inventaire.js";
+import { comparerObjet, equiperMeilleur, grouperInventaire } from "../../jeu/inventaire.js";
 import { texteObtentionObjet } from "../../jeu/obtention.js";
 import {
   EMPLACEMENTS,
@@ -125,6 +125,7 @@ export function ecranEquipement(e, t) {
     let r = 0;
     // objet ouvert dans la fiche : { inst } (inventaire) ou { slot } (porté)
     let selection = null;
+    let messageAuto = ``;
     let i = () => {
       let a = racine.querySelector(`.equip-inv`)?.scrollTop ?? 0;
       let o = document.scrollingElement?.scrollTop ?? 0;
@@ -225,7 +226,10 @@ export function ecranEquipement(e, t) {
         <div class="equip-onglets">${c}</div>
         <div class="equip-corps">
           <div class="equip-col">
-            <h3>${echapperHtml(nomClasse(s))} · PV max ${pvMaxPerso(s)}</h3>
+            <h3 class="equip-titre-heros">${echapperHtml(nomClasse(s))} · PV max ${pvMaxPerso(s)}
+              ${groupes.some((g) => e.some((p) => comparerObjet(g.inst, p).verdict === `mieux`)) ? `<button id="equip-auto" class="primaire petit" title="Équipe sur chaque héros les objets de l'inventaire qui sont une nette amélioration">⚡ Équiper le meilleur</button>` : ``}
+            </h3>
+            ${messageAuto ? `<p class="equip-auto-msg" role="status">${messageAuto}</p>` : ``}
             <div class="equip-slots grille">${l}</div>
             ${Object.entries(compterPanoplies(s))
               .map(([nom, nb]) => {
@@ -273,6 +277,15 @@ export function ecranEquipement(e, t) {
         selection = null;
         i();
       };
+      document.getElementById(`equip-auto`)?.addEventListener(`click`, () => {
+        const n = equiperMeilleur({ inventaire: t, persos: e });
+        messageAuto = n
+          ? `✓ ${n} objet${n > 1 ? `s` : ``} équipé${n > 1 ? `s` : ``} (seulement les nettes améliorations ; les objets « mitigés » restent à ton choix).`
+          : `Rien à améliorer.`;
+        selection = null;
+        i();
+        messageAuto = ``;
+      });
       racine.querySelectorAll(`.equip-onglet`).forEach((e) =>
         e.addEventListener(`click`, () => {
           r = Number(e.dataset.perso);

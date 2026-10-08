@@ -1,4 +1,4 @@
-import { CLASSES, COMBATS, DOFUS, EQUIPEMENTS, MONSTRES } from "./data/index.js";
+import { CLASSES, COMBATS, DOFUS, EQUIPEMENTS, MONSTRES, SORTS } from "./data/index.js";
 import {
   XP_PAR_COMBAT,
   butinDeZone,
@@ -71,7 +71,7 @@ import {
   pctSoinTaverne,
   prospectionMoyenne,
   reinitialiserDofus,
-  remettreDofusEnOrdre,
+  rendreDofusSuspendus,
   sauverMeta,
   tirerReliques,
 } from "./sauvegarde/meta.js";
@@ -87,6 +87,7 @@ import {
 import {
   controleurJoueur,
   definirDefiCombat,
+  majEtatDefi,
   enregistrerFx,
   initialiserVueCombat,
   installerInfobulleSorts,
@@ -95,9 +96,13 @@ import {
   rafraichirCombat,
 } from "./ui/combat.js";
 import { ecranButin } from "./ui/ecrans/butin.js";
-import { afficherObjectifsCombat, retirerObjectifsCombat } from "./ui/objectifs.js";
+import {
+  afficherObjectifsCombat,
+  majObjectifsCombat,
+  retirerObjectifsCombat,
+} from "./ui/objectifs.js";
 import { objectifsDuCombat } from "./jeu/objectifs.js";
-import { BONUS_DEFI, defiReussi, tirerDefi } from "./jeu/defis.js";
+import { BONUS_DEFI, defiReussi, etatDefi, tirerDefi } from "./jeu/defis.js";
 import {
   BENEDICTIONS,
   IDOLES,
@@ -180,7 +185,7 @@ async function traiterQuetes(e, t) {
     await donnerDofusEnAttente(e);
   }
 }
-// Dofus en attente dont les prérequis sont maintenant obtenus (ordre de Dofus 3), en cascade.
+// Dofus dont le succès est terminé mais pas encore remis (anciennes sauvegardes), en cascade.
 async function donnerDofusEnAttente(e) {
   let ids = dofusDebloquables(meta);
   if (!ids.length) {
@@ -298,6 +303,8 @@ async function jouerCombat(e, combatId, n) {
       noeud: n.type,
       zoneId: n.zone?.id,
       classes: e.persos.map((e) => e.classeId),
+      elements: [...new Set(e.persos.flatMap((p) => CLASSES[p.classeId]?.elements ?? []))],
+      soigneurs: i.some((h) => h.sorts.some((id) => SORTS[id]?.type === `soin`)),
       ascension: e.ascension,
       archis: meta.archis,
       reliques: meta.reliques ?? [],
@@ -316,7 +323,11 @@ async function jouerCombat(e, combatId, n) {
   let l = nouveauSuiviCombat();
   let herosVivantsAuDepart = i.filter((e) => e.pvActuels > 0).map((e) => e.ref);
   let gagne = await executerCombat(c, {
-    onEvenement: (e) => suivreEvenement(l, e, c),
+    onEvenement: (ev) => {
+      suivreEvenement(l, ev, c);
+      majEtatDefi(etatDefi(defi, l, c));
+      majObjectifsCombat(l, c);
+    },
     controllers: {
       // les créatures et tourelles invoquées par les héros jouent seules
       joueur: (c, cs) => (c.creature ? controleurEnnemi(c, cs) : controleurJoueur(c, cs)),
@@ -421,7 +432,7 @@ async function distribuerButin(e, t, n, r) {
   enregistrerCollection(meta, a);
   e.stats.objets += a.length;
   if (a.length) {
-    await ecranButin(a);
+    await ecranButin(a, e);
   }
 }
 function distribuerKamas(e, t, n, mult = 1) {
@@ -998,12 +1009,12 @@ async function jouerRun(e, t, n = 0, r = `t1`) {
   }
 }
 async function boucleJeu() {
-  // anciennes sauvegardes : les Dofus obtenus hors de l'ordre de Dofus 3 sont mis de côté
-  let suspendus = remettreDofusEnOrdre(meta);
-  if (suspendus.length) {
+  // anciennes versions : les Dofus mis de côté par l'ancien ordre strict reviennent
+  let rendus = rendreDofusSuspendus(meta);
+  if (rendus.length) {
     await ecranMessage(
-      `🥚 Dofus remis dans l'ordre`,
-      `Les Dofus s'obtiennent maintenant dans l'ordre de Dofus 3 : un Dofus demande tous ceux de niveau inférieur. Mis de côté : ${suspendus.map((id) => DOFUS[id].nom).join(`, `)}. Ils reviendront tout seuls (avec le même jet) quand leurs prérequis seront obtenus et leur succès terminé.`,
+      `🥚 Dofus rendus`,
+      `Les Dofus ne demandent plus ceux de niveau inférieur : chacun s'obtient dès que son succès est terminé, dans le monde de sa tranche de niveau. De retour (avec leur jet) : ${rendus.map((id) => DOFUS[id].nom).join(`, `)}.`,
     );
   }
   for (await traiterQuetes(null, verifierQuetesMeta(quetesMeta(), ctxMeta())); ;) {

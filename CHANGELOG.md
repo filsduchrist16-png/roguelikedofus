@@ -1,5 +1,45 @@
 # Journal des modifications
 
+## Passe de conformité : Dofus libres, défis en direct, confort
+
+**Dofus.** Chaque Dofus s'obtient **dès que son succès est terminé**, sans attendre ceux de niveau
+inférieur. Vérification complète : chaque Dofus est rangé dans le monde de sa tranche de niveau réelle
+(1-50 → Monde 1, 51-100 → Monde 2, 101-150 → Monde 3, 151-199 → Monde 4, 200 → Monde 5) et ses
+quêtes se font au plus tard dans ce monde (test automatique). Corrigés : Dofus Ocre et Argenté
+Scintillant (niveau 200) passent au Monde 5 ; l'Argenté Scintillant demande aussi de gagner le
+Monde 4. Les Dofus mis de côté par l'ancien ordre strict sont rendus avec leur jet au lancement.
+L'accueil montre les **Dofus à portée** : les deux succès de Dofus les plus avancés.
+
+**Défi et objectifs suivis en direct pendant le combat.**
+
+- Le défi affiche son état : en cours (avec « ronde 2/4 » pour Blitzkrieg), ✔ réussi si tu gagnes,
+  ou ✖ raté (grisé) dès qu'il ne peut plus réussir.
+- Les objectifs de succès aussi : ✔ quand le boss demandé tombe, ✖ si un héros tombe pour un
+  « sans KO », et les compteurs avancent en direct (« Vaincre 25 monstres : 12/25 », dégâts d'un
+  élément, soins). La pastille 🏆 compte les objectifs validés.
+- Sur grand écran, le panneau des objectifs s'ouvre en bas à gauche (il ne cache plus le défi ni les
+  ennemis).
+
+**Équilibrage vérifié.**
+
+- Audit de tous les objets (2 600 paliers de rareté) : puissance médiane exactement à la cible de
+  leur Tier, progression régulière d'une zone à l'autre.
+- Les objets à **+1 PA** (Gelano, Abracape, Bandeau de Spiritueur, Masque de Koutoulou…) donnaient
+  le PA en plus de stats complètes : ils gardent le PA mais ont des stats réduites, et le PA n'existe
+  plus qu'en épique et légendaire.
+- Simulation de 24 runs par monde avec le joueur automatique : victoires Monde 1 42 %, Monde 2 38 %,
+  Monde 3 42 %, Monde 4 50 %, Monde 5 21 % (il tombait à 8 % : ses monstres sont adoucis de 5 %, et
+  davantage dans les zones à pic de morts). Pics restants adoucis ensuite sans nouvelle simulation :
+  Tanière du Meulou (−12 %) et Breuil du Vénérable (−8 %).
+
+**Confort.**
+
+- **⚡ Équiper le meilleur** (écran Équipement) : met sur chaque héros les objets qui sont une nette
+  amélioration. Aussi sur l'écran de butin : **Équiper les améliorations**, et chaque objet trouvé
+  montre à quel héros il sert.
+- **Vendre l'inutile** à l'hôtel de vente : vend d'un coup les objets qui n'améliorent aucun héros.
+- **⏩** à côté de « Fin du tour » : tours des monstres rapides, sans passer par les Paramètres.
+
 ## Sauvegarde en ligne (PC ↔ mobile)
 
 Dans l'artefact claude.ai, **Paramètres → ☁️ Sauvegarde en ligne** : la partie (Dofus, succès,

@@ -79,7 +79,38 @@ export function objectifsDuCombat(p) {
         // Une quête « gagner n'importe quel combat » n'a rien de propre à ce combat.
         const cible = c.boss || c.combat || c.noeud || c.zone;
         if (possible && cible) {
-          ajouter({ ...base, consigne: consignesVaincre(c) });
+          ajouter({
+            ...base,
+            consigne: consignesVaincre(c),
+            suivi: { type: `vaincre`, boss: c.boss, sansKO: c.sansKO, toursMax: c.toursMax },
+          });
+        }
+      }
+      // compteurs (monstres vaincus, dégâts d'un élément, soins) qui avancent dans ce combat
+      if (c.type === `compteur`) {
+        const fait = p.quetes?.compteurs?.[q.id] ?? 0;
+        const utile =
+          c.evenement === `monstre_vaincu`
+            ? (c.zone === undefined || c.zone === p.zoneId) &&
+              (c.espece === undefined || presents.has(c.espece))
+            : c.evenement === `degats_element`
+              ? (p.elements ?? []).includes(c.element)
+              : c.evenement === `soins`
+                ? !!p.soigneurs
+                : false;
+        if (utile && fait < c.seuil) {
+          ajouter({
+            ...base,
+            consigne: `Progression gardée d'un combat à l'autre.`,
+            suivi: {
+              type: `compteur`,
+              evenement: c.evenement,
+              element: c.element,
+              espece: c.espece,
+              base: fait,
+              seuil: c.seuil,
+            },
+          });
         }
       }
       if (
@@ -153,4 +184,59 @@ function conditionsRunTenues(c, r) {
     r.ascension < (c.ascensionMin ?? 0) ||
     (c.quatreHerosEquipes && !r.quatreHerosEquipes)
   );
+}
+
+/**
+ * État d'un objectif pendant le combat : { etat: `en_cours` | `assure` | `rate`, detail }.
+ * `assure` = validé si le combat est gagné.
+ */
+export function etatObjectif(o, suivi, combattants) {
+  const s = o.suivi;
+  if (!s) {
+    return { etat: `en_cours` };
+  }
+  const mort = (c) => suivi.morts.has(c.ref) || c.pvActuels <= 0;
+  if (s.type === `vaincre`) {
+    if (
+      s.sansKO &&
+      combattants.some((c) => c.camp === `joueur` && !c.creature && c.pvActuels <= 0)
+    ) {
+      return { etat: `rate`, detail: `un héros est tombé` };
+    }
+    if (s.toursMax !== undefined && suivi.rondes > s.toursMax) {
+      return { etat: `rate`, detail: `trop de rondes` };
+    }
+    const ronde =
+      s.toursMax !== undefined ? `ronde ${Math.max(1, suivi.rondes)}/${s.toursMax}` : undefined;
+    if (s.boss) {
+      const boss = combattants.filter((c) => c.camp === `ennemi` && c.monstreId === s.boss);
+      if (boss.length && boss.every(mort)) {
+        return { etat: `assure`, detail: ronde ?? `vaincu` };
+      }
+    }
+    return { etat: `en_cours`, detail: ronde };
+  }
+  if (s.type === `compteur`) {
+    let gagne = 0;
+    if (s.evenement === `monstre_vaincu`) {
+      gagne = combattants.filter(
+        (c) =>
+          c.camp === `ennemi` &&
+          c.monstreId &&
+          !c.estLance &&
+          (s.espece === undefined || c.monstreId === s.espece) &&
+          mort(c),
+      ).length;
+    } else if (s.evenement === `degats_element`) {
+      gagne = Math.round(suivi.degats?.[s.element] ?? 0);
+    } else if (s.evenement === `soins`) {
+      gagne = Math.round(suivi.soins ?? 0);
+    }
+    const total = Math.min(s.seuil, s.base + gagne);
+    return {
+      etat: total >= s.seuil ? `assure` : `en_cours`,
+      detail: `${total.toLocaleString(`fr-FR`)}/${s.seuil.toLocaleString(`fr-FR`)}`,
+    };
+  }
+  return { etat: `en_cours` };
 }

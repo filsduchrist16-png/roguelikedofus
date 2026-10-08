@@ -9,14 +9,14 @@
         "adaptatif": -14,
         "pa": 1,
         "stats": {
-          "vitalite": 10
+          "vitalite": 3
         }
       },
       "legendaire": {
         "adaptatif": -10,
         "pa": 1,
         "stats": {
-          "vitalite": 16
+          "vitalite": 4
         }
       }
     }
@@ -6575,7 +6575,7 @@
         }
       },
       "legendaire": {
-        "adaptatif": 12,
+        "adaptatif": 6,
         "attaque": {
           "baseMax": 16,
           "baseMin": 13,
@@ -6583,8 +6583,8 @@
         },
         "pa": 1,
         "stats": {
-          "crit": 2,
-          "vitalite": 10
+          "crit": 1,
+          "vitalite": 5
         }
       }
     }
@@ -7106,7 +7106,7 @@
         }
       },
       "legendaire": {
-        "adaptatif": 18,
+        "adaptatif": 16,
         "attaque": {
           "baseMax": 19,
           "baseMin": 16,
@@ -7832,35 +7832,19 @@
     "nom": "Bandeau de Spiritueur",
     "slot": "coiffe",
     "tiers": {
-      "commun": {
-        "adaptatif": 15,
-        "stats": {
-          "vitalite": 5,
-          "crit": 2
-        },
-        "pa": 1
-      },
-      "rare": {
-        "adaptatif": 19,
-        "stats": {
-          "vitalite": 6,
-          "crit": 2
-        },
-        "pa": 1
-      },
       "epique": {
-        "adaptatif": 24,
+        "adaptatif": 7,
         "stats": {
-          "vitalite": 8,
-          "crit": 3
+          "vitalite": 2,
+          "crit": 1
         },
         "pa": 1
       },
       "legendaire": {
-        "adaptatif": 30,
+        "adaptatif": 9,
         "stats": {
-          "vitalite": 10,
-          "crit": 4
+          "vitalite": 3,
+          "crit": 1
         },
         "pa": 1
       }
@@ -12737,24 +12721,24 @@
     "slot": "cape",
     "tiers": {
       "epique": {
-        "adaptatif": 6,
+        "adaptatif": 1,
         "stats": {
-          "vitalite": 43,
-          "crit": 2
+          "vitalite": 9,
+          "crit": 1
         },
         "resistances": {
-          "air": 0.06
+          "air": 0.01
         },
         "pa": 1
       },
       "legendaire": {
-        "adaptatif": 13,
+        "adaptatif": 3,
         "stats": {
-          "vitalite": 52,
-          "crit": 2
+          "vitalite": 11,
+          "crit": 1
         },
         "resistances": {
-          "air": 0.07
+          "air": 0.01
         },
         "pa": 1
       }
@@ -14701,7 +14685,7 @@
         },
         "stats": {
           "prospection": 6,
-          "vitalite": 30
+          "vitalite": 6
         }
       },
       "legendaire": {
@@ -14714,7 +14698,7 @@
         },
         "stats": {
           "prospection": 8,
-          "vitalite": 40
+          "vitalite": 8
         }
       }
     }
@@ -25501,16 +25485,16 @@
         }
       },
       "epique": {
-        "adaptatif": 8,
+        "adaptatif": 2,
         "stats": {
-          "vitalite": 6
+          "vitalite": 2
         },
         "pa": 1
       },
       "legendaire": {
-        "adaptatif": 10,
+        "adaptatif": 3,
         "stats": {
-          "vitalite": 8
+          "vitalite": 2
         },
         "pa": 1
       }
@@ -28941,7 +28925,7 @@
         }
       },
       "legendaire": {
-        "adaptatif": 15,
+        "adaptatif": 8,
         "attaque": {
           "baseMax": 18,
           "baseMin": 15,
@@ -28949,7 +28933,7 @@
         },
         "pa": 1,
         "stats": {
-          "vitalite": 15
+          "vitalite": 8
         }
       }
     }
@@ -30014,24 +29998,24 @@
       "epique": {
         "adaptatif": -13,
         "stats": {
-          "vitalite": 55,
-          "crit": 2
+          "vitalite": 12,
+          "crit": 1
         },
         "resistances": {
-          "air": 0.06,
-          "feu": 0.06
+          "air": 0.01,
+          "feu": 0.01
         },
         "pa": 1
       },
       "legendaire": {
         "adaptatif": -10,
         "stats": {
-          "vitalite": 67,
-          "crit": 2
+          "vitalite": 15,
+          "crit": 1
         },
         "resistances": {
-          "air": 0.07,
-          "feu": 0.07
+          "air": 0.02,
+          "feu": 0.02
         },
         "pa": 1
       }
@@ -33254,7 +33238,7 @@
     "source": "boss",
     "tiers": {
       "epique": {
-        "adaptatif": 20,
+        "adaptatif": 7,
         "attaque": {
           "baseMax": 20,
           "baseMin": 17,
@@ -33263,15 +33247,15 @@
         },
         "pa": 1,
         "resistances": {
-          "terre": 0.02
+          "terre": 0.01
         },
         "stats": {
-          "crit": 2,
-          "vitalite": 10
+          "crit": 1,
+          "vitalite": 3
         }
       },
       "legendaire": {
-        "adaptatif": 30,
+        "adaptatif": 7,
         "attaque": {
           "baseMax": 22,
           "baseMin": 18,
@@ -33280,11 +33264,11 @@
         },
         "pa": 1,
         "resistances": {
-          "terre": 0.04
+          "terre": 0.01
         },
         "stats": {
-          "crit": 3,
-          "vitalite": 30
+          "crit": 1,
+          "vitalite": 7
         }
       }
     }

@@ -108,9 +108,10 @@ export const AIDE_OBTENTION = `
     combats durs et les donjons donnent aussi les objets d'élite et de boss. Survole un objet pour voir où il tombe.</p>
   <p><b>Hôtel de vente.</b> Il vend les objets de la zone en cours (épiques et plus) et de la zone suivante (rares et plus),
     et rachète ton inventaire à moitié prix. Le <b>Forgemage</b> monte la rareté d'un objet, même équipé.</p>
-  <p><b>Dofus.</b> Chaque Dofus récompense un succès (menu Succès sur l'accueil), repris des succès de Dofus 3. Ils
-    s'obtiennent dans l'ordre de leur niveau réel : Dofawa, Argenté, Jyfus et Cacao dans le Monde 1… jusqu'aux Dofus de
-    niveau 200 (Glaces, Abyssal, Ivoire, Ébène, Cauchemar…) dans le Monde 5. Ils restent acquis pour toutes les runs.</p>
+  <p><b>Dofus.</b> Chaque Dofus récompense un succès (menu Succès sur l'accueil), repris des succès de Dofus 3. Chacun
+    a ses quêtes dans le monde de sa tranche de niveau réelle (Dofawa, Argenté, Jyfus et Cacao dans le Monde 1… jusqu'aux
+    Dofus de niveau 200 dans le Monde 5) et s'obtient dès que son succès est terminé, sans attendre les autres. Ils
+    restent acquis pour toutes les runs.</p>
   <p><b>Archimonstres.</b> Un monstre a ${pct(CONFIG_ARCHI.chance)} de chance d'apparaître sous sa forme d'archimonstre,
     plus ${pct(CONFIG_ARCHI.philtre)} par philtre d'Otomai bu pendant la run (${CONFIG_ARCHI.philtresMax} au maximum).
     Un archimonstre <b>jamais capturé</b> apparaît ${CONFIG_ARCHI.multNouveau} fois plus souvent, et chaque combat sans

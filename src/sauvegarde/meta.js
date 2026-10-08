@@ -90,18 +90,11 @@ export function sauverMeta(e) {
   } catch {}
   signalerChangement();
 }
-// ---------- Ordre d'obtention (comme dans Dofus 3) ----------
-// Un Dofus ne s'obtient qu'une fois possédés tous les Dofus de niveau inférieur.
-export const prerequisDofus = (id) =>
-  Object.values(DOFUS)
-    .filter((d) => d.niveau < (DOFUS[id]?.niveau ?? 0))
-    .map((d) => d.id);
-export function dofusManquantsAvant(meta, id) {
-  const possedes = new Set(meta.dofus.map((d) => d.id));
-  return prerequisDofus(id).filter((x) => !possedes.has(x));
-}
+// ---------- Dofus : chacun dans la tranche de niveau de son monde ----------
+// Chaque Dofus s'obtient dès que son succès est terminé, sans attendre ceux de niveau inférieur :
+// le niveau réel de Dofus 3 décide seulement du monde où se trouvent ses quêtes.
 const succesDuDofusId = (id) => Object.values(SUCCES).find((s) => dofusDeSucces(s) === id);
-// Dofus dont le succès est terminé mais qui attendent des Dofus de niveau inférieur.
+// Dofus dont le succès est terminé mais pas encore remis (ancienne sauvegarde, ou cascade).
 export function dofusEnAttente(meta) {
   const possedes = new Set(meta.dofus.map((d) => d.id));
   return Object.values(DOFUS)
@@ -112,30 +105,18 @@ export function dofusEnAttente(meta) {
     })
     .map((d) => d.id);
 }
-// Ceux qui peuvent être remis maintenant (succès terminé et prérequis possédés), par niveau.
 export function dofusDebloquables(meta) {
-  return dofusEnAttente(meta)
-    .filter((id) => dofusManquantsAvant(meta, id).length === 0)
-    .sort((a, b) => DOFUS[a].niveau - DOFUS[b].niveau);
+  return dofusEnAttente(meta).sort((a, b) => DOFUS[a].niveau - DOFUS[b].niveau);
 }
-// Ancienne sauvegarde : un Dofus obtenu avant ses prérequis est mis de côté (avec son jet) ; il
-// revient tout seul quand l'ordre est respecté et que son succès est terminé.
-export function remettreDofusEnOrdre(meta) {
-  const valides = new Set();
-  const suspendus = [];
-  const parNiveau = [...meta.dofus].sort(
-    (a, b) => (DOFUS[a.id]?.niveau ?? 0) - (DOFUS[b.id]?.niveau ?? 0),
+// Anciennes versions : des Dofus avaient été mis de côté pour respecter un ordre strict. Ils
+// reviennent tous, avec leur jet.
+export function rendreDofusSuspendus(meta) {
+  const suspendus = (meta.dofusSuspendus ?? []).filter(
+    (d) => DOFUS[d.id] && !meta.dofus.some((x) => x.id === d.id),
   );
-  for (const d of parNiveau) {
-    if (prerequisDofus(d.id).every((p) => valides.has(p))) {
-      valides.add(d.id);
-    } else {
-      suspendus.push(d);
-    }
-  }
-  if (suspendus.length) {
-    meta.dofus = meta.dofus.filter((d) => !suspendus.includes(d));
-    meta.dofusSuspendus = [...(meta.dofusSuspendus ?? []), ...suspendus];
+  if (meta.dofusSuspendus?.length) {
+    meta.dofus.push(...suspendus);
+    meta.dofusSuspendus = [];
     sauverMeta(meta);
   }
   return suspendus.map((d) => d.id);
@@ -165,7 +146,7 @@ export function ajouterDofus(e, t, n = Math.random) {
 }
 export function dofusAGagner(e, t) {
   let n = dofusDeSucces(t);
-  if (n && !e.dofus.some((e) => e.id === n) && dofusManquantsAvant(e, n).length === 0) {
+  if (n && !e.dofus.some((e) => e.id === n)) {
     return n;
   }
 }

@@ -250,3 +250,127 @@ body.avec-fond .map-zone {
   display: inline-block;
   max-width: 46ch;
 }
+
+/* ---------- Combat : défi et objectifs avec état en direct ---------- */
+.defi-etat {
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #00000014;
+  white-space: nowrap;
+}
+.defi-combat.defi-assure {
+  border-color: #2f9e44;
+  box-shadow: 0 0 0 2px #2f9e4455;
+}
+.defi-combat.defi-assure .defi-etat {
+  background: #2f9e44;
+  color: #fff;
+}
+.defi-combat.defi-rate {
+  opacity: 0.6;
+  filter: grayscale(0.6);
+}
+.defi-combat.defi-rate .defi-etat {
+  background: #b23b2e;
+  color: #fff;
+}
+.objectif-ligne1 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.objectif-etat {
+  flex: none;
+  font-size: 0.72rem;
+  font-weight: 900;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #00000012;
+}
+.objectif-etat.etat-assure {
+  background: #2f9e44;
+  color: #fff;
+}
+.objectif-etat.etat-rate {
+  background: #b23b2e;
+  color: #fff;
+}
+.objectifs-combat li.rate {
+  opacity: 0.55;
+}
+.objectifs-combat li.flash {
+  animation: objectif-flash 0.9s ease-out;
+}
+@keyframes objectif-flash {
+  0% {
+    background: #ffe08a;
+  }
+  to {
+    background: transparent;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .objectifs-combat li.flash {
+    animation: none;
+  }
+}
+/* sur grand écran, le panneau des objectifs s'ouvre en bas à gauche (sur le journal) pour ne
+   cacher ni le défi ni les ennemis ; la pastille repliée reste en haut à droite */
+@media (width>=900px) {
+  .objectifs-combat.ouvert {
+    top: auto;
+    right: auto;
+    bottom: 16px;
+    left: 16px;
+  }
+}
+.equip-titre-heros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.equip-titre-heros .petit,
+.hdv-tout {
+  font-size: 0.78rem;
+  padding: 4px 10px;
+}
+.equip-auto-msg {
+  margin: 0 0 6px;
+  font-size: 0.8rem;
+  color: #2f6e1a;
+  font-weight: 700;
+}
+.drop-auto {
+  margin: 10px 0 0;
+  text-align: center;
+}
+.drop-auto .petit {
+  font-size: 0.85rem;
+  padding: 6px 14px;
+}
+.barre-actions-fin {
+  gap: 6px;
+}
+.vitesse-combat {
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  border-radius: 9px;
+}
+.vitesse-combat.on {
+  background: linear-gradient(180deg, #ffd27a, #f5a524);
+  border-color: #7a440c;
+}
+@media (width<=700px) {
+  .sorts-rangee .barre-actions-fin {
+    display: flex;
+  }
+  .sorts-rangee .vitesse-combat {
+    flex: none;
+    min-height: 34px;
+  }
+}
