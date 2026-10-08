@@ -76,7 +76,7 @@ src/
     ia.js                comportement des monstres (et des créatures invoquées par les héros)
     classes.js           mécaniques des classes ajoutées : infection, créatures, états, marques…
   carte/generation.js    génération de la carte d'une zone
-  sauvegarde/            localStorage : paramètres, run en cours, progression (meta), export/import
+  sauvegarde/            localStorage : paramètres, run en cours, progression (meta), export/import, sauvegarde en ligne (nuage.js)
   ui/                    affichage
     commun.js            utilitaires d'affichage, images, infobulles, fiches d'objets
     combat.js            écran de combat

@@ -34,6 +34,8 @@ import { ecranRegles } from "./regles.js";
 import { ecranMentionsLegales } from "./mentions.js";
 import { ecranDofus } from "./dofus.js";
 import { htmlProchainDofus } from "../prochainDofus.js";
+import { envoyerNuage, nuagePlusRecent, recupererNuage } from "../../sauvegarde/nuage.js";
+import { dateLisible } from "./parametres.js";
 const LIEN_DISCORD = `https://discord.gg/jxfWpRB7Rp`;
 export function ecranAccueil(e, onReset, n = null) {
   return new Promise((resolve) => {
@@ -196,6 +198,32 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
       document
         .querySelector(`.prochain-dofus`)
         ?.addEventListener(`click`, () => document.getElementById(`btn-succes`)?.click());
+      // une partie plus récente envoyée depuis l'autre appareil (sauvegarde en ligne)
+      nuagePlusRecent()
+        .then((info) => {
+          const ecran = document.querySelector(`.ecran-accueil`);
+          if (!info || !ecran || ecran.querySelector(`.nuage-bandeau`)) {
+            return;
+          }
+          const div = document.createElement(`div`);
+          div.className = `nuage-bandeau`;
+          div.innerHTML = `<span>☁️ Une partie plus récente est en ligne (envoyée depuis ${echapperHtml(info.appareil ?? `un autre appareil`)} le ${echapperHtml(dateLisible(info.date))}).</span>
+            <span class="setting-actions"><button class="primaire" data-nuage="recuperer">Récupérer</button><button class="secondaire" data-nuage="garder">Garder celle d'ici</button></span>`;
+          ecran.prepend(div);
+          div.querySelector(`[data-nuage="recuperer"]`).addEventListener(`click`, async (ev) => {
+            ev.currentTarget.disabled = true;
+            if (await recupererNuage().catch(() => false)) {
+              location.reload();
+            } else {
+              div.firstElementChild.textContent = `Récupération impossible pour l'instant (envoi en cours ?). Réessaie dans un moment.`;
+            }
+          });
+          div.querySelector(`[data-nuage="garder"]`).addEventListener(`click`, async () => {
+            div.remove();
+            await envoyerNuage().catch(() => {});
+          });
+        })
+        .catch(() => {});
       document.getElementById(`btn-dofus`)?.addEventListener(`click`, async () => {
         await ecranDofus(e);
         o();

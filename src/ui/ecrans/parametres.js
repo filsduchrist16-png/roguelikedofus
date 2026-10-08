@@ -2,6 +2,22 @@ import { CLASSES } from "../../data/index.js";
 import { nomTouche, rangOrdre, sauverParametres } from "../../sauvegarde/parametres.js";
 import { classesJouables } from "../../jeu/run.js";
 import { exporterSauvegarde, importerSauvegarde } from "../../sauvegarde/export.js";
+import {
+  changerSyncAuto,
+  envoyerNuage,
+  infoNuage,
+  nuageDisponible,
+  recupererNuage,
+  syncAuto,
+} from "../../sauvegarde/nuage.js";
+
+export const dateLisible = (iso) => {
+  try {
+    return new Date(iso).toLocaleString(`fr-FR`, { dateStyle: `short`, timeStyle: `short` });
+  } catch {
+    return iso;
+  }
+};
 import { telechargerTexte } from "../../sauvegarde/telechargement.js";
 import {
   afficherEcran,
@@ -44,6 +60,14 @@ export function ecranParametres(e) {
             </span>
           </div>
           <p id="set-import-msg" class="muet settings-sous" style="display:none"></p>
+          <div id="set-nuage" class="setting-ligne nuage-ligne" style="display:none">
+            <span class="setting-lbl">☁️ Sauvegarde en ligne<br><small class="muet">liée à ton compte claude.ai : ouvre ce même artefact sur PC ou sur mobile pour reprendre ta partie, sans mot de passe</small><br><small id="set-nuage-etat" class="muet"></small></span>
+            <span class="setting-actions">
+              <button id="set-nuage-envoyer" class="secondaire">Envoyer cette partie</button>
+              <button id="set-nuage-recuperer" class="secondaire">Récupérer</button>
+              <button id="set-nuage-auto" class="secondaire ${syncAuto() ? `on` : ``}" title="Envoie la partie quelques secondes après chaque sauvegarde">Auto : ${syncAuto() ? `activé` : `désactivé`}</button>
+            </span>
+          </div>
           <div id="set-texte-zone" class="sauvegarde-texte" style="display:none">
             <p class="muet">Copie ce texte et garde-le (notes, mail…) ; pour récupérer ta partie, colle-le ici puis « Importer le texte ».</p>
             <textarea id="set-texte-champ" rows="6" spellcheck="false" aria-label="Sauvegarde en texte"></textarea>
@@ -203,6 +227,67 @@ export function ecranParametres(e) {
         }
       });
       document.getElementById(`set-texte`)?.addEventListener(`click`, zoneTexte);
+      // sauvegarde en ligne : visible seulement dans l'artefact claude.ai
+      const etatNuage = async () => {
+        const ligne = document.getElementById(`set-nuage`);
+        if (!ligne || !(await nuageDisponible())) {
+          return;
+        }
+        ligne.style.display = ``;
+        const info = await infoNuage().catch(() => null);
+        const el = document.getElementById(`set-nuage-etat`);
+        if (el) {
+          el.textContent = info
+            ? `En ligne : partie envoyée depuis ${info.appareil} le ${dateLisible(info.date)}.`
+            : `Aucune partie en ligne pour l'instant.`;
+        }
+      };
+      etatNuage();
+      document.getElementById(`set-nuage-envoyer`)?.addEventListener(`click`, async (ev) => {
+        const b = ev.currentTarget;
+        if (b.dataset.confirme !== `1`) {
+          b.dataset.confirme = `1`;
+          b.textContent = `Confirmer (remplace celle en ligne)`;
+          return;
+        }
+        b.disabled = true;
+        try {
+          await envoyerNuage();
+          message(
+            `✓ Partie envoyée en ligne : ouvre l'artefact sur ton autre appareil et touche « Récupérer ».`,
+          );
+        } catch {
+          message(`✗ Envoi impossible pour l'instant, réessaie dans un moment.`);
+        }
+        b.disabled = false;
+        b.dataset.confirme = ``;
+        b.textContent = `Envoyer cette partie`;
+        etatNuage();
+      });
+      document.getElementById(`set-nuage-recuperer`)?.addEventListener(`click`, async (ev) => {
+        const b = ev.currentTarget;
+        if (b.dataset.confirme !== `1`) {
+          b.dataset.confirme = `1`;
+          b.textContent = `Confirmer (remplace celle d'ici)`;
+          return;
+        }
+        b.disabled = true;
+        if (await recupererNuage().catch(() => false)) {
+          message(`✓ Partie récupérée, rechargement…`);
+          setTimeout(() => location.reload(), 600);
+        } else {
+          message(
+            `✗ Rien à récupérer (ou un envoi est en cours depuis l'autre appareil : réessaie).`,
+          );
+          b.disabled = false;
+          b.dataset.confirme = ``;
+          b.textContent = `Récupérer`;
+        }
+      });
+      document.getElementById(`set-nuage-auto`)?.addEventListener(`click`, () => {
+        changerSyncAuto(!syncAuto());
+        i();
+      });
       document.getElementById(`set-texte-copier`)?.addEventListener(`click`, async () => {
         let champ = document.getElementById(`set-texte-champ`);
         try {

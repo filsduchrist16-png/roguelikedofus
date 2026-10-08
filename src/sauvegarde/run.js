@@ -1,3 +1,4 @@
+import { signalerChangement } from "./nuage.js";
 import { CLASSES, EQUIPEMENTS } from "../data/index.js";
 import { DIFFICULTE_MAX } from "../jeu/config.js";
 import { nouvellesStatsRun } from "../jeu/run.js";
@@ -14,6 +15,7 @@ export function sauverRun(zoneIdx, run) {
       }),
     );
   } catch {}
+  signalerChangement();
 }
 // Une sauvegarde importée peut venir de n'importe où : on ne garde que des champs connus et des
 // nombres (les clés et la rareté finissent dans le HTML de l'inventaire).
@@ -113,4 +115,5 @@ export function effacerRun() {
   try {
     localStorage.removeItem(CLE_RUN);
   } catch {}
+  signalerChangement();
 }

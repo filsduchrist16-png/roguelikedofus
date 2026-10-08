@@ -229,3 +229,24 @@ body.avec-fond .map-zone {
     font-size: 0.56rem;
   }
 }
+
+/* ---------- Sauvegarde en ligne ---------- */
+.nuage-bandeau {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 12px;
+  margin: 0 0 10px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  background: linear-gradient(180deg, #e8f3ff, #d3e6fa);
+  border: 1px solid #3a7bd5;
+  border-radius: 12px;
+  position: relative;
+  z-index: 3;
+}
+.nuage-ligne small {
+  display: inline-block;
+  max-width: 46ch;
+}

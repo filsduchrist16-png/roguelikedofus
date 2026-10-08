@@ -1,5 +1,20 @@
 # Journal des modifications
 
+## Sauvegarde en ligne (PC ↔ mobile)
+
+Dans l'artefact claude.ai, **Paramètres → ☁️ Sauvegarde en ligne** : la partie (Dofus, succès,
+réglages et run en cours) est rangée à un emplacement privé lié à ton compte claude.ai. Ouvre le même
+artefact sur PC ou sur mobile, connecté au même compte : pas d'identifiant ni de mot de passe à créer.
+
+- **Envoyer cette partie** / **Récupérer** (avec confirmation, chacun remplace l'autre côté).
+- **Auto** (activé par défaut) : la partie s'envoie toute seule quelques secondes après chaque
+  sauvegarde (fin de combat, de zone…). Elle n'écrase jamais une partie plus récente envoyée depuis
+  l'autre appareil : l'accueil affiche alors « Une partie plus récente est en ligne » avec
+  **Récupérer** ou **Garder celle d'ici**.
+- La sauvegarde est découpée en morceaux (limite de taille de la base) et vérifiée avant import.
+- Hors de l'artefact (version locale), la section n'apparaît pas ; l'export en fichier ou en texte
+  reste disponible partout.
+
 ## Dofus débloqués, archimonstres moins répétitifs, nouvel habillage
 
 **Bug des Dofus corrigé.** La Couronne du Wa Wabbit, demandée par le Dofus Cawotte (niv. 80), ne

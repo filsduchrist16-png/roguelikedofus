@@ -1,3 +1,4 @@
+import { signalerChangement } from "./nuage.js";
 import { CONFIG_RELIQUES, DOFUS, MONDES, MONSTRES, RELIQUES, SUCCES } from "../data/index.js";
 import { DIFFICULTES, RARETES, getMonde } from "../jeu/config.js";
 import { dofusDeSucces, nouvelEtatQuetes, progressionSucces } from "../jeu/quetes.js";
@@ -87,6 +88,7 @@ export function sauverMeta(e) {
   try {
     localStorage.setItem(CLE_META, JSON.stringify(e));
   } catch {}
+  signalerChangement();
 }
 // ---------- Ordre d'obtention (comme dans Dofus 3) ----------
 // Un Dofus ne s'obtient qu'une fois possédés tous les Dofus de niveau inférieur.
