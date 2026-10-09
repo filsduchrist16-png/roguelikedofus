@@ -1,5 +1,5 @@
 import { CLASSES } from "../../data/index.js";
-import { equiperMeilleur, herosAmeliores } from "../../jeu/inventaire.js";
+import { equiperMeilleur, herosAmeliorablesAuto } from "../../jeu/inventaire.js";
 import {
   afficherEcran,
   attrTipObjet,
@@ -26,7 +26,9 @@ export function ecranButin(e, run, bilan) {
       </div>`;
       })
       .join(``);
-    const utiles = run ? e.filter((inst) => herosAmeliores(inst, run.persos).length).length : 0;
+    const utiles = run
+      ? e.filter((inst) => herosAmeliorablesAuto(inst, run.persos).length).length
+      : 0;
     afficherEcran(`
       <h1>🎁 Butin !</h1>
       ${bilan ? `<p class="sous-titre drop-bilan">${echapperHtml(bilan)}</p>` : ``}

@@ -161,6 +161,22 @@ export function herosAmeliores(inst, persos) {
   return persos.filter((p) => comparerObjet(inst, p).verdict === `mieux`);
 }
 
+// Amélioration sûre à équiper d'office : nette (`mieux`) ou « plutôt mieux » (mitigé à score positif)
+// tant qu'aucun effet spécial n'est perdu.
+function ameliorationSure(c) {
+  return (
+    c.verdict === `mieux` ||
+    (c.verdict === `mitige` &&
+      c.score > 0 &&
+      !c.deltas.some((d) => d.cle.startsWith(`effet_`) && d.valeur < 0))
+  );
+}
+
+/** Les héros pour qui équiper cet objet est sûrement un progrès (voir equiperMeilleur). */
+export function herosAmeliorablesAuto(inst, persos) {
+  return persos.filter((p) => ameliorationSure(comparerObjet(inst, p)));
+}
+
 // Regroupe les exemplaires identiques : [{ inst, indices }] dans l'ordre de première apparition.
 const cleObjet = (inst) =>
   JSON.stringify([inst.id, inst.rarete, inst.stats, inst.adaptatif, inst.resistances, inst.pa]);
@@ -177,9 +193,9 @@ export function grouperInventaire(inventaire) {
 }
 
 /**
- * Équipe automatiquement, sur chaque héros, les objets de l'inventaire qui sont une nette
- * amélioration (verdict « mieux » : que des gains utiles, aucun effet spécial perdu). Le meilleur
- * gain d'abord, jusqu'à ce qu'il n'y en ait plus. Renvoie le nombre d'objets équipés.
+ * Équipe automatiquement, sur chaque héros, les objets de l'inventaire qui sont un progrès sûr
+ * (nette amélioration, ou « plutôt mieux » sans effet spécial perdu). Le plus gros gain d'abord,
+ * jusqu'à ce qu'il n'y en ait plus. Renvoie le nombre d'objets équipés.
  */
 export function equiperMeilleur(run, persos = run.persos) {
   let n = 0;
@@ -188,13 +204,10 @@ export function equiperMeilleur(run, persos = run.persos) {
     run.inventaire.forEach((inst, index) => {
       for (const p of persos) {
         const c = comparerObjet(inst, p);
-        if (c.verdict !== `mieux`) {
+        if (!ameliorationSure(c) || (meilleur && c.score <= meilleur.score)) {
           continue;
         }
-        const gain = c.deltas.filter((d) => d.utile).reduce((a, d) => a + Math.max(0, d.valeur), 0);
-        if (!meilleur || gain > meilleur.gain) {
-          meilleur = { index, p, gain, emplacement: c.emplacement };
-        }
+        meilleur = { index, p, score: c.score, emplacement: c.emplacement };
       }
     });
     if (!meilleur) {

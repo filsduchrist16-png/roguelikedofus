@@ -20,6 +20,7 @@ import { RARETES, RARETES_INFO } from "../../jeu/config.js";
 import {
   comparerObjet,
   equiperMeilleur,
+  herosAmeliorablesAuto,
   grouperInventaire,
   nomEffet,
 } from "../../jeu/inventaire.js";
@@ -297,13 +298,15 @@ export function ecranEquipement(e, t) {
       } else {
         selection = null;
       }
+      const nbAuto = groupes.filter((g) => herosAmeliorablesAuto(g.inst, e).length).length;
+      const boutonAuto = `<button id="equip-auto" class="primaire petit"${nbAuto ? `` : ` disabled`} title="${nbAuto ? `Équipe sur chaque héros les objets de l'inventaire qui sont un progrès sûr` : `Rien à améliorer dans l'inventaire pour le moment`}">⚡ Équiper le meilleur${nbAuto ? ` (${nbAuto})` : ``}</button>`;
       afficherEcran(`
         <h1>Équipement</h1>
         <div class="equip-onglets">${c}</div>
         <div class="equip-corps">
           <div class="equip-col">
             <h3 class="equip-titre-heros"><span>${echapperHtml(nomClasse(s))} · PV max ${pvMaxPerso(s)} · PA ${CLASSES[s.classeId].pa + f.paBonus} <small class="equip-pa">(équip. +${f.paBonus}/${PA_MAX_EQUIPEMENT})</small></span>
-              ${groupes.some((g) => e.some((p) => comparerObjet(g.inst, p).verdict === `mieux`)) ? `<button id="equip-auto" class="primaire petit" title="Équipe sur chaque héros les objets de l'inventaire qui sont une nette amélioration">⚡ Équiper le meilleur</button>` : ``}
+              ${boutonAuto}
             </h3>
             ${messageAuto ? `<p class="equip-auto-msg" role="status">${messageAuto}</p>` : ``}
             <div class="equip-slots grille">${l}</div>
@@ -379,7 +382,7 @@ export function ecranEquipement(e, t) {
       document.getElementById(`equip-auto`)?.addEventListener(`click`, () => {
         const n = equiperMeilleur({ inventaire: t, persos: e });
         messageAuto = n
-          ? `✓ ${n} objet${n > 1 ? `s` : ``} équipé${n > 1 ? `s` : ``} (seulement les nettes améliorations ; les objets « mitigés » restent à ton choix).`
+          ? `✓ ${n} objet${n > 1 ? `s` : ``} équipé${n > 1 ? `s` : ``} (seulement les progrès sûrs ; les objets vraiment « mitigés » restent à ton choix).`
           : `Rien à améliorer.`;
         selection = null;
         i();

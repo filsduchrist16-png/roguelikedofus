@@ -98,6 +98,20 @@ describe(`comparaisons chiffrées`, async () => {
     run.persos[0].equipement.cape = cape(stats);
     return run;
   };
+  it(`« Équiper le meilleur » équipe un « plutôt mieux », pas un « plutôt moins »`, async () => {
+    const { equiperMeilleur, herosAmeliorablesAuto } = await import(`../src/jeu/inventaire.js`);
+    const run = runAvecCape({ intelligence: 20 });
+    const perte = cape({ intelligence: 10, soin: 1 });
+    const gain = cape({ intelligence: 18, crit: 5 });
+    run.inventaire.push(perte);
+    expect(herosAmeliorablesAuto(perte, run.persos)).toEqual([]);
+    expect(equiperMeilleur(run)).toBe(0);
+    run.inventaire.push(gain);
+    expect(herosAmeliorablesAuto(gain, run.persos).length).toBe(1);
+    expect(equiperMeilleur(run)).toBe(1);
+    expect(run.persos[0].equipement.cape).toBe(gain);
+    expect(equiperMeilleur(run)).toBe(0);
+  });
   it(`un mitigé à score négatif pour tous est inutile, pas un mitigé à score positif`, () => {
     const run = runAvecCape({ intelligence: 20 });
     const perte = cape({ intelligence: 10, soin: 1 });

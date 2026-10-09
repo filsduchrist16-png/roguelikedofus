@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## Correctif : « Équiper le meilleur »
+
+- Le bouton est maintenant **toujours présent** dans l'écran Équipement (grisé avec « Rien à améliorer »
+  quand il n'y a rien à faire) et indique le nombre d'objets concernés.
+- Il équipe aussi les objets « plutôt mieux » (mitigés à score positif, sans effet spécial perdu), plus
+  seulement les nettes améliorations. Le plus gros gain est équipé en premier.
+- Le butin utilise le même critère : « ⚡ Équiper (n) » apparaît dès qu'un objet est un progrès sûr.
+
 ## Passe de confort de jeu
 
 Audit en 7 angles (déroulé d'une run, combat, inventaire, menus, clarté, et deux parties jouées pour
