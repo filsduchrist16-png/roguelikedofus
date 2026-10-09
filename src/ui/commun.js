@@ -515,7 +515,7 @@ export function htmlElementsClasse(e, t = {}) {
   let r = GAINS_ARCHETYPE[n.archetype];
   let i = `${NOMS_ARCHETYPES[n.archetype]} : +${r.parElement} dans chacun de ses 2 éléments et +${r.vitalite} en Vitalité par niveau`;
   return `<span class="classe-elems">
-    ${t.icone ? `<img class="archetype-icone" src="${imgArchetype(n.archetype)}" alt="${NOMS_ARCHETYPES[n.archetype]}" data-tip="${echapperHtml(i)}" onerror="const s=document.createElement('span');s.className='classe-archetype';s.textContent=this.alt;s.dataset.tip=this.dataset.tip;this.replaceWith(s)" />` : `<span class="classe-archetype" data-tip="${echapperHtml(i)}">${NOMS_ARCHETYPES[n.archetype]}</span>`}
+    ${t.icone && !ecranTactile() ? `<img class="archetype-icone" src="${imgArchetype(n.archetype)}" alt="${NOMS_ARCHETYPES[n.archetype]}" data-tip="${echapperHtml(i)}" onerror="const s=document.createElement('span');s.className='classe-archetype';s.textContent=this.alt;s.dataset.tip=this.dataset.tip;this.replaceWith(s)" />` : `<span class="classe-archetype" data-tip="${echapperHtml(i)}">${NOMS_ARCHETYPES[n.archetype]}</span>`}
     <span class="el-pastilles">${n.elements.map((e) => `<img class="el-pastille" src="${imgElement(e)}" alt="" title="Élément de la classe : ${NOMS_ELEMENTS[e]}" onerror="this.remove()" />`).join(``)}</span>
   </span>`;
 }

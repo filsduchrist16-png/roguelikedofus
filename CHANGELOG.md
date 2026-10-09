@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## Petit correctif tactile
+
+- Choix d'équipe sur téléphone : l'archétype (Mêlée / Distance) s'écrit en toutes lettres au lieu d'une icône à infobulle inaccessible au toucher.
+
 ## Correctif : « Équiper le meilleur »
 
 - Le bouton est maintenant **toujours présent** dans l'écran Équipement (grisé avec « Rien à améliorer »
