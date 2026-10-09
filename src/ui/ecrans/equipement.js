@@ -17,7 +17,14 @@ import {
 import { emplacementsDuType, typeDeEmplacement } from "../../jeu/emplacements.js";
 import { numeroZoneObjet } from "../../jeu/economie.js";
 import { RARETES, RARETES_INFO } from "../../jeu/config.js";
-import { comparerObjet, equiperMeilleur, grouperInventaire } from "../../jeu/inventaire.js";
+import {
+  comparerObjet,
+  equiperMeilleur,
+  grouperInventaire,
+  nomEffet,
+} from "../../jeu/inventaire.js";
+import { PA_MAX_EQUIPEMENT } from "../../jeu/emplacements.js";
+import { afficherBandeau } from "./succes.js";
 import { texteObtentionObjet } from "../../jeu/obtention.js";
 import {
   EMPLACEMENTS,
@@ -32,14 +39,14 @@ import {
   ecranTactile,
   htmlBadgesHeros,
   htmlChipsObjet,
-  htmlComparaisonObjet,
   htmlDeltas,
   htmlNomObjet,
   imgObjet,
   imgSymboleClasse,
   racine,
   htmlMetaObjet,
-  resumeBonus,
+  NOMS_ELEMENTS,
+  NOMS_STATS,
 } from "../commun.js";
 let triArmurerie = `toile`;
 let filtreSlot = `tout`;
@@ -48,14 +55,14 @@ const TRIS = [
   [`toile`, `Tier`, `Trier par Tier (toile d'obtention), les plus hauts d'abord`],
   [`type`, `Type`, `Trier par emplacement`],
   [`rarete`, `Rareté`, `Légendaires d'abord`],
-  [`interet`, `Intérêt`, `Les améliorations pour le héros choisi d'abord`],
+  [`interet`, `Intérêt`, `Le plus gros gain chiffré d'abord, tous héros confondus`],
 ];
 function trierGroupes(groupes, perso) {
   const nom = (inst) => EQUIPEMENTS[inst.id]?.nom ?? inst.id;
   const slot = (inst) => SLOTS.indexOf(EQUIPEMENTS[inst.id]?.slot ?? `arme`);
   const toile = (inst) => numeroZoneObjet(inst.id);
   const rarete = (inst) => -RARETES.indexOf(inst.rarete);
-  const interet = (g) => ORDRE_VERDICT.indexOf(g.comparaison.verdict);
+  const interet = (g) => g.meilleurScore;
   const criteres = {
     toile: (a, b) => [
       toile(b.inst) - toile(a.inst),
@@ -64,16 +71,69 @@ function trierGroupes(groupes, perso) {
     ],
     type: (a, b) => [slot(a.inst) - slot(b.inst), toile(a.inst) - toile(b.inst)],
     rarete: (a, b) => [rarete(a.inst) - rarete(b.inst), toile(b.inst) - toile(a.inst)],
-    interet: (a, b) => [interet(a) - interet(b), toile(b.inst) - toile(a.inst)],
+    interet: (a, b) => [
+      interet(b) - interet(a),
+      ORDRE_VERDICT.indexOf(a.comparaison.verdict) - ORDRE_VERDICT.indexOf(b.comparaison.verdict),
+      toile(b.inst) - toile(a.inst),
+    ],
   }[triArmurerie];
   return groupes.sort(
     (a, b) => criteres(a, b).find((x) => x !== 0) ?? nom(a.inst).localeCompare(nom(b.inst)),
   );
 }
 const nomClasse = (perso) => CLASSES[perso.classeId].nom;
-function htmlVerdict(verdict) {
-  const v = VERDICTS[verdict];
-  return `<span class="verdict verdict-${verdict}">${v.icone} ${v.texte}</span>`;
+const signe = (n) => (n > 0 ? `+${n}` : n < 0 ? `−${Math.abs(n)}` : `±0`);
+// Verdict d'une comparaison ; un « mitigé » est chiffré : plutôt mieux ou plutôt moins.
+function htmlVerdict(c) {
+  const v = VERDICTS[c.verdict];
+  if (c.verdict === `mitige` && c.score) {
+    const texte = c.tendance === `plus` ? `Plutôt mieux` : `Plutôt moins`;
+    return `<span class="verdict verdict-mitige tendance-${c.tendance}" title="Gains et pertes : bilan chiffré ${signe(c.score)}">${v.icone} ${texte} (${signe(c.score)})</span>`;
+  }
+  return `<span class="verdict verdict-${c.verdict}">${v.icone} ${v.texte}</span>`;
+}
+// Deltas de stats, puis effets spéciaux gagnés (+ riposte) ou perdus (− riposte).
+function htmlDeltasObjet(deltas) {
+  const stats = htmlDeltas(deltas.filter((d) => !d.cle.startsWith(`effet_`)));
+  const effets = deltas
+    .filter((d) => d.cle.startsWith(`effet_`))
+    .map(
+      (d) =>
+        `<span class="${d.valeur > 0 ? `delta-plus` : `delta-moins`} delta-effet">${d.valeur > 0 ? `+` : `−`} ${echapperHtml(nomEffet(d.cle.slice(6)))}</span>`,
+    )
+    .join(` `);
+  return [stats, effets].filter(Boolean).join(` `);
+}
+function htmlComparaison(c) {
+  if (c.verdict === `impossible`) {
+    return `<span class="item-delta"><span class="delta-ref">Équipable seulement en ligne avant.</span></span>`;
+  }
+  const ref = c.actuel
+    ? `À la place de ${echapperHtml(EQUIPEMENTS[c.actuel.id]?.nom ?? c.actuel.id)} (T${numeroZoneObjet(c.actuel.id)})`
+    : `Emplacement vide`;
+  return `<span class="item-delta"><span class="delta-ref">${ref} :</span> ${htmlDeltasObjet(c.deltas) || `<span class="muet">aucun changement de stats</span>`}</span>`;
+}
+// « Bonus total » avec le vrai signe (−10 Agilité, pas +-10) et les PA d'équipement.
+const NOMS_BONUS = { ...NOMS_STATS, crit: `% Critique` };
+function texteBonusTotal(b) {
+  const r = [];
+  if (b.pvBonus) {
+    r.push(`${signe(b.pvBonus)} PV`);
+  }
+  for (const [k, v] of Object.entries(b.stats)) {
+    if (v) {
+      r.push(`${signe(v)} ${NOMS_BONUS[k] ?? k}`);
+    }
+  }
+  for (const [el, v] of Object.entries(b.resistances)) {
+    if (v) {
+      r.push(`${signe(Math.round(v * 100))} % rés. ${NOMS_ELEMENTS[el] ?? el}`);
+    }
+  }
+  if (b.paBonus) {
+    r.push(`${signe(b.paBonus)} PA (max +${PA_MAX_EQUIPEMENT})`);
+  }
+  return r.join(` · `);
 }
 // Fiche d'un objet : tout ce qu'il donne, d'où il vient, et ce qu'il changerait pour chaque héros.
 function htmlFicheObjet(inst, persos, perso, porteePar, quantite, emplacementPorte) {
@@ -99,8 +159,8 @@ function htmlFicheObjet(inst, persos, perso, porteePar, quantite, emplacementPor
              : `emplacement vide`;
            return `<li class="${p === perso ? `courant` : ``}">
              <span class="fiche-heros-nom"><img src="${imgSymboleClasse(p.classeId)}" alt="" onerror="this.remove()" />${echapperHtml(nomClasse(p))}</span>
-             ${htmlVerdict(c.verdict)}
-             <span class="fiche-heros-detail">${c.verdict === `impossible` ? `Équipable seulement en ligne avant.` : `${actuel} : ${htmlDeltas(c.deltas) || `aucun changement de stats`}`}</span>
+             ${htmlVerdict(c)}
+             <span class="fiche-heros-detail">${c.verdict === `impossible` ? `Équipable seulement en ligne avant.` : `${actuel} : ${htmlDeltasObjet(c.deltas) || `aucun changement de stats`}`}</span>
              <span class="fiche-heros-boutons"><button class="primaire" data-equiper-sur="${i}" data-emplacement="${c.emplacement ?? ``}" ${c.verdict === `impossible` ? `disabled` : ``}>Équiper</button>${c.verdict === `impossible` ? `` : autreAnneau(p, c)}</span>
            </li>`;
          })
@@ -121,8 +181,12 @@ function htmlFicheObjet(inst, persos, perso, porteePar, quantite, emplacementPor
     </section>`;
 }
 export function ecranEquipement(e, t) {
+  // à chaque ouverture, le filtre repart sur « Tout » (le tri, lui, est gardé)
+  filtreSlot = `tout`;
   return new Promise((resolve) => {
     let r = 0;
+    // PC : un clic ouvre la fiche après un court délai, annulé par un double-clic (équiper/retirer)
+    let minuterieClic = null;
     // objet ouvert dans la fiche : { inst } (inventaire) ou { slot } (porté)
     let selection = null;
     let messageAuto = ``;
@@ -130,10 +194,18 @@ export function ecranEquipement(e, t) {
       let a = racine.querySelector(`.equip-inv`)?.scrollTop ?? 0;
       let o = document.scrollingElement?.scrollTop ?? 0;
       let s = e[r];
-      let groupes = grouperInventaire(t).map((g) => ({
-        ...g,
-        comparaison: comparerObjet(g.inst, s),
-      }));
+      clearTimeout(minuterieClic);
+      let groupes = grouperInventaire(t).map((g) => {
+        const scores = e
+          .map((p) => comparerObjet(g.inst, p))
+          .filter((c) => c.verdict !== `impossible`)
+          .map((c) => c.score);
+        return {
+          ...g,
+          comparaison: comparerObjet(g.inst, s),
+          meilleurScore: scores.length ? Math.max(...scores) : -Infinity,
+        };
+      });
       let c = e
         .map((p, idx) => {
           const portes = EMPLACEMENTS.filter((slot) => p.equipement[slot]).length;
@@ -173,13 +245,17 @@ export function ecranEquipement(e, t) {
             </div>`;
       }).join(``);
       const compteSlot = (slot) => t.filter((inst) => EQUIPEMENTS[inst.id]?.slot === slot).length;
+      // un filtre devenu vide (objet équipé, vendu) ne bloque pas l'inventaire : retour à « Tout »
+      if (filtreSlot !== `tout` && compteSlot(filtreSlot) === 0) {
+        filtreSlot = `tout`;
+      }
       let filtres = [
         [`tout`, `Tout`, t.length],
         ...SLOTS.map((slot) => [slot, NOMS_SLOTS[slot], compteSlot(slot)]),
       ]
         .map(
           ([id, nom, n]) =>
-            `<button class="filtre-btn${filtreSlot === id ? ` actif` : ``}" data-filtre="${id}" aria-pressed="${filtreSlot === id}" ${n || id === `tout` ? `` : `disabled`}>${nom} <small>${n}</small></button>`,
+            `<button class="filtre-btn${filtreSlot === id ? ` actif` : ``}" data-filtre="${id}" aria-pressed="${filtreSlot === id}" ${n || id === `tout` || filtreSlot === id ? `` : `disabled`}>${nom} <small>${n}</small></button>`,
         )
         .join(``);
       let visibles = trierGroupes(
@@ -194,19 +270,19 @@ export function ecranEquipement(e, t) {
               return `<button class="item-carte ic${classeRarete(inst)}${possible ? `` : ` inequipable`}" data-index="${indices[0]}" draggable="${possible}" aria-label="${echapperHtml(n.nom)} : voir la fiche">
               <span class="ic-visuel"><img src="${imgObjet(inst.id)}" alt="" loading="lazy" onerror="this.remove()" /></span>
               <span class="ic-corps">
-                <span class="ic-ligne1"><span class="ic-nom">${htmlNomObjet(inst)}${indices.length > 1 ? ` <span class="item-qte">×${indices.length}</span>` : ``}</span>${htmlVerdict(comparaison.verdict)}</span>
+                <span class="ic-ligne1"><span class="ic-nom">${htmlNomObjet(inst)}${indices.length > 1 ? ` <span class="item-qte">×${indices.length}</span>` : ``}</span>${htmlVerdict(comparaison)}</span>
                 <span class="ic-meta">${htmlMetaObjet(inst)}</span>
                 <span class="ic-stats">${htmlChipsObjet(inst, s.classeId)}</span>
-                ${possible ? htmlComparaisonObjet(inst, s) : ``}${htmlBadgesHeros(inst, e, s)}
+                ${possible ? htmlComparaison(comparaison) : ``}${htmlBadgesHeros(inst, e, s)}
               </span>
             </button>`;
             })
             .join(``)
         : t.length
-          ? `<p class="muet">Aucun objet de ce type.</p>`
+          ? `<p class="muet equip-vide">Aucun objet de ce type. <button class="secondaire petit" data-filtre="tout">Voir tout (${t.length})</button></p>`
           : `<p class="muet">Inventaire vide : gagne des combats pour trouver de l'équipement.</p>`;
       let f = bonusEquipement(s);
-      let p = resumeBonus(f.stats, f.pvBonus, f.resistances) || `aucun bonus`;
+      let p = texteBonusTotal(f) || `aucun bonus`;
       let fiche = ``;
       if (selection?.inst && t.includes(selection.inst)) {
         fiche = htmlFicheObjet(
@@ -226,7 +302,7 @@ export function ecranEquipement(e, t) {
         <div class="equip-onglets">${c}</div>
         <div class="equip-corps">
           <div class="equip-col">
-            <h3 class="equip-titre-heros">${echapperHtml(nomClasse(s))} · PV max ${pvMaxPerso(s)}
+            <h3 class="equip-titre-heros"><span>${echapperHtml(nomClasse(s))} · PV max ${pvMaxPerso(s)} · PA ${CLASSES[s.classeId].pa + f.paBonus} <small class="equip-pa">(équip. +${f.paBonus}/${PA_MAX_EQUIPEMENT})</small></span>
               ${groupes.some((g) => e.some((p) => comparerObjet(g.inst, p).verdict === `mieux`)) ? `<button id="equip-auto" class="primaire petit" title="Équipe sur chaque héros les objets de l'inventaire qui sont une nette amélioration">⚡ Équiper le meilleur</button>` : ``}
             </h3>
             ${messageAuto ? `<p class="equip-auto-msg" role="status">${messageAuto}</p>` : ``}
@@ -265,17 +341,40 @@ export function ecranEquipement(e, t) {
         conteneur.innerHTML = fiche;
         document.body.appendChild(conteneur);
       }
-      let m = (e, emplacement) => {
+      let m = (e, emplacement, confirmer = false) => {
         if (e >= 0 && e < t.length) {
+          const inst = t[e];
           equiperObjet(t, s, e, emplacement);
           selection = null;
           i();
+          if (confirmer && !t.includes(inst)) {
+            afficherBandeau(`✓ ${EQUIPEMENTS[inst.id]?.nom ?? inst.id} équipé sur ${nomClasse(s)}`);
+          }
         }
       };
-      let h = (e) => {
+      let h = (e, confirmer = false) => {
+        const inst = s.equipement[e];
         desequiper(t, s, e);
         selection = null;
         i();
+        if (confirmer && inst) {
+          afficherBandeau(`↩ ${EQUIPEMENTS[inst.id]?.nom ?? inst.id} retiré (dans l'inventaire)`);
+        }
+      };
+      // clic simple : fiche tout de suite sur tactile, après 250 ms sur PC (laisse place au double-clic)
+      const clicDiffere = (ouvrir) => {
+        clearTimeout(minuterieClic);
+        if (ecranTactile()) {
+          ouvrir();
+        } else {
+          minuterieClic = setTimeout(ouvrir, 250);
+        }
+      };
+      const doubleClic = (action) => {
+        clearTimeout(minuterieClic);
+        if (!ecranTactile()) {
+          action();
+        }
       };
       document.getElementById(`equip-auto`)?.addEventListener(`click`, () => {
         const n = equiperMeilleur({ inventaire: t, persos: e });
@@ -316,11 +415,22 @@ export function ecranEquipement(e, t) {
       );
       racine.querySelectorAll(`.item-carte`).forEach((e) => {
         let t_ = Number(e.dataset.index);
-        e.addEventListener(`click`, () => {
-          selection = { inst: t[t_] };
-          i();
+        e.addEventListener(`click`, (ev) => {
+          // clavier (Entrée) : pas de double-clic possible, ouverture immédiate
+          if (ev.detail === 0) {
+            selection = { inst: t[t_] };
+            i();
+            return;
+          }
+          if (ev.detail > 1) {
+            return;
+          }
+          clicDiffere(() => {
+            selection = { inst: t[t_] };
+            i();
+          });
         });
-        e.addEventListener(`dblclick`, () => m(t_));
+        e.addEventListener(`dblclick`, () => doubleClic(() => m(t_, undefined, true)));
         e.addEventListener(`dragstart`, (n) => {
           n.dataTransfer.setData(`text/plain`, `inv:${t_}`);
           n.dataTransfer.effectAllowed = `move`;
@@ -335,14 +445,19 @@ export function ecranEquipement(e, t) {
             selection = { slot };
             i();
           };
-          e.addEventListener(`click`, ouvrir);
+          e.addEventListener(`click`, (ev) => {
+            if (ev.detail > 1) {
+              return;
+            }
+            clicDiffere(ouvrir);
+          });
           e.addEventListener(`keydown`, (ev) => {
             if (ev.key === `Enter` || ev.key === ` `) {
               ev.preventDefault();
               ouvrir();
             }
           });
-          e.addEventListener(`dblclick`, () => h(slot));
+          e.addEventListener(`dblclick`, () => doubleClic(() => h(slot, true)));
           e.addEventListener(`dragstart`, (n) => {
             n.dataTransfer.setData(`text/plain`, `slot:${slot}`);
             n.dataTransfer.effectAllowed = `move`;
@@ -410,6 +525,7 @@ export function ecranEquipement(e, t) {
         ?.addEventListener(`click`, (ev) => h(ev.currentTarget.dataset.retirer));
       document.querySelector(`.fiche-fermer`)?.focus({ preventScroll: true });
       document.getElementById(`equip-retour`)?.addEventListener(`click`, () => {
+        clearTimeout(minuterieClic);
         document.removeEventListener(`keydown`, echap, true);
         document.getElementById(`fiche-equip`)?.remove();
         resolve();

@@ -1,1 +1,259 @@
 /* Confort de jeu — lot « run » (chargé après visuel.css). */
+
+/* ---------- Bandeaux : en bas sur téléphone, au-dessus de la barre d'actions ---------- */
+@media (max-width: 700px) {
+  #bandeaux-quete {
+    top: auto;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 76px);
+  }
+  /* le récap a une barre sur deux rangées : les bandeaux restent en haut */
+  body:has(.recap-boutons) #bandeaux-quete {
+    top: calc(env(safe-area-inset-top, 0px) + 12px);
+    bottom: auto;
+  }
+}
+
+/* ---------- Voile de fin de combat ---------- */
+.fin-combat-voile {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: #1c130acc;
+  cursor: pointer;
+  animation: fin-combat-entree 0.2s ease-out;
+}
+.fin-combat-boite {
+  text-align: center;
+  max-width: 520px;
+}
+.fin-combat-titre {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  color: var(--or-clair);
+  text-shadow: 0 2px 10px #000a;
+}
+.fin-combat-voile.defaite .fin-combat-titre {
+  color: #f0a59a;
+}
+.fin-combat-defi {
+  margin: 8px 0 0;
+  color: #f0e2c4;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+@keyframes fin-combat-entree {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fin-combat-voile {
+    animation: none;
+  }
+}
+
+/* ---------- Barre compacte de l'équipe (taverne, rencontres) ---------- */
+.barre-equipe {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin: 4px auto 10px;
+  max-width: 720px;
+}
+.be-heros {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 0 1 160px;
+  padding: 4px 8px;
+  background: var(--panel-2);
+  border: 1px solid var(--bord-clair);
+  border-radius: 10px;
+  text-align: left;
+}
+.be-heros.ko {
+  border-color: var(--danger);
+  background: #e9cfc0;
+}
+.be-sym {
+  width: 26px;
+  height: 26px;
+  flex: none;
+}
+.be-info {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  line-height: 1.15;
+}
+.be-nom {
+  font-weight: 800;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.be-nom small {
+  font-weight: 700;
+  color: var(--muet);
+}
+.be-pv {
+  font-size: 0.72rem;
+  color: var(--muet);
+  font-weight: 700;
+}
+.be-jauge {
+  display: block;
+  height: 4px;
+  margin-top: 2px;
+  border-radius: 999px;
+  background: #0002;
+  overflow: hidden;
+}
+.be-jauge > span {
+  display: block;
+  height: 100%;
+  background: var(--pv);
+}
+.be-ko {
+  display: inline-block;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--danger);
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 900;
+  vertical-align: 1px;
+}
+.be-kamas {
+  font-weight: 800;
+}
+@media (max-width: 700px) {
+  .barre-equipe {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+  .be-heros {
+    padding: 3px 6px;
+  }
+  .be-sym {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* ---------- Taverne ---------- */
+.tav-recrue-info {
+  margin: -4px auto 0;
+  font-size: 0.85rem;
+}
+.tav-remp-info {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--muet);
+}
+
+/* ---------- Choix de l'équipe : mini-symboles dans la barre ---------- */
+.choix-compte {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.choix-compte-sym {
+  width: 26px;
+  height: 26px;
+}
+
+/* ---------- Récapitulatif : relancer en un appui ---------- */
+.recap-debloque {
+  margin: 10px auto 0;
+  padding: 6px 12px;
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid var(--or);
+  border-radius: 10px;
+  background: #f7c44f33;
+  color: var(--or-texte);
+  font-weight: 800;
+}
+.ecran .boutons-ecran .btn-continuer.recap-rejouer {
+  background: linear-gradient(180deg, var(--or-clair), var(--or));
+  color: #3a2402;
+  border: 1px solid #c8881e;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-weight: 900;
+  box-shadow:
+    inset 0 1px #fff6,
+    0 2px 5px #4a3a2640;
+}
+.recap-rejouer small {
+  font-weight: 700;
+}
+.recap-rejouer {
+  white-space: nowrap;
+}
+@media (max-width: 700px) {
+  .recap-boutons {
+    gap: 8px 10px;
+  }
+  /* l'action principale d'abord, sur toute la largeur, sous le pouce */
+  .ecran .boutons-ecran .btn-continuer.recap-rejouer {
+    order: -1;
+    flex: 1 1 100%;
+    padding: 12px;
+    font-size: 1.05rem;
+  }
+  .recap-boutons .btn-retour img {
+    height: 40px;
+  }
+}
+
+/* ---------- Butin ---------- */
+.drop-bilan {
+  font-weight: 800;
+  color: var(--or-texte);
+}
+.badge-heros.badge-porte {
+  background: #2f6b12;
+  color: #fff;
+}
+
+/* ---------- Taverne : soin et recrutement côte à côte sur téléphone ---------- */
+@media (max-width: 700px) {
+  .tav-boutons {
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+  .tav-boutons > button {
+    flex: 1 1 0;
+    min-width: 0;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
+
+/* ---------- Butin : « Équiper » et « Continuer » sur une seule ligne ---------- */
+.butin-boutons {
+  flex-wrap: nowrap;
+}
+.butin-boutons > #drop-equiper {
+  min-width: 0;
+  white-space: nowrap;
+}

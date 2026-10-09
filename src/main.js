@@ -1,5 +1,6 @@
-import { CLASSES, COMBATS, DOFUS, EQUIPEMENTS, MONSTRES, SORTS } from "./data/index.js";
+import { CLASSES, COMBATS, DOFUS, MONSTRES, SORTS } from "./data/index.js";
 import {
+  CONFIG_ARCHI,
   XP_PAR_COMBAT,
   butinDeZone,
   calculerXpCombat,
@@ -27,6 +28,8 @@ import {
   effetsDifficulte,
   especesNormalesZone,
   gagnerXpPerso,
+  peutGagnerXp,
+  herosVivants,
   monstresDuCombat,
   multiplicateurKamas,
   noeudsExclus,
@@ -129,9 +132,11 @@ import {
 import { ecranAccueil } from "./ui/ecrans/accueil.js";
 import { ecranChoixEquipe } from "./ui/ecrans/choixEquipe.js";
 import { ecranTaverne } from "./ui/ecrans/taverne.js";
-import { ecranMessage, ecranZaap } from "./ui/ecrans/message.js";
+import { ecranMessage } from "./ui/ecrans/message.js";
 import { ecranCarte } from "./ui/ecrans/carte.js";
-import { ecranRecap } from "./ui/ecrans/recap.js";
+import { deblocagesVictoire, ecranRecap, etatDeblocage } from "./ui/ecrans/recap.js";
+import { afficherFinCombat, texteBilan } from "./ui/finCombat.js";
+import { sauverParametres } from "./sauvegarde/parametres.js";
 import { ecranHdv } from "./ui/ecrans/hdv.js";
 import { ecranForgemagie } from "./ui/ecrans/forgemagie.js";
 import "./style.css";
@@ -219,8 +224,12 @@ function contexteRun(e, trancheId, victoire) {
 const quetesDeLaRun = (e) =>
   (e.stats.quetes ?? []).map((e) => trouverQuete(e)).filter((e) => e !== undefined);
 const controleurEnnemi = async (e, t) => {
-  await attendre(parametres.combatRapide ? 180 : 550);
-  return choisirActionIA(e, t);
+  // l'action est choisie d'abord : pas d'attente inutile quand le monstre n'a plus rien à faire
+  const action = choisirActionIA(e, t);
+  if (action) {
+    await attendre(parametres.combatRapide ? 180 : 550);
+  }
+  return action;
 };
 async function jouerCombat(e, combatId, n) {
   let r = COMBATS[combatId]?.nom ?? `Combat`;
@@ -356,6 +365,28 @@ async function jouerCombat(e, combatId, n) {
   });
   retirerObjectifsCombat();
   synchroniserPv(e, c);
+  let resume = resumeCombat(l, {
+    combattants: c,
+    herosVivantsAuDepart,
+    gagne,
+    combatId,
+    noeud: n.type,
+    zoneId: n.zone?.id,
+    classes: e.persos.map((e) => e.classeId),
+    ascension: e.ascension,
+  });
+  let defiOk = defiReussi(defi, {
+    ...resume,
+    ordreMorts: [...l.morts].filter((ref) => a.some((m) => m.ref === ref)),
+  });
+  await afficherFinCombat(
+    gagne,
+    gagne
+      ? defiOk
+        ? `🎯 Défi ${defi.nom} réussi : +${Math.round(BONUS_DEFI * 100)} % d'XP et de kamas`
+        : `Défi ${defi.nom} raté`
+      : ``,
+  );
   if (
     gagne &&
     ((e.stats.combats += 1), (e.stats.archis += await capturerArchis(c)), n.type === `donjon`)
@@ -378,27 +409,8 @@ async function jouerCombat(e, combatId, n) {
       await ecranReliques(t);
     }
   }
-  let resume = resumeCombat(l, {
-    combattants: c,
-    herosVivantsAuDepart,
-    gagne,
-    combatId,
-    noeud: n.type,
-    zoneId: n.zone?.id,
-    classes: e.persos.map((e) => e.classeId),
-    ascension: e.ascension,
-  });
-  let defiOk = defiReussi(defi, {
-    ...resume,
-    ordreMorts: [...l.morts].filter((ref) => a.some((m) => m.ref === ref)),
-  });
   if (gagne) {
     e.stats.defis = (e.stats.defis ?? 0) + (defiOk ? 1 : 0);
-    afficherBandeau(
-      defiOk
-        ? `🎯 Défi ${defi.nom} réussi : +${Math.round(BONUS_DEFI * 100)} % d'XP et de kamas`
-        : `Défi ${defi.nom} raté`,
-    );
   }
   await traiterQuetes(e, verifierQuetesCombat(quetesMeta(), resume));
   await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta()));
@@ -409,12 +421,18 @@ async function jouerCombat(e, combatId, n) {
     prime,
   };
 }
+// Renvoie l'XP donnée à chaque héros (0 si tous sont au niveau max du monde)
+// et le nombre de héros qui ont gagné au moins un niveau.
 function gagnerXpEquipe(e, t) {
+  let niveaux = 0;
+  const profite = e.persos.some((p) => peutGagnerXp(p, e.trancheId));
   for (let n of e.persos) {
     if (gagnerXpPerso(n, t, e.trancheId) > 0) {
       n.flashNiveau = true;
+      niveaux += 1;
     }
   }
+  return { xp: profite ? t : 0, niveaux };
 }
 async function capturerArchis(e) {
   let t = [];
@@ -428,8 +446,12 @@ async function capturerArchis(e) {
   }
   return t.length;
 }
-async function distribuerButin(e, t, n, r) {
+// bilan : texte XP / kamas du combat, en sous-titre du butin (ou en bandeau s'il n'y a rien).
+async function distribuerButin(e, t, n, r, bilan) {
   if (!t) {
+    if (bilan) {
+      afficherBandeau(`Victoire : ${bilan}`);
+    }
     return;
   }
   let prospection = bonusEquipeRun(meta, e).prospection + (idoleActive(e, t)?.prospection ?? 0);
@@ -437,19 +459,27 @@ async function distribuerButin(e, t, n, r) {
   enregistrerCollection(meta, a);
   e.stats.objets += a.length;
   if (a.length) {
-    await ecranButin(a, e);
+    await ecranButin(a, e, bilan);
+  } else if (bilan) {
+    afficherBandeau(`Victoire : ${bilan}`);
   }
 }
+// Renvoie le montant ajouté à la bourse.
 function distribuerKamas(e, t, n, mult = 1) {
-  ajouterKamas(
-    e,
-    Math.round(
-      gainKamas(t, n, Math.random) *
-        multiplicateurKamas(e) *
-        bonusEquipeRun(meta, e).multKamas *
-        mult,
-    ),
+  let montant = Math.round(
+    gainKamas(t, n, Math.random) *
+      multiplicateurKamas(e) *
+      bonusEquipeRun(meta, e).multKamas *
+      mult,
   );
+  ajouterKamas(e, montant);
+  return montant;
+}
+// Soigne l'équipe et renvoie le total de PV rendus.
+function soignerAvecGain(e, pct) {
+  let avant = e.persos.reduce((s, p) => s + Math.max(0, p.pvActuels), 0);
+  soignerEquipe(e, pct);
+  return e.persos.reduce((s, p) => s + Math.max(0, p.pvActuels), 0) - avant;
 }
 const ARTICLES_NOEUDS = {
   combat: `un combat`,
@@ -480,12 +510,23 @@ async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
       let c = o ? numeroZone(o) : 1;
       let idole = idoleActive(e, o);
       let bonusDefi = defiOk ? 1 + BONUS_DEFI : 1;
-      distribuerKamas(e, type, c, bonusDefi * (idole?.kamasMult ?? 1) * (prime ? 2 : 1));
-      gagnerXpEquipe(
+      let kamas = distribuerKamas(
+        e,
+        type,
+        c,
+        bonusDefi * (idole?.kamasMult ?? 1) * (prime ? 2 : 1),
+      );
+      let { xp, niveaux } = gagnerXpEquipe(
         e,
         Math.round(calculerXpCombat(r, c, e.trancheId) * bonusDefi * (idole?.xpMult ?? 1)),
       );
-      await distribuerButin(e, o, type, type === `combat_dur` ? `donjon` : undefined);
+      await distribuerButin(
+        e,
+        o,
+        type,
+        type === `combat_dur` ? `donjon` : undefined,
+        texteBilan({ xp, kamas, defiOk, niveaux }),
+      );
       if (
         type === `combat_dur` &&
         !e.cle &&
@@ -502,7 +543,7 @@ async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
       return `continue`;
     }
     case `taverne`: {
-      if (effetsDifficulte(e.ascension).tavernesCoupeesAPlein && e.persos.length >= 4) {
+      if (effetsDifficulte(e.ascension).tavernesCoupeesAPlein && herosVivants(e) >= 4) {
         await ecranMessage(
           `🍺 Taverne fermée`,
           `En difficulté Ultime, plus aucune taverne ne t'accueille une fois ton équipe au complet.`,
@@ -515,15 +556,21 @@ async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
       let r = tirerRecrues(e, Math.random);
       let i = await ecranTaverne(e.persos, r, t, !!n.mortDefinitive, !!n.tavernesCoupeesAPlein);
       if (i.type === `soin`) {
-        soignerEquipe(e, t);
-        await ecranMessage(
-          `🍺 Taverne`,
-          `L'équipe récupère ${Math.round(t * 100)} % de ses PV max.`,
+        let gain = soignerAvecGain(e, t);
+        let resteKo = n.mortDefinitive && e.persos.some((p) => p.pvActuels <= 0);
+        afficherBandeau(
+          gain
+            ? `🍺 Équipe soignée : +${gain} PV`
+            : resteKo
+              ? `🍺 Les héros debout étaient déjà en pleine forme`
+              : `🍺 L'équipe était déjà en pleine forme`,
         );
       } else {
         recruter(e, i.classeId, i.remplace);
         e.stats.recrutements = (e.stats.recrutements ?? 0) + 1;
-        await ecranMessage(`🍺 Recrue !`, `${CLASSES[i.classeId].nom} rejoint l'équipe.`);
+        afficherBandeau(
+          `🍺 Recrue ! ${CLASSES[i.classeId].nom} rejoint l'équipe${i.remplace ? ` à la place de ${CLASSES[i.remplace]?.nom ?? i.remplace}` : ``}`,
+        );
       }
       return `continue`;
     }
@@ -536,10 +583,15 @@ async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
       await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta()));
       return `continue`;
     case `otomai`:
-      e.philtres += 1;
-      await ecranMessage(
-        `🧪 Otomai`,
-        `L'alchimiste te prépare un philtre d'archimonstre : les archis apparaissent plus souvent pour le reste de la run (${Math.round(chanceArchi(e) * 1000) / 10} %).`,
+      if ((e.philtres ?? 0) >= CONFIG_ARCHI.philtresMax) {
+        afficherBandeau(
+          `🧪 Otomai : tes philtres sont déjà au maximum (${CONFIG_ARCHI.philtresMax}/${CONFIG_ARCHI.philtresMax})`,
+        );
+        return `continue`;
+      }
+      e.philtres = (e.philtres ?? 0) + 1;
+      afficherBandeau(
+        `🧪 Otomai : philtre ${e.philtres}/${CONFIG_ARCHI.philtresMax}, archimonstres à ${Math.round(chanceArchi(e) * 1000) / 10} %`,
       );
       return `continue`;
     case `donjon`: {
@@ -547,17 +599,22 @@ async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
         type: `donjon`,
         zone,
       });
-      if (gagne && defiOk) {
-        distribuerKamas(e, `combat_dur`, o ? numeroZone(o) : 1);
+      if (!gagne) {
+        return `wipe`;
       }
-      if (gagne) {
-        return (
-          await distribuerButin(e, o, type),
-          await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta())),
-          `victoire`
-        );
+      let kamas = distribuerKamas(e, `donjon`, o ? numeroZone(o) : 1);
+      if (defiOk) {
+        kamas += distribuerKamas(e, `combat_dur`, o ? numeroZone(o) : 1);
       }
-      return `wipe`;
+      await distribuerButin(
+        e,
+        o,
+        type,
+        undefined,
+        texteBilan({ kamas, defiOk, libelleDefi: `défi réussi` }),
+      );
+      await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta()));
+      return `victoire`;
     }
     case `rencontre`:
       await jouerRencontre(e, zone);
@@ -581,6 +638,7 @@ async function jouerRencontre(e, zone) {
   if (type === `sanctuaire`) {
     let dieux = dieuxProposes(e, Math.random);
     let choix = await ecranRencontre({
+      equipe: e.persos,
       titre: `⛩️ Sanctuaire des Douze`,
       texte: `Un autel dédié aux dieux du Krosmoz se dresse au bord du chemin. Une seule prière sera exaucée.`,
       choix: [
@@ -594,21 +652,19 @@ async function jouerRencontre(e, zone) {
       ],
     });
     if (choix === `soin`) {
-      soignerEquipe(e, 0.3);
-      await ecranMessage(`⛩️ Recueillement`, `L'équipe récupère 30 % de ses PV max.`);
+      let gain = soignerAvecGain(e, 0.3);
+      afficherBandeau(`⛩️ Recueillement : +${gain} PV pour l'équipe`);
     } else {
       (e.benedictions ??= []).push(choix);
       let b = BENEDICTIONS[choix];
-      await ecranMessage(
-        `✨ ${b.nom}`,
-        `${b.dieu} exauce ta prière : ${b.desc} jusqu'à la fin de la run.`,
-      );
+      afficherBandeau(`✨ ${b.dieu} exauce ta prière : ${b.desc} jusqu'à la fin de la run`);
     }
     return;
   }
   if (type === `coffre`) {
     let crochet = peutCrocheter(e);
     let choix = await ecranRencontre({
+      equipe: e.persos,
       titre: `🧰 Coffre abandonné`,
       img: `/assets/monstres/coffre_forgerons.png`,
       texte: `Un vieux coffre traîne au milieu du chemin. Trésor… ou piège ?`,
@@ -645,6 +701,7 @@ async function jouerRencontre(e, zone) {
     let kamas = Math.round(gainBase(toile) * 1.5);
     ajouterKamas(e, kamas);
     let texte = `Le coffre contenait ${kamas} kamas.`;
+    let objet = null;
     let butin = zone ? butinDeZone(zone.id) : null;
     if (!e.cle && secretDuMonde(e.trancheId) && Math.random() < CHANCES_CLE.coffre) {
       e.cle = true;
@@ -657,10 +714,15 @@ async function jouerRencontre(e, zone) {
       if (obj) {
         e.inventaire.push(obj);
         enregistrerCollection(meta, [obj]);
-        texte += ` Et un objet : ${EQUIPEMENTS[obj.id]?.nom ?? obj.id} !`;
+        objet = obj;
       }
     }
-    await ecranMessage(`💰 Trésor`, texte);
+    if (objet) {
+      // l'objet trouvé passe par l'écran de butin (à qui il sert, équipement immédiat)
+      await ecranButin([objet], e, `💰 ${texte} Et un objet !`);
+    } else {
+      await ecranMessage(`💰 Trésor`, texte);
+    }
     return;
   }
   if (type === `marchand`) {
@@ -680,6 +742,7 @@ async function jouerRencontre(e, zone) {
             : ``,
       });
       let choix = await ecranRencontre({
+        equipe: e.persos,
         titre: `🧳 Marchand ambulant`,
         img: `/assets/divers/potion_de_soin.png`,
         texte: `Kerubim Crépin, l'antiquaire de Bonta, est en vadrouille et déballe quelques trouvailles.`,
@@ -687,11 +750,18 @@ async function jouerRencontre(e, zone) {
         choix: [
           offre(`potion`, `Potion de Soin`, `L'équipe récupère 40 % de ses PV max.`),
           offre(`parchemin`, `Parchemin d'expérience`, `${xp} XP pour chaque héros.`),
-          offre(
-            `philtre`,
-            `Philtre d'Otomaï`,
-            `Les archimonstres apparaissent plus souvent pour le reste de la run.`,
-          ),
+          {
+            ...offre(
+              `philtre`,
+              `Philtre d'Otomaï`,
+              `Les archimonstres apparaissent plus souvent pour le reste de la run.`,
+            ),
+            ...((e.philtres ?? 0) >= CONFIG_ARCHI.philtresMax
+              ? {
+                  desactive: `Effet déjà au maximum (${CONFIG_ARCHI.philtresMax}/${CONFIG_ARCHI.philtresMax})`,
+                }
+              : {}),
+          },
           { id: `partir`, libelle: `Repartir` },
         ],
       });
@@ -713,6 +783,7 @@ async function jouerRencontre(e, zone) {
     let prix = prixMarchand(toile).cle;
     let secret = secretDuMonde(e.trancheId);
     let choix = await ecranRencontre({
+      equipe: e.persos,
       titre: `🗝️ ${nomCle(e.trancheId)}`,
       img: `/assets/divers/cle_donjon.png`,
       texte: `Un contrebandier encapuchonné fait tinter une vieille clé : « Elle ouvre le ${secret.nom}. Pour qui ose y entrer… »`,
@@ -736,7 +807,7 @@ async function jouerRencontre(e, zone) {
     if (choix === `acheter`) {
       e.kamas -= prix;
       e.cle = true;
-      await ecranMessage(`🗝️ Clé obtenue`, `La ${nomCle(e.trancheId)} est à toi.`);
+      afficherBandeau(`🗝️ La ${nomCle(e.trancheId)} est à toi`);
     } else if (choix === `des`) {
       if (Math.random() < 0.5) {
         e.cle = true;
@@ -758,6 +829,7 @@ async function jouerRencontre(e, zone) {
   if (type === `idoles`) {
     let ids = idolesProposees(Math.random);
     let choix = await ecranRencontre({
+      equipe: e.persos,
       titre: `🗿 Autel des Idoles`,
       texte: `Des idoles anciennes promettent gloire et richesses à qui ose les porter… jusqu'à la fin de la zone.`,
       choix: [
@@ -771,9 +843,8 @@ async function jouerRencontre(e, zone) {
     });
     if (choix !== `partir`) {
       e.idole = { id: choix, zone: zone?.id };
-      await ecranMessage(
-        `🗿 ${IDOLES[choix].nom}`,
-        `Jusqu'à la fin de la zone : ${IDOLES[choix].malus} ; ${IDOLES[choix].bonus}.`,
+      afficherBandeau(
+        `🗿 ${IDOLES[choix].nom} jusqu'à la fin de la zone : ${IDOLES[choix].malus} ; ${IDOLES[choix].bonus}`,
       );
     }
     return;
@@ -781,6 +852,7 @@ async function jouerRencontre(e, zone) {
   // avis de recherche : traque d'un archimonstre, ou prime si la zone n'en a pas
   let archi = zone ? zoneAArchis(zone) : false;
   let choix = await ecranRencontre({
+    equipe: e.persos,
     titre: `📜 Avis de recherche`,
     img: `/assets/divers/avis_de_recherche.png`,
     texte: archi
@@ -811,6 +883,7 @@ async function jouerDonjonSecret(e, zone) {
   let r = recompensesSecret(toile);
   let derniere = getMonde(e.trancheId).zones.at(-1) === zone.id;
   let choix = await ecranRencontre({
+    equipe: e.persos,
     titre: `🗝️ ${secret.nom}`,
     img: MONSTRES[secret.bosses[0]]?.img,
     texte: `${secret.texte} Ta ${nomCle(e.trancheId)} tourne dans la serrure… Tu y entres avec les PV qu'il te reste.`,
@@ -852,15 +925,19 @@ async function jouerDonjonSecret(e, zone) {
     );
     return;
   }
-  ajouterKamas(e, Math.round(r.kamas * multiplicateurKamas(e) * bonusEquipeRun(meta, e).multKamas));
-  gagnerXpEquipe(e, calculerXpCombat(r.xp, toile, e.trancheId));
+  let kamas = Math.round(r.kamas * multiplicateurKamas(e) * bonusEquipeRun(meta, e).multKamas);
+  ajouterKamas(e, kamas);
+  let { xp, niveaux } = gagnerXpEquipe(e, calculerXpCombat(r.xp, toile, e.trancheId));
+  let bilan = texteBilan({ xp, kamas, niveaux });
   let id = secret.butin[Math.floor(Math.random() * secret.butin.length)];
   let obj = tirerObjet(id, Math.random, [tirerRareteSecret(Math.random)]);
   if (obj) {
     e.inventaire.push(obj);
     enregistrerCollection(meta, [obj]);
     e.stats.objets += 1;
-    await ecranButin([obj]);
+    await ecranButin([obj], e, bilan);
+  } else {
+    afficherBandeau(`Victoire : ${bilan}`);
   }
   meta.secrets = [...new Set([...(meta.secrets ?? []), e.trancheId])];
   sauverMeta(meta);
@@ -868,7 +945,7 @@ async function jouerDonjonSecret(e, zone) {
 }
 async function resoudreZaap(pools, t) {
   let n = tirerTypeZaap(Math.random, t);
-  await ecranZaap(ARTICLES_NOEUDS[n]);
+  afficherBandeau(`🌀 Le zaap mène à : ${ARTICLES_NOEUDS[n]}`);
   if (n === `combat`) {
     return {
       type: n,
@@ -907,6 +984,11 @@ async function jouerZone(e, t, n) {
       e.philtres,
       () => sauverRun(n, e),
       effetsEnCours(e, t.id),
+      {
+        zoneNum: n + 1,
+        nbZones: zonesDuMonde(getMonde(e.trancheId)).length,
+        tierObjets: numeroZone(t.id),
+      },
     );
     if (r === `accueil`) {
       return `accueil`;
@@ -927,7 +1009,6 @@ async function jouerZone(e, t, n) {
       return `wipe`;
     }
     if (s === `victoire`) {
-      distribuerKamas(e, `donjon`, numeroZone(t.id));
       await jouerDonjonSecret(e, t);
       return `clear`;
     }
@@ -955,7 +1036,21 @@ async function jouerRun(e, t, n = 0, r = `t1`) {
       return null;
     }
     o = nouvelleRun(e, n, i.id);
+    // dernier départ retenu : l'accueil et le choix d'équipe le proposent par défaut
+    parametres.dernierDepart = { trancheId: i.id, ascension: n, classes: [...e] };
+    sauverParametres(parametres);
   }
+  // relance demandée depuis le récapitulatif de fin de run
+  let relance = (choix) =>
+    choix === `memes`
+      ? {
+          relancer: o.choixDepart ?? o.persos.slice(0, 2).map((e) => e.classeId),
+          ascension: o.ascension,
+          trancheId: i.id,
+        }
+      : choix === `choix`
+        ? { relancer: `selection`, ascension: o.ascension, trancheId: i.id }
+        : null;
   fondDuMonde(i.id);
   try {
     for (let e = s; e < a.length; e++) {
@@ -981,8 +1076,7 @@ async function jouerRun(e, t, n = 0, r = `t1`) {
         effacerRun();
         enregistrerRun(meta, false);
         await traiterQuetes(o, verifierQuetesMeta(quetesMeta(), ctxMeta()));
-        await ecranRecap(o, false, quetesDeLaRun(o));
-        return null;
+        return relance(await ecranRecap(o, false, quetesDeLaRun(o)));
       }
       soignerEquipe(o, 1);
       o.stats.zones += 1;
@@ -998,17 +1092,18 @@ async function jouerRun(e, t, n = 0, r = `t1`) {
         sauverRun(e + 1, o);
         await ecranMessage(
           `${t.nom} — vaincu !`,
-          `Équipe soignée à 100 %. Tu pénètres dans ${a[e + 1].nom}.`,
+          `Équipe soignée à 100 %. Zone ${e + 2}/${a.length} : tu pénètres dans ${a[e + 1].nom}.`,
         );
       }
     }
     effacerRun();
     enregistrerRun(meta, true, i.id);
+    let avant = etatDeblocage(meta, i.id);
     enregistrerAscension(meta, i.id, o.ascension);
+    let debloques = deblocagesVictoire(avant, etatDeblocage(meta, i.id));
     await traiterQuetes(o, verifierQuetesRun(quetesMeta(), contexteRun(o, i.id, true)));
     await traiterQuetes(o, verifierQuetesMeta(quetesMeta(), ctxMeta()));
-    await ecranRecap(o, true, quetesDeLaRun(o));
-    return null;
+    return relance(await ecranRecap(o, true, quetesDeLaRun(o), debloques));
   } finally {
     fondDuMonde(null);
   }

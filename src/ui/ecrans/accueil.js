@@ -21,8 +21,10 @@ import {
   afficherEcran,
   demanderConfirmation,
   echapperHtml,
+  ecranTactile,
   etoilesDifficulte,
   imgMonde,
+  parametres,
   racine,
 } from "../commun.js";
 import { ecranParametres } from "./parametres.js";
@@ -35,29 +37,58 @@ import { ecranMentionsLegales } from "./mentions.js";
 import { ecranDofus } from "./dofus.js";
 import { htmlProchainDofus } from "../prochainDofus.js";
 import { envoyerNuage, nuagePlusRecent, recupererNuage } from "../../sauvegarde/nuage.js";
+import { resumePartieLocale, texteResume } from "../../sauvegarde/export.js";
 import { dateLisible } from "./parametres.js";
 const LIEN_DISCORD = `https://discord.gg/jxfWpRB7Rp`;
+const numeroMonde = (id) => MONDES.findIndex((m) => m.id === id) + 1;
+// Plus haute difficulté ouverte dans ce monde (une run gagnée débloque la suivante).
+function palierDebloque(meta, trancheId) {
+  const a = ascensionMonde(meta, trancheId);
+  return a === undefined ? 0 : Math.min(a + 1, DIFFICULTE_MAX);
+}
+const mondeOuvert = (meta, id) =>
+  MONDES.some((m) => m.id === id) && mondePrecedentTermine(meta, id) && mondeJouable(meta, id);
+// Ce qu'il faut faire pour débloquer la difficulté n dans ce monde (palier : plus haute ouverte).
+// Une victoire n'ouvre que le palier suivant : au-delà, on rappelle par où commencer.
+export function conditionVerrou(trancheId, palier, n) {
+  const monde = `Monde ${numeroMonde(trancheId)}`;
+  if (n <= palier + 1) {
+    return `🔒 Gagne une run du ${monde} en ${DIFFICULTES[n - 1].nom} pour débloquer ${DIFFICULTES[n].nom}.`;
+  }
+  return `🔒 Gagne une run du ${monde} en ${DIFFICULTES[n - 1].nom} pour débloquer ${DIFFICULTES[n].nom}. Les paliers s'ouvrent un à un : commence par gagner en ${DIFFICULTES[palier].nom}.`;
+}
 export function ecranAccueil(e, onReset, n = null) {
   return new Promise((resolve) => {
-    let trancheId = n?.trancheId ?? `t1`;
-    let ascension = 0;
+    // dernier départ retenu (monde et difficulté), s'il est encore possible
+    const depart = parametres.dernierDepart;
+    let trancheId =
+      n?.trancheId ??
+      (depart?.trancheId && mondeOuvert(e, depart.trancheId) ? depart.trancheId : `t1`);
+    let ascension = n
+      ? 0
+      : Math.max(0, Math.min(Math.trunc(depart?.ascension) || 0, palierDebloque(e, trancheId)));
+    // élément à refocaliser après un nouveau rendu (navigation au clavier)
+    let focusApres = null;
     let o = () => {
       let s = ascensionMonde(e, trancheId);
+      let diff = DIFFICULTES[ascension] ?? DIFFICULTES[0];
+      let recap = n
+        ? `Reprendre · Zone ${n.zoneNum}/${n.nbZones} : ${n.zoneNom}`
+        : `Monde ${numeroMonde(trancheId)} · ${`★`.repeat(ascension + 1)} ${diff.nom}`;
       let c = n
-        ? `<button id="btn-reprendre" class="btn-jouer btn-reprendre" title="Reprendre (zone ${n.zoneNum}/${n.nbZones}, ${echapperHtml(n.zoneNom)})"><img src="${IMG_JOUER}" alt="Reprendre" onerror="this.remove()" /></button>
+        ? `<button id="btn-reprendre" class="btn-jouer btn-reprendre" aria-label="${echapperHtml(recap)}"><img src="${IMG_JOUER}" alt="Reprendre" onerror="this.remove()" /></button>
            <button id="btn-abandon" class="btn-jouer btn-abandon" title="Abandonner la run"><img src="${IMG_ABANDONNER}" alt="Abandonner la run" onerror="this.replaceWith(this.alt)" /></button>`
-        : `<button id="btn-start" class="btn-jouer" title="Lancer une run"><img src="${IMG_JOUER}" alt="Jouer" onerror="this.remove()" /></button>`;
+        : `<button id="btn-start" class="btn-jouer" aria-label="${echapperHtml(`Jouer : ${recap}`)}"><img src="${IMG_JOUER}" alt="Jouer" onerror="this.remove()" /></button>`;
+      c += `<p class="jouer-recap${diff.effets.mortDefinitive && !n ? ` mort-definitive` : ``}">${echapperHtml(recap)}</p>`;
       let l = (t) => {
-        let n = ascensionMonde(e, t);
-        let r = n === undefined ? 0 : Math.min(n + 1, DIFFICULTE_MAX);
+        let r = palierDebloque(e, t);
         let o = t === trancheId;
         return DIFFICULTES.map((e, n) => {
           let i = n > r;
           let s = [`asc-etoile`, o && n <= ascension ? `pleine` : ``, i ? `verrou` : ``]
             .filter(Boolean)
             .join(` `);
-          let c = i ? `Gagne une run en ${DIFFICULTES[r].nom} pour débloquer ${e.nom}` : e.nom;
-          return `<button class="${s}" ${i ? `disabled` : `data-asc="${n}" data-asc-tranche="${t}"`} title="${echapperHtml(c)}" aria-label="${echapperHtml(e.nom)}">
+          return `<button class="${s}" ${i ? `aria-disabled="true" data-verrou="${n}" data-palier="${r}"` : `data-asc="${n}"`} data-asc-tranche="${t}" aria-label="${echapperHtml(i ? `${e.nom} (verrouillé)` : e.nom)}"${o && n === ascension ? ` aria-pressed="true"` : ``}>
             <img src="${IMG_ETOILE}" alt="" onerror="this.parentElement.textContent='★'" />
           </button>`;
         }).join(``);
@@ -71,7 +102,7 @@ export function ecranAccueil(e, onReset, n = null) {
               t,
             ) => `<div class="asc-texte${t === ascension ? ` visible` : ``}" data-asc-texte="${t}">
             <p class="asc-nom">${echapperHtml(e.nom)}</p>
-            <p class="asc-desc">${echapperHtml(e.desc)}</p>
+            <p class="asc-desc" data-desc="${echapperHtml(e.desc)}">${echapperHtml(e.desc)}</p>
           </div>`,
           ).join(``)}</div>
           ${s !== undefined && s >= 1 ? `<p class="asc-record">Meilleur palier : ${etoilesDifficulte(s)} ${echapperHtml(DIFFICULTES[s].nom)}</p>` : ``}
@@ -129,18 +160,19 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
             let length = h.filter((t) => e.reliques?.includes(t)).length;
             let _ = t.zones.length
               ? [
-                  [`Toile max atteinte`, f.toileMax ? `${f.toileMax}/${t.zones.length}` : `—`],
+                  [`Zone max atteinte`, f.toileMax ? `${f.toileMax}/${t.zones.length}` : `—`],
                   [`Runs réussies`, String(f.victoires)],
                   [`Archimonstres`, m ? `${p}/${m}` : `—`],
                   [`Reliques`, h.length ? `${length}/${h.length}` : `—`],
                 ]
               : [
-                  [`Toile max atteinte`, `—`],
+                  [`Zone max atteinte`, `—`],
                   [`Runs réussies`, `—`],
                   [`Archimonstres`, `—`],
                   [`Reliques`, `—`],
                 ];
-            return `<div class="${s}" ${o && !n ? `data-tranche="${t.id}"` : ``}${t.id === n?.trancheId ? ` data-tip="${echapperHtml(u)}"` : ``}>
+            let choisissable = o && !n;
+            return `<div class="${s}" ${choisissable ? `data-tranche="${t.id}" role="button" tabindex="0" aria-pressed="${t.id === trancheId}"` : ``}${t.id === n?.trancheId ? ` data-tip="${echapperHtml(u)}"` : ``}>
               <div class="monde-medaillon">
                 <img class="monde-img" src="${imgMonde(r + 1)}" alt="" onerror="this.remove()" />
                 ${d}${c ? `<span class="monde-badge">${c}</span>` : ``}
@@ -151,11 +183,10 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
             </div>`;
           }).join(``)}
         </div>
-        ${htmlProchainDofus(e)}
         ${u}
+        ${htmlProchainDofus(e)}
         <div class="boutons-ecran">
           ${c}
-          
         </div>
         <div class="accueil-mentions">
           <p class="mention-ankama">Fangame non officiel. Les illustrations DOFUS appartiennent à Ankama. <button id="btn-disclaimer" class="btn-lien">Mentions légales</button> · Fait avec passion par Cora, Daaye et T.</p>
@@ -195,9 +226,16 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
         await ecranArmurerie(e);
         o();
       });
-      document
-        .querySelector(`.prochain-dofus`)
-        ?.addEventListener(`click`, () => document.getElementById(`btn-succes`)?.click());
+      // l'encart « Dofus à portée » ouvre les Succès sur le Dofus touché
+      document.querySelector(`.prochain-dofus`)?.addEventListener(`click`, async (ev) => {
+        // au toucher, une quête ouvre son indice (« où la faire ») au lieu de quitter l'écran
+        if (ecranTactile() && ev.target.closest(`.pd-quetes li[data-tip]`)) {
+          return;
+        }
+        const id = ev.target.closest(`[data-dofus]`)?.dataset.dofus;
+        await ecranSucces(e, id ? `d:${id}` : undefined);
+        o();
+      });
       // une partie plus récente envoyée depuis l'autre appareil (sauvegarde en ligne)
       nuagePlusRecent()
         .then((info) => {
@@ -207,21 +245,9 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
           }
           const div = document.createElement(`div`);
           div.className = `nuage-bandeau`;
-          div.innerHTML = `<span>☁️ Une partie plus récente est en ligne (envoyée depuis ${echapperHtml(info.appareil ?? `un autre appareil`)} le ${echapperHtml(dateLisible(info.date))}).</span>
-            <span class="setting-actions"><button class="primaire" data-nuage="recuperer">Récupérer</button><button class="secondaire" data-nuage="garder">Garder celle d'ici</button></span>`;
+          div.innerHTML = htmlBandeauNuage(info);
           ecran.prepend(div);
-          div.querySelector(`[data-nuage="recuperer"]`).addEventListener(`click`, async (ev) => {
-            ev.currentTarget.disabled = true;
-            if (await recupererNuage().catch(() => false)) {
-              location.reload();
-            } else {
-              div.firstElementChild.textContent = `Récupération impossible pour l'instant (envoi en cours ?). Réessaie dans un moment.`;
-            }
-          });
-          div.querySelector(`[data-nuage="garder"]`).addEventListener(`click`, async () => {
-            div.remove();
-            await envoyerNuage().catch(() => {});
-          });
+          brancherBandeauNuage(div, info);
         })
         .catch(() => {});
       document.getElementById(`btn-dofus`)?.addEventListener(`click`, async () => {
@@ -229,16 +255,46 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
         o();
       });
       let d = [...racine.querySelectorAll(`[data-asc-texte]`)];
-      let f = (e) => {
-        d.forEach((t) => t.classList.toggle(`visible`, Number(t.dataset.ascTexte) === e));
+      // texte de difficulté affiché ; condition : message de déblocage à la place de la description
+      let f = (e, condition = null) => {
+        d.forEach((t) => {
+          let visible = Number(t.dataset.ascTexte) === e;
+          t.classList.toggle(`visible`, visible);
+          let desc = t.querySelector(`.asc-desc`);
+          if (desc) {
+            desc.textContent = visible && condition ? condition : desc.dataset.desc;
+            desc.classList.toggle(`asc-condition`, visible && !!condition);
+          }
+        });
       };
-      let p = (e, t) => {
+      // message de déblocage affiché : seul un autre survol ou clic l'efface (pas le mouseleave)
+      let conditionAffichee = false;
+      // pendant le défilement qui suit le clic, un survol « subi » ne doit pas l'effacer
+      let conditionDepuis = 0;
+      let p = (e, t, texte = true) => {
         e.querySelectorAll(`.asc-etoile`).forEach((e, n) => {
-          if (!e.disabled) {
+          if (!e.classList.contains(`verrou`)) {
             e.classList.toggle(`pleine`, n <= t);
           }
         });
-        f(Math.max(0, t));
+        if (texte) {
+          f(Math.max(0, t));
+        }
+      };
+      // fait remonter la section au-dessus de la barre « Jouer » collante
+      let montrerSection = () => {
+        let section = racine.querySelector(`.asc-section`);
+        if (!section) {
+          return;
+        }
+        let barre = racine.querySelector(`.ecran-accueil > .boutons-ecran`);
+        let bas = barre ? barre.getBoundingClientRect().top : window.innerHeight;
+        bas = Math.min(bas, window.innerHeight) - 8;
+        let r = section.getBoundingClientRect();
+        let delta = r.bottom > bas ? r.bottom - bas : r.top < 0 ? r.top - 8 : 0;
+        if (delta) {
+          window.scrollBy({ top: delta, behavior: `smooth` });
+        }
       };
       racine.querySelectorAll(`[data-rangee]`).forEach((e) => {
         e.querySelectorAll(`.asc-etoile[data-asc]`).forEach((t) => {
@@ -247,29 +303,76 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
             e.stopPropagation();
             trancheId = t.dataset.ascTranche;
             ascension = n;
+            focusApres = `.asc-etoile[data-asc="${n}"][data-asc-tranche="${trancheId}"]`;
             o();
           });
-          t.addEventListener(`mouseenter`, () => p(e, n));
+          t.addEventListener(`mouseenter`, () => {
+            if (ecranTactile() || performance.now() - conditionDepuis < 900) {
+              return;
+            }
+            conditionAffichee = false;
+            p(e, n);
+          });
         });
+        // étoile verrouillée : dire comment la débloquer plutôt que ne rien faire
+        e.querySelectorAll(`.asc-etoile[data-verrou]`).forEach((t) => {
+          t.addEventListener(`click`, (ev) => {
+            ev.stopPropagation();
+            let n = Number(t.dataset.verrou);
+            f(n, conditionVerrou(t.dataset.ascTranche, Number(t.dataset.palier), n));
+            conditionAffichee = true;
+            conditionDepuis = performance.now();
+            montrerSection();
+          });
+        });
+        // survol à la souris seulement : au toucher, le défilement ne doit pas effacer le message
         e.addEventListener(`mouseleave`, () => {
-          p(e, e.dataset.rangee === trancheId ? ascension : -1);
-          f(ascension);
+          if (ecranTactile()) {
+            return;
+          }
+          p(e, e.dataset.rangee === trancheId ? ascension : -1, false);
+          if (!conditionAffichee) {
+            f(ascension);
+          }
         });
       });
-      racine.querySelectorAll(`[data-tranche]`).forEach((e) =>
+      racine.querySelectorAll(`[data-tranche]`).forEach((e) => {
         e.addEventListener(`click`, () => {
-          trancheId = e.dataset.tranche;
-          ascension = 0;
+          // un appui à côté d'une étoile sur le monde déjà choisi ne remet pas la difficulté à zéro
+          if (e.dataset.tranche !== trancheId) {
+            trancheId = e.dataset.tranche;
+            ascension = 0;
+          }
+          focusApres = document.activeElement === e ? `[data-tranche="${trancheId}"]` : null;
           o();
-        }),
-      );
-      document.getElementById(`btn-start`)?.addEventListener(`click`, () =>
+        });
+        e.addEventListener(`keydown`, (ev) => {
+          if ((ev.key === `Enter` || ev.key === ` `) && ev.target === e) {
+            ev.preventDefault();
+            e.click();
+          }
+        });
+      });
+      if (focusApres) {
+        racine.querySelector(focusApres)?.focus({ preventScroll: true });
+        focusApres = null;
+      }
+      document.getElementById(`btn-start`)?.addEventListener(`click`, async () => {
+        if (
+          DIFFICULTES[ascension]?.effets.mortDefinitive &&
+          !(await demanderConfirmation(
+            `Mort définitive : un héros tombé est perdu pour la run. Lancer ?`,
+            `Lancer`,
+          ))
+        ) {
+          return;
+        }
         resolve({
           action: `nouvelle`,
           ascension,
           trancheId,
-        }),
-      );
+        });
+      });
       document.getElementById(`btn-reprendre`)?.addEventListener(`click`, () =>
         resolve({
           action: `reprendre`,
@@ -293,5 +396,53 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
       });
     };
     o();
+  });
+}
+
+// Bandeau « partie plus récente en ligne » : ce que contient chaque partie, et confirmation avant
+// de remplacer l'une par l'autre.
+function htmlBandeauNuage(info) {
+  let ici = ``;
+  try {
+    ici = texteResume(resumePartieLocale());
+  } catch {}
+  const enLigne = info.resume ? texteResume(info.resume) : `contenu inconnu (ancien envoi)`;
+  return `<span>☁️ Une partie plus récente est en ligne (envoyée depuis ${echapperHtml(info.appareil ?? `un autre appareil`)} le ${echapperHtml(dateLisible(info.date))}).
+      <small class="nuage-compare"><span>Ici : <b>${echapperHtml(ici || `—`)}</b></span><span>En ligne : <b>${echapperHtml(enLigne)}</b></span></small>
+      <small class="nuage-pause">Synchro auto en pause en attendant ton choix.</small></span>
+    <span class="setting-actions"><button class="primaire" data-nuage="recuperer">Récupérer</button><button class="secondaire" data-nuage="garder">Garder celle d'ici</button></span>`;
+}
+function brancherBandeauNuage(div, info) {
+  const enLigne = info.resume ? texteResume(info.resume) : `partie en ligne`;
+  div.querySelector(`[data-nuage="recuperer"]`).addEventListener(`click`, async (ev) => {
+    const b = ev.currentTarget;
+    if (
+      !(await demanderConfirmation(
+        `Récupérer la partie en ligne (${enLigne}) ? Elle remplacera celle d'ici, qui reste récupérable dans Paramètres (« Annuler le dernier import »).`,
+        `Récupérer`,
+      ))
+    ) {
+      return;
+    }
+    b.disabled = true;
+    // recupererNuage garde une copie de secours de la partie d'ici avant d'écrire
+    if (await recupererNuage().catch(() => false)) {
+      location.reload();
+    } else {
+      b.disabled = false;
+      div.firstElementChild.textContent = `Récupération impossible pour l'instant (envoi en cours ?). Réessaie dans un moment.`;
+    }
+  });
+  div.querySelector(`[data-nuage="garder"]`).addEventListener(`click`, async () => {
+    if (
+      !(await demanderConfirmation(
+        `Garder la partie d'ici ? Elle sera envoyée en ligne et remplacera celle de l'autre appareil (${enLigne}).`,
+        `Garder celle d'ici`,
+      ))
+    ) {
+      return;
+    }
+    div.remove();
+    await envoyerNuage().catch(() => {});
   });
 }

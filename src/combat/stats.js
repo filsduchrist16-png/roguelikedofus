@@ -166,6 +166,67 @@ export function ciblesValides(e, t, n) {
   }
   return filtrerCiblesClasse(e, t, i);
 }
+// Pourquoi un sort ne peut pas être lancé maintenant : libellé court pour l'interface, ou null.
+// Reprend dans l'ordre le coût en PA, la recharge, puis les conditions de ciblesValides.
+export function raisonIndisponible(lanceur, sort, combattants) {
+  const cout = coutPA(sort, lanceur);
+  if (lanceur.paActuels < cout) {
+    return `PA : ${lanceur.paActuels}/${cout}`;
+  }
+  const recharge = lanceur.cooldowns?.[sort.id] ?? 0;
+  if (recharge > 0) {
+    return `Recharge : ${recharge} t`;
+  }
+  if (ciblesValides(lanceur, sort, combattants).length > 0) {
+    return null;
+  }
+  const lanceVivante = (ref) => vivants(combattants).some((c) => c.ref === ref);
+  const lances = lanceur.lancersCeTour?.[sort.id] ?? 0;
+  if (sort.maxParTour && lances >= sort.maxParTour) {
+    return `Déjà lancé ce tour (${lances}/${sort.maxParTour})`;
+  }
+  if (sort.pasPremierTour && (lanceur.toursJoues ?? 0) <= 1) {
+    return `Pas au 1er tour`;
+  }
+  if (sort.consommeRage && !(lanceur.rage ?? 0)) {
+    return `Il faut 1 Rage`;
+  }
+  if (sort.kaboom && !ennemisVivants(lanceur, combattants).some((c) => (c.bombes ?? 0) > 0)) {
+    return `Aucune bombe posée`;
+  }
+  if (sort.invoqueCreature && sortIndisponible(lanceur, sort, combattants)) {
+    const deja = vivants(combattants).some(
+      (c) => c.ref === `crea_${sort.invoqueCreature}_${lanceur.ref}`,
+    );
+    return deja ? `Créature déjà invoquée` : `Plus de place pour l'invoquer`;
+  }
+  if (sort.posePortail && (lanceur.portails ?? 0) >= 4) {
+    return `4 portails déjà ouverts`;
+  }
+  if (sort.invoqueLance && lanceVivante(`lance_${lanceur.ref}`)) {
+    return `Lance déjà invoquée`;
+  }
+  if (sort.rappelleLance && !lanceVivante(`lance_${lanceur.ref}`)) {
+    return `Aucune lance à rappeler`;
+  }
+  if (sort.invoqueEgide && lanceVivante(`egide_${lanceur.ref}`)) {
+    return `Égide déjà invoquée`;
+  }
+  if (sort.changeLigne && caseOpposeeLibre(lanceur, combattants) === null) {
+    return `Aucune case libre en face`;
+  }
+  if (
+    sort.type === `buff` &&
+    sort.effetRangeeAlliee &&
+    !membresRangee(lanceur, sort.effetRangeeAlliee, combattants).length
+  ) {
+    return `Aucun allié dans la rangée`;
+  }
+  if (sort.cooldown || sort.maxParCibleParTour) {
+    return `Déjà visé sur chaque cible`;
+  }
+  return `Aucune cible`;
+}
 export function reinitialiserTour(e) {
   e.lancersCeTour = {};
   e.remisesCout = {};

@@ -13,11 +13,15 @@ export function ecranFormation(e) {
   return new Promise((resolve) => {
     let n = -1;
     let r = -1;
+    // vrai dès qu'un déplacement a eu lieu : sinon, rien à sauver en quittant
+    let modifie = false;
     let i = (t) => e.find((e) => e.position === t);
+    // On fusionne : les préréglages des classes absentes de l'équipe sont conservés.
     let a = () => {
-      parametres.formation = Object.fromEntries(
-        e.map((e) => [e.classeId, e.position < 4 ? `avant` : `arriere`]),
-      );
+      parametres.formation = {
+        ...parametres.formation,
+        ...Object.fromEntries(e.map((p) => [p.classeId, p.position < 4 ? `avant` : `arriere`])),
+      };
       sauverParametres(parametres);
     };
     let o = (e) => {
@@ -52,6 +56,7 @@ export function ecranFormation(e) {
         o.position = e;
       }
       n = -1;
+      modifie = true;
       a();
       f();
     };
@@ -62,12 +67,14 @@ export function ecranFormation(e) {
       let [i] = e.splice(t, 1);
       e.splice(n, 0, i);
       r = -1;
+      modifie = true;
+      a();
       f();
     };
     let f = () => {
       afficherEcran(`
         <h1>Formation</h1>
-        <p class="sous-titre">Glisse-dépose un perso sur une case pour le déplacer (ou l'échanger), ou clique-le puis clique la case. La <b>ligne avant</b> encaisse les sorts de ligne ennemis ; la <b>ligne arrière</b> est protégée. Effet dès le prochain combat.</p>
+        <p class="sous-titre">Glisse-dépose, ou touche une case puis une autre pour les échanger. La <b>ligne avant</b> encaisse les sorts de ligne ennemis ; la <b>ligne arrière</b> est protégée. Effet dès le prochain combat.</p>
         <p id="form-msg" class="muet settings-sous" style="display:none"></p>
         <div class="formation-grille">
           <div class="form-rangee"><span class="form-ligne-lbl">Ligne avant</span><div class="form-cells">${s(
@@ -170,7 +177,9 @@ export function ecranFormation(e) {
         });
       });
       document.getElementById(`form-retour`)?.addEventListener(`click`, () => {
-        a();
+        if (modifie) {
+          a();
+        }
         resolve();
       });
     };

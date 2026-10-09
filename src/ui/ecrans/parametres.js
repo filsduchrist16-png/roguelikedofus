@@ -1,12 +1,23 @@
 import { CLASSES } from "../../data/index.js";
 import { nomTouche, rangOrdre, sauverParametres } from "../../sauvegarde/parametres.js";
 import { classesJouables } from "../../jeu/run.js";
-import { exporterSauvegarde, importerSauvegarde } from "../../sauvegarde/export.js";
+import {
+  exporterSauvegarde,
+  importerSauvegarde,
+  infoSecours,
+  lireSauvegarde,
+  restaurerSecours,
+  resumePartieLocale,
+  resumeSauvegarde,
+  sauvegardeDeSecours,
+  texteResume,
+} from "../../sauvegarde/export.js";
 import {
   changerSyncAuto,
   envoyerNuage,
   infoNuage,
   nuageDisponible,
+  nuagePlusRecent,
   recupererNuage,
   syncAuto,
 } from "../../sauvegarde/nuage.js";
@@ -22,12 +33,23 @@ import { telechargerTexte } from "../../sauvegarde/telechargement.js";
 import {
   afficherEcran,
   barreRetour,
+  demanderConfirmation,
   echapperHtml,
   htmlElementsClasse,
   imgSymboleClasse,
   parametres,
   racine,
 } from "../commun.js";
+// Résumé de la copie de secours (les valeurs y sont gardées telles que stockées, en texte).
+function resumeSecours(secours) {
+  const donnees = {};
+  for (const [k, v] of Object.entries(secours.donnees ?? {})) {
+    try {
+      donnees[k] = JSON.parse(v);
+    } catch {}
+  }
+  return resumeSauvegarde({ date: secours.date, donnees });
+}
 export function ecranParametres(e) {
   return new Promise((resolve) => {
     let n = false;
@@ -60,6 +82,22 @@ export function ecranParametres(e) {
             </span>
           </div>
           <p id="set-import-msg" class="muet settings-sous" style="display:none"></p>
+          ${(() => {
+            const secours = infoSecours();
+            return secours
+              ? `<div class="setting-ligne">
+            <span class="setting-lbl">Partie d'avant le dernier import<br><small class="muet">copie gardée le ${echapperHtml(dateLisible(secours.date))} : ${echapperHtml(texteResume(resumeSecours(secours)))}</small></span>
+            <span class="setting-actions"><button id="set-annuler-import" class="secondaire">Annuler le dernier import</button></span>
+          </div>`
+              : ``;
+          })()}
+          <div id="set-nuage-pause" class="setting-ligne nuage-pause-ligne" style="display:none">
+            <span class="setting-lbl">⚠ Synchro auto en pause : une partie plus récente attend ton choix<br><small id="set-nuage-pause-detail" class="muet"></small></span>
+            <span class="setting-actions">
+              <button id="set-pause-recuperer" class="primaire">Récupérer</button>
+              <button id="set-pause-garder" class="secondaire">Garder celle d'ici</button>
+            </span>
+          </div>
           <div id="set-nuage" class="setting-ligne nuage-ligne" style="display:none">
             <span class="setting-lbl">☁️ Sauvegarde en ligne<br><small class="muet">liée à ton compte claude.ai : ouvre ce même artefact sur PC ou sur mobile pour reprendre ta partie, sans mot de passe</small><br><small id="set-nuage-etat" class="muet"></small></span>
             <span class="setting-actions">
@@ -298,14 +336,39 @@ export function ecranParametres(e) {
           message(`Sélectionne le texte et copie-le (appui long ou Ctrl+C).`);
         }
       });
-      document.getElementById(`set-texte-importer`)?.addEventListener(`click`, () => {
-        let champ = document.getElementById(`set-texte-champ`);
-        if (importerSauvegarde(champ.value)) {
+      // Import : résumé de ce qu'on importe et de ce qu'on remplace, puis copie de secours.
+      const importer = async (texte, invalide) => {
+        const objet = lireSauvegarde(texte);
+        if (!objet) {
+          message(invalide);
+          return;
+        }
+        const nouvelle = resumeSauvegarde(objet);
+        let ici = `—`;
+        try {
+          ici = texteResume(resumePartieLocale());
+        } catch {}
+        const date = nouvelle.date ? `Sauvegarde du ${dateLisible(nouvelle.date)}` : `Sauvegarde`;
+        if (
+          !(await demanderConfirmation(
+            `${date} : ${texteResume(nouvelle)}. Elle remplacera ta partie actuelle (${ici}), qui restera récupérable avec « Annuler le dernier import ».`,
+            `Importer`,
+          ))
+        ) {
+          message(`Import annulé.`);
+          return;
+        }
+        sauvegardeDeSecours();
+        if (importerSauvegarde(texte)) {
           message(`✓ Sauvegarde importée, rechargement…`);
           setTimeout(() => location.reload(), 600);
         } else {
-          message(`✗ Ce texte n'est pas une sauvegarde Roguefus Lite.`);
+          message(invalide);
         }
+      };
+      document.getElementById(`set-texte-importer`)?.addEventListener(`click`, () => {
+        let champ = document.getElementById(`set-texte-champ`);
+        importer(champ.value, `✗ Ce texte n'est pas une sauvegarde Roguefus Lite.`);
       });
       let o = document.getElementById(`set-import-file`);
       document.getElementById(`set-import`)?.addEventListener(`click`, () => o?.click());
@@ -314,18 +377,83 @@ export function ecranParametres(e) {
         if (!e) {
           return;
         }
-        let t = document.getElementById(`set-import-msg`);
-        if (importerSauvegarde(await e.text())) {
-          if (t) {
-            t.textContent = `✓ Sauvegarde importée, rechargement…`;
-            t.style.display = ``;
-          }
+        o.value = ``;
+        importer(await e.text(), `✗ Fichier invalide : ce n'est pas une sauvegarde Roguefus Lite.`);
+      });
+      document.getElementById(`set-annuler-import`)?.addEventListener(`click`, async () => {
+        const secours = infoSecours();
+        if (
+          !secours ||
+          !(await demanderConfirmation(
+            `Revenir à la partie d'avant le dernier import (${texteResume(resumeSecours(secours))}) ? La partie actuelle sera remplacée.`,
+            `Revenir`,
+          ))
+        ) {
+          return;
+        }
+        if (restaurerSecours()) {
+          message(`✓ Partie d'avant l'import remise, rechargement…`);
           setTimeout(() => location.reload(), 600);
-        } else if (t) {
-          t.textContent = `✗ Fichier invalide : ce n'est pas une sauvegarde Roguefus Lite.`;
-          t.style.display = ``;
+        } else {
+          message(`✗ Impossible de remettre la partie d'avant.`);
         }
       });
+      // synchro auto en pause : une partie plus récente venue de l'autre appareil attend un choix
+      nuagePlusRecent()
+        .then((info) => {
+          const ligne = document.getElementById(`set-nuage-pause`);
+          if (!info || !ligne) {
+            return;
+          }
+          let ici = `—`;
+          try {
+            ici = texteResume(resumePartieLocale());
+          } catch {}
+          const enLigne = info.resume ? texteResume(info.resume) : `contenu inconnu (ancien envoi)`;
+          ligne.style.display = ``;
+          document.getElementById(`set-nuage-pause-detail`).textContent =
+            `Ici : ${ici} · En ligne (${info.appareil ?? `autre appareil`}, ${dateLisible(info.date)}) : ${enLigne}`;
+          document.getElementById(`set-pause-recuperer`)?.addEventListener(`click`, async (ev) => {
+            const b = ev.currentTarget;
+            if (
+              !(await demanderConfirmation(
+                `Récupérer la partie en ligne (${enLigne}) ? Elle remplacera celle d'ici (${ici}), qui reste récupérable avec « Annuler le dernier import ».`,
+                `Récupérer`,
+              ))
+            ) {
+              return;
+            }
+            b.disabled = true;
+            if (await recupererNuage().catch(() => false)) {
+              message(`✓ Partie récupérée, rechargement…`);
+              setTimeout(() => location.reload(), 600);
+            } else {
+              b.disabled = false;
+              message(
+                `✗ Récupération impossible pour l'instant (envoi en cours ?). Réessaie dans un moment.`,
+              );
+            }
+          });
+          document.getElementById(`set-pause-garder`)?.addEventListener(`click`, async () => {
+            if (
+              !(await demanderConfirmation(
+                `Garder la partie d'ici (${ici}) ? Elle sera envoyée en ligne et remplacera celle de l'autre appareil (${enLigne}).`,
+                `Garder celle d'ici`,
+              ))
+            ) {
+              return;
+            }
+            ligne.style.display = `none`;
+            try {
+              await envoyerNuage();
+              message(`✓ Partie d'ici envoyée en ligne : la synchro auto reprend.`);
+            } catch {
+              message(`✗ Envoi impossible pour l'instant, réessaie dans un moment.`);
+            }
+            etatNuage();
+          });
+        })
+        .catch(() => {});
       document.getElementById(`set-reset-dofus`)?.addEventListener(`click`, () => {
         if (!r) {
           r = true;

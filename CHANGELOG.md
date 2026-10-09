@@ -1,5 +1,69 @@
 # Journal des modifications
 
+## Passe de confort de jeu
+
+Audit en 7 angles (déroulé d'une run, combat, inventaire, menus, clarté, et deux parties jouées pour
+de vrai, sur mobile et sur PC) : 103 constats, 26 corrections retenues, chacune relue puis vérifiée
+dans le navigateur.
+
+**Run et carte**
+
+- **Rejouer en 1 appui** depuis l'écran de fin : « ↻ Rejouer (mêmes héros) » ou « Autre équipe ».
+  Le jeu retient le dernier départ (monde, difficulté, héros) : l'accueil et le choix d'équipe le
+  reprennent. Une 3e classe choisie remplace la plus ancienne. En cas de victoire, le récap dit ce qui
+  vient d'être débloqué.
+- **Moins d'écrans « Continuer »** : soin, recrue, philtre, prière, idole, clé achetée et zaap
+  s'annoncent par un bandeau non bloquant (en bas de l'écran sur téléphone) et on enchaîne.
+- **Fin de combat lisible** : un court voile « Victoire ! » / « Défaite… » avec le résultat du défi,
+  puis le bilan (XP, kamas, niveaux) en tête du butin.
+- **Butin** : « ⚡ Équiper » est dans la barre du bas (plus caché sous la liste) ; chaque objet équipé
+  indique « ✓ sur Iop ». Le butin du donjon secret et des coffres a les mêmes aides.
+- **Taverne et rencontres** : les PV de l'équipe sont affichés ; le soin est chiffré (« +86 PV, relève
+  Cra ») ou signale « équipe déjà en pleine forme » ; la recrue indique son niveau d'arrivée et, au
+  remplacement, chaque héros montre niveau et PV.
+- **Carte** : titre « Zone 4/12 · Nom » avec le Tier des objets, héros K.O. bien visibles (tavernes
+  en surbrillance), barre d'XP. Le contenu de chaque case est lisible : monstres du combat, boss du
+  donjon, affixe du combat dur (au survol sur PC ; sur téléphone, un premier appui montre le contenu,
+  un second y va).
+- **Carte au clavier** : touches 1 à 9 pour les cases (AZERTY compris), E/S/F/B pour Équipement,
+  Stats, Formation, Bestiaire ; molette et glisser pour faire défiler.
+- Le philtre d'Otomai s'arrête de vous être proposé à 4/4 ; la Formation ne réinitialise plus les
+  préréglages des autres classes.
+
+**Combat**
+
+- On voit **qui joue** pendant les tours des monstres (carte et frise en surbrillance, « Ronde N »,
+  pastilles déjà jouées atténuées).
+- **Sorts indisponibles** : la vraie raison (« PA », « 1/1 », « 1er tour », « Aucune cible »…) est
+  écrite sur l'icône et s'affiche au toucher.
+- **États chiffrés** : « ☠ poison 12/t · 3 t », « 🛡 bouclier 40 · 2 t », « ⚔ +15 % dgts »… avec
+  l'explication au toucher.
+- **Ciblage au clavier** : ←/→ ou Tab pour choisir la cible, Entrée (ou la touche du sort) pour
+  lancer ; une cible mortelle est proposée en premier. Clic droit pour annuler.
+- Sur téléphone : journal compact dépliable d'un appui, sorts mieux espacés, objectifs de succès
+  repliés en pastille 🏆 qui se replie au premier geste.
+
+**Inventaire, HDV, Forgemagie**
+
+- Les objets « mitigés » disent s'ils sont **plutôt mieux ou plutôt moins** bien ; « Vendre
+  l'inutile » s'appuie sur ce calcul.
+- **HDV** : achat annulable, bouton « Équiper sur <héros> » juste après un achat, annulation des
+  ventes groupées ; plus de débordement sur téléphone, prix toujours visible (« il manque X k »).
+- **Forgemagie** : pièces portées d'abord (par héros), aperçu du seul gain du palier suivant,
+  résultat affiché là où l'on regarde.
+- Équipement : le filtre ne bloque plus sur un emplacement vide, le double-clic équipe vraiment sur
+  PC, « Bonus total » affiche les bons signes et « +1 PA (max +2) ».
+
+**Menus et clarté**
+
+- **Entrée** valide l'action principale de chaque écran ; chaque nouvel écran repart en haut.
+- **Infobulles au toucher et au clavier** partout (plus d'aide cachée dans des survols).
+- Accueil : monde et difficulté retenus, étoiles plus faciles à toucher, rappel « Monde 2 · ★★
+  Difficile » sous Jouer. L'encart Dofus ouvre directement le bon Dofus dans les Succès.
+- **Sauvegarde plus sûre** : avant d'écraser la partie (import ou récupération en ligne), un résumé
+  des deux parties (Dofus, quêtes, archis, run en cours) et une copie de secours restaurable.
+- Règles mises à jour (8 emplacements, Dofus sans ordre imposé, PA plafonnés, Tier expliqué).
+
 ## Passe de conformité : Dofus libres, défis en direct, confort
 
 **Dofus.** Chaque Dofus s'obtient **dès que son succès est terminé**, sans attendre ceux de niveau

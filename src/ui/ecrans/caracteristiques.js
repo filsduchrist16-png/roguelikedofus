@@ -33,6 +33,8 @@ const pct = (x) =>
   `${String(Math.round(x * 1000) / 10)
     .replace(`.`, `,`)
     .replace(`-`, `−`)} %`;
+// −10 avec le vrai signe moins
+const signeNombre = (n) => (n < 0 ? `−${Math.abs(n)}` : String(n));
 const plusPct = (x) => (x < 0 ? pct(x) : `+${pct(x)}`);
 // Ce que la valeur actuelle de chaque caractéristique apporte concrètement.
 function effetsStat(stat, valeur, base, classe, combattant) {
@@ -123,10 +125,15 @@ function htmlFichePerso(e, meta) {
     let t = i.stats[e] ?? 0;
     let n = (r[e] ?? 0) + t;
     let total = e === `vitalite` ? n : (combattant.stats[e] ?? n);
+    // le total réel (Dofus compris), puis ce qui vient de l'équipement et des Dofus
+    let dofus = total - n;
+    let parts = [t ? `${signeNombre(t)} équip.` : ``, dofus ? `${signeNombre(dofus)} Dofus` : ``]
+      .filter(Boolean)
+      .join(`, `);
     return `
       <div class="stat-ligne">
         <span class="stat-nom" tabindex="0">${NOMS_STATS[e]}<span class="stat-info">ⓘ</span><span class="stat-aide">${AIDE_STATS[e]}${STATS_ELEMENTAIRES_SET.has(e) ? AIDE_NOTE_ELEMENT : ``}</span></span>
-        <span class="stat-val"><b class="stat-total stat-c-${e}">${n}</b>${t ? ` + <span class="stat-part-equip" title="Équipement">(${t})</span>` : ``}</span>
+        <span class="stat-val"><b class="stat-total stat-c-${e}">${signeNombre(total)}</b>${parts ? ` <small class="stat-part-equip" title="Niveau : ${signeNombre(total - t - dofus)}">dont ${parts}</small>` : ``}</span>
         <span class="stat-effet">${effetsStat(e, total, r[e] ?? 0, classe, combattant)}</span>
       </div>`;
   }).join(``);

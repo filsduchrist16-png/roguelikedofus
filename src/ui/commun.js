@@ -56,9 +56,26 @@ function definirFond(e) {
     document.body.style.removeProperty(`--fond-run`);
   }
 }
+// Dernier écran affiché (élément + classe et titre) : un nouvel écran repart en haut avec le focus
+// sur son titre ; le même écran réaffiché (choix d'équipe, HDV, paramètres…) garde défilement et focus.
+let dernierEcran = { el: null, cle: `` };
 export function afficherEcran(e, t = ``) {
   masquerElements();
+  // le combat remplace la racine sans passer par ici : l'écran d'avant n'est alors plus affiché
+  const dejaAffiche = !!dernierEcran.el && racine.firstElementChild === dernierEcran.el;
   racine.innerHTML = `<div class="ecran${t ? ` ${t}` : ``}">${e}</div>`;
+  const el = racine.firstElementChild;
+  const titre = el?.querySelector(`h1`);
+  const cle = `${t}|${titre?.textContent.trim() ?? ``}`;
+  const nouveau = !dejaAffiche || cle !== dernierEcran.cle;
+  dernierEcran = { el, cle };
+  if (nouveau) {
+    window.scrollTo(0, 0);
+    if (titre) {
+      titre.tabIndex = -1;
+      titre.focus({ preventScroll: true });
+    }
+  }
 }
 // Boîte de confirmation (par-dessus l'écran courant). Résout true si le joueur confirme.
 export function demanderConfirmation(message, libelleOk = `Confirmer`) {
@@ -97,17 +114,69 @@ export function demanderConfirmation(message, libelleOk = `Confirmer`) {
     fond.querySelector(`[data-reponse="non"]`)?.focus();
   });
 }
+// Entrée valide l'action principale de l'écran (continuer, jouer, reprendre) quand le focus n'est
+// pas déjà sur un bouton ; 1 à 4 choisissent une option d'une rencontre. Pas Espace : c'est la touche
+// de fin de tour par défaut.
+const ACTIONS_PRINCIPALES = [
+  `.ecran .boutons-ecran .btn-continuer:not([disabled])`,
+  `#choix-go:not([disabled])`,
+  `#btn-reprendre`,
+  `#btn-start`,
+];
+function champDeSaisie(el) {
+  return (
+    el instanceof HTMLInputElement ||
+    el instanceof HTMLTextAreaElement ||
+    el instanceof HTMLSelectElement ||
+    !!el?.isContentEditable
+  );
+}
+function installerToucheEntree() {
+  document.addEventListener(`keydown`, (e) => {
+    if (e.defaultPrevented || e.repeat || e.ctrlKey || e.metaKey || e.altKey) {
+      return;
+    }
+    const actif = document.activeElement;
+    if (
+      champDeSaisie(actif) ||
+      document.querySelector(`.confirm-fond`) ||
+      !racine ||
+      racine.querySelector(`.combat`)
+    ) {
+      return;
+    }
+    if (e.key === `Enter`) {
+      // un bouton, un lien ou une carte focalisés réagissent déjà à Entrée
+      if (actif?.closest?.(`button, [role="button"], a[href], summary`)) {
+        return;
+      }
+      for (const sel of ACTIONS_PRINCIPALES) {
+        const b = racine.querySelector(sel);
+        if (b && !b.disabled) {
+          e.preventDefault();
+          b.click();
+          return;
+        }
+      }
+      return;
+    }
+    const chiffre = /^(?:Digit|Numpad)([1-4])$/.exec(e.code)?.[1];
+    if (chiffre) {
+      const option = racine.querySelectorAll(`.ecran [data-choix]`)[Number(chiffre) - 1];
+      if (option && !option.disabled) {
+        e.preventDefault();
+        option.click();
+      }
+    }
+  });
+}
 export function installerToucheEchap() {
+  installerToucheEntree();
   document.addEventListener(`keydown`, (e) => {
     if (e.key !== `Escape` || e.defaultPrevented) {
       return;
     }
-    let document_activeElement = document.activeElement;
-    if (
-      document_activeElement instanceof HTMLInputElement ||
-      document_activeElement instanceof HTMLTextAreaElement ||
-      document_activeElement instanceof HTMLSelectElement
-    ) {
+    if (champDeSaisie(document.activeElement)) {
       return;
     }
     let n = racine?.querySelector(`.ecran .boutons-ecran .btn-retour`);
@@ -180,7 +249,8 @@ export function barreRetour(e, t = `Retour`) {
   return `<div class="boutons-ecran">${boutonRetour(e, t)}</div>`;
 }
 export function boutonContinuer(e) {
-  return `<button id="${e}" class="btn-continuer" title="Continuer"><img src="${IMG_CONTINUER}" alt="Continuer" onerror="this.remove()" /></button>`;
+  const kbd = ecranTactile() ? `` : `<kbd class="kbd-entree" aria-hidden="true">Entrée</kbd>`;
+  return `<button id="${e}" class="btn-continuer" title="Continuer"><img src="${IMG_CONTINUER}" alt="Continuer" onerror="this.remove()" />${kbd}</button>`;
 }
 export function barreContinuer(e) {
   return `<div class="boutons-ecran">${boutonContinuer(e)}</div>`;
@@ -287,7 +357,80 @@ export function infobulleSort(e, t) {
 }
 // Écran tactile : pas de survol, les infobulles s'ouvrent au toucher.
 export const ecranTactile = () => window.matchMedia?.(`(hover: none)`).matches ?? false;
-function ouvrirAuToucher(selecteur, montrer, bulle) {
+// Règle des infobulles : data-tip (ou les data-* des Dofus) pour toute vraie information, car elle
+// s'ouvre au survol, au toucher et au focus clavier ; title seulement pour un libellé redondant.
+function creerBulle(classe, id) {
+  const bulle = document.createElement(`div`);
+  bulle.className = classe;
+  bulle.id = id;
+  bulle.setAttribute(`role`, `tooltip`);
+  bulle.style.display = `none`;
+  document.body.appendChild(bulle);
+  elementsAMasquer.push(bulle);
+  let cible = null;
+  const placer = (el) => {
+    if (cible && cible !== el) {
+      cible.removeAttribute(`aria-describedby`);
+    }
+    cible = el;
+    el.setAttribute(`aria-describedby`, id);
+    bulle.style.display = `block`;
+    const a = el.getBoundingClientRect();
+    const o = bulle.getBoundingClientRect();
+    let x = a.left + a.width / 2 - o.width / 2;
+    x = Math.max(8, Math.min(x, window.innerWidth - o.width - 8));
+    let y = a.top - o.height - 10;
+    if (y < 8) {
+      y = a.bottom + 10;
+    }
+    bulle.style.left = `${x}px`;
+    bulle.style.top = `${y}px`;
+  };
+  const masquer = () => {
+    bulle.style.display = `none`;
+    cible?.removeAttribute(`aria-describedby`);
+    cible = null;
+  };
+  return { bulle, placer, masquer };
+}
+// Survol (souris seulement : le survol simulé d'un toucher laissait des bulles collées), focus
+// clavier et toucher ; Échap et le défilement referment la bulle.
+function brancherBulle(selecteur, montrer, masquer) {
+  document.addEventListener(`mouseover`, (ev) => {
+    if (ecranTactile()) {
+      return;
+    }
+    const el = ev.target.closest?.(selecteur);
+    if (el) {
+      montrer(el);
+    }
+  });
+  document.addEventListener(`mouseout`, (ev) => {
+    const el = ev.target.closest?.(selecteur);
+    if (el && !el.contains(ev.relatedTarget)) {
+      masquer();
+    }
+  });
+  document.addEventListener(`focusin`, (ev) => {
+    const el = ev.target.closest?.(selecteur);
+    if (el) {
+      montrer(el);
+    }
+  });
+  document.addEventListener(`focusout`, (ev) => {
+    if (ev.target.closest?.(selecteur)) {
+      masquer();
+    }
+  });
+  document.addEventListener(`keydown`, (ev) => {
+    if (ev.key === `Escape`) {
+      masquer();
+    }
+  });
+  window.addEventListener(`scroll`, masquer, { capture: true, passive: true });
+  ouvrirAuToucher(selecteur, montrer, masquer);
+}
+function ouvrirAuToucher(selecteur, montrer, masquer) {
   document.addEventListener(
     `click`,
     (ev) => {
@@ -299,53 +442,24 @@ function ouvrirAuToucher(selecteur, montrer, bulle) {
       if (cible && !cible.matches(`button:not(.dofus-slot)`)) {
         montrer(cible);
       } else {
-        bulle.style.display = `none`;
+        masquer();
       }
     },
     true,
   );
 }
 export function installerInfobulleDofus() {
-  let e = document.createElement(`div`);
-  e.className = `dofus-tip`;
-  e.style.display = `none`;
-  document.body.appendChild(e);
-  elementsAMasquer.push(e);
-  let t = (t) => {
-    let n = t.dataset.nom ?? ``;
-    let r = t.dataset.effet ?? ``;
-    let i;
-    i = t.dataset.possede
+  const { bulle, placer, masquer } = creerBulle(`dofus-tip`, `dofus-tip`);
+  const montrer = (t) => {
+    const etat = t.dataset.possede
       ? `<div class="tip-muet">✓ Obtenu</div>`
       : `<div class="tip-muet">🔒 ${echapperHtml(t.dataset.obtention ?? ``)}</div>`;
-    e.innerHTML =
-      `<div class="tip-nom">${echapperHtml(n)}</div><div class="tip-effet">${echapperHtml(r)}</div>` +
-      i;
-    e.style.display = `block`;
-    let a = t.getBoundingClientRect();
-    let o = e.getBoundingClientRect();
-    let s = a.left + a.width / 2 - o.width / 2;
-    s = Math.max(8, Math.min(s, window.innerWidth - o.width - 8));
-    let c = a.top - o.height - 10;
-    if (c < 8) {
-      c = a.bottom + 10;
-    }
-    e.style.left = `${s}px`;
-    e.style.top = `${c}px`;
+    bulle.innerHTML =
+      `<div class="tip-nom">${echapperHtml(t.dataset.nom ?? ``)}</div><div class="tip-effet">${echapperHtml(t.dataset.effet ?? ``)}</div>` +
+      etat;
+    placer(t);
   };
-  document.addEventListener(`mouseover`, (e) => {
-    let n = e.target.closest?.(`.dofus-slot`);
-    if (n) {
-      t(n);
-    }
-  });
-  document.addEventListener(`mouseout`, (t) => {
-    let n = t.target.closest?.(`.dofus-slot`);
-    if (n && !n.contains(t.relatedTarget)) {
-      e.style.display = `none`;
-    }
-  });
-  ouvrirAuToucher(`.dofus-slot`, t, e);
+  brancherBulle(`.dofus-slot`, montrer, masquer);
 }
 const LIBELLES_CIBLE = {
   ennemi_ligne: `Ennemi (ligne avant)`,
@@ -357,42 +471,16 @@ const LIBELLES_CIBLE = {
   mixte: `Allié ou ennemi`,
 };
 export function installerInfobulleAide() {
-  let e = document.createElement(`div`);
-  e.className = `aide-tip`;
-  e.style.display = `none`;
-  document.body.appendChild(e);
-  elementsAMasquer.push(e);
-  let t = (t) => {
-    let tip = t.dataset.tip;
+  const { bulle, placer, masquer } = creerBulle(`aide-tip`, `aide-tip`);
+  const montrer = (t) => {
+    const tip = t.dataset.tip;
     if (!tip) {
       return;
     }
-    e.textContent = tip;
-    e.style.display = `block`;
-    let r = t.getBoundingClientRect();
-    let i = e.getBoundingClientRect();
-    let a = r.left + r.width / 2 - i.width / 2;
-    a = Math.max(8, Math.min(a, window.innerWidth - i.width - 8));
-    let o = r.top - i.height - 10;
-    if (o < 8) {
-      o = r.bottom + 10;
-    }
-    e.style.left = `${a}px`;
-    e.style.top = `${o}px`;
+    bulle.textContent = tip;
+    placer(t);
   };
-  document.addEventListener(`mouseover`, (e) => {
-    let n = e.target.closest?.(`[data-tip]`);
-    if (n) {
-      t(n);
-    }
-  });
-  document.addEventListener(`mouseout`, (t) => {
-    let n = t.target.closest?.(`[data-tip]`);
-    if (n && !n.contains(t.relatedTarget)) {
-      e.style.display = `none`;
-    }
-  });
-  ouvrirAuToucher(`[data-tip]`, t, e);
+  brancherBulle(`[data-tip]`, montrer, masquer);
 }
 export const NOMS_ELEMENTS = {
   terre: `Terre`,
@@ -427,7 +515,7 @@ export function htmlElementsClasse(e, t = {}) {
   let r = GAINS_ARCHETYPE[n.archetype];
   let i = `${NOMS_ARCHETYPES[n.archetype]} : +${r.parElement} dans chacun de ses 2 éléments et +${r.vitalite} en Vitalité par niveau`;
   return `<span class="classe-elems">
-    ${t.icone ? `<img class="archetype-icone" src="${imgArchetype(n.archetype)}" alt="${NOMS_ARCHETYPES[n.archetype]}" title="${echapperHtml(i)}" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'classe-archetype',textContent:this.alt,title:this.title}))" />` : `<span class="classe-archetype" title="${echapperHtml(i)}">${NOMS_ARCHETYPES[n.archetype]}</span>`}
+    ${t.icone ? `<img class="archetype-icone" src="${imgArchetype(n.archetype)}" alt="${NOMS_ARCHETYPES[n.archetype]}" data-tip="${echapperHtml(i)}" onerror="const s=document.createElement('span');s.className='classe-archetype';s.textContent=this.alt;s.dataset.tip=this.dataset.tip;this.replaceWith(s)" />` : `<span class="classe-archetype" data-tip="${echapperHtml(i)}">${NOMS_ARCHETYPES[n.archetype]}</span>`}
     <span class="el-pastilles">${n.elements.map((e) => `<img class="el-pastille" src="${imgElement(e)}" alt="" title="Élément de la classe : ${NOMS_ELEMENTS[e]}" onerror="this.remove()" />`).join(``)}</span>
   </span>`;
 }
@@ -542,10 +630,10 @@ export const classeRarete = (e) => {
 };
 // infobulle « où trouver cet objet » (à mettre sur la carte d'un objet)
 export const attrTipObjet = (id) => ` data-tip="${echapperHtml(texteObtentionObjet(id))}"`;
-// « T13 · Arme · Épique » : le Tier (toile d'obtention) d'abord, bien visible.
+// « T13 · Arme · Épique » : le Tier (zone d'obtention) d'abord, bien visible.
 export function htmlMetaObjet(inst) {
   const def = EQUIPEMENTS[inst.id];
-  return `<b class="ic-tier" title="Tier : la toile où l'objet s'obtient. Plus il est haut, plus l'objet est puissant.">T${numeroZoneObjet(inst.id)}</b> · ${NOMS_SLOTS[def.slot]}${inst.rarete ? ` · <span class="inom-${inst.rarete}">${RARETES_INFO[inst.rarete].nom}</span>` : ``}`;
+  return `<b class="ic-tier" data-tip="Tier : numéro de la zone où l'objet tombe, compté depuis le Monde 1. Plus il est haut, plus l'objet est puissant.">T${numeroZoneObjet(inst.id)}</b> · ${NOMS_SLOTS[def.slot]}${inst.rarete ? ` · <span class="inom-${inst.rarete}">${RARETES_INFO[inst.rarete].nom}</span>` : ``}`;
 }
 export function htmlNomObjet(e) {
   let t = EQUIPEMENTS[e.id];
@@ -560,7 +648,9 @@ export function htmlChipsObjet(e, classeId) {
   let t = EQUIPEMENTS[e.id];
   let n = [];
   let r = (e, t, titre) =>
-    n.push(`<span class="ichip ${e}"${titre ? ` title="${titre}"` : ``}>${t}</span>`);
+    n.push(
+      `<span class="ichip ${e}"${titre ? ` data-tip="${echapperHtml(titre)}"` : ``}>${t}</span>`,
+    );
   let i = (e) => {
     if (e > 0) {
       return `+${e}`;
@@ -573,12 +663,12 @@ export function htmlChipsObjet(e, classeId) {
       for (let el of elements) {
         let stat = STAT_PAR_ELEMENT[el];
         n.push(
-          `<span class="ichip ichip-${stat}${e.adaptatif < 0 ? ` malus` : ``}" title="Stat adaptative : s'applique aux 2 caractéristiques d'élément de ta classe">${i(e.adaptatif)} ${ABREV_STATS[stat]} ★</span>`,
+          `<span class="ichip ichip-${stat}${e.adaptatif < 0 ? ` malus` : ``}" data-tip="Stat adaptative : s'applique aux 2 caractéristiques d'élément de ta classe">${i(e.adaptatif)} ${ABREV_STATS[stat]} ★</span>`,
         );
       }
     } else {
       n.push(
-        `<span class="ichip ichip-adapt${e.adaptatif < 0 ? ` malus` : ``}" title="Stat adaptative : s'applique aux 2 caractéristiques d'élément du porteur (ex. Force et Chance pour un Feca)">${i(e.adaptatif)} aux 2 caracs d'élément ★</span>`,
+        `<span class="ichip ichip-adapt${e.adaptatif < 0 ? ` malus` : ``}" data-tip="Stat adaptative : s'applique aux 2 caractéristiques d'élément du porteur (ex. Force et Chance pour un Feca)">${i(e.adaptatif)} aux 2 caracs d'élément ★</span>`,
       );
     }
   }
@@ -620,107 +710,107 @@ export function htmlChipsObjet(e, classeId) {
   }
   if (t?.paGamble) {
     n.push(
-      `<span class="ichip ichip-pa" title="À chaque tour : ${Math.round(t.paGamble.pPlus * 100)} % de gagner +${t.paGamble.plus} PA, sinon −${t.paGamble.moins} PA">🎲 ${Math.round(t.paGamble.pPlus * 100)} % +${t.paGamble.plus} PA / −${t.paGamble.moins}</span>`,
+      `<span class="ichip ichip-pa" data-tip="À chaque tour : ${Math.round(t.paGamble.pPlus * 100)} % de gagner +${t.paGamble.plus} PA, sinon −${t.paGamble.moins} PA">🎲 ${Math.round(t.paGamble.pPlus * 100)} % +${t.paGamble.plus} PA / −${t.paGamble.moins}</span>`,
     );
   }
   if (t?.ligneAvant) {
     n.push(
-      `<span class="ichip malus" title="Équipable uniquement sur un personnage de la ligne avant">Ligne avant uniqt</span>`,
+      `<span class="ichip malus" data-tip="Équipable uniquement sur un personnage de la ligne avant">Ligne avant uniqt</span>`,
     );
   }
   if (t?.riposteAvant) {
     n.push(
-      `<span class="ichip ichip-force" title="Quand le porteur est frappé en ligne avant : ${Math.round(t.riposteAvant * 100)} % de chance de contre-attaquer">↩ ${Math.round(t.riposteAvant * 100)} % riposte (avant)</span>`,
+      `<span class="ichip ichip-force" data-tip="Quand le porteur est frappé en ligne avant : ${Math.round(t.riposteAvant * 100)} % de chance de contre-attaquer">↩ ${Math.round(t.riposteAvant * 100)} % riposte (avant)</span>`,
     );
   }
   if (t?.esquiveArriere) {
     n.push(
-      `<span class="ichip ichip-agilite" title="Quand le porteur est en ligne arrière : +${Math.round(t.esquiveArriere * 100)} % d'esquive">💨 +${Math.round(t.esquiveArriere * 100)} % esquive (arrière)</span>`,
+      `<span class="ichip ichip-agilite" data-tip="Quand le porteur est en ligne arrière : +${Math.round(t.esquiveArriere * 100)} % d'esquive">💨 +${Math.round(t.esquiveArriere * 100)} % esquive (arrière)</span>`,
     );
   }
   if (t?.soinDegatsRecus) {
     n.push(
-      `<span class="ichip ichip-soin" title="À chaque coup encaissé, le porteur récupère ${Math.round(t.soinDegatsRecus * 100)} % des dégâts subis">♥ récup. ${Math.round(t.soinDegatsRecus * 100)} % des dégâts subis</span>`,
+      `<span class="ichip ichip-soin" data-tip="À chaque coup encaissé, le porteur récupère ${Math.round(t.soinDegatsRecus * 100)} % des dégâts subis">♥ récup. ${Math.round(t.soinDegatsRecus * 100)} % des dégâts subis</span>`,
     );
   }
   if (t?.changeLigne) {
     n.push(
-      `<span class="ichip ichip-pa" title="Confère le sort « Changer de ligne » : bascule avant ↔ arrière en combat pour ${t.changeLigne} PA">↕ change de ligne (${t.changeLigne} PA)</span>`,
+      `<span class="ichip ichip-pa" data-tip="Confère le sort « Changer de ligne » : bascule avant ↔ arrière en combat pour ${t.changeLigne} PA">↕ change de ligne (${t.changeLigne} PA)</span>`,
     );
   }
   if (t?.perceResistances) {
     n.push(
-      `<span class="ichip ichip-force" title="L'attaque de cette arme ignore ${Math.round(t.perceResistances * 100)} % des résistances de la cible">⚡ perce ${Math.round(t.perceResistances * 100)} % des rés.</span>`,
+      `<span class="ichip ichip-force" data-tip="L'attaque de cette arme ignore ${Math.round(t.perceResistances * 100)} % des résistances de la cible">⚡ perce ${Math.round(t.perceResistances * 100)} % des rés.</span>`,
     );
   }
   if (t?.frappeDerriere) {
     n.push(
-      `<span class="ichip ichip-force" title="L'attaque touche aussi l'ennemi juste derrière la cible">⤈ frappe aussi derrière</span>`,
+      `<span class="ichip ichip-force" data-tip="L'attaque touche aussi l'ennemi juste derrière la cible">⤈ frappe aussi derrière</span>`,
     );
   }
   if (t?.prospParPvManquant) {
     n.push(
-      `<span class="ichip ichip-prospection" title="Au moment du butin : +${t.prospParPvManquant} prospection par PV manquant du porteur">📦 +${t.prospParPvManquant} PP / PV manquant</span>`,
+      `<span class="ichip ichip-prospection" data-tip="Au moment du butin : +${t.prospParPvManquant} prospection par PV manquant du porteur">📦 +${t.prospParPvManquant} PP / PV manquant</span>`,
     );
   }
   if (t?.multKamas) {
     n.push(
-      `<span class="ichip ichip-adapt" title="Les kamas gagnés en combat sont multipliés par ${t.multKamas}">🪙 kamas ×${t.multKamas}</span>`,
+      `<span class="ichip ichip-adapt" data-tip="Les kamas gagnés en combat sont multipliés par ${t.multKamas}">🪙 kamas ×${t.multKamas}</span>`,
     );
   }
   if (t?.bouclierDebut) {
     n.push(
-      `<span class="ichip ichip-vitalite" title="Commence chaque combat avec un bouclier de ${Math.round(t.bouclierDebut * 100)} % des PV max">🛡 bouclier de départ ${Math.round(t.bouclierDebut * 100)} %</span>`,
+      `<span class="ichip ichip-vitalite" data-tip="Commence chaque combat avec un bouclier de ${Math.round(t.bouclierDebut * 100)} % des PV max">🛡 bouclier de départ ${Math.round(t.bouclierDebut * 100)} %</span>`,
     );
   }
   if (t?.poisonArme) {
     n.push(
-      `<span class="ichip malus" title="L'attaque de cette arme empoisonne la cible (${t.poisonArme.degats} dégâts pendant ${t.poisonArme.duree} tours)">☠ empoisonne (${t.poisonArme.degats}/t · ${t.poisonArme.duree} t)</span>`,
+      `<span class="ichip malus" data-tip="L'attaque de cette arme empoisonne la cible (${t.poisonArme.degats} dégâts pendant ${t.poisonArme.duree} tours)">☠ empoisonne (${t.poisonArme.degats}/t · ${t.poisonArme.duree} t)</span>`,
     );
   }
   if (t?.soinAllieBlesse) {
     n.push(
-      `<span class="ichip ichip-soin" title="L'attaque soigne l'allié le plus blessé de ${Math.round(t.soinAllieBlesse * 100)} % des dégâts infligés">♥ soigne l'allié blessé (${Math.round(t.soinAllieBlesse * 100)} %)</span>`,
+      `<span class="ichip ichip-soin" data-tip="L'attaque soigne l'allié le plus blessé de ${Math.round(t.soinAllieBlesse * 100)} % des dégâts infligés">♥ soigne l'allié blessé (${Math.round(t.soinAllieBlesse * 100)} %)</span>`,
     );
   }
   if (t?.retraitPA) {
     n.push(
-      `<span class="ichip ichip-pa" title="L'attaque a 30 % de chance de retirer ${t.retraitPA} PA à la cible">⛓ retrait ${t.retraitPA} PA (30 %)</span>`,
+      `<span class="ichip ichip-pa" data-tip="L'attaque a 30 % de chance de retirer ${t.retraitPA} PA à la cible">⛓ retrait ${t.retraitPA} PA (30 %)</span>`,
     );
   }
   if (t?.assome) {
     n.push(
-      `<span class="ichip malus" title="L'attaque de cette arme a ${Math.round(t.assome * 100)} % de chance d'assommer la cible : elle passe son prochain tour">💫 assomme (${Math.round(t.assome * 100)} %)</span>`,
+      `<span class="ichip malus" data-tip="L'attaque de cette arme a ${Math.round(t.assome * 100)} % de chance d'assommer la cible : elle passe son prochain tour">💫 assomme (${Math.round(t.assome * 100)} %)</span>`,
     );
   }
   if (t?.recupPASort) {
     n.push(
-      `<span class="ichip ichip-pa" title="Après chaque sort lancé par le porteur : ${Math.round(t.recupPASort.chance * 100)} % de chance de récupérer ${t.recupPASort.pa} PA immédiatement">↺ ${Math.round(t.recupPASort.chance * 100)} % récup. ${t.recupPASort.pa} PA</span>`,
+      `<span class="ichip ichip-pa" data-tip="Après chaque sort lancé par le porteur : ${Math.round(t.recupPASort.chance * 100)} % de chance de récupérer ${t.recupPASort.pa} PA immédiatement">↺ ${Math.round(t.recupPASort.chance * 100)} % récup. ${t.recupPASort.pa} PA</span>`,
     );
   }
   if (t?.esquiveBonus) {
     n.push(
-      `<span class="ichip ichip-agilite" title="+${Math.round(t.esquiveBonus * 100)} % d'esquive pour le porteur, quelle que soit sa ligne">💨 +${Math.round(t.esquiveBonus * 100)} % esquive</span>`,
+      `<span class="ichip ichip-agilite" data-tip="+${Math.round(t.esquiveBonus * 100)} % d'esquive pour le porteur, quelle que soit sa ligne">💨 +${Math.round(t.esquiveBonus * 100)} % esquive</span>`,
     );
   }
   if (t?.esquiveParPiece) {
     n.push(
-      `<span class="ichip ichip-agilite" title="Bonus de panoplie : +${Math.round(t.esquiveParPiece * 1000) / 10} % d'esquive par pièce de sa panoplie équipée (s'ajoute aux bonus de panoplie)">💨 +${Math.round(t.esquiveParPiece * 1000) / 10} % esquive / pièce</span>`,
+      `<span class="ichip ichip-agilite" data-tip="Bonus de panoplie : +${Math.round(t.esquiveParPiece * 1000) / 10} % d'esquive par pièce de sa panoplie équipée (s'ajoute aux bonus de panoplie)">💨 +${Math.round(t.esquiveParPiece * 1000) / 10} % esquive / pièce</span>`,
     );
   }
   if (t?.elementLibre) {
     n.push(
-      `<span class="ichip ichip-adapt" title="Le porteur peut frapper dans N'IMPORTE quel élément (plus limité à sa paire déclarée)">🌈 élément libre</span>`,
+      `<span class="ichip ichip-adapt" data-tip="Le porteur peut frapper dans N'IMPORTE quel élément (plus limité à sa paire déclarée)">🌈 élément libre</span>`,
     );
   }
   if (t?.renaissance) {
     n.push(
-      `<span class="ichip ichip-adapt" title="À la mort du porteur : renaît UNE fois par combat à ${Math.round(t.renaissance * 100)} % de ses PV">🥚 renaissance (${Math.round(t.renaissance * 100)} % PV)</span>`,
+      `<span class="ichip ichip-adapt" data-tip="À la mort du porteur : renaît UNE fois par combat à ${Math.round(t.renaissance * 100)} % de ses PV">🥚 renaissance (${Math.round(t.renaissance * 100)} % PV)</span>`,
     );
   }
   if (t?.panoplie) {
     n.push(
-      `<span class="ichip ichip-pano" title="${echapperHtml(`${t.panoplie} (pièces portées par le même héros) : ${descriptionPanoplie(t.panoplie)}`)}">⬡ ${echapperHtml(t.panoplie)}</span>`,
+      `<span class="ichip ichip-pano" data-tip="${echapperHtml(`${t.panoplie} (pièces portées par le même héros) : ${descriptionPanoplie(t.panoplie)}`)}">⬡ ${echapperHtml(t.panoplie)}</span>`,
     );
   }
   return `<span class="ichips">${n.join(``)}</span>`;
@@ -806,7 +896,7 @@ export function htmlDeltas(deltas) {
   return deltas
     .map(
       (d) =>
-        `<span class="${d.valeur > 0 ? `delta-plus` : `delta-moins`}${d.utile ? `` : ` delta-inutile`}"${d.utile ? `` : ` title="Peu utile pour cette classe (élément non utilisé)"`}>${d.valeur > 0 ? `+` : `−`}${Math.abs(Math.round(d.valeur * 10) / 10)}${libelleDelta(d.cle)}</span>`,
+        `<span class="${d.valeur > 0 ? `delta-plus` : `delta-moins`}${d.utile ? `` : ` delta-inutile`}"${d.utile ? `` : ` data-tip="Peu utile pour cette classe (élément non utilisé)"`}>${d.valeur > 0 ? `+` : `−`}${Math.abs(Math.round(d.valeur * 10) / 10)}${libelleDelta(d.cle)}</span>`,
     )
     .join(` `);
 }
@@ -833,7 +923,7 @@ export function htmlBadgesHeros(inst, persos, sauf) {
   if (!heros.length) {
     return ``;
   }
-  return `<span class="badges-heros" title="Amélioration nette pour ces héros">${heros
+  return `<span class="badges-heros" data-tip="Amélioration nette pour ces héros">${heros
     .map(
       (p) =>
         `<span class="badge-heros">▲ ${echapperHtml(CLASSES[p.classeId]?.nom ?? p.classeId)}</span>`,

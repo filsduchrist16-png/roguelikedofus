@@ -12,7 +12,8 @@ const SECTIONS_REGLES = [
   {
     titre: `Les PV`,
     corps: `<p>Après chaque combat gagné, les héros encore debout récupèrent 10 % de leurs PV max ; un héros
-      tombé reste K.O. Pour se soigner davantage, il y a la taverne (la moitié des PV max), certaines
+      tombé reste K.O. Pour se soigner davantage, il y a la taverne (la moitié des PV max ; moins à partir d'Extrême,
+      et en Ultime plus de taverne une fois l'équipe complète), certaines
       rencontres et la victoire contre un boss de zone, qui remet toute l'équipe sur pied.</p>
       <p>Si toute l'équipe tombe, la run s'arrête : tu perds les héros, l'équipement et les kamas.</p>`,
   },
@@ -20,7 +21,7 @@ const SECTIONS_REGLES = [
     titre: `La carte`,
     corps: `<ul>
       <li><b>Combat</b> : un groupe de monstres.</li>
-      <li><b>Combat dur</b> : des ennemis renforcés (le bonus est affiché au survol), mais un meilleur butin.</li>
+      <li><b>Combat dur</b> : des ennemis renforcés (le bonus est affiché au survol, ou au toucher de la case), mais un meilleur butin.</li>
       <li><b>Taverne</b> : soin et recrutement.</li>
       <li><b>Otomai</b> : augmente les chances de croiser des archimonstres pour le reste de la run.</li>
       <li><b>Zaap</b> : la rencontre n'est révélée qu'en arrivant.</li>
@@ -75,7 +76,9 @@ const SECTIONS_REGLES = [
     titre: `Ce qui reste après la mort`,
     corps: `<p>Les Dofus. Chacun donne un bonus permanent à toutes tes runs suivantes. On les obtient en
       terminant les groupes de quêtes du menu Succès.</p>
-      <p>Restent aussi le bestiaire, l'armurerie et la progression des quêtes.</p>`,
+      <p>Restent aussi le bestiaire, l'armurerie, la progression des quêtes, les reliques et la jauge de traque
+      des archimonstres.</p>
+      <p><b>Reliques</b> : objets de collection comptés par les succès, sans bonus en combat.</p>`,
   },
   {
     titre: `Archimonstres`,
@@ -85,6 +88,14 @@ const SECTIONS_REGLES = [
   {
     titre: `Obtenir équipement, Dofus et reliques`,
     corps: AIDE_OBTENTION,
+  },
+  {
+    titre: `Glossaire`,
+    corps: `<ul>
+      <li><b>Tier (T)</b> : le « T13 » d'un objet est le numéro de la zone où il tombe, compté depuis le
+        Monde 1 (les 12 zones du Monde 1 sont T1 à T12, puis le Monde 2 commence à T13…). Plus il est haut,
+        plus l'objet est puissant.</li>
+    </ul>`,
   },
   {
     titre: `Ascension`,

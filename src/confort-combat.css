@@ -1,1 +1,287 @@
 /* Confort de jeu — lot « combat » (chargé après visuel.css). */
+
+/* ---------- Frise : ronde, qui joue, qui a déjà joué ---------- */
+.combat .timeline {
+  align-items: center;
+}
+.tl-ronde {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #ffffff1c;
+  color: var(--or-clair);
+  font-size: 0.72rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+.tl-pastille.deja-joue {
+  opacity: 0.45;
+  filter: grayscale(0.5);
+}
+.tl-pastille.actif {
+  opacity: 1;
+  filter: none;
+}
+
+/* ---------- Barre du bas pendant le tour d'un monstre ---------- */
+.attente-tour {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-style: normal;
+  font-size: 0.95rem;
+}
+.attente-tour b {
+  color: var(--txt);
+}
+.attente-portrait {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 2px solid var(--bord);
+  background: radial-gradient(#fff6, transparent 70%);
+  animation: attente-respire 1.2s ease-in-out infinite alternate;
+}
+.attente-tour.ennemi .attente-portrait {
+  border-color: var(--danger);
+}
+.attente-tour.joueur .attente-portrait {
+  border-color: var(--pa);
+}
+@keyframes attente-respire {
+  to {
+    transform: scale(1.08);
+  }
+}
+
+/* ---------- Sorts : indisponibles sans ambiguïté, étiquettes ---------- */
+.sort.indispo {
+  cursor: help;
+}
+.sort.indispo .sort-icon-wrap {
+  filter: grayscale(1) brightness(0.6);
+}
+.sort.indispo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: repeating-linear-gradient(-45deg, #0000 0 5px, #0000004d 5px 8px);
+}
+.sort.indispo:hover {
+  box-shadow: none;
+}
+.sort.info {
+  box-shadow:
+    0 0 0 2px var(--danger),
+    0 0 10px #b23b2e66;
+}
+.sort-etiquette {
+  position: absolute;
+  left: -5px;
+  bottom: -7px;
+  z-index: 3;
+  padding: 0 4px;
+  border-radius: 5px;
+  background: var(--danger);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 900;
+  line-height: 15px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 1px 2px #0008;
+}
+.sort-etiquette.dispo {
+  background: var(--pv);
+}
+.tip-indispo {
+  margin-top: 6px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #b23b2e;
+  color: #fff;
+  font-weight: 800;
+}
+.aide-indispo .aide-consigne {
+  color: var(--danger);
+}
+.aide-pa {
+  color: var(--pa);
+  font-weight: 800;
+  white-space: nowrap;
+}
+.aide-clavier {
+  margin-left: 4px;
+  color: var(--muet);
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+.aide-clavier kbd {
+  padding: 0 4px;
+  font-size: 0.9em;
+}
+.aide-refus {
+  margin: 4px 0 0;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #b23b2e1a;
+  color: var(--danger);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+.aide-refus[hidden] {
+  display: none;
+}
+
+/* ---------- Badges d'effets chiffrés ---------- */
+.combat .carte .badge {
+  white-space: nowrap;
+  cursor: help;
+}
+.combat .carte .badge.bien {
+  border-color: #2f9e44aa;
+  background: #dcebc9;
+}
+.combat .carte .badge.mal {
+  border-color: #b23b2eaa;
+  background: #f1d2c6;
+}
+.combat .carte .res-chip.vise {
+  cursor: help;
+}
+.cc-protege {
+  display: block;
+  width: fit-content;
+  margin: 3px auto 0;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #3a2c1a;
+  color: #f7e6c0;
+  font-size: 0.66rem;
+  font-weight: 800;
+  white-space: nowrap;
+  cursor: help;
+}
+.combat.ciblage .carte:not(.ciblable) {
+  cursor: not-allowed;
+}
+
+/* ---------- Visée au clavier ---------- */
+.combat .carte.ciblable:focus {
+  outline: none;
+}
+@media (hover: hover) {
+  .combat .carte.ciblable.visee {
+    outline: 3px solid var(--cyan);
+    outline-offset: 2px;
+    box-shadow: 0 0 16px #ef7d1aaa;
+  }
+}
+.combat .carte.ciblable.visee.unique {
+  outline: 3px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+/* ---------- Objectifs : pastille qui pulse, ancrage sur grand écran ---------- */
+.objectifs-combat.pulse .objectifs-pastille {
+  animation: objectifs-pulse 0.65s ease-in-out 3 alternate;
+}
+@keyframes objectifs-pulse {
+  to {
+    transform: scale(1.15);
+    box-shadow: 0 0 14px var(--or-clair);
+  }
+}
+@media (width>=1024px) {
+  .objectifs-combat.ouvert {
+    top: 12px;
+    right: 12px;
+    bottom: auto;
+    left: auto;
+    max-width: 320px;
+  }
+  /* boîte ouverte : le défi et la frise, centrés, glissent à gauche juste
+     ce qu'il faut pour ne pas passer dessous (50 % = demi-largeur propre) */
+  body:has(.objectifs-combat.ouvert) :is(.defi-combat, .timeline) {
+    max-width: calc(100% - 340px);
+    translate: min(0px, calc(50vw - 356px - 50%));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .attente-portrait,
+  .objectifs-combat.pulse .objectifs-pastille {
+    animation: none;
+  }
+}
+
+/* ---------- Téléphone ---------- */
+@media (max-width: 700px) {
+  /* journal de hauteur fixe : il ne pousse plus la page, un appui le déplie */
+  .combat .zone-bas .journal {
+    flex: 0 0 auto;
+    height: 76px;
+    cursor: pointer;
+    transition: height 0.2s ease;
+  }
+  .combat .zone-bas .journal.deplie {
+    height: 40dvh;
+  }
+  .combat .sorts-liste {
+    gap: 4px;
+  }
+  .combat .sort {
+    width: 40px;
+    height: 40px;
+  }
+  .combat .sort .sort-pa-badge {
+    transform: scale(0.7);
+    transform-origin: top right;
+  }
+  .combat .sorts-rangee .barre-actions-fin {
+    margin-top: 10px;
+  }
+  /* même hauteur pendant le tour d'un monstre : la barre ne saute plus */
+  .combat #cb-barre {
+    min-height: 144px;
+  }
+  .attente-tour {
+    justify-content: center;
+    min-height: 112px;
+  }
+
+  /* défi lisible : le texte prend sa propre ligne */
+  .defi-combat {
+    flex-wrap: wrap;
+    border-radius: 14px;
+    font-size: max(12px, 0.75rem);
+  }
+  .defi-combat .defi-texte {
+    flex: 1 1 100%;
+    order: 3;
+    text-align: center;
+  }
+  .defi-combat .defi-etat,
+  .defi-combat .defi-bonus {
+    white-space: normal;
+  }
+
+  .aide-clavier {
+    display: none;
+  }
+
+  /* badges d'effets compacts : une ou deux lignes par carte */
+  .combat .carte .badges {
+    gap: 2px;
+  }
+  .combat .carte .badge {
+    padding: 1px 4px;
+    font-size: 0.64rem;
+    letter-spacing: -0.01em;
+  }
+}

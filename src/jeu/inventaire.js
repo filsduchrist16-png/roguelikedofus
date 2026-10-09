@@ -21,6 +21,30 @@ const CLES_BASE = new Set([
 export const effetsSpeciaux = (id) =>
   Object.keys(EQUIPEMENTS[id] ?? {}).filter((k) => !CLES_BASE.has(k));
 
+// Libellés courts des effets spéciaux, pour les comparaisons (« − riposte »).
+export const NOMS_EFFETS = {
+  multKamas: `kamas ×`,
+  esquiveParPiece: `esquive par pièce`,
+  retraitPA: `retrait de PA`,
+  recupPASort: `récup. de PA`,
+  esquiveArriere: `esquive (arrière)`,
+  renaissance: `renaissance`,
+  bouclierDebut: `bouclier de départ`,
+  esquiveBonus: `esquive`,
+  prospParPvManquant: `prospection / PV manquant`,
+  paGamble: `PA aléatoires`,
+  perceResistances: `perce-résistances`,
+  changeLigne: `changement de ligne`,
+  soinDegatsRecus: `récup. des dégâts subis`,
+  assome: `assommer`,
+  elementLibre: `élément libre`,
+  frappeDerriere: `frappe derrière`,
+  soinAllieBlesse: `soin d'allié`,
+  riposteAvant: `riposte`,
+  poisonArme: `poison`,
+};
+export const nomEffet = (cle) => NOMS_EFFETS[cle] ?? cle;
+
 const degatsMoyensArme = (inst) => {
   const a = inst?.rarete ? EQUIPEMENTS[inst.id]?.tiers?.[inst.rarete]?.attaque : undefined;
   return a ? (a.baseMin + a.baseMax) / 2 : 0;
@@ -37,17 +61,50 @@ function statUtile(stat, classe) {
   return classe.elements.includes(element) || stat === `intelligence` || stat === `agilite`;
 }
 
+// Valeur d'un effet spécial dans le score (riposte, renaissance… : environ une demi-pièce).
+const VALEUR_EFFET = 30;
+
+/**
+ * Valeur chiffrée de l'équipement d'un héros, alignée sur les règles d'utilité de comparerObjet :
+ * meilleure stat d'élément de la classe, Intelligence (dégâts globaux) et Agilité (critique),
+ * PV max, critique, soin, résistances, PA, dégâts d'arme et effets spéciaux.
+ */
+function valeurPerso(perso) {
+  const b = bonusEquipement(perso);
+  const s = b.stats;
+  const elements = CLASSES[perso.classeId].elements.map((x) => s[STAT_PAR_ELEMENT[x]] ?? 0);
+  const res = Object.values(b.resistances).reduce((a, v) => a + v, 0);
+  const effets = Object.values(perso.equipement).reduce(
+    (a, inst) => a + (inst ? effetsSpeciaux(inst.id).length : 0),
+    0,
+  );
+  return (
+    Math.max(0, ...elements) +
+    (s.intelligence ?? 0) * 0.3 +
+    (s.agilite ?? 0) * 0.3 +
+    pvMaxPerso(perso) * 0.25 +
+    (s.crit ?? 0) * 2 +
+    (s.soin ?? 0) * 0.5 +
+    res * 100 +
+    b.paBonus * 60 +
+    degatsMoyensArme(perso.equipement.arme) +
+    effets * VALEUR_EFFET
+  );
+}
+
 /**
  * Ce que changerait le fait d'équiper `inst` sur `perso` (à la place de l'objet porté).
  * verdict : `mieux` (que des gains utiles), `moins` (que des pertes), `mitige`, `egal`
  * ou `impossible` (le héros ne peut pas le porter).
+ * score : gain chiffré (valeurPerso après − avant) ; tendance (`plus`/`moins`) pour un mitigé.
+ * Les effets spéciaux gagnés ou perdus figurent dans les deltas (cle `effet_<nom>`, ±1).
  */
 export function comparerObjet(inst, perso, emplacement) {
   const def = EQUIPEMENTS[inst.id];
   const slot = emplacement ?? (def ? emplacementCible(perso, inst) : undefined);
   const actuel = slot ? perso.equipement[slot] : undefined;
   if (!slot || !peutEquiper(perso, inst.id)) {
-    return { actuel, deltas: [], verdict: `impossible`, emplacement: slot };
+    return { actuel, deltas: [], verdict: `impossible`, emplacement: slot, score: 0 };
   }
   const classe = CLASSES[perso.classeId];
   const essai = { ...perso, equipement: { ...perso.equipement, [slot]: inst } };
@@ -85,7 +142,18 @@ export function comparerObjet(inst, perso, emplacement) {
   if ((verdict === `mieux` && perdus) || ((verdict === `moins` || verdict === `egal`) && gagnes)) {
     verdict = `mitige`;
   }
-  return { actuel, deltas, verdict, emplacement: slot };
+  for (const k of nouveaux.filter((k) => !anciens.includes(k))) {
+    ajouter(`effet_${k}`, 1);
+  }
+  for (const k of anciens.filter((k) => !nouveaux.includes(k))) {
+    ajouter(`effet_${k}`, -1);
+  }
+  const score = Math.round(valeurPerso(essai) - valeurPerso(perso));
+  const resultat = { actuel, deltas, verdict, emplacement: slot, score };
+  if (verdict === `mitige`) {
+    resultat.tendance = score > 0 ? `plus` : `moins`;
+  }
+  return resultat;
 }
 
 // Les héros pour qui cet objet est une nette amélioration.
@@ -138,11 +206,15 @@ export function equiperMeilleur(run, persos = run.persos) {
   return n;
 }
 
-/** Objets de l'inventaire qui n'améliorent aucun héros (ni nettement, ni en partie). */
-export function objetsInutiles(run) {
-  return run.inventaire.filter((inst) =>
-    run.persos.every((p) =>
-      [`moins`, `egal`, `impossible`].includes(comparerObjet(inst, p).verdict),
-    ),
+// L'objet n'apporte rien à ce héros : moins bien, pareil, impossible, ou mitigé à score négatif.
+export function inutilePour(inst, perso) {
+  const c = comparerObjet(inst, perso);
+  return (
+    [`moins`, `egal`, `impossible`].includes(c.verdict) || (c.verdict === `mitige` && c.score <= 0)
   );
+}
+
+/** Objets de l'inventaire qui n'améliorent aucun héros (ni nettement, ni « plutôt mieux »). */
+export function objetsInutiles(run) {
+  return run.inventaire.filter((inst) => run.persos.every((p) => inutilePour(inst, p)));
 }

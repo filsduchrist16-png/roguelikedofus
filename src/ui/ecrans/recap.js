@@ -1,14 +1,36 @@
-import { CLASSES, RELIQUES } from "../../data/index.js";
-import { DIFFICULTES } from "../../jeu/config.js";
+import { CLASSES, MONDES, RELIQUES } from "../../data/index.js";
+import { DIFFICULTES, DIFFICULTE_MAX } from "../../jeu/config.js";
+import { ascensionMonde, mondeJouable } from "../../sauvegarde/meta.js";
 import {
   afficherEcran,
-  barreRetour,
+  boutonRetour,
   echapperHtml,
   etoilesDifficulte,
   htmlKamas,
   imgSymboleClasse,
 } from "../commun.js";
-export function ecranRecap(e, t, n = []) {
+// Ce qui est débloqué pour un monde : plus haute difficulté accessible et monde suivant jouable.
+export function etatDeblocage(meta, trancheId) {
+  const record = ascensionMonde(meta, trancheId);
+  const suivant = MONDES[MONDES.findIndex((m) => m.id === trancheId) + 1];
+  return {
+    difficulte: record === undefined ? 0 : Math.min(record + 1, DIFFICULTE_MAX),
+    mondeSuivant: suivant && mondeJouable(meta, suivant.id) ? suivant.id : null,
+  };
+}
+// Libellés de ce qu'une victoire vient de débloquer (comparaison avant / après).
+export function deblocagesVictoire(avant, apres) {
+  const lignes = [];
+  if (apres.difficulte > avant.difficulte) {
+    lignes.push(`difficulté ${DIFFICULTES[apres.difficulte].nom}`);
+  }
+  if (apres.mondeSuivant && apres.mondeSuivant !== avant.mondeSuivant) {
+    lignes.push(MONDES.find((m) => m.id === apres.mondeSuivant)?.nom ?? apres.mondeSuivant);
+  }
+  return lignes;
+}
+// Résout 'memes' (rejouer avec les mêmes héros), 'choix' (autre équipe) ou null (accueil).
+export function ecranRecap(e, t, n = [], debloques = []) {
   return new Promise((resolve) => {
     let e_stats = e.stats;
     let a = Math.max(1, ...Object.values(e_stats.degats));
@@ -38,8 +60,15 @@ export function ecranRecap(e, t, n = []) {
       <div class="recap-degats">${s}</div>
       ${e_stats.reliques?.length ? `<div class="recap-succes">${e_stats.reliques.map((e) => `<span class="succes-chip nouveau">Relique : ${echapperHtml(RELIQUES[e]?.nom ?? e)}</span>`).join(``)}</div>` : ``}
       ${n.length ? `<div class="recap-succes">${n.map((e) => `<span class="succes-chip nouveau">✓ ${echapperHtml(e.nom)}</span>`).join(``)}</div>` : ``}
-      ${barreRetour(`recap-retour`, `Retour à l'accueil`)}
+      ${debloques.length ? `<p class="recap-debloque">🔓 Débloqué : ${debloques.map((d) => `<b>${echapperHtml(d)}</b>`).join(` · `)}</p>` : ``}
+      <div class="boutons-ecran recap-boutons">
+        ${boutonRetour(`recap-retour`, `Retour à l'accueil`)}
+        <button id="recap-choix" class="secondaire">Autre équipe</button>
+        <button id="recap-rejouer" class="btn-continuer primaire recap-rejouer" title="Rejouer avec les mêmes héros">↻ Rejouer <small>(mêmes héros)</small></button>
+      </div>
     `);
-    document.getElementById(`recap-retour`)?.addEventListener(`click`, () => resolve());
+    document.getElementById(`recap-retour`)?.addEventListener(`click`, () => resolve(null));
+    document.getElementById(`recap-choix`)?.addEventListener(`click`, () => resolve(`choix`));
+    document.getElementById(`recap-rejouer`)?.addEventListener(`click`, () => resolve(`memes`));
   });
 }

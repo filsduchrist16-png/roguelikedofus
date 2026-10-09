@@ -102,10 +102,10 @@ export function texteObtentionDofus(dofusId) {
 // Règles d'obtention, avec les chiffres réels du jeu.
 const pct = (x) => `${Math.round(x * 1000) / 10} %`;
 export const AIDE_OBTENTION = `
-  <p><b>Équipement.</b> Après chaque victoire, jusqu'à ${TAUX_BUTIN.tiragesMax} tirages de butin : ${pct(TAUX_BUTIN.taux.combat)} de chance par tirage
-    en combat, et ${pct(TAUX_BUTIN.taux.donjon)} en combat dur comme au donjon. La prospection de
+  <p><b>Équipement.</b> Après chaque victoire, jusqu'à ${TAUX_BUTIN.tiragesMax} tirages de butin : chance par tirage de ${pct(TAUX_BUTIN.taux.combat)}
+    en combat, ${pct(TAUX_BUTIN.taux.combat_dur)} en combat dur et ${pct(TAUX_BUTIN.taux.donjon)} au donjon. La prospection de
     l'équipe augmente ces chances (jusqu'à +${Math.round(TAUX_BUTIN.capProspection * 100)} %). Chaque zone a ses objets ; les
-    combats durs et les donjons donnent aussi les objets d'élite et de boss. Survole un objet pour voir où il tombe.</p>
+    combats durs et les donjons donnent aussi les objets d'élite et de boss. Survole un objet (ou touche-le) pour voir où il tombe.</p>
   <p><b>Hôtel de vente.</b> Il vend les objets de la zone en cours (épiques et plus) et de la zone suivante (rares et plus),
     et rachète ton inventaire à moitié prix. Le <b>Forgemage</b> monte la rareté d'un objet, même équipé.</p>
   <p><b>Dofus.</b> Chaque Dofus récompense un succès (menu Succès sur l'accueil), repris des succès de Dofus 3. Chacun

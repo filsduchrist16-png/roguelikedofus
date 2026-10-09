@@ -12,6 +12,7 @@ import { CONFIG_ARCHI } from "../../jeu/config.js";
 import { bonusJaugeArchi } from "../../jeu/run.js";
 import { afficherEcran, barreRetour, cheminAsset, echapperHtml, racine } from "../commun.js";
 import { pastilleReliques, rendreEnGardantScroll } from "../collection.js";
+const ECRAN_ETROIT = `(max-width: 760px)`;
 export function ecranBestiaire(e) {
   return new Promise((resolve) => {
     let n = e.reliques ?? [];
@@ -111,7 +112,7 @@ export function ecranBestiaire(e) {
         let t = bossDeZone(e);
         let n = monstresDeZone(e).filter((e) => !t.includes(e));
         v = `<div class="best-titre"><h2>${echapperHtml(e.nom)}</h2>
-            <small>${e.secret ? `Donjon secret (il s'ouvre avec une clé, après le boss d'une zone)` : `Toile ${numeroZone(e.id)}`} · ${p(a(e))}</small></div>
+            <small>${e.secret ? `Donjon secret (il s'ouvre avec une clé, après le boss d'une zone)` : `Zone ${numeroZone(e.id)}`} · ${p(a(e))}</small></div>
           <div class="best-boss-liste">${t.map(f).join(``)}</div>
           <h3 class="best-rubrique">Habitants</h3>
           <div class="best-especes">${n.map(u).join(``)}</div>`;
@@ -126,7 +127,7 @@ export function ecranBestiaire(e) {
         <div class="best-onglets" role="tablist">${g}</div>
         <div class="best-vue">
           <nav class="best-zones" aria-label="Zones du monde">${_}</nav>
-          <section class="best-detail">${v}</section>
+          <section class="best-detail"><button type="button" class="best-vers-zones secondaire">↑ Zones</button>${v}</section>
         </div>
         ${i.length ? `<p class="muet monde-verrouille">${i.map((e) => echapperHtml(e.nom)).join(`, `)} : à venir</p>` : ``}
         ${barreRetour(`best-retour`)}
@@ -142,8 +143,20 @@ export function ecranBestiaire(e) {
         e.addEventListener(`click`, () => {
           l = Number(e.dataset.zone);
           rendreEnGardantScroll(m, true);
+          // téléphone : le détail est sous la liste des zones, on l'amène à l'écran
+          if (window.matchMedia(ECRAN_ETROIT).matches) {
+            racine
+              .querySelector(`.best-detail`)
+              ?.scrollIntoView({ block: `start`, behavior: `smooth` });
+          }
         }),
       );
+      racine.querySelector(`.best-vers-zones`)?.addEventListener(`click`, () => {
+        const zone =
+          racine.querySelector(`.best-zone.actif`) ?? racine.querySelector(`.best-zones`);
+        zone?.scrollIntoView({ block: `center`, behavior: `smooth` });
+        zone?.focus({ preventScroll: true });
+      });
       racine.querySelector(`#best-retour`)?.addEventListener(`click`, () => resolve());
     };
     m();

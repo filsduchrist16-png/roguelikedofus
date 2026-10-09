@@ -20,6 +20,7 @@ import {
   progressionArmurerie,
   rendreEnGardantScroll,
 } from "../collection.js";
+const ECRAN_ETROIT = `(max-width: 760px)`;
 export function ecranArmurerie(e) {
   return new Promise((resolve) => {
     let n = e.collection ?? {};
@@ -93,7 +94,7 @@ export function ecranArmurerie(e) {
           .map((e) => MONSTRES[e]?.nom ?? e)
           .join(` et `);
         h = `<div class="best-titre"><h2>${echapperHtml(g.nom)}</h2>
-            <small>${g.secret ? `Donjon secret (il s'ouvre avec une clé)` : `Toile ${numeroZone(g.id)}`} · Objets ${t.filter((e) => n[e]).length}/${t.length}</small>
+            <small>${g.secret ? `Donjon secret (il s'ouvre avec une clé)` : `Zone ${numeroZone(g.id)}`} · Objets ${t.filter((e) => n[e]).length}/${t.length}</small>
             <span class="armu-legende"><span class="armu-r-texte-commun">Commun</span><span class="armu-r-texte-rare">Rare</span><span class="armu-r-texte-epique">Épique</span><span class="armu-r-texte-legendaire">Légendaire</span></span></div>
           ${e.panoplies
             .map((p) =>
@@ -125,7 +126,7 @@ export function ecranArmurerie(e) {
         <div class="best-onglets" role="tablist">${p}</div>
         <div class="best-vue">
           <nav class="best-zones" aria-label="Zones du monde">${m}</nav>
-          <section class="best-detail">${h}</section>
+          <section class="best-detail"><button type="button" class="best-vers-zones secondaire">↑ Zones</button>${h}</section>
         </div>
         ${a.length ? `<p class="muet monde-verrouille">${a.map((e) => echapperHtml(e.nom)).join(`, `)} : aucun objet pour l'instant</p>` : ``}
         ${barreRetour(`armu-retour`)}
@@ -141,8 +142,20 @@ export function ecranArmurerie(e) {
         e.addEventListener(`click`, () => {
           s = Number(e.dataset.zone);
           rendreEnGardantScroll(u, true);
+          // téléphone : le détail est sous la liste des zones, on l'amène à l'écran
+          if (window.matchMedia(ECRAN_ETROIT).matches) {
+            racine
+              .querySelector(`.best-detail`)
+              ?.scrollIntoView({ block: `start`, behavior: `smooth` });
+          }
         }),
       );
+      racine.querySelector(`.best-vers-zones`)?.addEventListener(`click`, () => {
+        const zone =
+          racine.querySelector(`.best-zone.actif`) ?? racine.querySelector(`.best-zones`);
+        zone?.scrollIntoView({ block: `center`, behavior: `smooth` });
+        zone?.focus({ preventScroll: true });
+      });
       racine.querySelector(`#armu-retour`)?.addEventListener(`click`, () => resolve());
     };
     u();

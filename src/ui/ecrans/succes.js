@@ -15,6 +15,8 @@ import {
   cheminAsset,
   echapperHtml,
 } from "../commun.js";
+import { dofusAPortee } from "../prochainDofus.js";
+const ECRAN_ETROIT = `(max-width: 900px)`;
 function succesParDofus() {
   let e = new Map();
   for (let [t, n] of Object.entries(SUCCES)) {
@@ -36,7 +38,8 @@ function rubriques(ids) {
     a === `Général` ? -1 : b === `Général` ? 1 : a.localeCompare(b),
   );
 }
-export function ecranSucces(e) {
+// selection (facultatif) : « d:<id du Dofus> » ou « g:<id du succès> » à ouvrir directement.
+export function ecranSucces(e, selection) {
   const e_meta = e;
   return new Promise((resolve) => {
     let n = e.quetes ?? nouvelEtatQuetes();
@@ -51,7 +54,19 @@ export function ecranSucces(e) {
     let l = Object.values(SUCCES).reduce((acc, item) => acc + item.quetes.length, 0);
     let u = [...i.values()];
     let length = u.filter((e) => progressionSucces(n, SUCCES[e]).complet).length;
-    let f = o.length ? `d:${o[0]}` : `g:${s[0]}`;
+    // par défaut, le Dofus non obtenu le plus avancé
+    let valide = (sel) =>
+      typeof sel === `string` &&
+      ((sel.startsWith(`d:`) && DOFUS[sel.slice(2)]) ||
+        (sel.startsWith(`g:`) && SUCCES[sel.slice(2)]));
+    let vise = dofusAPortee(e)[0];
+    let f = valide(selection)
+      ? selection
+      : vise
+        ? `d:${vise.id}`
+        : o.length
+          ? `d:${o[0]}`
+          : `g:${s[0]}`;
     let p = (faites, total) => {
       let n = total ? Math.round((faites / total) * 100) : 0;
       return `<span class="succes-barre"><span class="${n >= 100 ? `pleine` : ``}" style="width:${n}%"></span></span>`;
@@ -140,7 +155,7 @@ export function ecranSucces(e) {
               )
               .join(``)}
           </div>
-          <aside class="succes-panneau">${v()}</aside>
+          <aside class="succes-panneau"><button type="button" class="succes-vers-liste secondaire">↑ Liste</button>${v()}</aside>
         </div>
         ${barreRetour(`succes-retour`)}
       `);
@@ -154,16 +169,37 @@ export function ecranSucces(e) {
             n.scrollTop = t;
           }
           // Sur téléphone, le détail est sous la galerie : on l'amène à l'écran.
-          if (window.matchMedia(`(max-width: 900px)`).matches) {
+          if (window.matchMedia(ECRAN_ETROIT).matches) {
             document
               .querySelector(`.succes-panneau`)
               ?.scrollIntoView({ behavior: `smooth`, block: `start` });
           }
         }),
       );
+      // téléphone : retour à la carte active dans la liste
+      document.querySelector(`.succes-vers-liste`)?.addEventListener(`click`, () => {
+        const carte = document.querySelector(`.succes-galerie .actif`);
+        carte?.scrollIntoView({ behavior: `smooth`, block: `center` });
+        carte?.focus({ preventScroll: true });
+      });
       document.getElementById(`succes-retour`)?.addEventListener(`click`, () => resolve());
     };
     ee();
+    // la carte active est visible dans la galerie (PC : la galerie défile seule) ; sur téléphone,
+    // un Dofus demandé depuis l'accueil ouvre directement son détail
+    const galerie = document.querySelector(`.succes-galerie`);
+    const carte = galerie?.querySelector(`.actif`);
+    if (window.matchMedia(ECRAN_ETROIT).matches) {
+      if (valide(selection)) {
+        document.querySelector(`.succes-panneau`)?.scrollIntoView({ block: `start` });
+      }
+    } else if (galerie && carte) {
+      const g = galerie.getBoundingClientRect();
+      const c = carte.getBoundingClientRect();
+      if (c.top < g.top || c.bottom > g.bottom) {
+        galerie.scrollTop += c.top - g.top - (g.height - c.height) / 2;
+      }
+    }
   });
 }
 export function ecranSuccesObtenu(e, t, meta) {

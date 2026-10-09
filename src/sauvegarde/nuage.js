@@ -2,7 +2,12 @@
 // emplacement privé propre au compte claude.ai du joueur. Le même compte retrouve donc sa partie sur
 // PC comme sur mobile, sans identifiant ni mot de passe à créer. Hors de l'artefact (version locale),
 // tout est simplement indisponible.
-import { exporterSauvegarde, importerSauvegarde } from "./export.js";
+import {
+  exporterSauvegarde,
+  importerSauvegarde,
+  resumeSauvegarde,
+  sauvegardeDeSecours,
+} from "./export.js";
 
 const CLE_SYNC = `rld_sync_v0`;
 // une base limite chaque document à 256 Kio : la sauvegarde est découpée en morceaux
@@ -57,7 +62,8 @@ export async function nuageDisponible() {
   return !!(await connexion());
 }
 
-/** Infos sur la sauvegarde en ligne : { date, appareil } ou null s'il n'y en a pas. */
+/** Infos sur la sauvegarde en ligne : { date, appareil, version, resume } ou null s'il n'y en a pas.
+ * resume (voir resumeSauvegarde) est null pour une partie envoyée avant qu'on l'ajoute. */
 export async function infoNuage() {
   const c = await connexion();
   if (!c) {
@@ -65,7 +71,9 @@ export async function infoNuage() {
   }
   const snap = await c.db.doc(`${c.base}/sauvegarde`).get();
   const d = snap.exists ? snap.data() : null;
-  return d ? { date: d.date, appareil: d.appareil, version: d.version } : null;
+  return d
+    ? { date: d.date, appareil: d.appareil, version: d.version, resume: d.resume ?? null }
+    : null;
 }
 
 let envoiEnCours = null;
@@ -91,7 +99,12 @@ export async function envoyerNuage() {
       });
     }
     const date = new Date().toISOString();
-    await c.db.doc(`${c.base}/sauvegarde`).set({ version, n, date, appareil: appareil() });
+    // le résumé (Dofus, quêtes, run) laisse l'autre appareil voir ce qu'il récupérerait
+    let resume = null;
+    try {
+      resume = resumeSauvegarde(JSON.parse(texte));
+    } catch {}
+    await c.db.doc(`${c.base}/sauvegarde`).set({ version, n, date, appareil: appareil(), resume });
     ecrireSync({ version, date });
     return { date };
   })();
@@ -123,6 +136,8 @@ export async function recupererNuage() {
     }
     texte += md.texte;
   }
+  // la partie d'ici reste récupérable (Paramètres → « Annuler le dernier import »)
+  sauvegardeDeSecours();
   if (!importerSauvegarde(texte)) {
     return false;
   }

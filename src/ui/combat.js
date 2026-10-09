@@ -7,13 +7,16 @@ import {
   coutPA,
   enLigneAvant,
   meilleurElement,
+  raisonIndisponible,
   resistanceTotale,
+  sommeEffets,
   statsEffectives,
   calculerDegatsDetail,
 } from "../combat/stats.js";
 import { ordreDeJeu } from "../combat/moteur.js";
 import { ETATS_CLASSE, ICONES_MARQUES } from "../combat/classes.js";
 import { nomTouche, sauverParametres } from "../sauvegarde/parametres.js";
+import { replierObjectifsCombat } from "./objectifs.js";
 import {
   AIDE_PIEGE,
   IMGS_RESISTANCE,
@@ -53,14 +56,31 @@ let combatEnCours = false;
 let combattantActif = null;
 let sortChoisi = null;
 let contexteCombat = null;
+// journal agrandi au toucher (téléphone), gardé d'un combat à l'autre
+let journalDeplie = false;
+// qui joue pendant les tours des monstres et créatures (posé par le « ▶ Tour de … » du moteur)
+let refTourEnCours = null;
+let dejaJoues = new Set();
+let numeroRonde = 1;
+// dernier combattant actif rendu : la frise et la carte ne défilent qu'au changement de tour
+let derniereRefRendue = null;
+// sort indisponible dont l'aide (et la raison) est affichée, sans passer en visée
+let infoSort = null;
+// cible pointée au clavier pendant la visée
+let refVisee = null;
+// la boîte des objectifs se replie dès la première action du joueur
+let objectifsReplies = false;
+const ecranEtroit = () => window.matchMedia?.(`(max-width: 700px)`).matches ?? false;
+const refActive = () => combattantActif?.ref ?? refTourEnCours;
+function replierObjectifs() {
+  if (!objectifsReplies) {
+    objectifsReplies = true;
+    replierObjectifsCombat();
+  }
+}
 export function installerRaccourcisCombat() {
   document.addEventListener(`keydown`, (e) => {
     if (!contexteCombat || !combattantActif || e.repeat || e.ctrlKey || e.metaKey || e.altKey) {
-      return;
-    }
-    if (e.key === `Escape` && sortChoisi) {
-      sortChoisi = null;
-      rendreCombat();
       return;
     }
     if (e.key === parametres.toucheFinTour) {
@@ -68,10 +88,24 @@ export function installerRaccourcisCombat() {
       terminerAction(null);
       return;
     }
-    if (e.key === `Escape` && sortChoisi) {
+    if (e.key === `Escape` && (sortChoisi || infoSort)) {
       sortChoisi = null;
+      infoSort = null;
       rendreCombat();
       return;
+    }
+    if (sortChoisi && !sansCibleAChoisir(sortChoisi)) {
+      if (e.key === `ArrowLeft` || e.key === `ArrowRight` || e.key === `Tab`) {
+        e.preventDefault();
+        deplacerVisee(e.key === `ArrowLeft` || (e.key === `Tab` && e.shiftKey) ? -1 : 1);
+        return;
+      }
+      // Entrée sur un bouton de l'aide (Annuler, ⓘ…) garde son effet habituel
+      if (e.key === `Enter` && !document.activeElement?.closest?.(`.aide button, #fin-tour`)) {
+        e.preventDefault();
+        lancerSurVisee();
+        return;
+      }
     }
     let t = /^(?:Digit|Numpad)([1-9])$/.exec(e.code);
     if (t) {
@@ -79,10 +113,46 @@ export function installerRaccourcisCombat() {
       let r = n === 1 ? combattantActif.armeSort : SORTS[combattantActif.sorts[n - 2]];
       if (r) {
         e.preventDefault();
-        choisirSort(r);
+        choisirSort(r, true);
       }
     }
   });
+}
+// Visée au clavier : la classe .visee passe d'une carte ciblable à l'autre, dans l'ordre affiché.
+function cartesCiblables() {
+  return racine ? [...racine.querySelectorAll(`.carte.ciblable`)] : [];
+}
+function marquerVisee() {
+  const cartes = cartesCiblables();
+  if (!cartes.some((c) => c.dataset.ref === refVisee)) {
+    // par défaut : la première cible que le sort achève, sinon la première
+    const mortelle = cartes.find((c) => c.querySelector(`.cc-apercu.mortel`));
+    refVisee = (mortelle ?? cartes[0])?.dataset.ref ?? null;
+  }
+  for (const c of cartes) {
+    c.classList.toggle(`visee`, c.dataset.ref === refVisee);
+    c.classList.toggle(`unique`, cartes.length === 1);
+  }
+}
+function deplacerVisee(pas) {
+  const cartes = cartesCiblables();
+  if (!cartes.length) {
+    return;
+  }
+  const i = cartes.findIndex((c) => c.dataset.ref === refVisee);
+  refVisee = cartes[(i + pas + cartes.length) % cartes.length].dataset.ref;
+  marquerVisee();
+  const c = cartes.find((x) => x.dataset.ref === refVisee);
+  c?.focus({ preventScroll: true });
+  c?.scrollIntoView({ block: `nearest`, inline: `nearest` });
+}
+function lancerSurVisee() {
+  const c = racine?.querySelector(`.carte.ciblable.visee`);
+  if (!c || !sortChoisi) {
+    return false;
+  }
+  terminerAction({ sort: sortChoisi, cibleRef: c.dataset.ref });
+  return true;
 }
 export function installerInfobulleSorts() {
   let e = document.createElement(`div`);
@@ -99,7 +169,10 @@ export function installerInfobulleSorts() {
     if (!n) {
       return;
     }
-    e.innerHTML = infobulleSort(n, combattantActif);
+    let raison = combattantActif ? raisonIndisponible(combattantActif, n, combattants) : null;
+    e.innerHTML =
+      infobulleSort(n, combattantActif) +
+      (raison ? `<div class="tip-indispo">⛔ ${echapperHtml(raison)}</div>` : ``);
     e.style.display = `block`;
     let r = t.getBoundingClientRect();
     let i = e.getBoundingClientRect();
@@ -131,7 +204,7 @@ function peutEncoreJouer(e, t) {
   // de son arme voyait son tour passé automatiquement
   return [e.armeSort, ...e.sorts.map((e) => SORTS[e])]
     .filter(Boolean)
-    .some((n) => e.paActuels >= coutPA(n, e) && ciblesValides(e, n, t).length > 0);
+    .some((n) => !raisonIndisponible(e, n, t));
 }
 function htmlLigneJournal(e) {
   let t = `info`;
@@ -145,7 +218,7 @@ function htmlLigneJournal(e) {
     t = `poison`;
   }
   let n = echapperHtml(e.msg);
-  if (e.meta) {
+  if (e.meta?.portion) {
     let t = echapperHtml(e.meta.portion);
     n = n.replace(t, `<span class="log-el el-${e.meta.element}">${t}</span>`);
   }
@@ -154,11 +227,27 @@ function htmlLigneJournal(e) {
 function rafraichirJournal() {
   let e = document.getElementById(`journal`);
   if (e) {
+    // ne recolle en bas que si le joueur y était déjà : on peut remonter lire pendant un tour
+    const enBas = e.scrollHeight - e.scrollTop - e.clientHeight < 12;
     e.innerHTML = journalCombat.map(htmlLigneJournal).join(``);
-    e.scrollTop = e.scrollHeight;
+    if (enBas) {
+      e.scrollTop = e.scrollHeight;
+    }
   }
 }
 export function journaliser(msg, meta) {
+  if (meta?.ronde) {
+    // début de ronde signalé par le moteur : pas de ligne dans le journal
+    if (dejaJoues.size > 0) {
+      dejaJoues.clear();
+      numeroRonde++;
+    }
+    return;
+  }
+  if (meta?.tour) {
+    dejaJoues.add(meta.tour);
+    refTourEnCours = meta.tour;
+  }
   journalCombat.push({
     msg,
     meta,
@@ -213,6 +302,13 @@ export function initialiserVueCombat(e, t, n = null, options = {}) {
   journalCombat = [];
   combattantActif = null;
   sortChoisi = null;
+  infoSort = null;
+  refVisee = null;
+  refTourEnCours = null;
+  dejaJoues = new Set();
+  numeroRonde = 1;
+  derniereRefRendue = null;
+  objectifsReplies = false;
   combatEnCours = false;
   rendreCombat();
   memoriserEtats(e);
@@ -324,6 +420,8 @@ export function controleurJoueur(e, t) {
   combattants = t;
   combattantActif = e;
   sortChoisi = null;
+  infoSort = null;
+  refVisee = null;
   return new Promise((resolve) => {
     contexteCombat = resolve;
     if (parametres.autoFinTour && !peutEncoreJouer(e, t)) {
@@ -339,21 +437,35 @@ export function controleurJoueur(e, t) {
       return;
     }
     rendreCombat();
+    montrerHerosActif();
   });
+}
+// Téléphone : au début du tour d'un héros, sa carte ne doit pas rester cachée sous la barre
+// des sorts collée en bas de l'écran.
+function montrerHerosActif() {
+  if (!ecranEtroit() || !combattantActif) {
+    return;
+  }
+  const carte = racine.querySelector(`.carte[data-ref="${combattantActif.ref}"]`);
+  const barre = document.getElementById(`cb-barre`);
+  if (carte) {
+    carte.style.scrollMarginBottom = `${(barre?.offsetHeight ?? 0) + 8}px`;
+    carte.style.scrollMarginTop = `8px`;
+    carte.scrollIntoView({ block: `nearest` });
+  }
 }
 function terminerAction(e) {
   let t = contexteCombat;
   combattantActif = null;
   sortChoisi = null;
+  infoSort = null;
+  refVisee = null;
   contexteCombat = null;
   rendreCombat();
   t?.(e);
 }
 function sortJouable(lanceur, sort) {
-  return (
-    lanceur.paActuels >= coutPA(sort, lanceur) &&
-    ciblesValides(lanceur, sort, combattants).length > 0
-  );
+  return !raisonIndisponible(lanceur, sort, combattants);
 }
 function lancerSurSoi(sort) {
   terminerAction({
@@ -361,34 +473,41 @@ function lancerSurSoi(sort) {
     cibleRef: combattantActif.ref,
   });
 }
-function choisirSort(sort) {
+function choisirSort(sort, depuisClavier = false) {
   let t = combattantActif;
   if (!t || !contexteCombat || !sort) {
     return;
   }
+  replierObjectifs();
   document.querySelectorAll(`.sort-tip`).forEach((x) => (x.style.display = `none`));
-  // un second clic sur le sort sélectionné l'annule (ou le lance s'il n'a pas de cible à choisir)
+  // un second appui sur le sort choisi le lance sur la cible pointée (touche du sort, ou cible
+  // unique), le lance sur soi s'il n'a pas de cible à choisir, sinon l'annule
   if (sortChoisi?.id === sort.id) {
     if (sansCibleAChoisir(sort)) {
       lancerSurSoi(sort);
+    } else if ((depuisClavier || cartesCiblables().length === 1) && lancerSurVisee()) {
+      return;
     } else {
       sortChoisi = null;
       rendreCombat();
     }
     return;
   }
-  // les raccourcis clavier passent par ici : mêmes conditions que les boutons (PA, recharge, cibles)
+  // les raccourcis clavier passent par ici : mêmes conditions que les boutons (PA, recharge,
+  // cibles) ; un sort indisponible montre son aide et la raison, sans passer en visée
   if (!sortJouable(t, sort)) {
-    if (t.paActuels >= coutPA(sort, t)) {
-      journaliser(`${sort.nom} : aucune cible valable pour l'instant.`);
-    }
+    infoSort = infoSort?.id === sort.id ? null : sort;
+    sortChoisi = null;
+    rendreCombat();
     return;
   }
+  infoSort = null;
   if (sansCibleAChoisir(sort) && !ecranTactile()) {
     lancerSurSoi(sort);
     return;
   }
   sortChoisi = sort;
+  refVisee = null;
   rendreCombat();
 }
 function badgeArchi(e) {
@@ -438,6 +557,284 @@ function apercuDegats(cible) {
     return null;
   }
 }
+// Effets temporaires lisibles sur les cartes : un badge chiffré par effet (les effets identiques
+// se cumulent), et une explication longue au survol ou au toucher (data-tip).
+const pct = (v) => Math.round(Math.abs(v) * 100);
+const signe = (v) => (v >= 0 ? `+` : `−`);
+export const EFFETS_AFFICHAGE = {
+  poison: {
+    icone: `☠`,
+    court: (v) => `poison ${v}/t`,
+    long: (v) => `Poison : perd ${v} PV au début de chacun de ses tours.`,
+    classe: `mal`,
+  },
+  hot: {
+    icone: `♥`,
+    court: (v) => `soin ${v}/t`,
+    long: (v) => `Régénère ${v} PV au début de chacun de ses tours.`,
+    classe: `bien`,
+  },
+  degatsInfliges: {
+    icone: `⚔`,
+    court: (v) => `${signe(v)}${pct(v)} % dgts`,
+    long: (v) => `Dégâts infligés ${signe(v)}${pct(v)} %.`,
+  },
+  resAll: {
+    icone: `🛡`,
+    court: (v) => `${signe(v)}${pct(v)} % rés.`,
+    long: (v) => `Résistances à tous les éléments ${signe(v)}${pct(v)} %.`,
+  },
+  reductionDegats: {
+    icone: `🛡`,
+    court: (v) => `−${pct(v)} % subis`,
+    long: (v) => `Dégâts subis réduits de ${pct(v)} %.`,
+    classe: `bien`,
+  },
+  friction: {
+    icone: `🚫`,
+    court: () => `soins bloqués`,
+    long: () => `Friction : ne peut être ni soigné ni régénéré.`,
+    classe: `mal`,
+  },
+  ignoreLigne: {
+    icone: `👁`,
+    court: () => `vision`,
+    long: () => `Vision : ses sorts de ligne peuvent viser la ligne arrière.`,
+    classe: `bien`,
+  },
+  crit: {
+    icone: `🎯`,
+    court: (v) => `+${v} % crit`,
+    long: (v) => `Chance de coup critique +${v} %.`,
+    classe: `bien`,
+  },
+  force: {
+    icone: `💪`,
+    court: (v) => `${signe(v)}${Math.abs(v)} Force`,
+    long: (v) => `Force ${signe(v)}${Math.abs(v)} (cumulable).`,
+  },
+  intelligence: {
+    icone: `🔥`,
+    court: (v) => `${signe(v)}${Math.abs(v)} Intel.`,
+    long: (v) => `Intelligence ${signe(v)}${Math.abs(v)} (cumulable).`,
+  },
+  agilite: {
+    icone: `💨`,
+    court: (v) => `${signe(v)}${Math.abs(v)} Agi.`,
+    long: (v) => `Agilité ${signe(v)}${Math.abs(v)} (cumulable).`,
+  },
+  chance: {
+    icone: `💧`,
+    court: (v) => `${signe(v)}${Math.abs(v)} Chance`,
+    long: (v) => `Chance ${signe(v)}${Math.abs(v)} (cumulable).`,
+  },
+  vitalite: {
+    icone: `❤`,
+    court: (v) => `${signe(v)}${pct(v)} % PV`,
+    long: (v) => `PV max ${signe(v)}${pct(v)} %.`,
+  },
+  initiative: {
+    icone: `⏳`,
+    court: (v) => `init ${v >= 0 ? `+` : ``}${v}`,
+    long: (v) => `Initiative ${v >= 0 ? `+` : ``}${v} : change sa place dans l'ordre de jeu.`,
+  },
+  contre: {
+    icone: `⚔️`,
+    court: (v) => `contre ${pct(v)} %`,
+    long: (v) => `Contre : ${pct(v)} % de chances de riposter quand il est frappé.`,
+    classe: `bien`,
+  },
+  proie: {
+    icone: `🎯`,
+    court: (v) => `proie · vol ${pct(v)} %`,
+    long: (v) => `Proie : l'équipe adverse récupère ${pct(v)} % des dégâts qu'elle lui inflige.`,
+    classe: `mal`,
+  },
+  tetanise: {
+    icone: `🦴`,
+    court: () => `tétanisé`,
+    long: () => `Tétanisé : ses sorts ne peuvent viser que la ligne avant.`,
+    classe: `mal`,
+  },
+  assome: {
+    icone: `💫`,
+    court: () => `assommé`,
+    long: () => `Assommé : passe son prochain tour.`,
+    classe: `mal`,
+  },
+  echecCritique: {
+    icone: `🌀`,
+    court: (v) => `échec ${pct(v)} %`,
+    long: (v) => `${pct(v)} % de chances que chacun de ses sorts échoue.`,
+    classe: `mal`,
+  },
+  armure: {
+    icone: `🪨`,
+    court: (v) => `armure +${v}`,
+    long: (v) => `Armure : retire ${v} à chaque frappe reçue.`,
+    classe: `bien`,
+  },
+  degatsCritSubis: {
+    icone: `🃏`,
+    court: (v) => `+${pct(v)} % crit subis`,
+    long: (v) => `Subit ${pct(v)} % de dégâts en plus sur les coups critiques.`,
+    classe: `mal`,
+  },
+  esquive: {
+    icone: `💨`,
+    court: (v) => `+${pct(v)} % esq.`,
+    long: (v) => `Esquive +${pct(v)} % : chance d'éviter complètement une attaque.`,
+    classe: `bien`,
+  },
+  bonusPieges: {
+    icone: `🪤`,
+    court: (v) => `pièges +${pct(v)} %`,
+    long: (v) => `Ses pièges font ${pct(v)} % de dégâts en plus.`,
+    classe: `bien`,
+  },
+  infection: {
+    icone: `🌿`,
+    court: () => `infecté`,
+    long: () => `Infecté : les sorts du Sadida le frappent plus fort et se propagent.`,
+    classe: `mal`,
+  },
+  paParTour: {
+    icone: `★`,
+    court: (v) => `+${v} PA/tour`,
+    long: (v) => `Gagne ${v} PA au début de chacun de ses tours.`,
+    classe: `bien`,
+  },
+  aiguille: {
+    icone: `🪡`,
+    court: () => `écho d'Aiguille`,
+    long: () => `Chaque Téléfrag posé sur lui déclenche une Aiguille.`,
+    classe: `mal`,
+  },
+};
+// les effets « permanents » (99 tours) n'affichent pas de durée
+const duree = (t) => (t > 0 && t < 90 ? ` · ${t} t` : ``);
+const dureeLongue = (t) =>
+  t > 0 && t < 90 ? ` Encore ${t} tour${t > 1 ? `s` : ``}.` : ` Jusqu'à la fin du combat.`;
+export function badgesEffets(e) {
+  const cumuls = new Map();
+  for (const ef of e.effets) {
+    // les effets d'un état de classe sont expliqués par le badge de l'état
+    if (ef.source === `etat`) {
+      continue;
+    }
+    const c = cumuls.get(ef.stat) ?? { valeur: 0, tours: 0 };
+    c.valeur += ef.valeur;
+    c.tours = Math.max(c.tours, ef.toursRestants ?? 0);
+    cumuls.set(ef.stat, c);
+  }
+  const badges = [];
+  for (const [stat, { valeur, tours }] of cumuls) {
+    const v = Math.round(valeur * 100) / 100;
+    const def = EFFETS_AFFICHAGE[stat];
+    if (!def) {
+      badges.push({ texte: `${stat}${duree(tours)}`, tip: `${stat}.${dureeLongue(tours)}` });
+      continue;
+    }
+    badges.push({
+      texte: `${def.icone} ${def.court(v)}${duree(tours)}`,
+      tip: `${def.long(v)}${dureeLongue(tours)}`,
+      classe: def.classe,
+    });
+  }
+  const temporaires = e.boucliersTemporaires ?? [];
+  if (temporaires.length) {
+    const montant = temporaires.reduce((acc, b) => acc + b.montant, 0);
+    const tours = Math.max(...temporaires.map((b) => b.tours));
+    badges.push({
+      texte: `🛡 bouclier ${Math.round(montant)}${duree(tours)}`,
+      tip: `Bouclier temporaire : absorbe ${Math.round(montant)} dégâts avant les PV, puis s'estompe.${dureeLongue(tours)}`,
+      classe: `bien`,
+    });
+  }
+  if ((e.armure ?? 0) > 0) {
+    badges.push({
+      texte: `🪨 armure ${e.armure}`,
+      tip: `Armure permanente : retire ${e.armure} à chaque frappe reçue.`,
+    });
+  }
+  return badges;
+}
+function badgesCombattant(e) {
+  const c = badgesEffets(e);
+  const ajouter = (texte, tip, classe) => c.push({ texte, tip, classe });
+  const etat = e.etatClasse && ETATS_CLASSE[e.etatClasse];
+  if (etat) {
+    const effets = etat.effets
+      .map((x) => EFFETS_AFFICHAGE[x.stat]?.court(x.valeur))
+      .filter(Boolean)
+      .join(`, `);
+    ajouter(
+      `${etat.icone} ${etat.nom}`,
+      `État ${etat.nom}${effets ? ` : ${effets}` : ``}, tant que l'état dure.`,
+    );
+  }
+  if (e.marqueElement) {
+    ajouter(
+      `${ICONES_MARQUES[e.marqueElement]} Marque ${NOMS_ELEMENTS[e.marqueElement]}`,
+      `Marque ${NOMS_ELEMENTS[e.marqueElement]} : un sort d'un autre élément la combine pour un effet bonus.`,
+    );
+  }
+  if (e.tourelle) {
+    ajouter(`⚙️ Tourelle niv. ${e.niveauTourelle ?? 1}`, `Tourelle : joue seule à chaque tour.`);
+  } else if (e.creature) {
+    ajouter(`🐾 Créature`, `Créature invoquée : joue seule et disparaît si son invocateur tombe.`);
+  }
+  if ((e.bombes ?? 0) > 0) {
+    ajouter(`💣 ×${e.bombes}`, `${e.bombes} bombe(s) collée(s) : Kaboom les fait exploser.`);
+  }
+  if ((e.telefrags ?? 0) > 0) {
+    ajouter(`⌛ ×${e.telefrags}`, `${e.telefrags} Téléfrag(s) posé(s) (4 au plus).`);
+  }
+  if ((e.portails ?? 0) > 0) {
+    ajouter(`🌀 ×${e.portails}`, `${e.portails} portail(s) ouvert(s) : +2 % de dégâts chacun.`);
+  }
+  if ((e.rage ?? 0) > 0) {
+    ajouter(`🐺 Rage ×${e.rage}`, `Rage ×${e.rage} : +${5 * e.rage} % de dégâts.`, `bien`);
+  }
+  if ((e.chausseTrappe ?? 0) > 0) {
+    ajouter(
+      `🪤 Chausse-Trappe ×${e.chausseTrappe}`,
+      `Chausse-Trappe ×${e.chausseTrappe} (5 au plus) : renforce ses sorts liés.`,
+    );
+  }
+  if (e.provoque) {
+    ajouter(`🛡 Provoque`, `Provocation : les ennemis doivent le viser en priorité.`);
+  }
+  if ((e.coupsAnnulesRestants ?? 0) > 0) {
+    ajouter(
+      `🐺 ${e.coupsAnnulesRestants} coup(s) annulé(s)`,
+      `Encaisse sans broncher : ses ${e.coupsAnnulesRestants} prochain(s) coup(s) reçu(s) sont annulés (rechargé à chacun de ses tours).`,
+      `bien`,
+    );
+  }
+  if (e.bonusOffensifProchain > 0) {
+    const p = Math.round(e.bonusOffensifProchain * 100);
+    ajouter(`+${p} % prochain`, `Son prochain sort offensif fait +${p} % de dégâts.`, `bien`);
+  }
+  if (e.maxRollCharges > 0) {
+    ajouter(
+      `Œil affûté ×${e.maxRollCharges}`,
+      `Ses ${e.maxRollCharges} prochain(s) sort(s) font leurs dégâts maximaux.`,
+      `bien`,
+    );
+  }
+  if (e.paBonusNextTurn !== 0) {
+    const v = e.paBonusNextTurn;
+    ajouter(`${v > 0 ? `+` : ``}${v} PA`, `${v > 0 ? `+` : ``}${v} PA à son prochain tour.`);
+  }
+  if (e.estEgide && (e.toursRestantsInvocation ?? 0) > 0) {
+    ajouter(
+      `🛡️ Égide · ${e.toursRestantsInvocation} t`,
+      `Égide : protège sa ligne, disparaît dans ${e.toursRestantsInvocation} tour(s).`,
+    );
+  }
+  return c;
+}
 function htmlCarteCombattant(e, t) {
   let n = e.pvActuels <= 0;
   let r = Math.max(0, Math.round(e.pvActuels));
@@ -454,87 +851,10 @@ function htmlCarteCombattant(e, t) {
   let s = ELEMENTS.filter((t) => Math.round(resistanceTotale(e, t) * 100) !== 0 || t === o)
     .map((t) => {
       let n = Math.round(resistanceTotale(e, t) * 100);
-      return `<span class="res-chip ${n < 0 ? `faible` : n === 0 ? `zero` : ``}${t === o ? ` vise` : ``}" title="${t === o ? `Résistance ${NOMS_ELEMENTS[t]} · ton élément de frappe contre cette cible` : `Résistance ${NOMS_ELEMENTS[t]}`}"><img src="${IMGS_RESISTANCE[t]}" alt="" onerror="this.remove()" />${n > 0 ? `+` : ``}${n}%</span>`;
+      return `<span class="res-chip ${n < 0 ? `faible` : n === 0 ? `zero` : ``}${t === o ? ` vise` : ``}" ${t === o ? `data-tip="Résistance ${NOMS_ELEMENTS[t]} · ton élément de frappe contre cette cible (celui qui lui fait le plus mal)"` : `title="Résistance ${NOMS_ELEMENTS[t]}"`}><img src="${IMGS_RESISTANCE[t]}" alt="" onerror="this.remove()" />${n > 0 ? `+` : ``}${n}%</span>`;
     })
     .join(``);
-  let c = [];
-  for (let t of e.effets) {
-    if (t.stat === `vitalite`) {
-      c.push(`+PV (${t.toursRestants})`);
-    } else if (t.stat === `degatsInfliges`) {
-      c.push(`${t.valeur >= 0 ? `+` : `−`}dégâts (${t.toursRestants})`);
-    } else if (t.stat === `poison`) {
-      c.push(`☠ poison (${t.toursRestants})`);
-    } else if (t.stat === `hot`) {
-      c.push(`♥ soin/t (${t.toursRestants})`);
-    } else if (t.stat === `initiative`) {
-      c.push(`⏳ init ${t.valeur} (${t.toursRestants})`);
-    } else if (t.stat === `contre`) {
-      c.push(`⚔️ Contre ${Math.round(t.valeur * 100)} % (${t.toursRestants})`);
-    } else if (t.stat === `proie`) {
-      c.push(`🎯 Proie (vol ${Math.round(t.valeur * 100)} %)`);
-    } else if (t.stat === `tetanise`) {
-      c.push(`🦴 Tétanisé (${t.toursRestants})`);
-    } else if (t.stat === `assome`) {
-      c.push(`💫 Assommé`);
-    } else if (t.stat === `echecCritique`) {
-      c.push(`🌀 Échec ${Math.round(t.valeur * 100)} % (${t.toursRestants})`);
-    } else if (t.stat === `armure`) {
-      c.push(`🪨 Armure +${t.valeur} (${t.toursRestants})`);
-    } else if (t.stat === `degatsCritSubis`) {
-      c.push(`🃏 Crit subis +${Math.round(t.valeur * 100)} % (${t.toursRestants})`);
-    } else if (t.stat === `esquive`) {
-      c.push(`💨 Esquive +${Math.round(t.valeur * 100)} % (${t.toursRestants})`);
-    } else if (t.stat === `bonusPieges`) {
-      c.push(`🪤 Pièges +${Math.round(t.valeur * 100)} % (${t.toursRestants})`);
-    } else if (t.stat === `infection`) {
-      c.push(`🌿 Infecté (${t.toursRestants})`);
-    }
-  }
-  if (e.etatClasse && ETATS_CLASSE[e.etatClasse]) {
-    c.push(`${ETATS_CLASSE[e.etatClasse].icone} ${ETATS_CLASSE[e.etatClasse].nom}`);
-  }
-  if (e.marqueElement) {
-    c.push(`${ICONES_MARQUES[e.marqueElement]} Marque ${NOMS_ELEMENTS[e.marqueElement]}`);
-  }
-  if (e.tourelle) {
-    c.push(`⚙️ Tourelle niv. ${e.niveauTourelle ?? 1}`);
-  } else if (e.creature) {
-    c.push(`🐾 Créature`);
-  }
-  if ((e.bombes ?? 0) > 0) {
-    c.push(`💣 ×${e.bombes}`);
-  }
-  if ((e.telefrags ?? 0) > 0) {
-    c.push(`⌛ ×${e.telefrags}`);
-  }
-  if ((e.portails ?? 0) > 0) {
-    c.push(`🌀 ×${e.portails}`);
-  }
-  if ((e.rage ?? 0) > 0) {
-    c.push(`🐺 Rage ×${e.rage}`);
-  }
-  if ((e.chausseTrappe ?? 0) > 0) {
-    c.push(`🪤 Chausse-Trappe ×${e.chausseTrappe}`);
-  }
-  if (e.provoque) {
-    c.push(`🛡 Provoque`);
-  }
-  if ((e.coupsAnnulesRestants ?? 0) > 0) {
-    c.push(`🐺 ${e.coupsAnnulesRestants} coup(s) annulé(s)`);
-  }
-  if (e.bonusOffensifProchain > 0) {
-    c.push(`+${Math.round(e.bonusOffensifProchain * 100)} % prochain`);
-  }
-  if (e.maxRollCharges > 0) {
-    c.push(`Œil affûté ×${e.maxRollCharges}`);
-  }
-  if (e.paBonusNextTurn !== 0) {
-    c.push(`${e.paBonusNextTurn > 0 ? `+` : ``}${e.paBonusNextTurn} PA`);
-  }
-  if (e.estEgide && (e.toursRestantsInvocation ?? 0) > 0) {
-    c.push(`🛡️ Égide (${e.toursRestantsInvocation})`);
-  }
+  let c = badgesCombattant(e);
   let l = enLigneAvant(e) ? `avant` : `arriere`;
   return `
     <div class="${[
@@ -542,12 +862,14 @@ function htmlCarteCombattant(e, t) {
       e.camp === `joueur` ? `carte-joueur` : `carte-ennemi`,
       `ligne-${l}`,
       n ? `ko` : ``,
-      e === combattantActif ? `actif` : ``,
+      e.ref === refActive() ? `actif` : ``,
       t ? `ciblable` : ``,
       e.archi ? `archi` : ``,
     ]
       .filter(Boolean)
-      .join(` `)}" data-ref="${e.ref}">
+      .join(
+        ` `,
+      )}" data-ref="${e.ref}"${t ? ` tabindex="0" role="button" aria-label="${echapperHtml(libelleCible(e))}"` : ``}>
       <div class="carte-tete">
         <span class="carte-nom">${defiCombat?.cible === e.ref ? `<span class="badge-defi" title="Cible du défi ${echapperHtml(defiCombat.nom)}">🎯</span>` : ``}${echapperHtml(e.nom)}</span>
         <span class="rang rang-${l}">${l === `avant` ? `AVANT` : `ARR.`}</span>
@@ -582,7 +904,7 @@ function htmlCarteCombattant(e, t) {
       })()}
       ${e.camp === `joueur` && !e.estEgide ? `<div class="pp-row" title="Prospection"><img src="${IMG_PP}" alt="" onerror="this.remove()" /><b>${e.stats.prospection ?? 0}</b></div>` : ``}
       ${s && !e.estEgide ? `<div class="res-row">${s}</div>` : ``}
-      <div class="badges">${c.map((e) => `<span class="badge">${echapperHtml(e)}</span>`).join(``)}</div>
+      <div class="badges">${c.map((b) => `<span class="badge${b.classe ? ` ${b.classe}` : ``}" data-tip="${echapperHtml(b.tip)}">${echapperHtml(b.texte)}</span>`).join(``)}</div>
       ${(() => {
         let ap = t ? apercuDegats(e) : null;
         if (!ap) {
@@ -591,8 +913,81 @@ function htmlCarteCombattant(e, t) {
         let mortel = ap[0] >= e.pvActuels + (e.bouclier ?? 0);
         return `<div class="cc-apercu${mortel ? ` mortel` : ``}" title="Dégâts prévus du sort (hors critique et esquive)${mortel ? ` : la cible tombe` : ``}">${mortel ? `☠` : `💥`} ${ap[0]}${ap[1] !== ap[0] ? `–${ap[1]}` : ``} dégâts</div>`;
       })()}
+      ${!t && protegeParLigneAvant(e) ? `<span class="cc-protege" data-tip="Protégé par la ligne avant : ce sort vise d'abord un ennemi de devant">🛡 protégé</span>` : ``}
       ${n ? `<div class="ko-label">K.O.</div>` : ``}
     </div>`;
+}
+// Libellé d'une cible en visée, pour les lecteurs d'écran : « Zénith sur Chafer, 10-16 dégâts ».
+function libelleCible(e) {
+  if (!sortChoisi) {
+    return e.nom;
+  }
+  const ap = apercuDegats(e);
+  const degats = ap ? `, ${ap[0]}${ap[1] !== ap[0] ? `-${ap[1]}` : ``} dégâts` : ``;
+  return `${sortChoisi.nom} sur ${e.nom}${degats}`;
+}
+// En visée d'un sort de ligne : l'ennemi de la ligne arrière est protégé par sa ligne avant.
+function sortDeLigne() {
+  return (
+    sortChoisi?.cible === `ennemi_ligne` &&
+    combattantActif &&
+    sommeEffets(combattantActif, `ignoreLigne`) <= 0
+  );
+}
+function protegeParLigneAvant(e) {
+  return (
+    sortDeLigne() &&
+    e.camp !== combattantActif.camp &&
+    e.pvActuels > 0 &&
+    !enLigneAvant(e) &&
+    !e.estLance &&
+    combattants.some(
+      (x) => x.camp === e.camp && x.pvActuels > 0 && enLigneAvant(x) && !x.estLance && !x.estEgide,
+    )
+  );
+}
+// Pourquoi une carte n'est pas ciblable par le sort choisi (appui sur une carte refusée).
+function raisonCibleRefusee(e) {
+  const s = sortChoisi;
+  const l = combattantActif;
+  if (!s || !l) {
+    return ``;
+  }
+  if (e.pvActuels <= 0) {
+    return `${e.nom} est K.O.`;
+  }
+  const visEnnemi = [`ennemi_ligne`, `ennemi_tous`].includes(s.cible);
+  if (visEnnemi && e.camp === l.camp) {
+    return `${e.nom} est un allié : ce sort vise un ennemi.`;
+  }
+  if ([`allie`, `allie_tous`].includes(s.cible) && e.camp !== l.camp) {
+    return `${e.nom} est un ennemi : ce sort vise un allié.`;
+  }
+  if (s.cible === `soi`) {
+    return `Ce sort se lance sur ${l.nom} uniquement.`;
+  }
+  if (e.estLance) {
+    return `La Lance n'est pas une cible.`;
+  }
+  if (e.estEgide) {
+    return `L'Égide n'est pas une cible.`;
+  }
+  if (protegeParLigneAvant(e)) {
+    return `${e.nom} est protégé par la ligne avant : vise d'abord un ennemi de devant.`;
+  }
+  if (sommeEffets(l, `tetanise`) > 0 && !enLigneAvant(e) && e.camp !== l.camp) {
+    return `${l.nom} est tétanisé : il ne peut viser que la ligne avant.`;
+  }
+  if (
+    (s.cooldown && (l.cooldowns[`${s.id}:${e.ref}`] ?? 0) > 0) ||
+    (s.maxParCibleParTour && (l.lancersCeTour?.[`${s.id}:${e.ref}`] ?? 0) >= s.maxParCibleParTour)
+  ) {
+    return `${e.nom} a déjà été visé par ${s.nom} : choisis une autre cible.`;
+  }
+  if (s.transfertPvPct && e.ref === l.ref) {
+    return `${l.nom} ne peut pas se viser lui-même avec ce sort.`;
+  }
+  return `${e.nom} ne peut pas être visé par ${s.nom}.`;
 }
 // Sur téléphone : si aucune cible du sort choisi n'est visible (cachée par la barre des sorts ou
 // hors de l'écran), on fait défiler jusqu'à elles.
@@ -660,6 +1055,7 @@ function rendreCombat() {
           <div id="cb-barre" class="barre-sorts"></div>
         </div>
       </div>`),
+    installerEcouteursPlateau(),
     true);
   let r = (e, t) => {
     let n = document.getElementById(e);
@@ -673,24 +1069,94 @@ function rendreCombat() {
   r(`cb-ennemi`, n(`ennemi`));
   r(`cb-barre`, htmlBarreSorts());
   racine.querySelector(`.combat`)?.classList.toggle(`ciblage`, !!(combattantActif && sortChoisi));
+  document.getElementById(`journal`)?.classList.toggle(`deplie`, journalDeplie);
   rafraichirJournal();
   if (combattantActif && sortChoisi) {
     montrerCibles();
+    marquerVisee();
     racine.querySelectorAll(`.carte.ciblable, .tl-pastille.ciblable`).forEach((e) => {
-      e.addEventListener(`click`, () => {
+      e.addEventListener(`click`, (ev) => {
+        // un appui pour lire un badge ou une résistance ne lance pas le sort
+        if (ev.target.closest(`.badge, [data-tip]`)) {
+          return;
+        }
         terminerAction({
           sort: sortChoisi,
           cibleRef: e.dataset.ref,
         });
       });
     });
+    racine.querySelectorAll(`.carte.ciblable`).forEach((e) => {
+      e.addEventListener(`focus`, () => {
+        refVisee = e.dataset.ref;
+        marquerVisee();
+      });
+    });
+    if (!sansCibleAChoisir(sortChoisi)) {
+      racine.querySelectorAll(`.carte:not(.ciblable)`).forEach((e) => {
+        e.addEventListener(`click`, (ev) => {
+          const c = combattants.find((x) => x.ref === e.dataset.ref);
+          const zone = document.getElementById(`aide-refus`);
+          if (!c || !zone || ev.target.closest(`.badge, [data-tip]`)) {
+            return;
+          }
+          zone.textContent = `⛔ ${raisonCibleRefusee(c)}`;
+          zone.hidden = false;
+        });
+      });
+    }
   }
+  suivreTourActif();
   racine.querySelectorAll(`[data-ref]`).forEach((e) => {
     let ref = e.dataset.ref;
     let n = () => racine.querySelectorAll(`[data-ref="${ref}"]`);
     e.addEventListener(`mouseenter`, () => n().forEach((e) => e.classList.add(`lie-survol`)));
     e.addEventListener(`mouseleave`, () => n().forEach((e) => e.classList.remove(`lie-survol`)));
   });
+}
+// Écouteurs posés une fois par combat sur la coquille (les zones internes sont re-rendues).
+function installerEcouteursPlateau() {
+  const combat = racine.querySelector(`.combat`);
+  document.getElementById(`journal`)?.addEventListener(`click`, (ev) => {
+    if (!ecranEtroit()) {
+      return;
+    }
+    const journal = ev.currentTarget;
+    journalDeplie = !journalDeplie;
+    journal.classList.toggle(`deplie`, journalDeplie);
+    journal.scrollTop = journal.scrollHeight;
+  });
+  // clic droit pendant la visée : l'annule
+  combat?.addEventListener(`contextmenu`, (ev) => {
+    if (sortChoisi && contexteCombat) {
+      ev.preventDefault();
+      sortChoisi = null;
+      rendreCombat();
+    }
+  });
+  // premier clic sur le plateau : la boîte des objectifs laisse la place
+  combat?.querySelector(`.plateau`)?.addEventListener(`click`, replierObjectifs);
+}
+// Au changement de tour : la frise garde la pastille active visible (téléphone), et la carte du
+// héros qui commence son tour n'est plus cachée par la barre des sorts.
+function suivreTourActif() {
+  const ref = refActive();
+  if (ref === derniereRefRendue) {
+    return;
+  }
+  derniereRefRendue = ref;
+  const pastille = racine.querySelector(`.tl-pastille.actif`);
+  const liste = pastille?.closest(`.timeline`);
+  if (!pastille || !liste) {
+    return;
+  }
+  for (const c of [pastille.parentElement, liste]) {
+    if (c.scrollWidth > c.clientWidth + 1) {
+      const p = pastille.getBoundingClientRect();
+      const r = c.getBoundingClientRect();
+      c.scrollLeft += p.left + p.width / 2 - (r.left + r.width / 2);
+    }
+  }
 }
 function initiativeEffective(e) {
   return (
@@ -708,10 +1174,11 @@ function htmlTimeline() {
   }
   let n =
     combattantActif && sortChoisi ? ciblesValides(combattantActif, sortChoisi, combattants) : [];
-  return `<div class="timeline"><div class="tl-liste">${t
+  const actif = refActive();
+  return `<div class="timeline"><span class="tl-ronde" title="Ronde en cours : chacun joue une fois par ronde">Ronde ${numeroRonde}</span><div class="tl-liste">${t
     .map((e) => {
       let e_camp = e.camp;
-      let r = e === combattantActif ? `actif` : ``;
+      let r = e.ref === actif ? `actif` : dejaJoues.has(e.ref) ? `deja-joue` : ``;
       let i = n.some((t) => t.ref === e.ref) ? `ciblable` : ``;
       let a = e.img
         ? `<img src="${cheminAsset(e.img)}" alt="" onerror="this.remove()" />`
@@ -720,39 +1187,80 @@ function htmlTimeline() {
     })
     .join(``)}</div></div>`;
 }
+// Bouton d'un sort : un sort indisponible reste appuyable (aria-disabled) pour lire sa raison.
+function htmlBoutonSort(lanceur, sort, touche, icone, arme = false) {
+  const raison = raisonIndisponible(lanceur, sort, combattants);
+  const recharge = lanceur.cooldowns[sort.id] ?? 0;
+  const max = sort.maxParTour ?? 0;
+  const lances = lanceur.lancersCeTour?.[sort.id] ?? 0;
+  let etiquette = ``;
+  if (raison?.startsWith(`PA`)) {
+    etiquette = `PA`;
+  } else if (raison?.startsWith(`Déjà lancé`)) {
+    etiquette = `${lances}/${max}`;
+  } else if (raison === `Pas au 1er tour`) {
+    etiquette = `1er t.`;
+  } else if (!raison && max >= 2) {
+    etiquette = `${max - lances}/${max}`;
+  }
+  const libelle = `${sort.nom}${arme ? `, attaque d'arme` : ``}${
+    raison ? ` : ${raison}` : max >= 2 ? ` : ${max - lances}/${max} lancers restants` : ``
+  }`;
+  const classes = [
+    `sort`,
+    sortChoisi?.id === sort.id ? `choisi` : ``,
+    infoSort?.id === sort.id ? `info` : ``,
+    recharge > 0 ? `cooldown` : ``,
+    raison ? `indispo` : ``,
+  ]
+    .filter(Boolean)
+    .join(` `);
+  return `<button class="${classes}" ${arme ? `data-arme="1"` : `data-sort="${sort.id}"`} aria-label="${echapperHtml(libelle)}"${raison ? ` aria-disabled="true"` : ``}>
+        <span class="sort-touche">${touche}</span>
+        <span class="sort-pa-badge"><img src="${IMG_ETOILE}" alt="" onerror="this.remove()" /><b>${coutPA(sort, lanceur)}</b></span>
+        ${icone}
+        ${pastilleElementSort(sort, lanceur)}
+        ${recharge > 0 ? `<span class="sort-cd" title="Rechargement : ${recharge} tour(s)">${recharge}</span>` : ``}
+        ${etiquette ? `<span class="sort-etiquette${raison ? `` : ` dispo`}">${echapperHtml(etiquette)}</span>` : ``}
+      </button>`;
+}
 function htmlBarreSorts() {
   if (!combattantActif) {
-    return `<div class="attente">En attente…</div>`;
+    // tour d'un monstre ou d'une créature : on montre qui joue, à la place des sorts
+    const joueur = combattants.find((x) => x.ref === refTourEnCours && x.pvActuels > 0);
+    if (!joueur) {
+      return `<div class="attente">En attente…</div>`;
+    }
+    return `<div class="attente attente-tour ${joueur.camp}">
+      ${joueur.img ? `<img class="attente-portrait" src="${cheminAsset(joueur.img)}" alt="" onerror="this.remove()" />` : ``}
+      <span>Tour de <b>${echapperHtml(joueur.nom)}</b>…</span>
+    </div>`;
   }
   let e = combattantActif;
   let e_armeSort = e.armeSort;
   let n =
     (e_armeSort
-      ? `<button class="sort ${sortChoisi?.id === e_armeSort.id ? `choisi` : ``}" data-arme="1" ${sortJouable(e, e_armeSort) ? `` : `disabled`} title="${echapperHtml(e_armeSort.nom)}, attaque d'arme">
-        <span class="sort-touche">1</span>
-        <span class="sort-pa-badge"><img src="${IMG_ETOILE}" alt="" onerror="this.remove()" /><b>${coutPA(e_armeSort, e)}</b></span>
-        <span class="sort-icon-wrap"><img class="sort-icon" src="${e_armeSort.img ? cheminAsset(e_armeSort.img) : ``}" alt="" onerror="this.closest('.sort-icon-wrap')?.remove()" /></span>
-        ${pastilleElementSort(e_armeSort, e)}
-      </button>`
+      ? htmlBoutonSort(
+          e,
+          e_armeSort,
+          1,
+          `<span class="sort-icon-wrap"><img class="sort-icon" src="${e_armeSort.img ? cheminAsset(e_armeSort.img) : ``}" alt="" onerror="this.closest('.sort-icon-wrap')?.remove()" /></span>`,
+          true,
+        )
       : `<div class="sort sort-cac" title="Corps à corps, aucune arme équipée">
         <span class="sort-touche">1</span>
         <span class="sort-icon-vide">🗡️</span>
       </div>`) +
     e.sorts
       .map((e) => SORTS[e])
-      .map((t, n) => {
-        let r = e.cooldowns[t.id] ?? 0;
-        let i = ciblesValides(e, t, combattants).length === 0;
-        let a = coutPA(t, e);
-        let o = e.paActuels >= a && r <= 0 && !i;
-        return `<button class="sort ${sortChoisi?.id === t.id ? `choisi` : ``} ${r > 0 ? `cooldown` : ``}" data-sort="${t.id}" ${o ? `` : `disabled`} ${i ? `title="Aucune cible valable"` : ``}>
-        <span class="sort-touche">${n + 2}</span>
-        <span class="sort-pa-badge"><img src="${IMG_ETOILE}" alt="" onerror="this.remove()" /><b>${a}</b></span>
-        <span class="sort-icon-wrap"${attrElementSort(t, e)}><span class="sort-nom-fallback">${echapperHtml(t.nom)}</span><img class="sort-icon" src="${iconeSort(t.id)}" alt="" onerror="this.closest('.sort-icon-wrap')?.classList.add('noicon'); this.remove()" /></span>
-        ${pastilleElementSort(t, e)}
-        ${r > 0 ? `<span class="sort-cd" title="Rechargement : ${r} tour(s)">${r}</span>` : ``}
-      </button>`;
-      })
+      .map((t, n) =>
+        htmlBoutonSort(
+          e,
+          t,
+          n + 2,
+          `<span class="sort-icon-wrap"${attrElementSort(t, e)}><span class="sort-nom-fallback">${echapperHtml(t.nom)}</span><img class="sort-icon" src="${iconeSort(t.id)}" alt="" onerror="this.closest('.sort-icon-wrap')?.classList.add('noicon'); this.remove()" /></span>`,
+        ),
+      )
       .join(``);
   queueMicrotask(() => {
     racine.querySelectorAll(`button.sort[data-sort]`).forEach((e) => {
@@ -781,20 +1289,43 @@ function htmlBarreSorts() {
     });
     document.getElementById(`sort-annuler`)?.addEventListener(`click`, () => {
       sortChoisi = null;
+      infoSort = null;
       rendreCombat();
+    });
+    document.getElementById(`sort-lancer-cible`)?.addEventListener(`click`, () => {
+      lancerSurVisee();
     });
   });
   let r;
   if (sortChoisi) {
-    const consigne = sansCibleAChoisir(sortChoisi)
-      ? `<button id="sort-lancer" class="primaire">Lancer ${echapperHtml(sortChoisi.nom)}</button>`
-      : `<span class="aide-consigne">Choisis une cible pour <b>${echapperHtml(sortChoisi.nom)}</b>.</span>`;
+    const cibles = sansCibleAChoisir(sortChoisi)
+      ? []
+      : ciblesValides(e, sortChoisi, combattants).filter((c) => c.pvActuels > 0);
+    const clavier = ecranTactile()
+      ? ``
+      : `<span class="aide-clavier"><kbd>←</kbd>/<kbd>→</kbd> cible · <kbd>Entrée</kbd> lancer</span>`;
+    let consigne;
+    if (sansCibleAChoisir(sortChoisi)) {
+      consigne = `<button id="sort-lancer" class="primaire">Lancer ${echapperHtml(sortChoisi.nom)}</button>`;
+    } else if (cibles.length === 1 && ecranTactile()) {
+      // une seule cible : un bouton suffit, sans chercher la carte sur l'écran
+      consigne = `<button id="sort-lancer-cible" class="primaire">Lancer sur ${echapperHtml(cibles[0].nom)}</button>`;
+    } else {
+      consigne = `<span class="aide-consigne">Choisis une cible${sortDeLigne() ? ` (ligne avant)` : ``} pour <b>${echapperHtml(sortChoisi.nom)}</b>. ${clavier}</span>`;
+    }
     r = `<div class="aide aide-sort${aideDepliee ? ` deplie` : ``}">
       <div class="aide-sort-tete">${consigne}<button id="sort-info" class="secondaire sort-info" aria-label="Détails du sort" aria-pressed="${aideDepliee}">ⓘ</button><button id="sort-annuler" class="secondaire">Annuler</button></div>
+      <div id="aide-refus" class="aide-refus" role="status" hidden></div>
       <div class="aide-sort-detail">${infobulleSort(sortChoisi, e)}</div>
     </div>`;
+  } else if (infoSort) {
+    const raison = raisonIndisponible(e, infoSort, combattants);
+    r = `<div class="aide aide-sort aide-indispo deplie">
+      <div class="aide-sort-tete"><span class="aide-consigne">⛔ <b>${echapperHtml(infoSort.nom)}</b>${raison ? ` : ${echapperHtml(raison)}` : ``}</span><button id="sort-annuler" class="secondaire">Fermer</button></div>
+      <div class="aide-sort-detail">${infobulleSort(infoSort, e)}</div>
+    </div>`;
   } else {
-    r = `<div class="aide">Tour de <b>${echapperHtml(e.nom)}</b> : choisis un sort.</div>`;
+    r = `<div class="aide">Tour de <b>${echapperHtml(e.nom)}</b> : choisis un sort · <span class="aide-pa">${e.paActuels}/${e.paMax} PA</span></div>`;
   }
   return `
     <div class="sorts-rangee">

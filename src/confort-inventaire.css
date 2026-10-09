@@ -1,1 +1,216 @@
 /* Confort de jeu — lot « inventaire » (chargé après visuel.css). */
+
+/* ---------- Cartes d'objet : plus de débordement horizontal ---------- */
+.item-carte .item-nom {
+  flex: 1;
+  min-width: 0;
+}
+.equip-inv > .item-carte {
+  min-width: 0;
+}
+.item-carte .ichips {
+  flex-wrap: wrap;
+}
+/* le « ×2 » ne s'étire plus en barre noire */
+.item-nom > .item-qte {
+  align-self: flex-start;
+}
+/* un objet seul ne s'étire plus sur toute la hauteur de la liste */
+.equip-inv {
+  align-content: start;
+}
+
+/* ---------- Comparaisons chiffrées ---------- */
+.verdict-mitige.tendance-plus {
+  background: #cfe3a6;
+  color: #24420c;
+}
+.verdict-mitige.tendance-moins {
+  background: #ecc8a8;
+  color: #5a2a10;
+}
+.delta-effet {
+  font-style: italic;
+}
+.equip-pa {
+  color: var(--muet);
+  font-size: 0.78em;
+  font-weight: 700;
+}
+.equip-vide {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ---------- Hôtel de vente ---------- */
+.hdv-manque {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  white-space: nowrap;
+  color: #9b2d1c;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+.hdv-manque .kamas {
+  color: inherit;
+}
+.pastille-inutile {
+  display: inline-block;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: #b9ad95;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  vertical-align: middle;
+}
+.hdv-inutile {
+  border-style: dashed;
+}
+/* barre d'annulation : dans la barre collante du bas, juste au-dessus du bouton Retour
+   (elle ne peut donc jamais le recouvrir, en haut comme en bas de page) */
+.hdv-barre {
+  gap: 8px 12px;
+}
+.hdv-snack {
+  flex: 1 1 100%;
+  max-width: 560px;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  padding: 6px 10px;
+  border: 1px solid var(--or);
+  border-radius: 12px;
+  background: #fff4d6;
+  box-shadow: 0 2px 8px #0002;
+  font-size: 0.88rem;
+  text-align: left;
+}
+.hdv-snack-texte {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+.hdv-snack-boutons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-left: auto;
+}
+.hdv-snack button {
+  padding: 5px 12px;
+}
+@media (width<=700px) {
+  .hdv-barre {
+    padding-top: 8px;
+  }
+  .hdv-snack {
+    gap: 4px 8px;
+    font-size: 0.82rem;
+  }
+  /* « Annuler » reste sur la ligne des boutons « Équiper sur … » : défilement horizontal si besoin */
+  .hdv-snack-boutons {
+    flex: 1 1 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  /* calage à droite sans justify-content, qui rendrait le début inatteignable en cas de débordement */
+  .hdv-snack-boutons > :first-child {
+    margin-left: auto;
+  }
+  .hdv-snack-boutons::-webkit-scrollbar {
+    display: none;
+  }
+  .hdv-snack button {
+    flex: none;
+    padding: 4px 9px;
+    white-space: nowrap;
+  }
+}
+
+/* ---------- Forgemagie ---------- */
+.forge-solde {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  width: fit-content;
+  margin-inline: auto;
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: #fff4d6;
+  box-shadow: 0 2px 8px #0002;
+}
+.forge-section {
+  margin: 10px 0 2px;
+  color: var(--muet);
+  font-size: 0.84rem;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.forge-section:first-child {
+  margin-top: 0;
+}
+.forge-apercu .delta-plus,
+.forge-apercu .delta-moins {
+  margin-right: 4px;
+}
+.forge-carte.flash-ok {
+  animation: forge-flash-ok 1s ease-out;
+}
+.forge-carte.flash-ko {
+  animation: forge-flash-ko 1s ease-out;
+}
+@keyframes forge-flash-ok {
+  0%,
+  40% {
+    background: #fff0a8;
+    box-shadow: 0 0 0 3px #e9b949;
+  }
+}
+@keyframes forge-flash-ko {
+  0%,
+  40% {
+    background: #f7c9bd;
+    box-shadow: 0 0 0 3px #c8442c;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .forge-carte.flash-ok,
+  .forge-carte.flash-ko {
+    animation-duration: 0.01s;
+  }
+}
+
+/* ---------- Téléphone ---------- */
+@media (width<=700px) {
+  .ichip {
+    white-space: normal;
+  }
+  .forge-carte,
+  .hdv-achat {
+    flex-wrap: wrap;
+  }
+  .forge-boutons {
+    flex-direction: row;
+    width: 100%;
+    margin-left: 0;
+  }
+  .forge-boutons button {
+    flex: 1;
+  }
+}
+@media (width<=480px) {
+  .item-carte .hdv-prix {
+    margin-left: 0;
+  }
+}
+.item-nom > .pastille-inutile {
+  align-self: flex-start;
+}

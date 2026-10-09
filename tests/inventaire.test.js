@@ -82,3 +82,84 @@ describe(`équiper le meilleur / vendre l'inutile`, async () => {
     }
   });
 });
+
+describe(`comparaisons chiffrées`, async () => {
+  const { objetsInutiles } = await import(`../src/jeu/inventaire.js`);
+  const {
+    acheterObjet,
+    annulerAchat,
+    annulerVentes,
+    vendreObjet: vendre,
+  } = await import(`../src/jeu/economie.js`);
+  // une cape aux stats choisies (mêmes résistances et effets que la cape portée)
+  const cape = (stats) => ({ ...objet(`abracape`, `epique`), adaptatif: 0, pa: 0, stats });
+  const runAvecCape = (stats) => {
+    const run = nouvelleRun([`iop`]);
+    run.persos[0].equipement.cape = cape(stats);
+    return run;
+  };
+  it(`un mitigé à score négatif pour tous est inutile, pas un mitigé à score positif`, () => {
+    const run = runAvecCape({ intelligence: 20 });
+    const perte = cape({ intelligence: 10, soin: 1 });
+    const gain = cape({ intelligence: 18, crit: 5 });
+    const cp = comparerObjet(perte, run.persos[0]);
+    const cg = comparerObjet(gain, run.persos[0]);
+    expect(cp.verdict).toBe(`mitige`);
+    expect(cp.score).toBeLessThan(0);
+    expect(cp.tendance).toBe(`moins`);
+    expect(cg.verdict).toBe(`mitige`);
+    expect(cg.score).toBeGreaterThan(0);
+    expect(cg.tendance).toBe(`plus`);
+    run.inventaire.push(perte, gain);
+    expect(objetsInutiles(run)).toEqual([perte]);
+  });
+  it(`les effets spéciaux gagnés ou perdus figurent dans les deltas`, () => {
+    const run = nouvelleRun([`iop`]);
+    const p = run.persos[0];
+    const id = Object.keys(EQUIPEMENTS).find((k) => EQUIPEMENTS[k].riposteAvant);
+    const inst = objet(id);
+    p.equipement = {};
+    const c = comparerObjet(inst, p);
+    expect(c.deltas).toContainEqual({ cle: `effet_riposteAvant`, valeur: 1, utile: true });
+    p.equipement[c.emplacement] = inst;
+    const sans = Object.keys(EQUIPEMENTS).find(
+      (k) =>
+        EQUIPEMENTS[k].slot === EQUIPEMENTS[id].slot &&
+        !EQUIPEMENTS[k].riposteAvant &&
+        !EQUIPEMENTS[k].ligneAvant,
+    );
+    const c2 = comparerObjet(objet(sans), p);
+    expect(c2.deltas).toContainEqual({ cle: `effet_riposteAvant`, valeur: -1, utile: true });
+  });
+  it(`un achat est annulable : remboursé et remis à sa place dans le stock`, () => {
+    const run = nouvelleRun([`iop`]);
+    run.kamas = 1000;
+    const stock = [
+      { inst: cape({ force: 1 }), prix: 100 },
+      { inst: cape({ force: 2 }), prix: 200 },
+      { inst: cape({ force: 3 }), prix: 300 },
+    ];
+    const achete = stock[1];
+    expect(acheterObjet(run, stock, 1)).toBe(true);
+    expect(run.kamas).toBe(800);
+    expect(annulerAchat(run, stock, achete.inst, achete.prix, 1)).toBe(true);
+    expect(run.kamas).toBe(1000);
+    expect(run.inventaire).toEqual([]);
+    expect(stock.map((x) => x.prix)).toEqual([100, 200, 300]);
+    // déjà sorti de l'inventaire (équipé) : rien n'est fait
+    expect(annulerAchat(run, stock, achete.inst, achete.prix, 1)).toBe(false);
+  });
+  it(`un lot vendu s'annule d'un bloc`, () => {
+    const run = nouvelleRun([`iop`]);
+    const a = cape({ force: 1 });
+    const b = cape({ force: 2 });
+    run.inventaire.push(a, b);
+    const kamas = run.kamas;
+    const ventes = [a, b].map((inst) => ({ inst, prix: prixRevente(inst) }));
+    vendre(run, 0);
+    vendre(run, 0);
+    expect(annulerVentes(run, ventes)).toBe(true);
+    expect(run.kamas).toBe(kamas);
+    expect(run.inventaire).toEqual([a, b]);
+  });
+});

@@ -27,10 +27,10 @@ function htmlUnDofus(meta, d) {
     const e = etatQuete(etat, q, ctx);
     const compteur =
       e.compteur && !e.faite ? ` <small>${e.compteur[0]}/${e.compteur[1]}</small>` : ``;
-    return `<li class="${e.faite ? `fait` : ``}" title="${echapperHtml(indiceQuete(q))}">${e.faite ? `✔` : `○`} ${echapperHtml(q.nom.replace(/\.$/, ``))}${compteur}</li>`;
+    return `<li class="${e.faite ? `fait` : ``}" data-tip="${echapperHtml(indiceQuete(q))}">${e.faite ? `✔` : `○`} ${echapperHtml(q.nom.replace(/\.$/, ``))}${compteur}</li>`;
   });
   const monde = mondeDuDofus(d.id);
-  return `<div class="pd-dofus">
+  return `<div class="pd-dofus" data-dofus="${echapperHtml(d.id)}">
     <img class="pd-img" src="${cheminAsset(d.img)}" alt="" onerror="this.remove()" />
     <div class="pd-corps">
       <p class="pd-titre"><b>${echapperHtml(d.nom)}</b> <span class="pd-niv">niv. ${d.niveau}${monde ? ` · ${echapperHtml(monde.nom)}` : ``}</span></p>

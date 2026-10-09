@@ -1,1 +1,155 @@
 /* Confort de jeu — lot « meta » (chargé après visuel.css). */
+
+/* ---------- Focus : le titre d'un nouvel écran reçoit le focus sans cadre ---------- */
+.ecran h1[tabindex="-1"]:focus {
+  outline: none;
+}
+
+/* ---------- Bouton Continuer : rappel de la touche Entrée (PC) ---------- */
+.btn-continuer {
+  position: relative;
+}
+.btn-continuer .kbd-entree {
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 0 5px;
+  font-size: 0.62rem;
+  line-height: 1.4;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+/* ---------- Infobulles : les pastilles qui en ont une ---------- */
+.ichip[data-tip],
+.ic-tier[data-tip],
+.classe-archetype[data-tip],
+.archetype-icone[data-tip],
+.badges-heros[data-tip],
+.pd-quetes li[data-tip] {
+  cursor: help;
+}
+
+/* ---------- Accueil ---------- */
+.monde-carte[role="button"]:focus-visible {
+  outline: 3px solid var(--or, #c8962c);
+  outline-offset: 3px;
+}
+.asc-etoile:focus-visible {
+  outline: 2px solid var(--or, #c8962c);
+  outline-offset: 1px;
+  border-radius: 6px;
+}
+/* étoile verrouillée : plus de disabled, mais même rendu qu'avant */
+.asc-etoile.verrou:hover {
+  transform: none;
+}
+.asc-desc.asc-condition {
+  color: var(--or-texte, #8a5a12);
+  font-weight: 700;
+}
+.ecran-accueil > .boutons-ecran .jouer-recap {
+  flex-basis: 100%;
+  margin: -4px 0 0;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #4b2e10;
+  text-align: center;
+}
+.ecran-accueil > .boutons-ecran .jouer-recap.mort-definitive::after {
+  content: " · mort définitive";
+  color: #a02a1a;
+  font-weight: 700;
+}
+.prochain-dofus .pd-dofus {
+  cursor: pointer;
+}
+.nuage-bandeau .nuage-compare {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px 14px;
+  margin-top: 4px;
+}
+.nuage-bandeau .nuage-pause {
+  display: block;
+  opacity: 0.8;
+}
+/* étoiles : une vraie zone tactile sur téléphone, l'icône reste petite */
+@media (width<=700px) {
+  .monde-carte .asc-rangee {
+    padding: 0;
+  }
+  .monde-carte .asc-etoile {
+    position: relative;
+    width: 28px;
+    height: 40px;
+  }
+  .monde-carte .asc-etoile img {
+    width: 42px;
+    height: 34px;
+  }
+  .monde-carte .asc-etoile::before {
+    content: "";
+    position: absolute;
+    inset: 0 -4px;
+  }
+}
+
+/* ---------- Succès : un seul défilement sur téléphone ---------- */
+.succes-vers-liste {
+  display: none;
+}
+@media (max-width: 900px) {
+  .succes-galerie,
+  .succes-panneau {
+    max-height: none;
+    overflow: visible;
+  }
+  .succes-vers-liste {
+    display: inline-flex;
+    position: sticky;
+    top: 8px;
+    z-index: 3;
+    align-self: flex-start;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ---------- Bestiaire et armurerie : retour aux zones sur téléphone ---------- */
+.best-vers-zones {
+  display: none;
+}
+@media (width<=760px) {
+  .best-detail {
+    max-height: none;
+    overflow: visible;
+    scroll-margin-top: 8px;
+  }
+  .best-vers-zones {
+    display: inline-flex;
+    position: sticky;
+    top: 8px;
+    z-index: 3;
+    align-self: flex-start;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ---------- Paramètres : synchro en pause ---------- */
+.nuage-pause-ligne {
+  background: #fff4d6;
+  border: 1px solid #d9a441;
+  border-radius: 10px;
+}
+
+/* reprise sur téléphone : le récapitulatif juste sous « Reprendre », avant « Abandonner » */
+@media (width<=700px) {
+  .ecran-accueil > .boutons-ecran .btn-abandon {
+    order: 2;
+  }
+}

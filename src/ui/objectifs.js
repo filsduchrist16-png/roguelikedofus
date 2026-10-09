@@ -6,11 +6,14 @@ import { cheminAsset, echapperHtml } from "./commun.js";
 
 let minuteur = null;
 let objectifsCourants = [];
+// replie la boîte (posé par afficherObjectifsCombat, appelé par la vue de combat)
+let replier = null;
 const ICONES = { en_cours: `○`, assure: `✔`, rate: `✖` };
 
 export function retirerObjectifsCombat() {
   clearTimeout(minuteur);
   objectifsCourants = [];
+  replier = null;
   document.getElementById(`objectifs-combat`)?.remove();
 }
 
@@ -35,12 +38,16 @@ export function afficherObjectifsCombat(objectifs, { replierApres = 9000 } = {})
       detail: o.suivi?.type === `compteur` ? `${o.suivi.base}/${o.suivi.seuil}` : undefined,
     },
   }));
+  // Sur téléphone, la boîte ouverte cachait le défi et l'ordre de jeu : elle démarre repliée
+  // (pastille qui pulse). Partout, un simple compteur cumulé ne mérite pas d'ouverture d'office.
+  const mobile = window.matchMedia?.(`(max-width: 700px)`).matches ?? false;
+  const ouvrir = !mobile && objectifsCourants.some((o) => o.suivi?.type !== `compteur`);
   const boite = document.createElement(`aside`);
   boite.id = `objectifs-combat`;
-  boite.className = `objectifs-combat ouvert`;
+  boite.className = `objectifs-combat${ouvrir ? ` ouvert` : ` pulse`}`;
   boite.setAttribute(`aria-label`, `Objectifs de succès dans ce combat`);
   boite.innerHTML = `
-    <button type="button" class="objectifs-pastille" aria-expanded="true" title="Objectifs de succès dans ce combat">${htmlPastille()}</button>
+    <button type="button" class="objectifs-pastille" aria-expanded="${ouvrir}" title="Objectifs de succès dans ce combat">${htmlPastille()}</button>
     <div class="objectifs-panneau">
       <div class="objectifs-tete">
         <span>🏆 Objectif${objectifs.length > 1 ? `s` : ``} dans ce combat</span>
@@ -68,9 +75,17 @@ export function afficherObjectifsCombat(objectifs, { replierApres = 9000 } = {})
   };
   pastille.addEventListener(`click`, () => basculer(!boite.classList.contains(`ouvert`)));
   boite.querySelector(`.objectifs-fermer`).addEventListener(`click`, () => basculer(false));
-  if (replierApres) {
+  replier = () => boite.classList.contains(`ouvert`) && basculer(false);
+  if (!ouvrir) {
+    setTimeout(() => boite.classList.remove(`pulse`), 2000);
+  } else if (replierApres) {
     minuteur = setTimeout(() => basculer(false), replierApres);
   }
+}
+
+/** Replie la boîte des objectifs si elle est ouverte (première action du joueur). */
+export function replierObjectifsCombat() {
+  replier?.();
 }
 
 /** Met à jour l'état des objectifs après un évènement du combat. */

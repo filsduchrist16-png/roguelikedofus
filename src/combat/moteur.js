@@ -136,6 +136,8 @@ export async function executerCombat(e, t) {
     n.onEvenement?.({
       type: `ronde`,
     });
+    // méta sans texte : l'interface remet la frise à zéro (rien n'est affiché)
+    n.log(``, { ronde: true });
     let r = new Set();
     while (!combatTermine(e)) {
       let i = prochainAJouer(e, r);
@@ -171,10 +173,10 @@ export async function executerCombat(e, t) {
       i.degatsPctDofus = a.degatsPct;
       if (i.effets.some((e) => e.stat === `assome`)) {
         i.effets = i.effets.filter((e) => e.stat !== `assome`);
-        n.log(`💫 ${i.nom} est assommé et passe son tour !`);
+        n.log(`💫 ${i.nom} est assommé et passe son tour !`, { tour: i.ref });
         await t.onUpdate?.();
       } else {
-        n.log(`▶ Tour de ${i.nom} (${i.paActuels} PA).`);
+        n.log(`▶ Tour de ${i.nom} (${i.paActuels} PA).`, { tour: i.ref });
         await t.onUpdate?.();
         let r = 0;
         while (i.pvActuels > 0 && !combatTermine(e) && !(++r > 50)) {

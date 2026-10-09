@@ -40,6 +40,10 @@ const niveauMaxMonde = (e) => getMonde(e).niveaux[1];
 export function gagnerXpPerso(e, t, n) {
   return gagnerXp(e.progression, t, niveauMaxMonde(n));
 }
+// Vrai si le héros est encore sous le niveau maximum du monde (il peut donc gagner de l'XP).
+export function peutGagnerXp(perso, trancheId) {
+  return perso.progression.niveau < niveauMaxMonde(trancheId);
+}
 const CLASSES_DESACTIVEES = new Set();
 export const classesJouables = () =>
   Object.keys(CLASSES).filter((e) => !CLASSES_DESACTIVEES.has(e));
@@ -110,18 +114,24 @@ export function nouvelleRun(e = EQUIPE_DEFAUT, ascension = 0, trancheId = `t1`) 
     trancheId,
   };
 }
+// Héros encore debout (les tombés de la mort définitive ne comptent pas pour l'équipe « pleine »).
+export const herosVivants = (e) => e.persos.filter((p) => p.pvActuels > 0).length;
 export function noeudsExclus(e, t) {
   let n = [...(t.sansNoeuds ?? [])];
   if (
     effetsDifficulte(e.ascension).tavernesCoupeesAPlein &&
-    e.persos.length >= 4 &&
+    herosVivants(e) >= 4 &&
     !n.includes(`taverne`)
   ) {
     n.push(`taverne`);
   }
+  // philtres d'Otomai plafonnés : plus d'Otomai une fois le maximum atteint
+  if ((e.philtres ?? 0) >= CONFIG_ARCHI.philtresMax && !n.includes(`otomai`)) {
+    n.push(`otomai`);
+  }
   return n;
 }
-function niveauMoyen(e) {
+export function niveauMoyen(e) {
   if (e.persos.length) {
     return Math.max(
       1,
@@ -369,6 +379,25 @@ export function synchroniserPv(e, t) {
       n.pvActuels = e.pvActuels;
     }
   }
+}
+// Aperçu d'un soin de taverne : PV rendus au total et héros K.O. relevés (même calcul que soignerEquipe).
+export function apercuSoin(persos, t, mortDefinitive = false) {
+  let total = 0;
+  let releves = [];
+  for (let p of persos) {
+    if (mortDefinitive && p.pvActuels <= 0) {
+      continue;
+    }
+    let max = pvMaxPerso(p);
+    let gain = Math.min(max, p.pvActuels + Math.round(max * t)) - p.pvActuels;
+    if (gain > 0) {
+      total += gain;
+      if (p.pvActuels <= 0) {
+        releves.push(p.classeId);
+      }
+    }
+  }
+  return { total, releves };
 }
 export function soignerEquipe(e, t) {
   let n = !!effetsDifficulte(e.ascension).mortDefinitive;

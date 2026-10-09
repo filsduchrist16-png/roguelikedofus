@@ -161,3 +161,24 @@ export function annulerVente(e, inst, prix) {
   e.inventaire.push(inst);
   return true;
 }
+// Annule plusieurs ventes d'un coup (« Vendre l'inutile ») : tout ou rien.
+export function annulerVentes(e, ventes) {
+  const total = ventes.reduce((a, v) => a + v.prix, 0);
+  if (!ventes.length || e.kamas < total) {
+    return false;
+  }
+  ajouterKamas(e, -total);
+  e.inventaire.push(...ventes.map((v) => v.inst));
+  return true;
+}
+// Annule un achat : remboursé à 100 %, l'objet retourne dans le stock, à sa place.
+export function annulerAchat(e, stock, inst, prix, index) {
+  const i = e.inventaire.indexOf(inst);
+  if (i < 0) {
+    return false;
+  }
+  e.inventaire.splice(i, 1);
+  e.kamas += prix;
+  stock.splice(Math.min(Math.max(0, index), stock.length), 0, { inst, prix });
+  return true;
+}
