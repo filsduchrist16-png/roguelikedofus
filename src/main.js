@@ -137,6 +137,11 @@ import { ecranForgemagie } from "./ui/ecrans/forgemagie.js";
 import "./style.css";
 import "./interface.css";
 import "./visuel.css";
+import "./confort-run.css";
+import "./confort-carte.css";
+import "./confort-combat.css";
+import "./confort-inventaire.css";
+import "./confort-meta.css";
 function initialiserInterface(elementApp) {
   definirRacine(elementApp);
   fondDuMonde(null);
