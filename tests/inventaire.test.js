@@ -112,6 +112,36 @@ describe(`comparaisons chiffrées`, async () => {
     expect(run.persos[0].equipement.cape).toBe(gain);
     expect(equiperMeilleur(run)).toBe(0);
   });
+  it(`un PA pèse plus que n'importe quelle pile de Vitalité, et les dégâts plus que les PV`, async () => {
+    const { equiperMeilleur } = await import(`../src/jeu/inventaire.js`);
+    const run = runAvecCape({ intelligence: 20, vitalite: 40 });
+    const avecPA = { ...cape({ intelligence: 12, vitalite: 10 }), pa: 1 };
+    const grosPV = cape({ intelligence: 19, vitalite: 90 });
+    run.inventaire.push(grosPV);
+    expect(equiperMeilleur(run)).toBe(0); // beaucoup de PV ne vaut pas 1 point de dégâts perdu
+    run.inventaire.push(avecPA);
+    expect(equiperMeilleur(run)).toBe(1);
+    expect(run.persos[0].equipement.cape).toBe(avecPA);
+    const degats = cape({ intelligence: 30, vitalite: 0 });
+    run.inventaire.push(degats);
+    expect(equiperMeilleur(run)).toBe(0); // perdre le PA pour +18 dégâts : non
+  });
+  it(`une pièce de panoplie qui rapproche d'un palier à PA est préférée à une pièce banale`, async () => {
+    const { PANOPLIES } = await import(`../src/data/index.js`);
+    const { valeurEquipement } = await import(`../src/jeu/inventaire.js`);
+    const nom = Object.keys(PANOPLIES).find((n) => {
+      const p = PANOPLIES[n];
+      return p.pieces.length >= 3 && p.paliers[3]?.pa && !p.paliers[2]?.pa;
+    });
+    expect(nom).toBeTruthy();
+    const run = nouvelleRun([`iop`]);
+    const perso = run.persos[0];
+    const piece = objet(PANOPLIES[nom].pieces[0], `epique`);
+    const avant = valeurEquipement(perso);
+    perso.equipement[EQUIPEMENTS[piece.id].slot === `arme` ? `arme` : EQUIPEMENTS[piece.id].slot] =
+      { ...piece, stats: {}, adaptatif: 0, pa: 0 };
+    expect(valeurEquipement(perso)).toBeGreaterThan(avant + 20);
+  });
   it(`un mitigé à score négatif pour tous est inutile, pas un mitigé à score positif`, () => {
     const run = runAvecCape({ intelligence: 20 });
     const perte = cape({ intelligence: 10, soin: 1 });

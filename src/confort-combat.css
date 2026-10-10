@@ -290,3 +290,27 @@
 .sorts-zone {
   padding-top: 12px;
 }
+
+/* PV de l'équipe dans la barre du bas : seulement sur téléphone, où la barre cache les cartes */
+.equipe-mini {
+  display: none;
+}
+@media (width<=700px) {
+  .equipe-mini {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 12px;
+    justify-content: center;
+    margin: 0 0 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .equipe-mini .em-heros.actif b {
+    color: #c96a00;
+  }
+  .equipe-mini .em-heros.mort {
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+}

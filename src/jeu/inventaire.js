@@ -2,6 +2,9 @@
 import { CLASSES, EQUIPEMENTS } from "../data/index.js";
 import { STAT_PAR_ELEMENT } from "./progression.js";
 import { bonusEquipement, emplacementCible, equiperObjet, peutEquiper, pvMaxPerso } from "./run.js";
+import { PA_MAX_EQUIPEMENT, PA_MAX_PANOPLIES } from "./emplacements.js";
+import { bonusPanoplie, compterPanoplies, paliersPanoplie } from "./panoplies.js";
+import { PANOPLIES } from "../data/index.js";
 
 const STATS = [`force`, `intelligence`, `agilite`, `chance`, `soin`, `prospection`, `crit`];
 const ELEMENTS = [`terre`, `feu`, `eau`, `air`];
@@ -63,32 +66,63 @@ function statUtile(stat, classe) {
 
 // Valeur d'un effet spécial dans le score (riposte, renaissance… : environ une demi-pièce).
 const VALEUR_EFFET = 30;
+// Un PA vaut plus que n'importe quelle pièce : c'est ce qui fait pencher la balance en premier.
+const VALEUR_PA = 150;
 
 /**
- * Valeur chiffrée de l'équipement d'un héros, alignée sur les règles d'utilité de comparerObjet :
- * meilleure stat d'élément de la classe, Intelligence (dégâts globaux) et Agilité (critique),
- * PV max, critique, soin, résistances, PA, dégâts d'arme et effets spéciaux.
+ * Avancée vers un palier de panoplie qui donne du PA (pas encore atteint, et tant que le plafond
+ * de PA n'est pas touché) : une pièce de plus sur 3 vaut un tiers d'un demi-PA, etc. Sans cela, une
+ * pièce de panoplie à moitié inutile ne serait jamais équipée, et le palier n'arriverait jamais.
  */
-function valeurPerso(perso) {
+function progressionPA(perso, paBonus) {
+  const comptes = compterPanoplies(perso);
+  let pasDePanoplie = paBonus >= PA_MAX_EQUIPEMENT;
+  let meilleur = 0;
+  for (const [nom, nb] of Object.entries(comptes)) {
+    if (bonusPanoplie(nom, nb)?.pa) {
+      pasDePanoplie ||= PA_MAX_PANOPLIES <= 1;
+      continue;
+    }
+    const cible = paliersPanoplie(nom).find((k) => k > nb && PANOPLIES[nom].paliers[k].pa);
+    if (cible) {
+      meilleur = Math.max(meilleur, nb / cible);
+    }
+  }
+  return pasDePanoplie ? 0 : VALEUR_PA * 0.5 * meilleur;
+}
+
+/**
+ * Valeur chiffrée de l'équipement d'un héros, alignée sur les règles d'utilité de comparerObjet.
+ * Ce qui compte d'abord : les PA (objets ou panoplie qui se complète) puis les dégâts : stats des
+ * éléments de la classe (la meilleure à plein, la seconde à moitié), Intelligence (dégâts globaux),
+ * dégâts d'arme, critique. Viennent ensuite, en poids plus faible : PV, soin, résistances et
+ * effets spéciaux.
+ */
+export function valeurEquipement(perso, offensifSeul = false) {
   const b = bonusEquipement(perso);
   const s = b.stats;
-  const elements = CLASSES[perso.classeId].elements.map((x) => s[STAT_PAR_ELEMENT[x]] ?? 0);
+  const elements = CLASSES[perso.classeId].elements
+    .map((x) => s[STAT_PAR_ELEMENT[x]] ?? 0)
+    .sort((x, y) => y - x);
   const res = Object.values(b.resistances).reduce((a, v) => a + v, 0);
   const effets = Object.values(perso.equipement).reduce(
     (a, inst) => a + (inst ? effetsSpeciaux(inst.id).length : 0),
     0,
   );
-  return (
-    Math.max(0, ...elements) +
-    (s.intelligence ?? 0) * 0.3 +
+  const offensif =
+    (elements[0] ?? 0) +
+    (elements[1] ?? 0) * 0.5 +
+    (s.intelligence ?? 0) * 0.4 +
     (s.agilite ?? 0) * 0.3 +
-    pvMaxPerso(perso) * 0.25 +
-    (s.crit ?? 0) * 2 +
-    (s.soin ?? 0) * 0.5 +
-    res * 100 +
-    b.paBonus * 60 +
-    degatsMoyensArme(perso.equipement.arme) +
-    effets * VALEUR_EFFET
+    (s.crit ?? 0) * 2.5 +
+    degatsMoyensArme(perso.equipement.arme) * 2 +
+    b.paBonus * VALEUR_PA +
+    progressionPA(perso, b.paBonus);
+  if (offensifSeul) {
+    return offensif;
+  }
+  return (
+    offensif + pvMaxPerso(perso) * 0.2 + (s.soin ?? 0) * 0.4 + res * 80 + effets * VALEUR_EFFET
   );
 }
 
@@ -148,8 +182,10 @@ export function comparerObjet(inst, perso, emplacement) {
   for (const k of anciens.filter((k) => !nouveaux.includes(k))) {
     ajouter(`effet_${k}`, -1);
   }
-  const score = Math.round(valeurPerso(essai) - valeurPerso(perso));
-  const resultat = { actuel, deltas, verdict, emplacement: slot, score };
+  const score = Math.round(valeurEquipement(essai) - valeurEquipement(perso));
+  const offensif =
+    Math.round((valeurEquipement(essai, true) - valeurEquipement(perso, true)) * 10) / 10;
+  const resultat = { actuel, deltas, verdict, emplacement: slot, score, offensif };
   if (verdict === `mitige`) {
     resultat.tendance = score > 0 ? `plus` : `moins`;
   }
@@ -161,14 +197,15 @@ export function herosAmeliores(inst, persos) {
   return persos.filter((p) => comparerObjet(inst, p).verdict === `mieux`);
 }
 
-// Amélioration sûre à équiper d'office : nette (`mieux`) ou « plutôt mieux » (mitigé à score positif)
-// tant qu'aucun effet spécial n'est perdu.
+// Amélioration sûre à équiper d'office : le score augmente vraiment (PA d'abord, puis dégâts), ou
+// l'objet n'a que des gains. Jamais au prix d'un effet spécial perdu.
 function ameliorationSure(c) {
+  const perdEffet = c.deltas.some((d) => d.cle.startsWith(`effet_`) && d.valeur < 0);
+  // PA et dégâts décident : jamais d'échange qui en fait perdre, même contre beaucoup de PV
   return (
-    c.verdict === `mieux` ||
-    (c.verdict === `mitige` &&
-      c.score > 0 &&
-      !c.deltas.some((d) => d.cle.startsWith(`effet_`) && d.valeur < 0))
+    !perdEffet &&
+    c.offensif >= 0 &&
+    (c.verdict === `mieux` || (c.verdict !== `impossible` && c.score > 0.5))
   );
 }
 

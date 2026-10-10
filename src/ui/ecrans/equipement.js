@@ -299,7 +299,7 @@ export function ecranEquipement(e, t) {
         selection = null;
       }
       const nbAuto = groupes.filter((g) => herosAmeliorablesAuto(g.inst, e).length).length;
-      const boutonAuto = `<button id="equip-auto" class="primaire petit"${nbAuto ? `` : ` disabled`} title="${nbAuto ? `Équipe sur chaque héros les objets de l'inventaire qui sont un progrès sûr` : `Rien à améliorer dans l'inventaire pour le moment`}">⚡ Équiper le meilleur${nbAuto ? ` (${nbAuto})` : ``}</button>`;
+      const boutonAuto = `<button id="equip-auto" class="primaire petit"${nbAuto ? `` : ` disabled`} title="${nbAuto ? `Équipe sur chaque héros les objets qui font gagner des PA (objet ou panoplie qui se complète) ou des dégâts, sans en faire perdre` : `Rien à améliorer dans l'inventaire pour le moment`}">⚡ Équiper le meilleur${nbAuto ? ` (${nbAuto})` : ``}</button>`;
       afficherEcran(`
         <h1>Équipement</h1>
         <div class="equip-onglets">${c}</div>
@@ -386,7 +386,7 @@ export function ecranEquipement(e, t) {
       document.getElementById(`equip-auto`)?.addEventListener(`click`, () => {
         const n = equiperMeilleur({ inventaire: t, persos: e });
         messageAuto = n
-          ? `✓ ${n} objet${n > 1 ? `s` : ``} équipé${n > 1 ? `s` : ``} (seulement les progrès sûrs ; les objets vraiment « mitigés » restent à ton choix).`
+          ? `✓ ${n} objet${n > 1 ? `s` : ``} équipé${n > 1 ? `s` : ``} (PA et dégâts d'abord ; les échanges douteux restent à ton choix).`
           : `Rien à améliorer.`;
         selection = null;
         i();

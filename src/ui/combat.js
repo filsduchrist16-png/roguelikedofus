@@ -1327,7 +1327,16 @@ function htmlBarreSorts() {
   } else {
     r = `<div class="aide">Tour de <b>${echapperHtml(e.nom)}</b> : choisis un sort · <span class="aide-pa">${e.paActuels}/${e.paMax} PA</span></div>`;
   }
+  // PV des héros toujours visibles (téléphone) : la barre recouvre les cartes de l'équipe
+  const equipeMini = combattants
+    .filter((c) => c.camp === `joueur`)
+    .map(
+      (c) =>
+        `<span class="em-heros${c.pvActuels <= 0 ? ` mort` : ``}${c === e ? ` actif` : ``}"><b>${echapperHtml(c.nom)}</b> ${Math.max(0, Math.round(c.pvActuels))}/${c.pvMax}</span>`,
+    )
+    .join(``);
   return `
+    <div class="equipe-mini" aria-hidden="true">${equipeMini}</div>
     <div class="sorts-rangee">
       <div class="sorts-zone"><div class="sorts-liste">${n}</div></div>
       <div class="barre-actions-fin"><button id="vitesse-combat" class="secondaire vitesse-combat${parametres.combatRapide ? ` on` : ``}" title="Tours des monstres rapides (aussi dans les Paramètres)" aria-pressed="${!!parametres.combatRapide}">⏩</button><button id="fin-tour" class="fin-tour primaire" title="Terminer le tour"><span class="fin-tour-txt">Fin du tour</span> <kbd>${echapperHtml(nomTouche(parametres.toucheFinTour))}</kbd></button></div>

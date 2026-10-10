@@ -3003,6 +3003,14 @@
           "type": "runs_jouees",
           "seuil": 50
         }
+      },
+      {
+        "id": "dl_dolmanax_4",
+        "nom": "Mener l'année d'offrandes à son terme : gagner le monde 5.",
+        "critere": {
+          "type": "run_gagnee",
+          "tranche": "t5"
+        }
       }
     ]
   },
@@ -3052,6 +3060,14 @@
         "critere": {
           "type": "archis_total",
           "seuil": 40
+        }
+      },
+      {
+        "id": "dl_dokille_2",
+        "nom": "Rapporter le trophée de la chasse : gagner le monde 5.",
+        "critere": {
+          "type": "run_gagnee",
+          "tranche": "t5"
         }
       },
       {
@@ -3260,6 +3276,14 @@
         },
         "id": "ocre_t4",
         "nom": "Capturer tous les archimonstres du monde 4."
+      },
+      {
+        "id": "ocre_t5",
+        "nom": "Gagner le monde 5 : les derniers archimonstres rôdent partout.",
+        "critere": {
+          "type": "run_gagnee",
+          "tranche": "t5"
+        }
       }
     ]
   },
@@ -3288,10 +3312,10 @@
       },
       {
         "id": "dl_dofoozbz_3",
-        "nom": "Gagner le Monde 4.",
+        "nom": "Gagner le Monde 5.",
         "critere": {
           "type": "run_gagnee",
-          "tranche": "t4"
+          "tranche": "t5"
         }
       }
     ]
@@ -3477,7 +3501,7 @@
       },
       {
         "id": "dl_dofus_ivoire_3",
-        "nom": "« Une voix de crystal » : vaincre le Capitaine Meno.",
+        "nom": "« Une voix de cristal » : vaincre le Capitaine Meno.",
         "critere": {
           "type": "vaincre",
           "boss": "capitaine_meno"
@@ -3611,10 +3635,10 @@
       },
       {
         "id": "dl_dofus_nebuleux_4",
-        "nom": "« Odyssée en trois dimensions » : posséder le Dofus des Veilleurs.",
+        "nom": "Vaincre le Chalœil.",
         "critere": {
-          "type": "dofus_possede",
-          "dofus": "dofus_des_veilleurs"
+          "type": "vaincre",
+          "boss": "chaloeil"
         }
       }
     ]
@@ -3685,10 +3709,10 @@
       },
       {
         "id": "dl_dofus_sylvestre_3",
-        "nom": "Posséder le Dom de Pin.",
+        "nom": "Vaincre le Korriandre.",
         "critere": {
-          "type": "dofus_possede",
-          "dofus": "dom_de_pin"
+          "type": "vaincre",
+          "boss": "korriandre"
         }
       }
     ]
@@ -3905,6 +3929,14 @@
         },
         "id": "argente_scintillant_m4",
         "nom": "Gagner le Monde 4."
+      },
+      {
+        "id": "t5_rathrosk_gagne",
+        "nom": "Rapporter les trophées à Rathrosk : gagner le monde 5.",
+        "critere": {
+          "type": "run_gagnee",
+          "tranche": "t5"
+        }
       }
     ]
   }

@@ -60,26 +60,28 @@
     "slot": "anneau",
     "tiers": {
       "epique": {
-        "adaptatif": 9,
+        "adaptatif": 7,
         "stats": {
-          "vitalite": 8,
-          "soin": 9,
+          "vitalite": 6,
+          "soin": 7,
           "prospection": 7
         },
         "resistances": {
           "air": 0.09
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 12,
+        "adaptatif": 9,
         "stats": {
-          "vitalite": 10,
-          "soin": 11,
+          "vitalite": 8,
+          "soin": 8,
           "prospection": 9
         },
         "resistances": {
           "air": 0.12
-        }
+        },
+        "pa": 1
       }
     },
     "source": "elite",
@@ -210,9 +212,10 @@
           "terre": -0.03
         },
         "stats": {
-          "soin": 7,
-          "vitalite": 12
-        }
+          "soin": 5,
+          "vitalite": 9
+        },
+        "pa": 1
       },
       "legendaire": {
         "resistances": {
@@ -222,9 +225,10 @@
           "terre": -0.02
         },
         "stats": {
-          "soin": 9,
-          "vitalite": 15
-        }
+          "soin": 7,
+          "vitalite": 12
+        },
+        "pa": 1
       }
     }
   },
@@ -516,16 +520,18 @@
     "slot": "anneau",
     "tiers": {
       "epique": {
-        "adaptatif": 13,
+        "adaptatif": 10,
         "stats": {
-          "vitalite": 7
-        }
+          "vitalite": 5
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 16,
+        "adaptatif": 12,
         "stats": {
-          "vitalite": 9
-        }
+          "vitalite": 7
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -1046,22 +1052,24 @@
     "slot": "amulette",
     "tiers": {
       "epique": {
+        "adaptatif": 23,
+        "stats": {
+          "vitalite": 14
+        },
+        "resistances": {
+          "feu": 0.08
+        },
+        "pa": 1
+      },
+      "legendaire": {
         "adaptatif": 29,
         "stats": {
           "vitalite": 18
         },
         "resistances": {
-          "feu": 0.08
-        }
-      },
-      "legendaire": {
-        "adaptatif": 37,
-        "stats": {
-          "vitalite": 23
-        },
-        "resistances": {
           "feu": 0.1
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss"
@@ -2609,24 +2617,26 @@
     "slot": "amulette",
     "tiers": {
       "epique": {
-        "adaptatif": 26,
+        "adaptatif": 20,
         "stats": {
-          "vitalite": 17,
+          "vitalite": 13,
           "prospection": 7
         },
         "resistances": {
           "feu": 0.08
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 33,
+        "adaptatif": 26,
         "stats": {
-          "vitalite": 22,
+          "vitalite": 17,
           "prospection": 9
         },
         "resistances": {
           "feu": 0.1
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -3644,24 +3654,26 @@
     "slot": "anneau",
     "tiers": {
       "epique": {
+        "adaptatif": 7,
+        "stats": {
+          "vitalite": 7,
+          "crit": 3
+        },
+        "resistances": {
+          "eau": 0.04
+        },
+        "pa": 1
+      },
+      "legendaire": {
         "adaptatif": 9,
         "stats": {
           "vitalite": 9,
           "crit": 4
         },
         "resistances": {
-          "eau": 0.04
-        }
-      },
-      "legendaire": {
-        "adaptatif": 12,
-        "stats": {
-          "vitalite": 12,
-          "crit": 5
-        },
-        "resistances": {
           "eau": 0.05
-        }
+        },
+        "pa": 1
       }
     },
     "source": "elite",
@@ -4841,18 +4853,20 @@
     "slot": "anneau",
     "tiers": {
       "epique": {
+        "adaptatif": 11,
+        "stats": {
+          "vitalite": 3,
+          "soin": 7
+        },
+        "pa": 1
+      },
+      "legendaire": {
         "adaptatif": 14,
         "stats": {
           "vitalite": 4,
           "soin": 9
-        }
-      },
-      "legendaire": {
-        "adaptatif": 18,
-        "stats": {
-          "vitalite": 6,
-          "soin": 12
-        }
+        },
+        "pa": 1
       }
     },
     "source": "elite",
@@ -7569,28 +7583,30 @@
     "source": "boss",
     "tiers": {
       "epique": {
-        "adaptatif": 10,
+        "adaptatif": 8,
         "attaque": {
           "baseMax": 12,
           "baseMin": 9,
           "coutPA": 3
         },
         "stats": {
-          "crit": 2,
-          "vitalite": 8
-        }
+          "crit": 1,
+          "vitalite": 6
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 12,
+        "adaptatif": 9,
         "attaque": {
           "baseMax": 13,
           "baseMin": 10,
           "coutPA": 3
         },
         "stats": {
-          "crit": 3,
-          "vitalite": 10
-        }
+          "crit": 2,
+          "vitalite": 8
+        },
+        "pa": 1
       }
     }
   },
@@ -7893,24 +7909,26 @@
     "slot": "coiffe",
     "tiers": {
       "epique": {
-        "adaptatif": 18,
+        "adaptatif": 14,
         "stats": {
-          "vitalite": 9,
-          "crit": 5
+          "vitalite": 7,
+          "crit": 4
         },
         "resistances": {
           "air": 0.05
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 23,
+        "adaptatif": 18,
         "stats": {
-          "vitalite": 11,
-          "crit": 6
+          "vitalite": 8,
+          "crit": 4
         },
         "resistances": {
           "air": 0.06
-        }
+        },
+        "pa": 1
       }
     },
     "source": "elite",
@@ -8631,24 +8649,26 @@
     "slot": "anneau",
     "tiers": {
       "epique": {
-        "adaptatif": 6,
+        "adaptatif": 4,
         "stats": {
-          "vitalite": 7,
-          "soin": 18
+          "vitalite": 5,
+          "soin": 14
         },
         "resistances": {
           "air": 0.06
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 8,
+        "adaptatif": 6,
         "stats": {
-          "vitalite": 9,
-          "soin": 22
+          "vitalite": 7,
+          "soin": 17
         },
         "resistances": {
           "air": 0.08
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -8882,16 +8902,18 @@
     "source": "boss",
     "tiers": {
       "epique": {
-        "adaptatif": 5,
+        "adaptatif": 4,
         "stats": {
-          "vitalite": 15
-        }
+          "vitalite": 12
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 6,
+        "adaptatif": 4,
         "stats": {
-          "vitalite": 18
-        }
+          "vitalite": 14
+        },
+        "pa": 1
       }
     }
   },
@@ -9512,28 +9534,30 @@
     "slot": "bottes",
     "tiers": {
       "epique": {
-        "adaptatif": 15,
+        "adaptatif": 12,
         "stats": {
-          "vitalite": 9,
-          "crit": 2,
+          "vitalite": 7,
+          "crit": 1,
           "prospection": 7
         },
         "resistances": {
           "terre": 0.03,
           "feu": 0.03
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 19,
+        "adaptatif": 15,
         "stats": {
-          "vitalite": 11,
-          "crit": 3,
+          "vitalite": 8,
+          "crit": 2,
           "prospection": 9
         },
         "resistances": {
           "terre": 0.03,
           "feu": 0.03
-        }
+        },
+        "pa": 1
       }
     },
     "source": "elite",
@@ -9719,16 +9743,18 @@
     "slot": "bottes",
     "tiers": {
       "epique": {
-        "adaptatif": 4,
+        "adaptatif": 3,
         "stats": {
-          "vitalite": 3
-        }
+          "vitalite": 2
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 5,
+        "adaptatif": 4,
         "stats": {
-          "vitalite": 3
-        }
+          "vitalite": 2
+        },
+        "pa": 1
       }
     },
     "source": "elite",
@@ -9935,16 +9961,18 @@
     "slot": "bottes",
     "tiers": {
       "epique": {
-        "adaptatif": 19,
+        "adaptatif": 15,
         "stats": {
-          "soin": 9
-        }
+          "soin": 7
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 24,
+        "adaptatif": 19,
         "stats": {
-          "soin": 11
-        }
+          "soin": 8
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -10300,18 +10328,20 @@
     "slot": "bottes",
     "tiers": {
       "epique": {
-        "adaptatif": 20,
+        "adaptatif": 16,
         "stats": {
-          "vitalite": 6,
+          "vitalite": 4,
           "prospection": 7
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 25,
+        "adaptatif": 20,
         "stats": {
-          "vitalite": 7,
+          "vitalite": 5,
           "prospection": 9
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -12170,10 +12200,12 @@
     "slot": "cape",
     "tiers": {
       "epique": {
-        "adaptatif": 4
+        "adaptatif": 3,
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 5
+        "adaptatif": 4,
+        "pa": 1
       }
     },
     "source": "boss",
@@ -12385,26 +12417,28 @@
     "slot": "cape",
     "tiers": {
       "epique": {
-        "adaptatif": 28,
+        "adaptatif": 22,
         "stats": {
-          "crit": 4,
+          "crit": 3,
           "prospection": 7
         },
         "resistances": {
           "terre": 0.04,
           "air": 0.04
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 36,
+        "adaptatif": 28,
         "stats": {
-          "crit": 5,
+          "crit": 4,
           "prospection": 9
         },
         "resistances": {
           "terre": 0.06,
           "air": 0.06
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -12480,24 +12514,26 @@
     "slot": "cape",
     "tiers": {
       "epique": {
-        "adaptatif": 10,
+        "adaptatif": 8,
         "stats": {
-          "vitalite": 9,
-          "crit": 6
+          "vitalite": 7,
+          "crit": 4
         },
         "resistances": {
           "eau": 0.06
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 13,
+        "adaptatif": 10,
         "stats": {
-          "vitalite": 11,
-          "crit": 7
+          "vitalite": 8,
+          "crit": 5
         },
         "resistances": {
           "eau": 0.07
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -12530,26 +12566,28 @@
     "slot": "cape",
     "tiers": {
       "epique": {
-        "adaptatif": 14,
+        "adaptatif": 11,
         "stats": {
-          "vitalite": 17,
+          "vitalite": 13,
           "prospection": 7
         },
         "resistances": {
           "terre": 0.08,
           "air": 0.08
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 18,
+        "adaptatif": 14,
         "stats": {
-          "vitalite": 22,
+          "vitalite": 17,
           "prospection": 9
         },
         "resistances": {
           "terre": 0.1,
           "air": 0.1
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -12800,15 +12838,17 @@
     "tiers": {
       "epique": {
         "stats": {
-          "vitalite": 16,
-          "crit": 9
-        }
+          "vitalite": 12,
+          "crit": 7
+        },
+        "pa": 1
       },
       "legendaire": {
         "stats": {
-          "vitalite": 20,
-          "crit": 11
-        }
+          "vitalite": 16,
+          "crit": 8
+        },
+        "pa": 1
       }
     },
     "source": "elite",
@@ -13455,26 +13495,28 @@
     "slot": "cape",
     "tiers": {
       "epique": {
-        "adaptatif": 17,
+        "adaptatif": 13,
         "stats": {
-          "vitalite": 10,
-          "crit": 5,
+          "vitalite": 8,
+          "crit": 4,
           "prospection": 7
         },
         "resistances": {
           "eau": 0.07
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 21,
+        "adaptatif": 16,
         "stats": {
-          "vitalite": 13,
-          "crit": 6,
+          "vitalite": 10,
+          "crit": 4,
           "prospection": 9
         },
         "resistances": {
           "eau": 0.09
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -13567,26 +13609,28 @@
     "source": "boss",
     "tiers": {
       "epique": {
-        "adaptatif": 22,
+        "adaptatif": 17,
         "resistances": {
           "feu": -0.06
         },
         "stats": {
           "crit": 1,
           "prospection": 6,
-          "vitalite": 8
-        }
+          "vitalite": 6
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 25,
+        "adaptatif": 20,
         "resistances": {
           "feu": -0.03
         },
         "stats": {
-          "crit": 2,
+          "crit": 1,
           "prospection": 10,
-          "vitalite": 12
-        }
+          "vitalite": 9
+        },
+        "pa": 1
       }
     }
   },
@@ -16007,24 +16051,26 @@
     "slot": "coiffe",
     "tiers": {
       "epique": {
-        "adaptatif": 17,
+        "adaptatif": 13,
+        "stats": {
+          "vitalite": 8,
+          "crit": 4
+        },
+        "resistances": {
+          "terre": 0.08
+        },
+        "pa": 1
+      },
+      "legendaire": {
+        "adaptatif": 16,
         "stats": {
           "vitalite": 11,
           "crit": 5
         },
         "resistances": {
-          "terre": 0.08
-        }
-      },
-      "legendaire": {
-        "adaptatif": 21,
-        "stats": {
-          "vitalite": 14,
-          "crit": 7
-        },
-        "resistances": {
           "terre": 0.1
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -16096,28 +16142,30 @@
     "slot": "coiffe",
     "tiers": {
       "epique": {
-        "adaptatif": 17,
+        "adaptatif": 13,
         "stats": {
-          "vitalite": 15,
-          "crit": 5,
+          "vitalite": 12,
+          "crit": 4,
           "prospection": 7
         },
         "resistances": {
           "feu": 0.05,
           "air": 0.05
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 22,
+        "adaptatif": 17,
         "stats": {
-          "vitalite": 19,
-          "crit": 6,
+          "vitalite": 15,
+          "crit": 4,
           "prospection": 9
         },
         "resistances": {
           "feu": 0.06,
           "air": 0.06
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -16533,6 +16581,18 @@
     "slot": "coiffe",
     "tiers": {
       "epique": {
+        "adaptatif": 7,
+        "stats": {
+          "vitalite": 9,
+          "crit": 4,
+          "soin": 6
+        },
+        "resistances": {
+          "feu": 0.1
+        },
+        "pa": 1
+      },
+      "legendaire": {
         "adaptatif": 9,
         "stats": {
           "vitalite": 12,
@@ -16540,19 +16600,9 @@
           "soin": 8
         },
         "resistances": {
-          "feu": 0.1
-        }
-      },
-      "legendaire": {
-        "adaptatif": 12,
-        "stats": {
-          "vitalite": 15,
-          "crit": 8,
-          "soin": 10
-        },
-        "resistances": {
           "feu": 0.13
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -18753,7 +18803,19 @@
     "slot": "ceinture",
     "tiers": {
       "epique": {
-        "adaptatif": 13,
+        "adaptatif": 10,
+        "stats": {
+          "vitalite": 6,
+          "crit": 1
+        },
+        "resistances": {
+          "feu": 0.03,
+          "air": 0.03
+        },
+        "pa": 1
+      },
+      "legendaire": {
+        "adaptatif": 12,
         "stats": {
           "vitalite": 8,
           "crit": 2
@@ -18761,18 +18823,8 @@
         "resistances": {
           "feu": 0.03,
           "air": 0.03
-        }
-      },
-      "legendaire": {
-        "adaptatif": 16,
-        "stats": {
-          "vitalite": 10,
-          "crit": 3
         },
-        "resistances": {
-          "feu": 0.03,
-          "air": 0.03
-        }
+        "pa": 1
       }
     },
     "source": "elite",
@@ -18833,15 +18885,17 @@
     "tiers": {
       "epique": {
         "stats": {
-          "vitalite": 5,
-          "crit": 4
-        }
+          "vitalite": 4,
+          "crit": 3
+        },
+        "pa": 1
       },
       "legendaire": {
         "stats": {
-          "vitalite": 6,
-          "crit": 5
-        }
+          "vitalite": 4,
+          "crit": 4
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -18938,20 +18992,22 @@
     "slot": "ceinture",
     "tiers": {
       "epique": {
-        "adaptatif": 13,
+        "adaptatif": 10,
         "stats": {
-          "vitalite": 13,
-          "crit": 2,
+          "vitalite": 10,
+          "crit": 1,
           "prospection": 7
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 17,
+        "adaptatif": 13,
         "stats": {
-          "vitalite": 16,
-          "crit": 3,
+          "vitalite": 12,
+          "crit": 2,
           "prospection": 9
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -19244,24 +19300,26 @@
     "slot": "coiffe",
     "tiers": {
       "epique": {
+        "adaptatif": 16,
+        "stats": {
+          "vitalite": 8,
+          "crit": 3
+        },
+        "resistances": {
+          "terre": 0.07
+        },
+        "pa": 1
+      },
+      "legendaire": {
         "adaptatif": 20,
         "stats": {
           "vitalite": 10,
           "crit": 4
         },
         "resistances": {
-          "terre": 0.07
-        }
-      },
-      "legendaire": {
-        "adaptatif": 26,
-        "stats": {
-          "vitalite": 13,
-          "crit": 6
-        },
-        "resistances": {
           "terre": 0.08
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -22067,27 +22125,29 @@
     "tiers": {
       "epique": {
         "stats": {
-          "vitalite": 12,
-          "crit": 6,
-          "soin": 15,
+          "vitalite": 9,
+          "crit": 4,
+          "soin": 12,
           "prospection": 7
         },
         "resistances": {
           "terre": 0.07,
           "feu": 0.07
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
         "stats": {
-          "vitalite": 15,
-          "crit": 7,
-          "soin": 19,
+          "vitalite": 12,
+          "crit": 5,
+          "soin": 15,
           "prospection": 9
         },
         "resistances": {
           "terre": 0.09,
           "feu": 0.09
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -22607,26 +22667,28 @@
     "slot": "coiffe",
     "tiers": {
       "epique": {
-        "adaptatif": 16,
+        "adaptatif": 12,
         "stats": {
-          "vitalite": 14,
-          "crit": 4,
+          "vitalite": 11,
+          "crit": 3,
           "prospection": 7
         },
         "resistances": {
           "air": 0.06
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 21,
+        "adaptatif": 16,
         "stats": {
-          "vitalite": 18,
-          "crit": 5,
+          "vitalite": 14,
+          "crit": 4,
           "prospection": 9
         },
         "resistances": {
           "air": 0.07
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -22640,17 +22702,19 @@
     "tiers": {
       "epique": {
         "stats": {
-          "crit": 2,
+          "crit": 1,
           "prospection": 6,
-          "vitalite": 21
-        }
+          "vitalite": 16
+        },
+        "pa": 1
       },
       "legendaire": {
         "stats": {
-          "crit": 3,
+          "crit": 2,
           "prospection": 10,
-          "vitalite": 26
-        }
+          "vitalite": 20
+        },
+        "pa": 1
       }
     }
   },
@@ -23064,26 +23128,28 @@
     "slot": "arme",
     "tiers": {
       "epique": {
-        "adaptatif": 24,
+        "adaptatif": 19,
         "stats": {
-          "vitalite": 26
+          "vitalite": 20
         },
         "attaque": {
           "baseMin": 20,
           "baseMax": 28,
           "coutPA": 4
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 30,
+        "adaptatif": 24,
         "stats": {
-          "vitalite": 32
+          "vitalite": 25
         },
         "attaque": {
           "baseMin": 22,
           "baseMax": 30,
           "coutPA": 4
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss"
@@ -25696,24 +25762,26 @@
     "slot": "bottes",
     "tiers": {
       "epique": {
-        "adaptatif": 16,
+        "adaptatif": 12,
         "stats": {
-          "vitalite": 8,
+          "vitalite": 6,
           "prospection": 8
         },
         "resistances": {
           "feu": 0.05
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 20,
+        "adaptatif": 16,
         "stats": {
-          "vitalite": 11,
+          "vitalite": 8,
           "prospection": 10
         },
         "resistances": {
           "feu": 0.06
-        }
+        },
+        "pa": 1
       }
     },
     "source": "elite",
@@ -26177,9 +26245,9 @@
     "slot": "arme",
     "tiers": {
       "epique": {
-        "adaptatif": 26,
+        "adaptatif": 20,
         "stats": {
-          "vitalite": 31,
+          "vitalite": 24,
           "crit": 1,
           "prospection": 7
         },
@@ -26190,12 +26258,13 @@
           "baseMin": 33,
           "baseMax": 42,
           "coutPA": 4
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 33,
+        "adaptatif": 26,
         "stats": {
-          "vitalite": 40,
+          "vitalite": 32,
           "crit": 1,
           "prospection": 9
         },
@@ -26206,7 +26275,8 @@
           "baseMin": 36,
           "baseMax": 45,
           "coutPA": 4
-        }
+        },
+        "pa": 1
       }
     },
     "source": "elite"
@@ -26807,28 +26877,30 @@
     "slot": "arme",
     "tiers": {
       "epique": {
-        "adaptatif": 13,
+        "adaptatif": 10,
         "stats": {
-          "vitalite": 14,
-          "crit": 9
+          "vitalite": 11,
+          "crit": 7
         },
         "attaque": {
           "baseMin": 18,
           "baseMax": 23,
           "coutPA": 4
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 16,
+        "adaptatif": 12,
         "stats": {
-          "vitalite": 18,
-          "crit": 11
+          "vitalite": 14,
+          "crit": 8
         },
         "attaque": {
           "baseMin": 20,
           "baseMax": 24,
           "coutPA": 4
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -27292,22 +27364,24 @@
     "slot": "amulette",
     "tiers": {
       "epique": {
+        "adaptatif": 6,
+        "stats": {
+          "vitalite": 15,
+          "crit": 5,
+          "soin": 7,
+          "prospection": 8
+        },
+        "pa": 1
+      },
+      "legendaire": {
         "adaptatif": 8,
         "stats": {
           "vitalite": 19,
           "crit": 7,
-          "soin": 9,
-          "prospection": 8
-        }
-      },
-      "legendaire": {
-        "adaptatif": 10,
-        "stats": {
-          "vitalite": 24,
-          "crit": 9,
-          "soin": 11,
+          "soin": 8,
           "prospection": 10
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -27347,28 +27421,30 @@
     "source": "boss",
     "tiers": {
       "epique": {
-        "adaptatif": 18,
+        "adaptatif": 14,
         "attaque": {
           "baseMax": 18,
           "baseMin": 15,
           "coutPA": 4
         },
         "stats": {
-          "crit": 2,
-          "vitalite": 11
-        }
+          "crit": 1,
+          "vitalite": 8
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 20,
+        "adaptatif": 16,
         "attaque": {
           "baseMax": 20,
           "baseMin": 16,
           "coutPA": 4
         },
         "stats": {
-          "crit": 3,
-          "vitalite": 16
-        }
+          "crit": 2,
+          "vitalite": 12
+        },
+        "pa": 1
       }
     }
   },
@@ -27860,16 +27936,18 @@
     "slot": "anneau",
     "tiers": {
       "epique": {
+        "adaptatif": 10,
+        "stats": {
+          "vitalite": 2
+        },
+        "pa": 1
+      },
+      "legendaire": {
         "adaptatif": 13,
         "stats": {
           "vitalite": 3
-        }
-      },
-      "legendaire": {
-        "adaptatif": 17,
-        "stats": {
-          "vitalite": 4
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -28944,26 +29022,28 @@
     "slot": "coiffe",
     "tiers": {
       "epique": {
-        "adaptatif": 11,
+        "adaptatif": 8,
         "stats": {
-          "vitalite": 26,
-          "crit": 3,
+          "vitalite": 20,
+          "crit": 2,
           "prospection": 8
         },
         "resistances": {
           "feu": 0.04
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 14,
+        "adaptatif": 11,
         "stats": {
-          "vitalite": 34,
-          "crit": 3,
+          "vitalite": 27,
+          "crit": 2,
           "prospection": 10
         },
         "resistances": {
           "feu": 0.05
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss"
@@ -29824,24 +29904,26 @@
     "slot": "coiffe",
     "tiers": {
       "epique": {
+        "adaptatif": 11,
+        "stats": {
+          "vitalite": 15,
+          "soin": 6
+        },
+        "resistances": {
+          "air": 0.08
+        },
+        "pa": 1
+      },
+      "legendaire": {
         "adaptatif": 14,
         "stats": {
           "vitalite": 19,
           "soin": 8
         },
         "resistances": {
-          "air": 0.08
-        }
-      },
-      "legendaire": {
-        "adaptatif": 18,
-        "stats": {
-          "vitalite": 24,
-          "soin": 10
-        },
-        "resistances": {
           "air": 0.11
-        }
+        },
+        "pa": 1
       }
     },
     "source": "elite",
@@ -30234,18 +30316,20 @@
     "slot": "coiffe",
     "tiers": {
       "epique": {
+        "adaptatif": 21,
+        "stats": {
+          "vitalite": 12,
+          "crit": 2
+        },
+        "pa": 1
+      },
+      "legendaire": {
         "adaptatif": 27,
         "stats": {
           "vitalite": 16,
           "crit": 3
-        }
-      },
-      "legendaire": {
-        "adaptatif": 34,
-        "stats": {
-          "vitalite": 20,
-          "crit": 4
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -30491,7 +30575,7 @@
         }
       },
       "epique": {
-        "adaptatif": 4,
+        "adaptatif": 3,
         "resistances": {
           "air": -0.03,
           "feu": 0.03,
@@ -30499,11 +30583,12 @@
         },
         "stats": {
           "prospection": 6,
-          "vitalite": 9
-        }
+          "vitalite": 7
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 6,
+        "adaptatif": 4,
         "resistances": {
           "air": -0.02,
           "feu": 0.04,
@@ -30511,8 +30596,9 @@
         },
         "stats": {
           "prospection": 8,
-          "vitalite": 10
-        }
+          "vitalite": 8
+        },
+        "pa": 1
       },
       "rare": {
         "adaptatif": 3,
@@ -30676,9 +30762,9 @@
     "slot": "arme",
     "tiers": {
       "epique": {
-        "adaptatif": 41,
+        "adaptatif": 32,
         "stats": {
-          "vitalite": 16,
+          "vitalite": 12,
           "prospection": 7
         },
         "attaque": {
@@ -30686,12 +30772,13 @@
           "baseMax": 34,
           "coutPA": 4,
           "vampirisme": 0.3
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 51,
+        "adaptatif": 40,
         "stats": {
-          "vitalite": 20,
+          "vitalite": 16,
           "prospection": 9
         },
         "attaque": {
@@ -30699,7 +30786,8 @@
           "baseMax": 36,
           "coutPA": 4,
           "vampirisme": 0.3
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss"
@@ -31672,10 +31760,10 @@
     "slot": "arme",
     "tiers": {
       "epique": {
-        "adaptatif": 18,
+        "adaptatif": 14,
         "stats": {
-          "vitalite": 34,
-          "crit": 3,
+          "vitalite": 27,
+          "crit": 2,
           "prospection": 8
         },
         "resistances": {
@@ -31686,13 +31774,14 @@
           "baseMax": 40,
           "coutPA": 4,
           "vampirisme": 0.3
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 22,
+        "adaptatif": 17,
         "stats": {
-          "vitalite": 44,
-          "crit": 3,
+          "vitalite": 35,
+          "crit": 2,
           "prospection": 10
         },
         "resistances": {
@@ -31703,7 +31792,8 @@
           "baseMax": 43,
           "coutPA": 4,
           "vampirisme": 0.3
-        }
+        },
+        "pa": 1
       }
     },
     "source": "elite"
@@ -32095,10 +32185,12 @@
     "slot": "amulette",
     "tiers": {
       "epique": {
-        "adaptatif": 19
+        "adaptatif": 15,
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 24
+        "adaptatif": 19,
+        "pa": 1
       }
     },
     "source": "boss",
@@ -32732,9 +32824,9 @@
     "slot": "arme",
     "tiers": {
       "epique": {
-        "adaptatif": 30,
+        "adaptatif": 24,
         "stats": {
-          "vitalite": 21,
+          "vitalite": 16,
           "prospection": 7
         },
         "resistances": {
@@ -32745,12 +32837,13 @@
           "baseMin": 16,
           "baseMax": 28,
           "coutPA": 3
-        }
+        },
+        "pa": 1
       },
       "legendaire": {
-        "adaptatif": 36,
+        "adaptatif": 28,
         "stats": {
-          "vitalite": 26,
+          "vitalite": 20,
           "prospection": 9
         },
         "resistances": {
@@ -32761,7 +32854,8 @@
           "baseMin": 17,
           "baseMax": 30,
           "coutPA": 3
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss"
@@ -33526,20 +33620,22 @@
     "slot": "bottes",
     "tiers": {
       "epique": {
+        "adaptatif": 16,
+        "stats": {
+          "vitalite": 7,
+          "soin": 4,
+          "prospection": 7
+        },
+        "pa": 1
+      },
+      "legendaire": {
         "adaptatif": 20,
         "stats": {
           "vitalite": 9,
-          "soin": 5,
-          "prospection": 7
-        }
-      },
-      "legendaire": {
-        "adaptatif": 26,
-        "stats": {
-          "vitalite": 12,
-          "soin": 6,
+          "soin": 4,
           "prospection": 9
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -34574,18 +34670,20 @@
     "slot": "bottes",
     "tiers": {
       "epique": {
+        "adaptatif": 14,
+        "stats": {
+          "vitalite": 9,
+          "crit": 2
+        },
+        "pa": 1
+      },
+      "legendaire": {
         "adaptatif": 18,
         "stats": {
           "vitalite": 12,
           "crit": 3
-        }
-      },
-      "legendaire": {
-        "adaptatif": 23,
-        "stats": {
-          "vitalite": 15,
-          "crit": 4
-        }
+        },
+        "pa": 1
       }
     },
     "source": "boss",
@@ -34823,26 +34921,28 @@
     "slot": "ceinture",
     "tiers": {
       "epique": {
+        "adaptatif": 5,
+        "stats": {
+          "vitalite": 7,
+          "crit": 2
+        },
+        "resistances": {
+          "feu": 0.04,
+          "air": 0.04
+        },
+        "pa": 1
+      },
+      "legendaire": {
         "adaptatif": 7,
         "stats": {
           "vitalite": 9,
           "crit": 3
         },
         "resistances": {
-          "feu": 0.04,
-          "air": 0.04
-        }
-      },
-      "legendaire": {
-        "adaptatif": 9,
-        "stats": {
-          "vitalite": 12,
-          "crit": 4
-        },
-        "resistances": {
           "feu": 0.05,
           "air": 0.05
-        }
+        },
+        "pa": 1
       }
     },
     "source": "elite",

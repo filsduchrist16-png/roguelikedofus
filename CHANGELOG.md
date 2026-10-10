@@ -1,5 +1,19 @@
 # Journal des modifications
 
+## « Équiper le meilleur » repensé, PA, Dofus
+
+- **Nouvel algorithme** : un objet est « meilleur » d'abord par les **PA** (objet à PA, ou panoplie qui
+  atteint son palier à PA), puis par les **dégâts** (stats des éléments de la classe, Intelligence,
+  critique, dégâts d'arme). PV, soin, résistances et effets ne servent qu'ensuite. Jamais d'échange qui
+  fait perdre des PA ou des dégâts, même contre beaucoup de PV. Une pièce de panoplie qui rapproche d'un
+  palier à PA est valorisée, pour que la panoplie finisse par se compléter.
+- **Plus d'objets à PA** : un objet à +1 PA par zone dès la zone 2 (50 objets, tous les emplacements),
+  avec des stats un peu réduites en contrepartie. Le plafond de +2 PA d'équipement reste.
+- **Dofus** : cinq Dofus (Dolmanax, Dokille, Ocre, Dofoozbz, Argenté Scintillant) n'étaient pas encore
+  tous réservés à leur tranche de niveau : leur dernière quête est maintenant au Monde 5. Plus aucun Dofus
+  n'en exige un autre précis (Nébuleux : vaincre le Chalœil ; Sylvestre : vaincre le Korriandre).
+- **Combat sur téléphone** : les PV des héros restent visibles dans la barre du bas.
+
 ## Petites finitions d'interface (mobile)
 
 - Combat : les pastilles de coût des sorts ne sont plus coupées par le haut de la barre.

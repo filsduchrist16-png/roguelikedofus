@@ -56,6 +56,32 @@ describe(`Dofus et tranches de niveau`, () => {
     }
   });
 
+  it(`un Dofus n'est pas obtenable avant son monde : une quête au moins ne se fait que là`, () => {
+    for (const d of Object.values(DOFUS)) {
+      const debuts = succesDe(d.id).quetes.map((q) => {
+        const c = q.critere;
+        const mondes = [
+          ...(c.boss ? [...(mondesBoss[c.boss] ?? [])] : []),
+          ...(c.zone ? [mondeZone[c.zone]] : []),
+          ...(c.tranche ? [c.tranche] : []),
+        ];
+        return mondes.length ? Math.min(...mondes.map((m) => ordre.indexOf(m))) : 0;
+      });
+      expect(Math.max(...debuts), d.id).toBe(ordre.indexOf(mondeDuNiveau(d.niveau)));
+    }
+  });
+
+  it(`aucun Dofus n'en exige un autre précis (seul un total de Dofus est permis)`, () => {
+    for (const d of Object.values(DOFUS)) {
+      for (const q of succesDe(d.id).quetes) {
+        expect(q.critere.type, `${d.id} : ${q.nom}`).not.toBe(`dofus_possede`);
+        if (q.critere.type === `dofus_possedes`) {
+          expect(q.critere.seuil, d.id).toBeLessThan(Object.keys(DOFUS).length);
+        }
+      }
+    }
+  });
+
   it(`un Dofus s'obtient dès que son succès est terminé, sans attendre les autres`, () => {
     const meta = metaVide();
     terminer(meta, `dofus_ebene`);

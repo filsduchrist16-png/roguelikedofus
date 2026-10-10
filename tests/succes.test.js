@@ -63,13 +63,13 @@ describe("succès et Dofus", () => {
     expect(r.quetes.map((q) => q.id)).toContain("dl_dofus_argente_1");
   });
 
-  it("posséder un Dofus précis valide la quête qui le demande", () => {
+  it("posséder un Dofus précis valide la quête qui le demande (mécanisme)", () => {
+    const quete = { id: "t_dofus", critere: { type: "dofus_possede", dofus: "dom_de_pin" } };
+    const succes = { test: { categorie: {}, quetes: [quete] } };
     const ctx = { archis: [], collection: {}, dofus: [], runs: 0, ascension: {}, reliques: [] };
-    expect(verifierQuetesMeta(nouvelEtatQuetes(), ctx).quetes.map((q) => q.id)).not.toContain(
-      "dl_dofus_sylvestre_3",
-    );
-    const r = verifierQuetesMeta(nouvelEtatQuetes(), { ...ctx, dofus: ["dom_de_pin"] });
-    expect(r.quetes.map((q) => q.id)).toContain("dl_dofus_sylvestre_3");
+    const ids = (c) => verifierQuetesMeta(nouvelEtatQuetes(), c, succes).quetes.map((q) => q.id);
+    expect(ids(ctx)).not.toContain("t_dofus");
+    expect(ids({ ...ctx, dofus: ["dom_de_pin"] })).toContain("t_dofus");
   });
 
   it("progression linéaire : un Dofus ne demande rien d'un monde plus avancé que le sien", () => {
