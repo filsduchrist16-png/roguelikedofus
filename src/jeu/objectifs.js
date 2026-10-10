@@ -2,6 +2,7 @@
 // reliques et âmes d'archimonstres à gagner. Affichés en début de combat.
 import { DOFUS, MONSTRES, RELIQUES, SUCCES, ZONES } from "../data/index.js";
 import { dofusDeSucces } from "./quetes.js";
+import { decrireQuete } from "./obtention.js";
 
 function succesDeQuete(queteId) {
   return Object.values(SUCCES).find((s) => s.quetes.some((q) => q.id === queteId));
@@ -66,7 +67,14 @@ export function objectifsDuCombat(p) {
       }
       const c = q.critere;
       const dofus = dofusDeQuete(q.id);
-      const base = { quete: q.nom, succes: succes.nom, img: dofus?.img, dofus: dofus?.nom };
+      const description = decrireQuete(q);
+      const base = {
+        quete: description.titre,
+        lore: description.lore,
+        succes: succes.nom,
+        img: dofus?.img,
+        dofus: dofus?.nom,
+      };
       if (c.type === `vaincre`) {
         const possible =
           (c.boss === undefined || presents.has(c.boss)) &&

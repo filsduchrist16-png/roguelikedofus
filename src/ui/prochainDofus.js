@@ -1,7 +1,7 @@
 // Encart « Dofus à portée » de l'accueil : les Dofus qu'on n'a pas encore et dont le succès est le
 // plus avancé (à égalité, le moins haut niveau), avec leurs quêtes faites ou non et où les faire.
 import { DOFUS } from "../data/index.js";
-import { indiceQuete, mondeDuDofus, succesDuDofus } from "../jeu/obtention.js";
+import { decrireQuete, indiceQuete, mondeDuDofus, succesDuDofus } from "../jeu/obtention.js";
 import { contexteMeta, etatQuete, progressionSucces } from "../jeu/quetes.js";
 import { cheminAsset, echapperHtml } from "./commun.js";
 
@@ -27,7 +27,7 @@ function htmlUnDofus(meta, d) {
     const e = etatQuete(etat, q, ctx);
     const compteur =
       e.compteur && !e.faite ? ` <small>${e.compteur[0]}/${e.compteur[1]}</small>` : ``;
-    return `<li class="${e.faite ? `fait` : ``}" data-tip="${echapperHtml(indiceQuete(q))}">${e.faite ? `✔` : `○`} ${echapperHtml(q.nom.replace(/\.$/, ``))}${compteur}</li>`;
+    return `<li class="${e.faite ? `fait` : ``}" data-tip="${echapperHtml(indiceQuete(q))}">${e.faite ? `✔` : `○`} ${echapperHtml(decrireQuete(q).titre)}${compteur}</li>`;
   });
   const monde = mondeDuDofus(d.id);
   return `<div class="pd-dofus" data-dofus="${echapperHtml(d.id)}">

@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## Succès : descriptions en clair
+
+- Chaque quête affiche maintenant **ce qu'il faut faire** en une phrase (« Vaincre Nagate »), puis des
+  lignes courtes **OÙ** (zone, monde, type de case), **COMMENT** ou **CONDITION** (équipe réduite, en
+  X rondes, boss tué en premier…). Le titre du succès dans Dofus (« Sous le bois de sa colère ») passe en
+  petit, à part, au lieu d'être mélangé à l'action.
+- Même texte clair dans l'encart « Dofus à portée », les objectifs de combat, les bandeaux de quête
+  accomplie et les infobulles.
+
 ## « Équiper le meilleur » repensé, PA, Dofus
 
 - **Nouvel algorithme** : un objet est « meilleur » d'abord par les **PA** (objet à PA, ou panoplie qui

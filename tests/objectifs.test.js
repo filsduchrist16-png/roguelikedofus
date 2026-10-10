@@ -59,8 +59,8 @@ describe(`objectifs de combat`, () => {
       classes: [`iop`, `cra`],
       combattants: c,
     });
-    expect(trois.some((x) => /Main dans la main/.test(x.quete))).toBe(false);
-    expect(deux.some((x) => /Main dans la main/.test(x.quete))).toBe(true);
+    expect(trois.some((x) => /Main dans la main/.test(x.lore))).toBe(false);
+    expect(deux.some((x) => /Main dans la main/.test(x.lore))).toBe(true);
   });
 });
 

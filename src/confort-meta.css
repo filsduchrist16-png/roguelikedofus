@@ -171,3 +171,37 @@
     margin-bottom: 14px;
   }
 }
+
+/* ---------- Succès : quêtes lisibles (titre clair, puis Où / Comment / Condition) ---------- */
+.quete-nom {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.quete-titre {
+  font-weight: 800;
+  line-height: 1.25;
+}
+.quete-lore {
+  color: var(--muet);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.quete-aide {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 3px;
+  padding-left: 8px;
+  border-left: 3px solid var(--cadre-or);
+  color: var(--txt);
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.quete-ligne-aide b {
+  color: #9a5b0b;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+}

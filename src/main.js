@@ -1,3 +1,4 @@
+import { decrireQuete } from "./jeu/obtention.js";
 import { CLASSES, COMBATS, DOFUS, MONSTRES, SORTS } from "./data/index.js";
 import {
   CONFIG_ARCHI,
@@ -173,7 +174,7 @@ async function traiterQuetes(e, t) {
     return;
   }
   for (let n of t.quetes) {
-    afficherBandeauQuete(n.nom);
+    afficherBandeauQuete(decrireQuete(n).titre);
     if (e) {
       (e.stats.quetes ??= []).push(n.id);
     }

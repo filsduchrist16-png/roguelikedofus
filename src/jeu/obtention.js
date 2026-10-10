@@ -96,7 +96,7 @@ export function texteObtentionDofus(dofusId) {
     return `Pas encore obtenable.`;
   }
   const monde = mondeDuDofus(dofusId);
-  return `${monde ? `${monde.nom} — ` : ``}succès « ${succes.nom} » : ${succes.quetes.map((q) => q.nom.replace(/\.$/, ``)).join(` ; `)}.`;
+  return `${monde ? `${monde.nom} — ` : ``}succès « ${succes.nom} » : ${succes.quetes.map((q) => decrireQuete(q).titre).join(` ; `)}.`;
 }
 
 // Règles d'obtention, avec les chiffres réels du jeu.
@@ -188,104 +188,183 @@ const nomClasse = (id) => CLASSES[id]?.nom ?? id;
 const nomDifficulte = (cran) => DIFFICULTES[cran]?.nom ?? `?`;
 const ELEMENTS_NOMS = { terre: `Terre`, feu: `Feu`, eau: `Eau`, air: `Air` };
 
-// Indice affiché sous une quête : où aller et comment s'y prendre.
-export function indiceQuete(quete) {
-  const c = quete.critere;
-  const conditions = [];
+// Conditions particulières d'une quête, en phrases courtes.
+function conditionsQuete(c) {
+  const l = [];
   if (c.sansKO) {
-    conditions.push(`aucun héros ne doit tomber pendant le combat`);
+    l.push(`aucun héros ne doit tomber`);
   }
   if (c.toursMax !== undefined) {
-    conditions.push(`finis en ${c.toursMax} rondes au plus : vise les dégâts`);
+    l.push(`gagne en ${c.toursMax} rondes au plus (joue offensif)`);
   }
   if (c.equipeMax !== undefined) {
-    conditions.push(`${c.equipeMax} héros au plus dans l'équipe (avant d'en recruter d'autres)`);
+    l.push(`${c.equipeMax} héros au plus dans l'équipe (avant d'en recruter d'autres)`);
   }
   if (c.bossPremier) {
-    conditions.push(`le boss doit tomber avant tous ses alliés`);
+    l.push(`le boss doit tomber en premier, avant ses alliés`);
   }
   if (c.bossDernier) {
-    conditions.push(`le boss doit tomber après tous ses alliés`);
+    l.push(`le boss doit tomber en dernier, après ses alliés`);
   }
   if (c.classe !== undefined) {
-    conditions.push(`un ${nomClasse(c.classe)} doit être dans l'équipe`);
+    l.push(`un ${nomClasse(c.classe)} doit être dans l'équipe`);
   }
   if (c.ascensionMin) {
-    conditions.push(`difficulté ${nomDifficulte(c.ascensionMin)} ou plus (au lancement de la run)`);
+    l.push(`difficulté ${nomDifficulte(c.ascensionMin)} ou plus, choisie au lancement de la run`);
   }
-  const suite = conditions.length ? ` Condition : ${conditions.join(`, `)}.` : ``;
+  return l;
+}
+
+// Texte « Où / Comment » d'une quête, selon son critère : [[étiquette, texte], …].
+function lignesQuete(c) {
+  const lignes = [];
+  const conditions = conditionsQuete(c);
   switch (c.type) {
     case `vaincre`:
       if (c.boss) {
-        return `${MONSTRES[c.boss]?.nom ?? c.boss} : ${texteLieuxMonstre(c.boss)}.${suite}`;
-      }
-      if (c.noeud === `combat_dur`) {
-        return `N'importe quel combat dur (case rouge de la carte, ennemis renforcés).${suite}`;
-      }
-      if (c.zone && c.noeud === `donjon`) {
+        lignes.push([`Où`, `${texteLieuxMonstre(c.boss)}.`]);
+      } else if (c.noeud === `combat_dur`) {
+        lignes.push([`Où`, `sur une case rouge de la carte (combat dur : ennemis renforcés).`]);
+      } else if (c.zone && c.noeud === `donjon`) {
         const monde = MONDES.find((m) => m.zones.includes(c.zone));
-        return `Le donjon (dernière case) de la zone « ${nomZone(c.zone)} »${monde ? ` (${monde.nom}, zone ${monde.zones.indexOf(c.zone) + 1})` : ``}.${suite}`;
+        lignes.push([
+          `Où`,
+          `dernière case (donjon) de « ${nomZone(c.zone)} »${monde ? `, ${monde.nom} (zone ${monde.zones.indexOf(c.zone) + 1})` : ``}.`,
+        ]);
+      } else if (c.zone) {
+        lignes.push([`Où`, `n'importe quel combat de la zone « ${nomZone(c.zone)} ».`]);
+      } else {
+        lignes.push([`Où`, `n'importe quel combat.`]);
       }
-      if (c.zone) {
-        return `Un combat de la zone « ${nomZone(c.zone)} ».${suite}`;
-      }
-      return `N'importe quel combat.${suite}`;
+      break;
     case `zone_terminee`:
-      return `Bats le donjon (dernière case) de la zone « ${nomZone(c.zone)} » pendant une run.${suite}`;
+      lignes.push([
+        `Où`,
+        `bats le donjon (dernière case) de « ${nomZone(c.zone)} » pendant une run.`,
+      ]);
+      break;
     case `run_gagnee`: {
-      const lieu = c.tranche
-        ? `Bats le dernier donjon du ${nomMonde(c.tranche)}`
-        : `Gagne une run, dans n'importe quel monde`;
-      const extra = [];
+      lignes.push([
+        `Comment`,
+        c.tranche
+          ? `bats le dernier donjon du ${nomMonde(c.tranche)} pour gagner la run.`
+          : `gagne une run, dans n'importe quel monde.`,
+      ]);
       if (c.sansTaverne) {
-        extra.push(`n'entre dans aucune taverne (évite ces cases sur la carte)`);
+        conditions.push(`n'entre dans aucune taverne (évite ces cases sur la carte)`);
       }
       if (c.sansRecrutement) {
-        extra.push(`ne recrute personne en taverne (tu peux y entrer pour te soigner)`);
+        conditions.push(`ne recrute personne en taverne (tu peux y entrer pour te soigner)`);
       }
-      if (c.equipeMax !== undefined) {
-        extra.push(`pas plus de ${c.equipeMax} héros`);
+      if (c.equipeMax !== undefined && c.type === `run_gagnee`) {
+        conditions.push(`pas plus de ${c.equipeMax} héros`);
       }
       if (c.quatreHerosEquipes) {
-        extra.push(
+        conditions.push(
           `4 héros avec leurs 8 emplacements remplis à la fin (arme, coiffe, cape, amulette, 2 anneaux, ceinture, bottes)`,
         );
       }
-      return `${lieu}.${suite}${extra.length ? ` À respecter : ${extra.join(`, `)}.` : ``}`;
+      break;
     }
     case `compteur`:
       if (c.evenement === `degats_element`) {
         const classes = Object.values(CLASSES)
           .filter((k) => k.elements?.includes(c.element))
           .map((k) => k.nom);
-        return `Se cumule d'une run à l'autre. Sorts ${ELEMENTS_NOMS[c.element] ?? c.element} : ${classes.join(`, `)}.`;
+        lignes.push([
+          `Comment`,
+          `inflige ces dégâts avec des sorts ${ELEMENTS_NOMS[c.element] ?? c.element} (${classes.join(`, `)}). Le total se cumule d'une run à l'autre.`,
+        ]);
+      } else if (c.evenement === `soins`) {
+        lignes.push([
+          `Comment`,
+          `soigne tes héros en combat (Eniripsa en tête, puis Pandawa, Sadida, Ouginak, Éliotrope). Le total se cumule d'une run à l'autre.`,
+        ]);
+      } else {
+        lignes.push([
+          `Comment`,
+          `bats des monstres, dans tous les combats. Le total se cumule d'une run à l'autre.`,
+        ]);
       }
-      if (c.evenement === `soins`) {
-        return `Se cumule d'une run à l'autre. Les soins de l'Eniripsa (le meilleur), du Pandawa, du Sadida, de l'Ouginak ou de l'Éliotrope font avancer ce compteur.`;
-      }
-      return `Se cumule d'une run à l'autre, dans tous les combats.`;
+      break;
     case `archi_capture`:
-      if (c.tranche) {
-        return `Les archimonstres apparaissent au hasard dans les zones du ${nomMonde(c.tranche)} (plus souvent avec des philtres d'Otomai). Le Bestiaire montre ceux qui manquent.`;
-      }
-      if (c.zone) {
-        return `Archimonstres de ${nomZone(c.zone)} : voir le Bestiaire.`;
-      }
-      return `Les archimonstres apparaissent au hasard ; le Bestiaire montre ceux qui manquent par zone.`;
+      lignes.push([
+        `Comment`,
+        c.tranche
+          ? `bats les archimonstres du ${nomMonde(c.tranche)} : ils apparaissent au hasard dans ses zones (plus souvent avec des philtres d'Otomai). Le Bestiaire montre ceux qui manquent.`
+          : c.zone
+            ? `bats tous les archimonstres de « ${nomZone(c.zone)} » (voir le Bestiaire).`
+            : `bats tous les archimonstres d'une même zone : ils apparaissent au hasard, le Bestiaire montre ceux qui manquent.`,
+      ]);
+      break;
     case `record_ascension`:
-      return `Choisis la difficulté ${nomDifficulte(c.min)} au lancement d'une run du ${nomMonde(c.tranche)}, puis gagne-la.`;
+      lignes.push([
+        `Comment`,
+        `choisis la difficulté ${nomDifficulte(c.min)} au lancement d'une run du ${nomMonde(c.tranche)}, puis gagne-la.`,
+      ]);
+      break;
     case `relique_obtenue`:
-      return `${MONSTRES[c.boss]?.nom ?? c.boss} (${texteLieuxMonstre(c.boss)}) la lâche parfois. La difficulté et la prospection augmentent la chance.`;
+      lignes.push([`Où`, `${texteLieuxMonstre(c.boss)}.`]);
+      lignes.push([
+        `Astuce`,
+        `${MONSTRES[c.boss]?.nom ?? c.boss} ne la lâche que parfois : la difficulté et la prospection augmentent la chance.`,
+      ]);
+      break;
     case `archis_total`:
-      return `Total d'âmes capturées, toutes runs confondues.`;
+      lignes.push([
+        `Comment`,
+        `capture des âmes d'archimonstres ; le total compte toutes les runs.`,
+      ]);
+      break;
     case `objet_obtenu`:
-      return `Objet à trouver : ${texteObtentionObjet(c.objet).split(`\n`)[0]}`;
+      lignes.push([`Où`, texteObtentionObjet(c.objet).split(`\n`)[0]]);
+      break;
     case `dofus_possede`:
-      return `Obtiens d'abord le ${DOFUS[c.dofus]?.nom ?? c.dofus} : ${texteObtentionDofus(c.dofus)}`;
+      lignes.push([
+        `Comment`,
+        `obtiens d'abord le ${DOFUS[c.dofus]?.nom ?? c.dofus} : ${texteObtentionDofus(c.dofus)}`,
+      ]);
+      break;
     case `dofus_possedes`:
-      return `Termine d'autres succès de Dofus.`;
+      lignes.push([`Comment`, `termine d'autres succès de Dofus pour les obtenir.`]);
+      break;
     case `runs_jouees`:
-      return `Chaque run lancée compte, gagnée ou non.`;
+      lignes.push([`Comment`, `chaque run lancée compte, gagnée ou non.`]);
+      break;
   }
-  return ``;
+  if (conditions.length) {
+    lignes.push([`Condition`, `${conditions.join(` ; `)}.`]);
+  }
+  return lignes;
+}
+
+const majuscule = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+
+/**
+ * Description d'une quête en clair : { titre, lore, lignes }.
+ * titre : ce qu'il faut faire, en une phrase simple ; lore : le titre du succès dans Dofus (s'il y en
+ * a un), à part ; lignes : [étiquette, texte] (Où / Comment / Condition).
+ */
+export function decrireQuete(quete) {
+  let texte = quete.nom.replace(/\.$/, ``);
+  let lore = ``;
+  const citation = texte.match(/^«\s*(.+?)\s*»\s*:\s*(.+)$/);
+  if (citation) {
+    [, lore, texte] = citation;
+  } else {
+    // « Kardorim (Duo) : vaincre… » : le préfixe répète la quête ; « Titre : action » : titre = lore
+    const prefixe = texte.match(/^([^:]+?)\s:\s(.+)$/);
+    if (prefixe) {
+      const titre = prefixe[1].replace(/\s*\(.+\)\s*$/, ``);
+      lore = prefixe[2].includes(titre) ? `` : titre;
+      texte = prefixe[2];
+    }
+  }
+  return { titre: majuscule(texte), lore, lignes: lignesQuete(quete.critere) };
+}
+
+// Indice en une chaîne (infobulles) : « Où : … Condition : … ».
+export function indiceQuete(quete) {
+  const { lignes } = decrireQuete(quete);
+  return lignes.map(([e, t]) => `${e} : ${t}`).join(` `);
 }

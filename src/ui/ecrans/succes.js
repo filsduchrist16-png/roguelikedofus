@@ -7,7 +7,7 @@ import {
   progressionSucces,
   trouverQuete,
 } from "../../jeu/quetes.js";
-import { indiceQuete, mondeDuDofus } from "../../jeu/obtention.js";
+import { decrireQuete, mondeDuDofus } from "../../jeu/obtention.js";
 import {
   afficherEcran,
   barreContinuer,
@@ -111,9 +111,13 @@ export function ecranSucces(e, selection) {
           let i = t.compteur
             ? `<span class="quete-compteur">${t.compteur[0]}/${t.compteur[1]}</span>`
             : ``;
+          const d = decrireQuete(e);
+          const aide = t.faite
+            ? ``
+            : `<span class="quete-aide">${d.lignes.map(([etiq, texte]) => `<span class="quete-ligne-aide"><b>${echapperHtml(etiq)}</b> ${echapperHtml(texte)}</span>`).join(``)}</span>`;
           return `<li class="quete-ligne${t.faite ? ` faite` : ``}">
         <span class="quete-coche" aria-label="${t.faite ? `faite` : `à faire`}">${t.faite ? `✓` : ``}</span>
-        <span class="quete-nom">${echapperHtml(e.nom)}${t.faite ? `` : `<small class="quete-indice">${echapperHtml(indiceQuete(e))}</small>`}</span>${i}
+        <span class="quete-nom"><span class="quete-titre">${echapperHtml(d.titre)}</span>${d.lore ? `<em class="quete-lore">« ${echapperHtml(d.lore)} »</em>` : ``}${aide}</span>${i}
       </li>`;
         })
         .join(``)}</ul>`;
