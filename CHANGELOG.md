@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## Confort : Règles, Caractéristiques, Bestiaire
+
+- **Règles** : sections repliables (la première est ouverte) avec un bouton « Tout déplier / Tout replier »,
+  texte un peu plus petit sur téléphone : plus de mur de texte à défiler.
+- **Caractéristiques** : sur téléphone, un onglet par héros au lieu de toutes les fiches empilées.
+- **Bestiaire** : « Pas d'archimonstre » au lieu de « 0/0 » pour le Monde 5.
+
 ## Confort : collection de Dofus, Bestiaire, Armurerie, Formation
 
 - **Collection de Dofus** : touche un Dofus (même pas encore obtenu) pour voir sa fiche en dessous :

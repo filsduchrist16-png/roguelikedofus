@@ -251,3 +251,60 @@
     font-size: 0.7rem;
   }
 }
+
+/* ---------- Règles : sections repliables ---------- */
+.regles-outils {
+  margin: 0 0 8px;
+  text-align: center;
+}
+.regles-section > summary {
+  cursor: pointer;
+  list-style: none;
+}
+.regles-section > summary::-webkit-details-marker {
+  display: none;
+}
+.regles-section > summary h2 {
+  display: inline;
+}
+.regles-section > summary::before {
+  content: "▸ ";
+  color: var(--or);
+  font-weight: 900;
+}
+.regles-section[open] > summary::before {
+  content: "▾ ";
+}
+@media (width<=700px) {
+  .regles-section {
+    font-size: 0.92rem;
+  }
+}
+
+/* ---------- Caractéristiques : un héros à la fois sur téléphone ---------- */
+.prog-onglets {
+  display: none;
+}
+@media (width<=700px) {
+  .prog-onglets {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0 0 8px;
+  }
+  .prog-onglet {
+    padding: 6px 14px;
+    border: 2px solid var(--cadre);
+    border-radius: 12px;
+    background: linear-gradient(180deg, #f3e7c9, #dcc596);
+    font-weight: 800;
+  }
+  .prog-onglet.sel {
+    background: linear-gradient(180deg, #ffc75a, #f59a24);
+    border-color: #7a440c;
+  }
+  .prog-grille .carte-prog:not(.sel) {
+    display: none;
+  }
+}

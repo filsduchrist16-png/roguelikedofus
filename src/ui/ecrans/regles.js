@@ -107,11 +107,19 @@ export function ecranRegles() {
   return new Promise((resolve) => {
     afficherEcran(`
       <h1>Règles</h1>
+      <p class="regles-outils"><button type="button" id="regles-tout" class="secondaire petit">Tout déplier</button></p>
       <div class="regles">
-        ${SECTIONS_REGLES.map((e) => `<section class="regles-section"><h2>${e.titre}</h2>${e.corps}</section>`).join(``)}
+        ${SECTIONS_REGLES.map((e, k) => `<details class="regles-section"${k === 0 ? ` open` : ``}><summary><h2>${e.titre}</h2></summary>${e.corps}</details>`).join(``)}
       </div>
       ${barreRetour(`retour`)}
     `);
+    const sections = [...racine.querySelectorAll(`.regles-section`)];
+    const bouton = racine.querySelector(`#regles-tout`);
+    bouton?.addEventListener(`click`, () => {
+      const deplier = sections.some((d) => !d.open);
+      sections.forEach((d) => (d.open = deplier));
+      bouton.textContent = deplier ? `Tout replier` : `Tout déplier`;
+    });
     racine.querySelector(`#retour`)?.addEventListener(`click`, () => resolve());
   });
 }

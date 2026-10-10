@@ -204,9 +204,22 @@ export function ecranCaracteristiques(
       <h1>${echapperHtml(t)}</h1>
       <p class="sous-titre">${echapperHtml(n)}</p>
       ${resumeBonusDofus(i)}
+      ${e.length > 1 ? `<div class="prog-onglets" role="group" aria-label="Héros">${e.map((perso, k) => `<button type="button" class="prog-onglet${k === 0 ? ` sel` : ``}" data-k="${k}" aria-pressed="${k === 0}">${echapperHtml(CLASSES[perso.classeId]?.nom ?? perso.classeId)}</button>`).join(``)}</div>` : ``}
       <div class="prog-grille">${e.map((perso) => htmlFichePerso(perso, i)).join(``)}</div>
       <div class="boutons-ecran">${r ? boutonRetour(`prog-fermer`, `Retour au plateau`) : boutonContinuer(`prog-fermer`)}</div>
     `);
+    // téléphone : un héros à la fois (les onglets remplacent la longue liste)
+    const fiches = [...document.querySelectorAll(`.prog-grille .carte-prog`)];
+    fiches[0]?.classList.add(`sel`);
+    document.querySelectorAll(`.prog-onglet`).forEach((b) =>
+      b.addEventListener(`click`, () => {
+        document.querySelectorAll(`.prog-onglet`).forEach((x) => {
+          x.classList.toggle(`sel`, x === b);
+          x.setAttribute(`aria-pressed`, String(x === b));
+        });
+        fiches.forEach((f, k) => f.classList.toggle(`sel`, k === Number(b.dataset.k)));
+      }),
+    );
     document.getElementById(`prog-fermer`)?.addEventListener(`click`, () => resolve());
   });
 }

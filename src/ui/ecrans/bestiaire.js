@@ -83,7 +83,7 @@ export function ecranBestiaire(e) {
           let i = reliquesDuMonde(t.id);
           return `<button class="best-onglet${t.id === e?.id ? ` actif` : ``}" role="tab" aria-selected="${t.id === e?.id}" data-monde="${t.id}">
             <b>${echapperHtml(t.nom)}</b>
-            <small>Archimonstres ${r.fait}/${r.sur} · Reliques ${i.filter((e) => n.includes(e)).length}/${i.length}</small>
+            <small>${r.sur ? `Archimonstres ${r.fait}/${r.sur}` : `Pas d'archimonstre`} · Reliques ${i.filter((e) => n.includes(e)).length}/${i.length}</small>
           </button>`;
         })
         .join(``);
