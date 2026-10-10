@@ -74,7 +74,7 @@ export function ecranFormation(e) {
     let f = () => {
       afficherEcran(`
         <h1>Formation</h1>
-        <p class="sous-titre">Glisse-dépose, ou touche une case puis une autre pour les échanger. La <b>ligne avant</b> encaisse les sorts de ligne ennemis ; la <b>ligne arrière</b> est protégée. Effet dès le prochain combat.</p>
+        <p class="sous-titre">Touche deux cases pour les échanger (ou glisse-dépose). <b>Ligne avant</b> : encaisse les sorts de ligne ennemis. <b>Ligne arrière</b> : protégée.</p>
         <p id="form-msg" class="muet settings-sous" style="display:none"></p>
         <div class="formation-grille">
           <div class="form-rangee"><span class="form-ligne-lbl">Ligne avant</span><div class="form-cells">${s(

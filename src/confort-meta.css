@@ -205,3 +205,49 @@
   font-size: 0.7rem;
   letter-spacing: 0.04em;
 }
+
+/* ---------- Collection de Dofus : fiche du Dofus touché ---------- */
+.dofus-slot.choisi {
+  outline: 3px solid #f59a24;
+  outline-offset: 2px;
+}
+.dofus-detail {
+  margin: 12px 0 0;
+  padding: 10px 14px;
+  background: #fff6e0aa;
+  border: 1px solid var(--cadre-or);
+  border-radius: 14px;
+}
+.dofus-detail h2 {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+}
+.dofus-detail p {
+  margin: 4px 0;
+}
+.dofus-detail .dofus-possede {
+  color: #2f6e1a;
+  font-size: 0.8rem;
+}
+.dofus-detail-obt {
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.dofus-voir {
+  margin-top: 6px;
+}
+
+/* ---------- Bestiaire / Armurerie : mondes en grille compacte sur téléphone ---------- */
+@media (width<=700px) {
+  .best-onglets {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+  .best-onglet {
+    padding: 6px 8px;
+  }
+  .best-onglet small {
+    font-size: 0.7rem;
+  }
+}

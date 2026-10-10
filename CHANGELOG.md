@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## Confort : collection de Dofus, Bestiaire, Armurerie, Formation
+
+- **Collection de Dofus** : touche un Dofus (même pas encore obtenu) pour voir sa fiche en dessous :
+  effet, niveau, monde, avancement des quêtes et comment l'obtenir, avec un bouton « 🏆 Voir les quêtes »
+  qui ouvre directement son succès (et ramène à la collection au retour). Utilisable au clavier.
+- **Bestiaire et Armurerie sur téléphone** : les 5 mondes passent en grille 2 colonnes au lieu de 5
+  grosses cartes empilées : la liste des zones est visible sans défiler.
+- **Formation** : texte d'aide raccourci de moitié.
+
 ## Succès : descriptions en clair
 
 - Chaque quête affiche maintenant **ce qu'il faut faire** en une phrase (« Vaincre Nagate »), puis des
