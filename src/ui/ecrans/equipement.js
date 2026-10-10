@@ -324,13 +324,17 @@ export function ecranEquipement(e, t) {
           </div>
           <div class="equip-col">
             <h3>Inventaire (${t.length})</h3>
-            <div class="equip-outils">
+            ${
+              t.length
+                ? `<div class="equip-outils">
               <div class="equip-filtres" role="group" aria-label="Filtrer par emplacement">${filtres}</div>
               <div class="equip-tri" role="group" aria-label="Trier">Tri :
                 ${TRIS.map(([id, nom, aide]) => `<button class="tri-btn${triArmurerie === id ? ` actif` : ``}" data-tri="${id}" aria-pressed="${triArmurerie === id}" title="${aide}">${nom}</button>`).join(``)}
               </div>
             </div>
-            <p class="equip-astuce muet">Touche un objet pour voir sa fiche et l'équiper sur n'importe quel héros${ecranTactile() ? `` : ` (double-clic : équiper directement, ou glisser-déposer)`}.</p>
+            <p class="equip-astuce muet">Touche un objet pour voir sa fiche et l'équiper sur n'importe quel héros${ecranTactile() ? `` : ` (double-clic : équiper directement, ou glisser-déposer)`}.</p>`
+                : `<p class="equip-vide muet">🎒 Ton sac est vide. Les objets viennent des combats, des coffres et de l'HDV : ils apparaîtront ici.</p>`
+            }
             <div class="equip-inv">${d}</div>
           </div>
         </div>

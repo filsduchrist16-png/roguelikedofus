@@ -364,6 +364,17 @@ export function ecranCarte(
           </footer>
         </div>`;
       centrerCarte();
+      // menu du haut : un dégradé à droite tant qu'il reste des boutons hors écran
+      const menuHaut = racine.querySelector(`.topbar-actions`);
+      if (menuHaut) {
+        const maj = () =>
+          menuHaut.classList.toggle(
+            `suite`,
+            menuHaut.scrollLeft + menuHaut.clientWidth < menuHaut.scrollWidth - 4,
+          );
+        menuHaut.addEventListener(`scroll`, maj, { passive: true });
+        maj();
+      }
       const aller = (id) => {
         let n = trouverNoeud(e, id);
         if (n) {

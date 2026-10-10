@@ -285,3 +285,8 @@
     letter-spacing: -0.01em;
   }
 }
+
+/* pastilles de coût des sorts : plus rognées par le haut de la barre */
+.sorts-zone {
+  padding-top: 12px;
+}

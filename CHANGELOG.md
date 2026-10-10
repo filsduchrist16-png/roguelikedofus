@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## Petites finitions d'interface (mobile)
+
+- Combat : les pastilles de coût des sorts ne sont plus coupées par le haut de la barre.
+- Accueil : légendes du menu alignées sous chaque icône, plus de chevauchement avec le logo.
+- Carte : le menu du haut s'estompe à droite tant qu'il reste des boutons à faire défiler.
+- Équipement : sac vide = un message clair au lieu de filtres et de tris à zéro.
+
 ## Petit correctif tactile
 
 - Choix d'équipe sur téléphone : l'archétype (Mêlée / Distance) s'écrit en toutes lettres au lieu d'une icône à infobulle inaccessible au toucher.

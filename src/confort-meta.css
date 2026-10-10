@@ -153,3 +153,21 @@
     order: 2;
   }
 }
+
+/* accueil : les légendes du menu restent alignées sous chaque icône et ne passent plus sous le logo */
+.coin-menu .coin-param {
+  height: auto;
+  min-height: 42px;
+  justify-content: flex-start;
+}
+.coin-menu .coin-param img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+@media (width<=700px) {
+  .coin-menu {
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+}

@@ -214,3 +214,11 @@
 .item-nom > .pastille-inutile {
   align-self: flex-start;
 }
+
+.equip-vide {
+  margin: 8px 0;
+  padding: 14px;
+  text-align: center;
+  border: 2px dashed var(--cadre-or);
+  border-radius: 14px;
+}

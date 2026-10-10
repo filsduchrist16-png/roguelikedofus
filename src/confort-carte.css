@@ -222,3 +222,11 @@
 .aside-niv.au-plafond .aside-xp > span {
   background: linear-gradient(90deg, #e8b84a, #f5d77a);
 }
+
+/* menu du haut : fondu sur le bord droit tant que d'autres boutons sont cachés */
+@media (width<=700px) {
+  .topbar-actions.suite {
+    -webkit-mask-image: linear-gradient(90deg, #000 85%, #0000);
+    mask-image: linear-gradient(90deg, #000 85%, #0000);
+  }
+}
