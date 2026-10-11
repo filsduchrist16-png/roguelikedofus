@@ -1,5 +1,18 @@
 # Journal des modifications
 
+## « Équiper le meilleur » compare les combinaisons complètes
+
+- Pour chaque héros, on cherche le **meilleur ensemble de 8 emplacements** parmi tout ce qui est
+  disponible (porté + inventaire), pas seulement le meilleur échange isolé : l'équipement actuel est
+  amélioré emplacement par emplacement, puis on essaie **chaque panoplie dont on possède plusieurs pièces**
+  (toutes ses pièces d'un coup, portées ou dans l'inventaire) et des **paires de panoplies**, en
+  cherchant à chaque fois le meilleur pour les autres emplacements. Le meilleur ensemble gagne : PA
+  d'abord (donc un +1 PA de panoplie qui se complète l'emporte même si chaque pièce vaut moins que
+  l'objet porté), puis dégâts, puis survie.
+- Les héros se disputent l'inventaire : le plus gros progrès est appliqué en premier, puis on recalcule.
+- Le plan est mémorisé tant que l'inventaire et l'équipement ne changent pas (l'écran se redessine
+  vite) ; pire cas mesuré (4 héros, 100 objets, 6 panoplies complètes) : environ une demi-seconde.
+
 ## « Équiper le meilleur » : nouvel algorithme
 
 - **Règles choisies** : un PA passe avant tout (objet à PA ou panoplie qui atteint son palier à PA) ; ensuite

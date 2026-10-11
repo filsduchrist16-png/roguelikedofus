@@ -150,6 +150,44 @@ describe(`comparaisons chiffrées`, async () => {
     expect(equiperMeilleur(run)).toBe(3);
     expect(bonusEquipement(run.persos[0]).paBonus).toBe(1);
   });
+  it(`toutes les pièces d'une panoplie dans l'inventaire : on les pose ensemble pour le +1 PA, même si chacune vaut moins que l'objet porté`, async () => {
+    const { PANOPLIES } = await import(`../src/data/index.js`);
+    const { equiperMeilleur } = await import(`../src/jeu/inventaire.js`);
+    const nom = Object.keys(PANOPLIES).find((n) => {
+      const p = PANOPLIES[n];
+      const slots = p.pieces.slice(0, 3).map((id) => EQUIPEMENTS[id].slot);
+      return (
+        p.paliers[3]?.pa &&
+        !p.paliers[2]?.pa &&
+        new Set(slots).size === 3 &&
+        !slots.includes(`arme`) &&
+        !slots.includes(`anneau`)
+      );
+    });
+    expect(nom).toBeTruthy();
+    const run = nouvelleRun([`iop`]);
+    const perso = run.persos[0];
+    const trois = PANOPLIES[nom].pieces.slice(0, 3);
+    // l'héros porte déjà des objets puissants à ces emplacements
+    for (const id of trois) {
+      perso.equipement[EQUIPEMENTS[id].slot] = {
+        ...objet(`abracape`, `epique`),
+        id: Object.values(EQUIPEMENTS).find(
+          (o) => o.slot === EQUIPEMENTS[id].slot && !o.panoplie && !o.retire && o.tiers.epique,
+        ).id,
+        adaptatif: 30,
+        pa: 0,
+        stats: {},
+      };
+    }
+    run.inventaire.push(
+      ...trois.map((id) => ({ ...objet(id, `epique`), stats: {}, adaptatif: 0, pa: 0 })),
+    );
+    const degatsAvant = comparerObjet(run.inventaire[0], perso).offensif;
+    expect(degatsAvant).toBeLessThan(0); // une pièce seule est moins bonne que l'objet porté
+    expect(equiperMeilleur(run)).toBe(3);
+    expect(bonusEquipement(perso).paBonus).toBe(1); // mais l'ensemble donne le PA
+  });
   it(`planEquiper annonce exactement ce que fait le bouton, sans rien changer`, async () => {
     const { equiperMeilleur, planEquiper } = await import(`../src/jeu/inventaire.js`);
     const run = runAvecCape({ intelligence: 20 });

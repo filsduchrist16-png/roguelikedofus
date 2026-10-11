@@ -1,7 +1,15 @@
 // Aides à la gestion de l'inventaire : comparer un objet à celui porté, regrouper les doublons.
 import { CLASSES, EQUIPEMENTS, PANOPLIES } from "../data/index.js";
 import { STAT_PAR_ELEMENT } from "./progression.js";
-import { bonusEquipement, emplacementCible, equiperObjet, peutEquiper, pvMaxPerso } from "./run.js";
+import {
+  bonusEquipement,
+  emplacementCible,
+  emplacementPossible,
+  equiperObjet,
+  peutEquiper,
+  pvMaxPerso,
+} from "./run.js";
+import { EMPLACEMENTS, emplacementsDuType, typeDeEmplacement } from "./emplacements.js";
 
 const STATS = [`force`, `intelligence`, `agilite`, `chance`, `soin`, `prospection`, `crit`];
 const ELEMENTS = [`terre`, `feu`, `eau`, `air`];
@@ -232,86 +240,235 @@ export function grouperInventaire(inventaire) {
 
 const RANG_RARETE = [`commun`, `rare`, `epique`, `legendaire`];
 const copiePerso = (p) => ({ ...p, equipement: { ...p.equipement } });
+const rang = (inst) => RANG_RARETE.indexOf(inst.rarete);
 
-// Meilleur coup possible : un seul objet, ou plusieurs pièces d'une même panoplie d'un coup (pour
-// qu'une panoplie qui se complète compte autant qu'un gain direct, même si la première pièce seule
-// ne vaut rien). Renvoie { perso, actions: [{ inst, emplacement }], delta } ou null.
-function meilleurCoup(inventaire, persos) {
-  let meilleur = null;
-  let base = null;
-  const proposer = (perso, actions, apres) => {
-    if (!estProgres(perso, apres, base)) {
-      return;
-    }
-    const delta = deltaCle(cleEquipement(apres), base);
-    if (!meilleur || comparerDeltas(delta, meilleur.delta) > 0) {
-      meilleur = { perso, actions, delta };
-    }
-  };
-  for (const perso of persos) {
-    base = cleEquipement(perso);
-    // un seul objet
-    for (const inst of inventaire) {
-      if (!peutEquiper(perso, inst.id)) {
+// Le chargement `a` (sa clé) est-il meilleur que `b` ? PA, puis dégâts, puis survie.
+const meilleureCle = (a, b) => comparerDeltas(deltaCle(a, b), ZERO) > 0;
+
+// Un chargement est valide s'il ne fait perdre aucun effet spécial ni ne vide les PV max (voir estProgres).
+function chargementValide(origine, effetsOrigine, pvOrigine, essai) {
+  const effets = effetsDe(essai);
+  return (
+    [...effetsOrigine].every((k) => effets.has(k)) &&
+    pvMaxPerso(essai) >= pvOrigine * (1 - CHUTE_PV_MAX)
+  );
+}
+
+/**
+ * Améliore un chargement emplacement par emplacement (les `verrous` ne bougent pas) en testant tous
+ * les objets disponibles, jusqu'à ce que plus aucun changement d'un seul objet n'aide.
+ */
+function grimper(perso, depart, verrous, pool, contexte) {
+  const parType = contexte.parType;
+  let eq = { ...depart };
+  let cle = cleEquipement({ ...perso, equipement: eq });
+  for (let tour = 0; tour < 12; tour++) {
+    let ameliore = false;
+    for (const slot of EMPLACEMENTS) {
+      if (verrous.has(slot)) {
         continue;
       }
-      const emplacement = emplacementCible(perso, inst);
-      if (emplacement) {
-        proposer(perso, [{ inst, emplacement }], {
-          ...perso,
-          equipement: { ...perso.equipement, [emplacement]: inst },
-        });
-      }
-    }
-    // plusieurs pièces d'une panoplie : toutes celles de l'inventaire qui manquent au héros
-    for (const nom of Object.keys(PANOPLIES)) {
-      // il faut au moins deux pièces de la panoplie dans l'inventaire (sinon ce sont des objets seuls)
-      const manquantes = PANOPLIES[nom].pieces.filter((id) => inventaire.some((i) => i.id === id));
-      if (manquantes.length < 2) {
-        continue;
-      }
-      const essai = copiePerso(perso);
-      const actions = [];
-      const pris = new Set();
-      for (const id of PANOPLIES[nom].pieces) {
-        if (Object.values(essai.equipement).some((i) => i?.id === id) || !peutEquiper(perso, id)) {
+      for (const inst of parType[typeDeEmplacement(slot)] ?? []) {
+        if (Object.values(eq).includes(inst)) {
           continue;
         }
-        const candidats = inventaire.filter((i) => i.id === id && !pris.has(i));
-        const inst = candidats.sort(
-          (x, y) => RANG_RARETE.indexOf(y.rarete) - RANG_RARETE.indexOf(x.rarete),
-        )[0];
-        const emplacement = inst && emplacementCible(essai, inst);
-        if (emplacement) {
-          essai.equipement[emplacement] = inst;
-          pris.add(inst);
-          actions.push({ inst, emplacement });
+        if (
+          !peutEquiper(perso, inst.id) ||
+          !emplacementPossible({ ...perso, equipement: eq }, inst, slot)
+        ) {
+          continue;
+        }
+        const essai = { ...perso, equipement: { ...eq, [slot]: inst } };
+        if (!chargementValide(perso, contexte.effets, contexte.pv, essai)) {
+          continue;
+        }
+        const c = cleEquipement(essai);
+        if (meilleureCle(c, cle)) {
+          eq = essai.equipement;
+          cle = c;
+          ameliore = true;
         }
       }
-      if (actions.length >= 2) {
-        proposer(perso, actions, essai);
+    }
+    if (!ameliore) {
+      break;
+    }
+  }
+  return { eq, cle };
+}
+
+// Point de départ qui force toutes les pièces d'une panoplie disponibles (portées ou dans l'inventaire).
+// Renvoie { eq, verrous, nouvelles } ou null s'il n'y a aucune pièce à ajouter.
+function departForce(perso, depart, verrousDepart, inventaire, nom) {
+  const eq = { ...depart };
+  const verrous = new Set(verrousDepart);
+  let nouvelles = 0;
+  for (const id of PANOPLIES[nom].pieces) {
+    const porte = Object.entries(eq).find(([, i]) => i?.id === id);
+    if (porte) {
+      verrous.add(porte[0]);
+      continue;
+    }
+    const inst = inventaire
+      .filter((i) => i.id === id && !Object.values(eq).includes(i))
+      .sort((x, y) => rang(y) - rang(x))[0];
+    if (!inst || !peutEquiper(perso, id)) {
+      continue;
+    }
+    const libres = emplacementsDuType(EQUIPEMENTS[id].slot).filter((k) => !verrous.has(k));
+    const cible = emplacementCible({ ...perso, equipement: eq }, inst);
+    const slot = libres.includes(cible) ? cible : libres[0];
+    if (!slot) {
+      continue;
+    }
+    eq[slot] = inst;
+    verrous.add(slot);
+    nouvelles++;
+  }
+  return nouvelles ? { eq, verrous } : null;
+}
+
+/**
+ * Meilleur chargement complet d'un héros parmi tout ce qui est disponible (porté + inventaire) :
+ * on part de l'équipement actuel, puis de chaque panoplie dont on peut mettre plusieurs pièces d'un
+ * coup (et des paires de panoplies), en forçant ces pièces et en cherchant le meilleur pour les
+ * autres emplacements. Renvoie { eq, cle } ou null si rien ne vaut mieux que l'actuel.
+ */
+function meilleurChargement(perso, inventaire) {
+  const pool = [...inventaire, ...Object.values(perso.equipement)];
+  // panoplies jouables : au moins deux pièces disponibles dont une dans l'inventaire
+  const disponible = (nom) =>
+    PANOPLIES[nom].pieces.filter((id) => pool.some((i) => i.id === id) && peutEquiper(perso, id));
+  const jouables = Object.keys(PANOPLIES).filter(
+    (nom) =>
+      disponible(nom).length >= 2 &&
+      PANOPLIES[nom].pieces.some((id) => inventaire.some((i) => i.id === id)),
+  );
+  const piecesJouables = new Set(jouables.flatMap((nom) => PANOPLIES[nom].pieces));
+  // par type d'objet : les objets portés, les pièces des panoplies jouables et les 4 meilleurs
+  // objets seuls (les autres ne peuvent pas faire partie d'un meilleur ensemble)
+  const parType = {};
+  for (const inst of pool) {
+    const type = EQUIPEMENTS[inst.id]?.slot;
+    if (type && peutEquiper(perso, inst.id)) {
+      (parType[type] ??= []).push(inst);
+    }
+  }
+  for (const [type, liste] of Object.entries(parType)) {
+    const slot = emplacementsDuType(type)[0];
+    const notes = new Map(
+      liste.map((inst) => [
+        inst,
+        cleEquipement({ ...perso, equipement: { ...perso.equipement, [slot]: inst } }),
+      ]),
+    );
+    const classes = [...liste].sort((x, y) =>
+      meilleureCle(notes.get(x), notes.get(y))
+        ? -1
+        : meilleureCle(notes.get(y), notes.get(x))
+          ? 1
+          : 0,
+    );
+    const gardes = new Set(classes.slice(0, 4));
+    parType[type] = liste.filter(
+      (inst) =>
+        gardes.has(inst) ||
+        piecesJouables.has(inst.id) ||
+        Object.values(perso.equipement).includes(inst),
+    );
+  }
+  const contexte = { effets: effetsDe(perso), pv: pvMaxPerso(perso), parType };
+  const aucun = new Set();
+  const departs = [grimper(perso, perso.equipement, aucun, pool, contexte)];
+  const seuls = [];
+  for (const nom of jouables) {
+    const d = departForce(perso, perso.equipement, aucun, inventaire, nom);
+    if (d) {
+      const r = grimper(perso, d.eq, d.verrous, pool, contexte);
+      departs.push(r);
+      seuls.push({ nom, r });
+    }
+  }
+  // paires de panoplies, parmi les 4 meilleures prises seules
+  seuls.sort((x, y) =>
+    meilleureCle(x.r.cle, y.r.cle) ? -1 : meilleureCle(y.r.cle, x.r.cle) ? 1 : 0,
+  );
+  const top = seuls.slice(0, 3);
+  for (let i = 0; i < top.length; i++) {
+    for (let j = i + 1; j < top.length; j++) {
+      const a = departForce(perso, perso.equipement, aucun, inventaire, top[i].nom);
+      const b = a && departForce(perso, a.eq, a.verrous, inventaire, top[j].nom);
+      if (b) {
+        departs.push(grimper(perso, b.eq, b.verrous, pool, contexte));
       }
     }
   }
-  return meilleur;
+  let meilleur = departs[0];
+  for (const d of departs) {
+    if (meilleureCle(d.cle, meilleur.cle)) {
+      meilleur = d;
+    }
+  }
+  const actuel = cleEquipement(perso);
+  return meilleureCle(meilleur.cle, actuel) ? meilleur : null;
+}
+
+// Les équipements à poser pour atteindre le chargement : [{ inst, emplacement }] dans un ordre jouable.
+function actionsVers(perso, inventaire, eq) {
+  const restant = EMPLACEMENTS.filter((k) => eq[k] && eq[k] !== perso.equipement[k]);
+  const actions = [];
+  const simule = copiePerso(perso);
+  const stock = inventaire.slice();
+  for (let passe = 0; passe < 4 && restant.length; passe++) {
+    for (const slot of [...restant]) {
+      const inst = eq[slot];
+      if (stock.includes(inst)) {
+        actions.push({ inst, emplacement: slot });
+        stock.splice(stock.indexOf(inst), 1);
+        const remplace = simule.equipement[slot];
+        if (remplace) {
+          stock.push(remplace);
+        }
+        simule.equipement[slot] = inst;
+        restant.splice(restant.indexOf(slot), 1);
+      }
+    }
+  }
+  return actions;
 }
 
 function jouerCoups(run, persos, enregistrer) {
   let n = 0;
-  for (let tour = 0; tour < 64; tour++) {
-    const coup = meilleurCoup(run.inventaire, persos);
-    if (!coup) {
-      break;
-    }
-    for (const { inst, emplacement } of coup.actions) {
-      const index = run.inventaire.indexOf(inst);
-      const remplace = coup.perso.equipement[emplacement];
-      equiperObjet(run.inventaire, coup.perso, index, emplacement);
-      if (coup.perso.equipement[emplacement] === inst) {
-        n++;
-        enregistrer?.({ perso: coup.perso, emplacement, inst, remplace });
+  for (let tour = 0; tour < 24; tour++) {
+    let meilleur = null;
+    for (const perso of persos) {
+      const c = meilleurChargement(perso, run.inventaire);
+      if (!c) {
+        continue;
+      }
+      const delta = deltaCle(c.cle, cleEquipement(perso));
+      if (!meilleur || comparerDeltas(delta, meilleur.delta) > 0) {
+        meilleur = { perso, c, delta };
       }
     }
+    if (!meilleur) {
+      break;
+    }
+    const actions = actionsVers(meilleur.perso, run.inventaire, meilleur.c.eq);
+    let fait = 0;
+    for (const { inst, emplacement } of actions) {
+      const index = run.inventaire.indexOf(inst);
+      const remplace = meilleur.perso.equipement[emplacement];
+      equiperObjet(run.inventaire, meilleur.perso, index, emplacement);
+      if (meilleur.perso.equipement[emplacement] === inst) {
+        fait++;
+        enregistrer?.({ perso: meilleur.perso, emplacement, inst, remplace });
+      }
+    }
+    if (!fait) {
+      break;
+    }
+    n += fait;
   }
   return n;
 }
@@ -332,11 +489,37 @@ export function equiperMeilleur(run, persos = run.persos) {
  * Ce que ferait equiperMeilleur, sans rien changer : [{ perso, emplacement, inst, remplace }] dans
  * l'ordre. Sert au bouton (nombre), aux flèches ▲ et à l'écran de butin : ils ne se contredisent jamais.
  */
+const idsInstances = new WeakMap();
+let prochainId = 1;
+const idDe = (x) => {
+  if (!x) {
+    return 0;
+  }
+  if (!idsInstances.has(x)) {
+    idsInstances.set(x, prochainId++);
+  }
+  return idsInstances.get(x);
+};
+let memo = { cle: ``, plan: [] };
 export function planEquiper(run, persos = run.persos) {
+  // même inventaire, mêmes pièces portées, mêmes niveaux : même plan (l'écran se redessine souvent)
+  const cle = JSON.stringify([
+    run.inventaire.map(idDe),
+    persos.map((p) => [
+      p.classeId,
+      p.position,
+      p.progression?.niveau,
+      EMPLACEMENTS.map((k) => idDe(p.equipement[k])),
+    ]),
+  ]);
+  if (memo.cle === cle && memo.persos?.every((p, i) => p === persos[i])) {
+    return memo.plan;
+  }
   const copie = persos.map(copiePerso);
   const essai = { inventaire: run.inventaire.slice() };
   const coups = [];
   jouerCoups(essai, copie, (c) => coups.push({ ...c, perso: persos[copie.indexOf(c.perso)] }));
+  memo = { cle, plan: coups, persos: persos.slice() };
   return coups;
 }
 
