@@ -116,3 +116,28 @@ describe("contenu du jeu", () => {
     }
   });
 });
+
+describe(`archimonstres capturables`, () => {
+  it(`tout monstre qui a un archiNom apparaît dans un combat de zone, de donjon secret ou parmi les monstres rares`, async () => {
+    const { MONSTRES, COMBATS, ZONES, SECRETS } = await import(`../src/data/index.js`);
+    const { MONSTRES_RARES } = await import(`../src/jeu/config.js`);
+    const vus = new Set();
+    for (const z of ZONES) {
+      for (const liste of Object.values(z.pools ?? {})) {
+        for (const c of liste) {
+          COMBATS[c].ennemis.forEach((e) => vus.add(e.monstre));
+        }
+      }
+    }
+    for (const s of Object.values(SECRETS)) {
+      COMBATS[s.combat].ennemis.forEach((e) => vus.add(e.monstre));
+    }
+    for (const liste of Object.values(MONSTRES_RARES)) {
+      liste.especes.forEach((m) => vus.add(m));
+    }
+    const orphelins = Object.values(MONSTRES)
+      .filter((m) => m.archiNom && !vus.has(m.id))
+      .map((m) => m.id);
+    expect(orphelins).toEqual([]);
+  });
+});

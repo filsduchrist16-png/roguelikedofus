@@ -308,13 +308,6 @@ export function capturerArchi(e, t) {
   }
   return (e.archis.push(t), sauverMeta(e), true);
 }
-function tousArchisCaptures(e) {
-  let t = Object.values(MONSTRES)
-    .filter((e) => e.archiNom)
-    .map((e) => e.id);
-  let n = new Set(e.archis);
-  return t.length > 0 && t.every((e) => n.has(e));
-}
 export function bonusDofus(e) {
   let t = {
     damageMult: 1,
@@ -337,7 +330,7 @@ export function bonusDofus(e) {
     let r = DOFUS[n];
     r &&
       (r.degatsPct && (t.damageMult *= 1 + r.degatsPct),
-      r.paBonus && (n !== `dofus_ocre` || tousArchisCaptures(e)) && (t.paBonus += r.paBonus),
+      r.paBonus && (t.paBonus += r.paBonus),
       r.pvBonus && (t.pvBonus += r.pvBonus),
       r.resAll && (t.resAllBonus += r.resAll),
       r.statsElementaires && (t.statsElementaires += r.statsElementaires),

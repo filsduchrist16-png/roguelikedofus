@@ -36,3 +36,15 @@ describe("Dofus", () => {
     expect(bonusDofus(meta()).multKamas).toBe(1);
   });
 });
+
+describe(`Dofus Ocre`, () => {
+  it(`donne son +1 PA dès qu'il est possédé (son succès demande déjà tous les archimonstres)`, async () => {
+    const { bonusDofus } = await import(`../src/sauvegarde/meta.js`);
+    const meta = {
+      dofus: [{ id: `dofus_ocre` }],
+      archis: [],
+      quetes: { faites: [], compteurs: {} },
+    };
+    expect(bonusDofus(meta).paBonus).toBe(1);
+  });
+});
