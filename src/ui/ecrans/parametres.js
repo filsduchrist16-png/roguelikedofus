@@ -152,11 +152,11 @@ export function ecranParametres(e) {
                   let t = e.nb();
                   let n =
                     t > 0
-                      ? `Efface définitivement les ${t} Dofus collectés. Succès, réglages et run en cours sont conservés.`
+                      ? `Efface les ${t} Dofus collectés et les quêtes de leurs succès (les autres succès, les réglages et la run en cours sont conservés).`
                       : `Aucun Dofus collecté pour l'instant.`;
                   return `<div class="setting-ligne ${t > 0 ? `setting-danger` : ``}">
             <span class="setting-lbl">Réinitialiser les Dofus<br><small class="muet">${n}</small></span>
-            <button id="set-reset-dofus" class="secondaire ${r ? `danger-arme` : ``}" ${t > 0 ? `` : `disabled`}>${r ? `Confirmer l'effacement` : `Réinitialiser`}</button>
+            <button id="set-reset-dofus" class="secondaire" ${t > 0 ? `` : `disabled`}>Réinitialiser</button>
           </div>`;
                 })()
               : ``
@@ -548,12 +548,17 @@ export function ecranParametres(e) {
           });
         })
         .catch(() => {});
-      document.getElementById(`set-reset-dofus`)?.addEventListener(`click`, () => {
-        if (!r) {
-          r = true;
-          i();
+      document.getElementById(`set-reset-dofus`)?.addEventListener(`click`, async () => {
+        const nb = e.nb();
+        if (
+          !(await demanderConfirmation(
+            `Effacer définitivement tes Dofus${nb ? ` (${nb})` : ``} et les quêtes de leurs succès ? Une copie de ta partie est gardée : « Annuler le dernier import » la remet.`,
+            `Effacer`,
+          ))
+        ) {
           return;
         }
+        sauvegardeDeSecours();
         e.onReset();
         r = false;
         i();

@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## Lot A terminé (A4 à A9)
+
+- **A4** : le +1 PA du Dofus Ocre s'active dès qu'il est possédé ; Toufou le Benêt (jamais en combat) n'est plus un archimonstre.
+- **A5** : import et restauration de sauvegarde atomiques (trois clés d'un coup, anciennes valeurs remises en cas d'erreur de quota), version et types contrôlés ; la copie de secours est exigée avant d'écraser, et sa suppression est signalée.
+- **A6** : une sauvegarde qui échoue (navigateur plein) affiche une fois un bandeau d'alerte.
+- **A7** : en combat, Espace ne termine plus le tour quand un bouton a le focus.
+- **A8** : à la taverne, remplacer un héros demande confirmation, et Échap annule.
+- **A9** : « Réinitialiser les Dofus » efface aussi les quêtes de leurs succès (ils ne reviennent plus), avec confirmation et copie de secours.
+
 ## Réparation et lot A (A1 à A3)
 
 - `src/main.js`, `src/sauvegarde/meta.js` et `run.js` avaient été presque vidés par un commit

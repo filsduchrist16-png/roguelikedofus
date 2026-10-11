@@ -170,8 +170,22 @@ export function dofusAGagner(e, t) {
     return n;
   }
 }
+/**
+ * Efface les Dofus ET les quêtes des succès de Dofus : sinon ils reviendraient aussitôt (leur succès
+ * resterait terminé) et le Kaliptus pourrait être retiré à volonté.
+ */
 export function reinitialiserDofus(e) {
   e.dofus = [];
+  e.dofusSuspendus = [];
+  const ids = new Set(
+    Object.values(SUCCES)
+      .filter((s) => s.categorie?.dofus)
+      .flatMap((s) => s.quetes.map((q) => q.id)),
+  );
+  e.quetes.faites = e.quetes.faites.filter((id) => !ids.has(id));
+  for (const id of ids) {
+    delete e.quetes.compteurs[id];
+  }
   sauverMeta(e);
 }
 export function enregistrerRun(e, t, n) {

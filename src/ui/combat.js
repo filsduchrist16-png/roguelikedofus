@@ -84,6 +84,12 @@ export function installerRaccourcisCombat() {
       return;
     }
     if (e.key === parametres.toucheFinTour) {
+      // Espace sur un sort ou un bouton qui a le focus l'active : il ne doit pas finir le tour
+      if (
+        document.activeElement?.closest(`button, a[href], input, textarea, select, [role="button"]`)
+      ) {
+        return;
+      }
       e.preventDefault();
       terminerAction(null);
       return;

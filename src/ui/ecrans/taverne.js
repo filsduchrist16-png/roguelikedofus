@@ -1,7 +1,14 @@
 import { CLASSES } from "../../data/index.js";
 import { apercuSoin, niveauMoyen, pvMaxPerso } from "../../jeu/run.js";
 import { htmlBarreEquipe } from "../barreEquipe.js";
-import { afficherEcran, echapperHtml, ecranTactile, htmlCarteClasse, racine } from "../commun.js";
+import {
+  afficherEcran,
+  demanderConfirmation,
+  echapperHtml,
+  ecranTactile,
+  htmlCarteClasse,
+  racine,
+} from "../commun.js";
 const nomClasse = (id) => CLASSES[id]?.nom ?? id;
 // Carte de classe avec une ligne d'info ajoutée en bas (niveau, PV…).
 const carteAvecInfo = (html, info) => html.replace(/<\/button>\s*$/, `${info}</button>`);
@@ -38,16 +45,28 @@ export function ecranTaverne(e, t, n, r = false, i = false) {
           <h1>Recruter ${echapperHtml(nomClasse(classeId))}</h1>
           <p class="sous-titre">L'équipe est pleine. Choisis le membre à remplacer : son équipement retourne dans l'inventaire.</p>
           <div class="choix-grille">${t}</div>
-          <div class="boutons-ecran"><button id="tav-annuler" class="secondaire">Annuler</button></div>
+          <div class="boutons-ecran"><button id="tav-annuler" class="secondaire btn-retour">Annuler</button></div>
         `);
-        racine.querySelectorAll(`.classe-carte`).forEach((e) => {
-          e.addEventListener(`click`, () =>
+        racine.querySelectorAll(`.classe-carte`).forEach((carte) => {
+          carte.addEventListener(`click`, async () => {
+            const partant = e.find((p) => p.classeId === carte.dataset.remplace);
+            const detail = partant
+              ? `${nomClasse(partant.classeId)} (niv. ${partant.progression.niveau})`
+              : `ce héros`;
+            if (
+              !(await demanderConfirmation(
+                `Remplacer ${detail} par ${nomClasse(classeId)} ? Son équipement retourne dans l'inventaire.`,
+                `Remplacer`,
+              ))
+            ) {
+              return;
+            }
             resolve({
               type: `recrue`,
               classeId,
-              remplace: e.dataset.remplace,
-            }),
-          );
+              remplace: carte.dataset.remplace,
+            });
+          });
         });
         document.getElementById(`tav-annuler`)?.addEventListener(`click`, () => {
           classeId = null;

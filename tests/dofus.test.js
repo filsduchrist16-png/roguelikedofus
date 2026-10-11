@@ -48,3 +48,20 @@ describe(`Dofus Ocre`, () => {
     expect(bonusDofus(meta).paBonus).toBe(1);
   });
 });
+
+describe(`réinitialiser les Dofus`, () => {
+  it(`efface aussi les quêtes de leurs succès : aucun Dofus ne revient tout seul`, async () => {
+    const m = await import(`../src/sauvegarde/meta.js`);
+    const { SUCCES } = await import(`../src/data/index.js`);
+    globalThis.localStorage = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
+    const succes = Object.values(SUCCES).find((s) => s.categorie?.dofus);
+    const meta = m.chargerMeta();
+    meta.quetes.faites = succes.quetes.map((q) => q.id).concat([`g_dix_runs`]);
+    meta.dofus = [{ id: succes.categorie.dofus }];
+    expect(m.dofusDebloquables(meta).length).toBeGreaterThanOrEqual(0);
+    m.reinitialiserDofus(meta);
+    expect(meta.dofus).toEqual([]);
+    expect(m.dofusDebloquables(meta).length).toBe(0);
+    expect(meta.quetes.faites).toContain(`g_dix_runs`); // les autres succès restent
+  });
+});
