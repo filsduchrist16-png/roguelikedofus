@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { comparerObjet, grouperInventaire } from "../src/jeu/inventaire.js";
 import { annulerVente, prixRevente, vendreObjet } from "../src/jeu/economie.js";
-import { instancierObjet, nouvelleRun } from "../src/jeu/run.js";
+import { bonusEquipement, instancierObjet, nouvelleRun } from "../src/jeu/run.js";
 import { EQUIPEMENTS } from "../src/data/index.js";
 
 const premierTier = (id) => Object.keys(EQUIPEMENTS[id].tiers)[0];
@@ -98,68 +98,80 @@ describe(`comparaisons chiffrées`, async () => {
     run.persos[0].equipement.cape = cape(stats);
     return run;
   };
-  it(`« Équiper le meilleur » équipe un « plutôt mieux », pas un « plutôt moins »`, async () => {
-    const { equiperMeilleur, herosAmeliorablesAuto } = await import(`../src/jeu/inventaire.js`);
-    const run = runAvecCape({ intelligence: 20 });
-    const perte = cape({ intelligence: 10, soin: 1 });
-    const gain = cape({ intelligence: 18, crit: 5 });
-    run.inventaire.push(perte);
-    expect(herosAmeliorablesAuto(perte, run.persos)).toEqual([]);
+  it(`les dégâts décident : on équipe plus de dégâts même contre des PV, jamais l'inverse`, async () => {
+    const { equiperMeilleur } = await import(`../src/jeu/inventaire.js`);
+    const run = runAvecCape({ intelligence: 20, vitalite: 40 });
+    // moins de dégâts, beaucoup plus de PV : refusé
+    run.inventaire.push(cape({ intelligence: 19, vitalite: 90 }));
     expect(equiperMeilleur(run)).toBe(0);
-    run.inventaire.push(gain);
-    expect(herosAmeliorablesAuto(gain, run.persos).length).toBe(1);
+    // un peu plus de dégâts, moins de PV : équipé (les dégâts sont privilégiés)
+    const plusDegats = cape({ intelligence: 24, vitalite: 30 });
+    run.inventaire.push(plusDegats);
     expect(equiperMeilleur(run)).toBe(1);
-    expect(run.persos[0].equipement.cape).toBe(gain);
-    expect(equiperMeilleur(run)).toBe(0);
+    expect(run.persos[0].equipement.cape).toBe(plusDegats);
+    // mais pas au prix d'une chute des PV max de plus d'un tiers
+    const run2 = runAvecCape({ intelligence: 20, vitalite: 100 });
+    run2.inventaire.push(cape({ intelligence: 40, vitalite: 0 }));
+    expect(equiperMeilleur(run2)).toBe(0);
   });
-  it(`un PA pèse plus que n'importe quelle pile de Vitalité, et les dégâts plus que les PV`, async () => {
+  it(`le critique est un gain de dégâts, la survie ne sert qu'à départager`, async () => {
+    const { equiperMeilleur } = await import(`../src/jeu/inventaire.js`);
+    const run = runAvecCape({ intelligence: 20, vitalite: 10 });
+    run.inventaire.push(cape({ intelligence: 20, vitalite: 30 }));
+    expect(equiperMeilleur(run)).toBe(1); // à dégâts égaux, plus de survie
+    const run2 = runAvecCape({ intelligence: 20, vitalite: 30 });
+    run2.inventaire.push(cape({ intelligence: 18, crit: 6, vitalite: 10 }));
+    expect(equiperMeilleur(run2)).toBe(1); // le critique compte comme des dégâts
+  });
+  it(`un PA passe avant tout, même devant un gros gain de dégâts`, async () => {
     const { equiperMeilleur } = await import(`../src/jeu/inventaire.js`);
     const run = runAvecCape({ intelligence: 20, vitalite: 40 });
     const avecPA = { ...cape({ intelligence: 12, vitalite: 10 }), pa: 1 };
-    const grosPV = cape({ intelligence: 19, vitalite: 90 });
-    run.inventaire.push(grosPV);
-    expect(equiperMeilleur(run)).toBe(0); // beaucoup de PV ne vaut pas 1 point de dégâts perdu
     run.inventaire.push(avecPA);
     expect(equiperMeilleur(run)).toBe(1);
     expect(run.persos[0].equipement.cape).toBe(avecPA);
-    const degats = cape({ intelligence: 30, vitalite: 0 });
-    run.inventaire.push(degats);
-    expect(equiperMeilleur(run)).toBe(0); // perdre le PA pour +18 dégâts : non
+    run.inventaire.push(cape({ intelligence: 60, vitalite: 0 }));
+    expect(equiperMeilleur(run)).toBe(0); // perdre le PA pour des dégâts : non
   });
-  it(`une pièce de panoplie qui rapproche d'un palier à PA est préférée à une pièce banale`, async () => {
+  it(`une panoplie qui se complète compte comme un gain direct : ses pièces sans stats sont équipées ensemble`, async () => {
     const { PANOPLIES } = await import(`../src/data/index.js`);
-    const { valeurEquipement } = await import(`../src/jeu/inventaire.js`);
+    const { equiperMeilleur } = await import(`../src/jeu/inventaire.js`);
     const nom = Object.keys(PANOPLIES).find((n) => {
       const p = PANOPLIES[n];
-      return p.pieces.length >= 3 && p.paliers[3]?.pa && !p.paliers[2]?.pa;
+      const slots = p.pieces.slice(0, 3).map((id) => EQUIPEMENTS[id].slot);
+      return p.paliers[3]?.pa && !p.paliers[2]?.pa && new Set(slots).size === 3;
     });
     expect(nom).toBeTruthy();
     const run = nouvelleRun([`iop`]);
-    const perso = run.persos[0];
-    const piece = objet(PANOPLIES[nom].pieces[0], `epique`);
-    const avant = valeurEquipement(perso);
-    perso.equipement[EQUIPEMENTS[piece.id].slot === `arme` ? `arme` : EQUIPEMENTS[piece.id].slot] =
-      { ...piece, stats: {}, adaptatif: 0, pa: 0 };
-    expect(valeurEquipement(perso)).toBeGreaterThan(avant + 20);
+    const trois = PANOPLIES[nom].pieces.slice(0, 3);
+    run.inventaire.push(
+      ...trois.map((id) => ({ ...objet(id, `epique`), stats: {}, adaptatif: 0, pa: 0 })),
+    );
+    expect(equiperMeilleur(run)).toBe(3);
+    expect(bonusEquipement(run.persos[0]).paBonus).toBe(1);
   });
-  it(`un objet meilleur en stats mais qui éloigne d'un palier de panoplie à PA n'est ni équipé ni signalé « sûr »`, async () => {
+  it(`planEquiper annonce exactement ce que fait le bouton, sans rien changer`, async () => {
+    const { equiperMeilleur, planEquiper } = await import(`../src/jeu/inventaire.js`);
+    const run = runAvecCape({ intelligence: 20 });
+    run.inventaire.push(cape({ intelligence: 30 }), cape({ intelligence: 5 }));
+    const avant = run.inventaire.length;
+    const plan = planEquiper(run);
+    expect(run.inventaire.length).toBe(avant);
+    expect(equiperMeilleur(run)).toBe(plan.length);
+  });
+  it(`un objet qui fait perdre des dégâts (bonus de panoplie perdu) n'est pas équipé d'office`, async () => {
     const { PANOPLIES } = await import(`../src/data/index.js`);
     const { equiperMeilleur } = await import(`../src/jeu/inventaire.js`);
     const run = nouvelleRun([`eniripsa`]);
     const perso = run.persos[0];
-    // 5 pièces de la panoplie du Bouftou (le +1 PA est au palier de 7 pièces)
     const pieces = PANOPLIES[`Panoplie du Bouftou`].pieces.slice(0, 5);
     for (const id of pieces) {
-      perso.equipement[EQUIPEMENTS[id].slot === `anneau` ? `anneau` : EQUIPEMENTS[id].slot] = objet(
-        id,
-        `epique`,
-      );
+      perso.equipement[EQUIPEMENTS[id].slot] = objet(id, `epique`);
     }
-    // une amulette banale ne remplace que l'amulette du Bouftou : meilleure en PV, mais la panoplie
-    // passerait de 5 à 4 pièces
-    const inst = objet(`amulette_de_logram`, `epique`);
+    // une amulette banale ne remplace que l'amulette du Bouftou : plus de PV, mais la panoplie
+    // passerait de 5 à 4 pièces et perdrait son bonus
+    const inst = { ...objet(`amulette_de_logram`, `epique`), adaptatif: 0, stats: { vitalite: 6 } };
     const c = comparerObjet(inst, perso);
-    expect(c.verdict).toBe(`mieux`);
     expect(c.offensif).toBeLessThan(0);
     expect(c.sure).toBe(false);
     run.inventaire.push(inst);

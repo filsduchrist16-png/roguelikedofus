@@ -20,7 +20,7 @@ import { RARETES, RARETES_INFO } from "../../jeu/config.js";
 import {
   comparerObjet,
   equiperMeilleur,
-  herosAmeliorablesAuto,
+  planEquiper,
   grouperInventaire,
   nomEffet,
 } from "../../jeu/inventaire.js";
@@ -84,10 +84,10 @@ function trierGroupes(groupes, perso) {
 }
 const nomClasse = (perso) => CLASSES[perso.classeId].nom;
 const signe = (n) => (n > 0 ? `+${n}` : n < 0 ? `−${Math.abs(n)}` : `±0`);
-// Un objet meilleur en stats n'est pas équipé d'office s'il éloigne d'un palier de panoplie à PA
-// ou fait perdre des dégâts : on le dit au lieu d'afficher un « mieux » trompeur.
-const TEXTE_COURT_PAS_SUR = `éloigne d'un bonus`;
-const TEXTE_PAS_SUR = `Meilleur en stats, mais il éloigne d'un bonus de panoplie (PA) ou fait perdre des dégâts : « Équiper le meilleur » ne le met pas. À toi de voir.`;
+// Un objet « mieux » qui n'ajoute ni PA ni dégâts n'est pas équipé d'office : on le dit au lieu
+// d'afficher un « mieux » trompeur.
+const TEXTE_COURT_PAS_SUR = `sans dégâts en plus`;
+const TEXTE_PAS_SUR = `Meilleur en stats de survie, mais il n'ajoute ni PA ni dégâts : « Équiper le meilleur » ne le met pas. À toi de voir.`;
 // Verdict d'une comparaison ; un « mitigé » est chiffré : plutôt mieux ou plutôt moins.
 function htmlVerdict(c) {
   const v = VERDICTS[c.verdict];
@@ -295,10 +295,11 @@ export function ecranEquipement(e, t) {
           meilleurScore: scores.length ? Math.max(...scores) : -Infinity,
         };
       });
+      const plan = planEquiper({ inventaire: t }, e);
       let c = e
         .map((p, idx) => {
           const portes = EMPLACEMENTS.filter((slot) => p.equipement[slot]).length;
-          const ameliorations = groupes.filter((g) => comparerObjet(g.inst, p).sure).length;
+          const ameliorations = plan.filter((m) => m.perso === p).length;
           return `<button class="equip-onglet ${idx === r ? `sel` : ``}" data-perso="${idx}" aria-pressed="${idx === r}">
           <img src="${imgSymboleClasse(p.classeId)}" alt="" onerror="this.remove()" />
           <span class="onglet-texte">${echapperHtml(nomClasse(p))}<small>${portes}/${EMPLACEMENTS.length} équipés${ameliorations ? ` · <b class="onglet-mieux">▲ ${ameliorations}</b>` : ``}</small></span></button>`;
@@ -312,12 +313,7 @@ export function ecranEquipement(e, t) {
         const dispo = groupes.some(
           (g) => EQUIPEMENTS[g.inst.id]?.slot === type && g.comparaison.verdict !== `impossible`,
         );
-        const mieux = groupes.some(
-          (g) =>
-            EQUIPEMENTS[g.inst.id]?.slot === type &&
-            g.comparaison.sure &&
-            g.comparaison.emplacement === slot,
-        );
+        const mieux = plan.some((m) => m.perso === s && m.emplacement === slot);
         return n && inst
           ? `<div class="equip-slot rempli${classeRarete(inst)}" data-slot="${slot}" data-desequip="${slot}" draggable="true" role="button" tabindex="0" aria-label="${NOMS_EMPLACEMENTS[slot]} : ${echapperHtml(n.nom)}, voir la fiche" title="${echapperHtml(n.nom)}">
               <span class="ic-visuel"><img src="${imgObjet(n.id)}" alt="" onerror="this.remove()" />${mieux ? `<b class="slot-mieux" title="Un objet de l'inventaire ferait mieux">▲</b>` : ``}</span>
@@ -383,7 +379,7 @@ export function ecranEquipement(e, t) {
       } else {
         selection = null;
       }
-      const nbAuto = groupes.filter((g) => herosAmeliorablesAuto(g.inst, e).length).length;
+      const nbAuto = plan.length;
       const boutonAuto = `<button id="equip-auto" class="primaire petit"${nbAuto ? `` : ` disabled`} title="${nbAuto ? `Équipe sur chaque héros les objets qui font gagner des PA (objet ou panoplie qui se complète) ou des dégâts, sans en faire perdre` : `Rien à améliorer dans l'inventaire pour le moment`}">⚡ Équiper le meilleur${nbAuto ? ` (${nbAuto})` : ``}</button>`;
       afficherEcran(`
         <h1>Équipement</h1>

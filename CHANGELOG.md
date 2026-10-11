@@ -1,5 +1,20 @@
 # Journal des modifications
 
+## « Équiper le meilleur » : nouvel algorithme
+
+- **Règles choisies** : un PA passe avant tout (objet à PA ou panoplie qui atteint son palier à PA) ; ensuite
+  les **dégâts** décident (stat de l'élément principal, seconde à moitié, Intelligence, Agilité, critique,
+  dégâts d'arme). Pour des dégâts égaux, le **critique** puis la survie (PV, résistances) départagent.
+  Plus de dégâts contre moins de PV : équipé. Jamais au prix d'un PA, d'un effet spécial, ni d'une chute
+  des PV max de plus d'un tiers.
+- **Panoplies jugées comme les gains directs** : plus de « bonus fantôme » : on évalue le vrai résultat. Si
+  l'inventaire contient au moins 2 pièces d'une même panoplie, elles sont essayées **ensemble** (une pièce
+  sans stats ne vaut rien seule, mais trois pièces qui donnent +1 PA oui). Casser une panoplie coûte
+  exactement ce qu'elle apportait.
+- **Un seul calcul pour tout** : le bouton, les flèches ▲, le compteur des onglets et l'écran de butin
+  utilisent le même plan (`planEquiper`), qui ne change rien tant qu'on ne clique pas : ils ne peuvent plus
+  se contredire.
+
 ## Correctif : flèches ▲ et « Équiper le meilleur » ne se contredisent plus
 
 - Les ▲ (emplacements, onglets des héros) utilisent maintenant exactement le même critère que le bouton :

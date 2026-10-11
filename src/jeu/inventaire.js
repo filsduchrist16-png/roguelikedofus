@@ -1,10 +1,7 @@
 // Aides à la gestion de l'inventaire : comparer un objet à celui porté, regrouper les doublons.
-import { CLASSES, EQUIPEMENTS } from "../data/index.js";
+import { CLASSES, EQUIPEMENTS, PANOPLIES } from "../data/index.js";
 import { STAT_PAR_ELEMENT } from "./progression.js";
 import { bonusEquipement, emplacementCible, equiperObjet, peutEquiper, pvMaxPerso } from "./run.js";
-import { PA_MAX_EQUIPEMENT, PA_MAX_PANOPLIES } from "./emplacements.js";
-import { bonusPanoplie, compterPanoplies, paliersPanoplie } from "./panoplies.js";
-import { PANOPLIES } from "../data/index.js";
 
 const STATS = [`force`, `intelligence`, `agilite`, `chance`, `soin`, `prospection`, `crit`];
 const ELEMENTS = [`terre`, `feu`, `eau`, `air`];
@@ -64,41 +61,24 @@ function statUtile(stat, classe) {
   return classe.elements.includes(element) || stat === `intelligence` || stat === `agilite`;
 }
 
-// Valeur d'un effet spécial dans le score (riposte, renaissance… : environ une demi-pièce).
-const VALEUR_EFFET = 30;
-// Un PA vaut plus que n'importe quelle pièce : c'est ce qui fait pencher la balance en premier.
-const VALEUR_PA = 150;
+// Un PA passe avant tout : un objet (ou une panoplie qui se complète) qui en donne un de plus est
+// préféré à n'importe quel gain de dégâts. Viennent ensuite les dégâts, puis, seulement pour
+// départager, la survie (PV, résistances) et les effets spéciaux.
+const VALEUR_PA = 1000;
+const VALEUR_EFFET = 10;
+// « À égalité » : en dessous de cet écart de dégâts, deux équipements se départagent par la survie.
+const TOLERANCE_DEGATS = 0.1;
+// « Équiper le meilleur » ne fait pas chuter les PV max de plus de cette part, même pour des dégâts.
+const CHUTE_PV_MAX = 0.35;
 
 /**
- * Avancée vers un palier de panoplie qui donne du PA (pas encore atteint, et tant que le plafond
- * de PA n'est pas touché) : une pièce de plus sur 3 vaut un tiers d'un demi-PA, etc. Sans cela, une
- * pièce de panoplie à moitié inutile ne serait jamais équipée, et le palier n'arriverait jamais.
+ * Clé de comparaison de l'équipement d'un héros : { pa, off, sec }.
+ * pa  : PA venant de l'équipement et des panoplies (plafonnés comme dans le jeu).
+ * off : dégâts : stat de son meilleur élément (le second à moitié), Intelligence (dégâts
+ *       globaux), Agilité, critique (le critique d'abord parmi les stats), dégâts d'arme.
+ * sec : survie et effets spéciaux, uniquement pour départager.
  */
-function progressionPA(perso, paBonus) {
-  const comptes = compterPanoplies(perso);
-  let pasDePanoplie = paBonus >= PA_MAX_EQUIPEMENT;
-  let meilleur = 0;
-  for (const [nom, nb] of Object.entries(comptes)) {
-    if (bonusPanoplie(nom, nb)?.pa) {
-      pasDePanoplie ||= PA_MAX_PANOPLIES <= 1;
-      continue;
-    }
-    const cible = paliersPanoplie(nom).find((k) => k > nb && PANOPLIES[nom].paliers[k].pa);
-    if (cible) {
-      meilleur = Math.max(meilleur, nb / cible);
-    }
-  }
-  return pasDePanoplie ? 0 : VALEUR_PA * 0.5 * meilleur;
-}
-
-/**
- * Valeur chiffrée de l'équipement d'un héros, alignée sur les règles d'utilité de comparerObjet.
- * Ce qui compte d'abord : les PA (objets ou panoplie qui se complète) puis les dégâts : stats des
- * éléments de la classe (la meilleure à plein, la seconde à moitié), Intelligence (dégâts globaux),
- * dégâts d'arme, critique. Viennent ensuite, en poids plus faible : PV, soin, résistances et
- * effets spéciaux.
- */
-export function valeurEquipement(perso, offensifSeul = false) {
+export function cleEquipement(perso) {
   const b = bonusEquipement(perso);
   const s = b.stats;
   const elements = CLASSES[perso.classeId].elements
@@ -109,21 +89,58 @@ export function valeurEquipement(perso, offensifSeul = false) {
     (a, inst) => a + (inst ? effetsSpeciaux(inst.id).length : 0),
     0,
   );
-  const offensif =
+  const off =
     (elements[0] ?? 0) +
     (elements[1] ?? 0) * 0.5 +
     (s.intelligence ?? 0) * 0.4 +
     (s.agilite ?? 0) * 0.3 +
     (s.crit ?? 0) * 2.5 +
-    degatsMoyensArme(perso.equipement.arme) * 2 +
-    b.paBonus * VALEUR_PA +
-    progressionPA(perso, b.paBonus);
-  if (offensifSeul) {
-    return offensif;
+    degatsMoyensArme(perso.equipement.arme) * 2;
+  const sec = pvMaxPerso(perso) * 0.05 + res * 20 + (s.soin ?? 0) * 0.1 + effets * VALEUR_EFFET;
+  return { pa: b.paBonus, off, sec };
+}
+
+/** Valeur chiffrée d'un équipement (pour les scores affichés) : PA, puis dégâts, puis survie. */
+export function valeurEquipement(perso) {
+  const c = cleEquipement(perso);
+  return c.pa * VALEUR_PA + c.off + c.sec;
+}
+
+// Différence de clés : [PA, dégâts, survie].
+const deltaCle = (apres, avant) => [
+  apres.pa - avant.pa,
+  apres.off - avant.off,
+  apres.sec - avant.sec,
+];
+// Ordre des différences : PA d'abord, puis dégâts (hors égalité), puis survie. > 0 si a est mieux que b.
+function comparerDeltas(a, b) {
+  if (a[0] !== b[0]) {
+    return a[0] - b[0];
   }
-  return (
-    offensif + pvMaxPerso(perso) * 0.2 + (s.soin ?? 0) * 0.4 + res * 80 + effets * VALEUR_EFFET
-  );
+  if (Math.abs(a[1] - b[1]) > TOLERANCE_DEGATS) {
+    return a[1] - b[1];
+  }
+  return a[2] - b[2];
+}
+const ZERO = [0, 0, 0];
+const effetsDe = (perso) =>
+  new Set(Object.values(perso.equipement).flatMap((inst) => (inst ? effetsSpeciaux(inst.id) : [])));
+
+/**
+ * Le changement d'équipement `avant` → `apres` est-il un vrai progrès ? Plus de PA, ou à PA égaux
+ * plus de dégâts, ou à dégâts égaux plus de survie. Refusé s'il fait perdre un effet spécial ou
+ * s'il écroule les PV max (plus d'un tiers).
+ */
+export function estProgres(avant, apres, cleAvant = cleEquipement(avant)) {
+  if (comparerDeltas(deltaCle(cleEquipement(apres), cleAvant), ZERO) <= 0) {
+    return false;
+  }
+  const anciens = effetsDe(avant);
+  const nouveaux = effetsDe(apres);
+  if ([...anciens].some((k) => !nouveaux.has(k))) {
+    return false;
+  }
+  return pvMaxPerso(apres) >= pvMaxPerso(avant) * (1 - CHUTE_PV_MAX);
 }
 
 /**
@@ -183,37 +200,19 @@ export function comparerObjet(inst, perso, emplacement) {
     ajouter(`effet_${k}`, -1);
   }
   const score = Math.round(valeurEquipement(essai) - valeurEquipement(perso));
-  const offensif =
-    Math.round((valeurEquipement(essai, true) - valeurEquipement(perso, true)) * 10) / 10;
+  const offensif = Math.round((cleEquipement(essai).off - cleEquipement(perso).off) * 10) / 10;
   const resultat = { actuel, deltas, verdict, emplacement: slot, score, offensif };
   if (verdict === `mitige`) {
     resultat.tendance = score > 0 ? `plus` : `moins`;
   }
   // « sure » : ce que « Équiper le meilleur » ferait d'office (c'est aussi ce que montrent les ▲)
-  resultat.sure = ameliorationSure(resultat);
+  resultat.sure = verdict !== `impossible` && estProgres(perso, essai);
   return resultat;
 }
 
 // Les héros pour qui cet objet est une nette amélioration.
 export function herosAmeliores(inst, persos) {
   return persos.filter((p) => comparerObjet(inst, p).verdict === `mieux`);
-}
-
-// Amélioration sûre à équiper d'office : le score augmente vraiment (PA d'abord, puis dégâts), ou
-// l'objet n'a que des gains. Jamais au prix d'un effet spécial perdu.
-function ameliorationSure(c) {
-  const perdEffet = c.deltas.some((d) => d.cle.startsWith(`effet_`) && d.valeur < 0);
-  // PA et dégâts décident : jamais d'échange qui en fait perdre, même contre beaucoup de PV
-  return (
-    !perdEffet &&
-    c.offensif >= 0 &&
-    (c.verdict === `mieux` || (c.verdict !== `impossible` && c.score > 0.5))
-  );
-}
-
-/** Les héros pour qui équiper cet objet est sûrement un progrès (voir equiperMeilleur). */
-export function herosAmeliorablesAuto(inst, persos) {
-  return persos.filter((p) => ameliorationSure(comparerObjet(inst, p)));
 }
 
 // Regroupe les exemplaires identiques : [{ inst, indices }] dans l'ordre de première apparition.
@@ -231,31 +230,114 @@ export function grouperInventaire(inventaire) {
   return [...groupes.values()];
 }
 
-/**
- * Équipe automatiquement, sur chaque héros, les objets de l'inventaire qui sont un progrès sûr
- * (nette amélioration, ou « plutôt mieux » sans effet spécial perdu). Le plus gros gain d'abord,
- * jusqu'à ce qu'il n'y en ait plus. Renvoie le nombre d'objets équipés.
- */
-export function equiperMeilleur(run, persos = run.persos) {
-  let n = 0;
-  for (let tour = 0; tour < 64; tour++) {
-    let meilleur = null;
-    run.inventaire.forEach((inst, index) => {
-      for (const p of persos) {
-        const c = comparerObjet(inst, p);
-        if (!ameliorationSure(c) || (meilleur && c.score <= meilleur.score)) {
+const RANG_RARETE = [`commun`, `rare`, `epique`, `legendaire`];
+const copiePerso = (p) => ({ ...p, equipement: { ...p.equipement } });
+
+// Meilleur coup possible : un seul objet, ou plusieurs pièces d'une même panoplie d'un coup (pour
+// qu'une panoplie qui se complète compte autant qu'un gain direct, même si la première pièce seule
+// ne vaut rien). Renvoie { perso, actions: [{ inst, emplacement }], delta } ou null.
+function meilleurCoup(inventaire, persos) {
+  let meilleur = null;
+  let base = null;
+  const proposer = (perso, actions, apres) => {
+    if (!estProgres(perso, apres, base)) {
+      return;
+    }
+    const delta = deltaCle(cleEquipement(apres), base);
+    if (!meilleur || comparerDeltas(delta, meilleur.delta) > 0) {
+      meilleur = { perso, actions, delta };
+    }
+  };
+  for (const perso of persos) {
+    base = cleEquipement(perso);
+    // un seul objet
+    for (const inst of inventaire) {
+      if (!peutEquiper(perso, inst.id)) {
+        continue;
+      }
+      const emplacement = emplacementCible(perso, inst);
+      if (emplacement) {
+        proposer(perso, [{ inst, emplacement }], {
+          ...perso,
+          equipement: { ...perso.equipement, [emplacement]: inst },
+        });
+      }
+    }
+    // plusieurs pièces d'une panoplie : toutes celles de l'inventaire qui manquent au héros
+    for (const nom of Object.keys(PANOPLIES)) {
+      // il faut au moins deux pièces de la panoplie dans l'inventaire (sinon ce sont des objets seuls)
+      const manquantes = PANOPLIES[nom].pieces.filter((id) => inventaire.some((i) => i.id === id));
+      if (manquantes.length < 2) {
+        continue;
+      }
+      const essai = copiePerso(perso);
+      const actions = [];
+      const pris = new Set();
+      for (const id of PANOPLIES[nom].pieces) {
+        if (Object.values(essai.equipement).some((i) => i?.id === id) || !peutEquiper(perso, id)) {
           continue;
         }
-        meilleur = { index, p, score: c.score, emplacement: c.emplacement };
+        const candidats = inventaire.filter((i) => i.id === id && !pris.has(i));
+        const inst = candidats.sort(
+          (x, y) => RANG_RARETE.indexOf(y.rarete) - RANG_RARETE.indexOf(x.rarete),
+        )[0];
+        const emplacement = inst && emplacementCible(essai, inst);
+        if (emplacement) {
+          essai.equipement[emplacement] = inst;
+          pris.add(inst);
+          actions.push({ inst, emplacement });
+        }
       }
-    });
-    if (!meilleur) {
+      if (actions.length >= 2) {
+        proposer(perso, actions, essai);
+      }
+    }
+  }
+  return meilleur;
+}
+
+function jouerCoups(run, persos, enregistrer) {
+  let n = 0;
+  for (let tour = 0; tour < 64; tour++) {
+    const coup = meilleurCoup(run.inventaire, persos);
+    if (!coup) {
       break;
     }
-    equiperObjet(run.inventaire, meilleur.p, meilleur.index, meilleur.emplacement);
-    n++;
+    for (const { inst, emplacement } of coup.actions) {
+      const index = run.inventaire.indexOf(inst);
+      const remplace = coup.perso.equipement[emplacement];
+      equiperObjet(run.inventaire, coup.perso, index, emplacement);
+      if (coup.perso.equipement[emplacement] === inst) {
+        n++;
+        enregistrer?.({ perso: coup.perso, emplacement, inst, remplace });
+      }
+    }
   }
   return n;
+}
+
+/**
+ * Équipe automatiquement le meilleur équipement. Les PA passent avant tout (objets à PA, panoplie
+ * qui se complète), puis les dégâts (éléments de la classe, Intelligence, critique, arme) ; la
+ * survie (PV, résistances) ne sert qu'à départager. Un objet seul ou plusieurs pièces d'une même
+ * panoplie sont jugés pareil, le plus gros progrès d'abord, jusqu'à ce qu'il n'y en ait plus.
+ * Jamais au prix d'un effet spécial ni d'une chute des PV max de plus d'un tiers.
+ * Renvoie le nombre d'objets équipés.
+ */
+export function equiperMeilleur(run, persos = run.persos) {
+  return jouerCoups(run, persos);
+}
+
+/**
+ * Ce que ferait equiperMeilleur, sans rien changer : [{ perso, emplacement, inst, remplace }] dans
+ * l'ordre. Sert au bouton (nombre), aux flèches ▲ et à l'écran de butin : ils ne se contredisent jamais.
+ */
+export function planEquiper(run, persos = run.persos) {
+  const copie = persos.map(copiePerso);
+  const essai = { inventaire: run.inventaire.slice() };
+  const coups = [];
+  jouerCoups(essai, copie, (c) => coups.push({ ...c, perso: persos[copie.indexOf(c.perso)] }));
+  return coups;
 }
 
 // L'objet n'apporte rien à ce héros : moins bien, pareil, impossible, ou mitigé à score négatif.
