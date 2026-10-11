@@ -18,6 +18,7 @@ import {
   infoNuage,
   nuageDisponible,
   nuagePlusRecent,
+  raisonEchecNuage,
   recupererNuage,
   syncAuto,
 } from "../../sauvegarde/nuage.js";
@@ -315,7 +316,7 @@ export function ecranParametres(e) {
           setTimeout(() => location.reload(), 600);
         } else {
           message(
-            `✗ Rien à récupérer (ou un envoi est en cours depuis l'autre appareil : réessaie).`,
+            `✗ Récupération impossible : ${raisonEchecNuage() || `erreur inconnue`}. Réessaie dans un moment.`,
           );
           b.disabled = false;
           b.dataset.confirme = ``;
@@ -430,7 +431,7 @@ export function ecranParametres(e) {
             } else {
               b.disabled = false;
               message(
-                `✗ Récupération impossible pour l'instant (envoi en cours ?). Réessaie dans un moment.`,
+                `✗ Récupération impossible : ${raisonEchecNuage() || `erreur inconnue`}. Réessaie dans un moment.`,
               );
             }
           });

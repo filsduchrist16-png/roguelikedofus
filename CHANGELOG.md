@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## Correctif : récupération de la partie en ligne
+
+- Quand « Récupérer » échoue, le message dit maintenant **pourquoi** (morceau manquant, lecture impossible,
+  partie abîmée, navigateur plein) au lieu d'un « envoi en cours ? » générique.
+- Chaque lecture est retentée 3 fois, la taille de la partie est vérifiée avant de remplacer quoi que ce
+  soit, et en cas de navigateur plein la copie de secours est libérée puis l'import retenté.
+- L'envoi ne coupe plus un emoji en deux entre deux morceaux (risque de partie illisible).
+
 ## Combats plus durs, combat et équipement plus lisibles, revue des écrans
 
 - **Difficulté** : les combats normaux et durs sont plus dangereux, surtout en fin de monde (×1,03 → ×1,2

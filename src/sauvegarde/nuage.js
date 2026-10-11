@@ -76,6 +76,49 @@ export async function infoNuage() {
     : null;
 }
 
+// Découpe le texte en morceaux sans couper une paire de substitution (emoji) en deux.
+export function decouper(texte, taille = TAILLE_MORCEAU) {
+  const morceaux = [];
+  for (let i = 0; i < texte.length;) {
+    let fin = Math.min(texte.length, i + taille);
+    const dernier = texte.charCodeAt(fin - 1);
+    if (fin < texte.length && dernier >= 0xd800 && dernier <= 0xdbff) {
+      fin--;
+    }
+    morceaux.push(texte.slice(i, fin));
+    i = fin;
+  }
+  return morceaux.length ? morceaux : [``];
+}
+
+// Pourquoi la dernière récupération a échoué (pour l'afficher au joueur).
+let echec = ``;
+export const raisonEchecNuage = () => echec;
+const MESSAGES_ECHEC = {
+  absent: `aucune partie en ligne`,
+  incomplet: `la partie en ligne est incomplète (un envoi était peut-être en cours)`,
+  lecture: `lecture impossible (connexion ?)`,
+  corrompu: `la partie en ligne est abîmée`,
+  stockage: `pas assez de place dans le navigateur de cet appareil`,
+};
+const echouer = (code, detail = ``) => {
+  echec = `${MESSAGES_ECHEC[code] ?? code}${detail ? ` [${detail}]` : ``}`;
+  return false;
+};
+const attendre = (ms) => new Promise((r) => setTimeout(r, ms));
+async function lireAvecReessais(ref) {
+  let derniere;
+  for (let essai = 0; essai < 3; essai++) {
+    try {
+      return await ref.get();
+    } catch (e) {
+      derniere = e;
+      await attendre(400 * (essai + 1));
+    }
+  }
+  throw derniere;
+}
+
 let envoiEnCours = null;
 /** Envoie la partie de cet appareil dans le nuage (remplace celle qui y est). */
 export async function envoyerNuage() {
@@ -90,13 +133,11 @@ export async function envoyerNuage() {
   envoiEnCours = (async () => {
     const texte = exporterSauvegarde();
     const version = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
-    const n = Math.max(1, Math.ceil(texte.length / TAILLE_MORCEAU));
+    const morceaux = decouper(texte);
+    const n = morceaux.length;
     // les morceaux d'abord, puis l'en-tête qui pointe vers cette version complète
     for (let k = 0; k < n; k++) {
-      await c.db.doc(`${c.base}/partie_${k}`).set({
-        version,
-        texte: texte.slice(k * TAILLE_MORCEAU, (k + 1) * TAILLE_MORCEAU),
-      });
+      await c.db.doc(`${c.base}/partie_${k}`).set({ version, texte: morceaux[k] });
     }
     const date = new Date().toISOString();
     // le résumé (Dofus, quêtes, run) laisse l'autre appareil voir ce qu'il récupérerait
@@ -104,7 +145,9 @@ export async function envoyerNuage() {
     try {
       resume = resumeSauvegarde(JSON.parse(texte));
     } catch {}
-    await c.db.doc(`${c.base}/sauvegarde`).set({ version, n, date, appareil: appareil(), resume });
+    await c.db
+      .doc(`${c.base}/sauvegarde`)
+      .set({ version, n, taille: texte.length, date, appareil: appareil(), resume });
     ecrireSync({ version, date });
     return { date };
   })();
@@ -115,31 +158,59 @@ export async function envoyerNuage() {
   }
 }
 
-/** Remplace la partie de cet appareil par celle du nuage. true si réussi. */
+/** Remplace la partie de cet appareil par celle du nuage. true si réussi (sinon voir raisonEchecNuage). */
 export async function recupererNuage() {
+  echec = ``;
   const c = await connexion();
   if (!c) {
-    return false;
+    return echouer(`lecture`, `pas de connexion à l'artefact`);
   }
-  const tete = await c.db.doc(`${c.base}/sauvegarde`).get();
-  const d = tete.exists ? tete.data() : null;
+  let d;
+  try {
+    const tete = await lireAvecReessais(c.db.doc(`${c.base}/sauvegarde`));
+    d = tete.exists ? tete.data() : null;
+  } catch (e) {
+    return echouer(`lecture`, String(e?.message ?? e).slice(0, 80));
+  }
   if (!d?.n) {
-    return false;
+    return echouer(`absent`);
   }
   let texte = ``;
   for (let k = 0; k < d.n; k++) {
-    const m = await c.db.doc(`${c.base}/partie_${k}`).get();
-    const md = m.exists ? m.data() : null;
-    // un envoi depuis l'autre appareil est en cours : morceaux d'une autre version
+    let md;
+    try {
+      const m = await lireAvecReessais(c.db.doc(`${c.base}/partie_${k}`));
+      md = m.exists ? m.data() : null;
+    } catch (e) {
+      return echouer(
+        `lecture`,
+        `morceau ${k + 1}/${d.n} : ${String(e?.message ?? e).slice(0, 60)}`,
+      );
+    }
+    // morceau manquant, ou d'une autre version : un envoi depuis l'autre appareil est en cours
     if (!md || md.version !== d.version) {
-      return false;
+      return echouer(`incomplet`, `morceau ${k + 1}/${d.n}`);
     }
     texte += md.texte;
+  }
+  if (typeof d.taille === `number` && texte.length !== d.taille) {
+    return echouer(`corrompu`, `taille ${texte.length}/${d.taille}`);
+  }
+  try {
+    JSON.parse(texte);
+  } catch {
+    return echouer(`corrompu`, `JSON illisible`);
   }
   // la partie d'ici reste récupérable (Paramètres → « Annuler le dernier import »)
   sauvegardeDeSecours();
   if (!importerSauvegarde(texte)) {
-    return false;
+    // le plus souvent : navigateur plein. On libère la copie de secours puis on réessaie une fois.
+    try {
+      localStorage.removeItem(`rld_backup_v0`);
+    } catch {}
+    if (!importerSauvegarde(texte)) {
+      return echouer(`stockage`);
+    }
   }
   ecrireSync({ version: d.version, date: d.date });
   return true;

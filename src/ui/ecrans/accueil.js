@@ -36,7 +36,12 @@ import { ecranRegles } from "./regles.js";
 import { ecranMentionsLegales } from "./mentions.js";
 import { ecranDofus } from "./dofus.js";
 import { htmlProchainDofus } from "../prochainDofus.js";
-import { envoyerNuage, nuagePlusRecent, recupererNuage } from "../../sauvegarde/nuage.js";
+import {
+  envoyerNuage,
+  nuagePlusRecent,
+  raisonEchecNuage,
+  recupererNuage,
+} from "../../sauvegarde/nuage.js";
 import { resumePartieLocale, texteResume } from "../../sauvegarde/export.js";
 import { dateLisible } from "./parametres.js";
 const LIEN_DISCORD = `https://discord.gg/jxfWpRB7Rp`;
@@ -430,7 +435,7 @@ function brancherBandeauNuage(div, info) {
       location.reload();
     } else {
       b.disabled = false;
-      div.firstElementChild.textContent = `Récupération impossible pour l'instant (envoi en cours ?). Réessaie dans un moment.`;
+      div.firstElementChild.textContent = `Récupération impossible : ${raisonEchecNuage() || `erreur inconnue`}. Réessaie dans un moment.`;
     }
   });
   div.querySelector(`[data-nuage="garder"]`).addEventListener(`click`, async () => {

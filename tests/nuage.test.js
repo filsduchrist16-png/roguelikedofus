@@ -72,6 +72,37 @@ describe(`sauvegarde en ligne`, () => {
     expect(base.get(`data/users/u1/sauvegarde`).version).toBe(enLigne);
   });
 
+  it(`la découpe ne coupe jamais un emoji en deux`, async () => {
+    const pc = await appareil(`Windows`);
+    const texte = `a`.repeat(9) + `😀`.repeat(10);
+    const morceaux = pc.decouper(texte, 10);
+    expect(morceaux.join(``)).toBe(texte);
+    for (const m of morceaux) {
+      expect(/[\ud800-\udbff]$/.test(m)).toBe(false);
+    }
+  });
+
+  it(`une récupération impossible dit pourquoi (morceau manquant, partie abîmée)`, async () => {
+    const pc = await appareil(`Windows`);
+    localStorage.setItem(`rld_meta_v0`, JSON.stringify({ version: 4, dofus: [], runs: 1 }));
+    localStorage.setItem(
+      `rld_run_v0`,
+      JSON.stringify({ version: 2, run: { x: `y`.repeat(400_000) } }),
+    );
+    await pc.envoyerNuage();
+    const mobile = await appareil(`iPhone`);
+    base.delete(`data/users/u1/partie_1`);
+    expect(await mobile.recupererNuage()).toBe(false);
+    expect(mobile.raisonEchecNuage()).toMatch(/incompl/);
+    // taille annoncée différente : partie abîmée
+    base.set(`data/users/u1/partie_1`, {
+      version: base.get(`data/users/u1/sauvegarde`).version,
+      texte: `x`,
+    });
+    expect(await mobile.recupererNuage()).toBe(false);
+    expect(mobile.raisonEchecNuage()).toMatch(/abîmée/);
+  });
+
   it(`hors de l'artefact, tout est indisponible`, async () => {
     vi.resetModules();
     globalThis.localStorage = stockage();
