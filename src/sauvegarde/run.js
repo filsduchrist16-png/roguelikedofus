@@ -1,6 +1,6 @@
 import { signalerChangement } from "./nuage.js";
 import { CLASSES, EQUIPEMENTS, MONDES } from "../data/index.js";
-import { DIFFICULTE_MAX } from "../jeu/config.js";
+import { DIFFICULTE_MAX, getMonde, zonesDuMonde } from "../jeu/config.js";
 import { nouvellesStatsRun } from "../jeu/run.js";
 import { EMPLACEMENTS, emplacementsDuType } from "../jeu/emplacements.js";
 const CLE_RUN = `rld_run_v0`;
@@ -70,14 +70,11 @@ export function chargerRun() {
       t.version > 2 ||
       !Number.isInteger(t.zoneIdx) ||
       t.zoneIdx < 0 ||
+      !MONDES.some((m) => m.id === (t.run?.trancheId ?? `t1`)) ||
+      t.zoneIdx >= zonesDuMonde(getMonde(t.run?.trancheId ?? `t1`)).length ||
       !t.run?.persos?.length ||
       !t.run.persos.every((e) => CLASSES[e.classeId])
     ) {
-      return null;
-    }
-    // A3 : zoneIdx et trancheId valides
-    const monde = MONDES.find((m) => m.id === t.run.trancheId);
-    if (!monde || t.zoneIdx >= (monde.zones?.length ?? 0)) {
       return null;
     }
     t.run.inventaire = (t.run.inventaire ?? [])
@@ -104,12 +101,22 @@ export function chargerRun() {
     t.run.kamas = t.run.kamas ?? 0;
     t.run.ascension =
       t.version < 2 ? 0 : Math.max(0, Math.min(t.run.ascension ?? 0, DIFFICULTE_MAX));
+    t.run.philtres = t.run.philtres ?? 0;
+    t.run.trancheId = t.run.trancheId ?? `t1`;
+    for (let e of t.run.carte?.noeuds ?? []) {
+      let t = e.eliteModif;
+      if (t && !e.eliteModifs) {
+        e.eliteModifs = [t];
+      }
+    }
     return t;
   } catch {
     return null;
   }
 }
 export function effacerRun() {
-  localStorage.removeItem(CLE_RUN);
+  try {
+    localStorage.removeItem(CLE_RUN);
+  } catch {}
   signalerChangement();
 }

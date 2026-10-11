@@ -1,5 +1,15 @@
 # Journal des modifications
 
+## Réparation et lot A (A1 à A3)
+
+- `src/main.js`, `src/sauvegarde/meta.js` et `run.js` avaient été presque vidés par un commit
+  automatique (le jeu ne se construisait plus) : restaurés depuis la dernière version saine.
+- **A1** : la boucle principale rattrape les erreurs (message « Oups » puis retour à l'accueil) et
+  journalise les promesses rejetées au lieu de figer le jeu.
+- **A2** : `chargerMeta` valide champ par champ ; une valeur abîmée ne fait plus perdre le reste, et une
+  méta illisible est copiée dans `rld_meta_corrompue_v0` avant d'être remplacée.
+- **A3** : `chargerRun` refuse une run dont la zone ou le monde est hors limites.
+
 ## Compte et sauvegarde en ligne hors de claude.ai (Supabase)
 
 - Nouveau `src/sauvegarde/compte.js` : connexion / création de compte par email + mot de passe et
