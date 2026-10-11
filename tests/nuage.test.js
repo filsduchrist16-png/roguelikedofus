@@ -90,17 +90,54 @@ describe(`sauvegarde en ligne`, () => {
       JSON.stringify({ version: 2, run: { x: `y`.repeat(400_000) } }),
     );
     await pc.envoyerNuage();
+    const tete = base.get(`data/users/u1/sauvegarde`);
     const mobile = await appareil(`iPhone`);
-    base.delete(`data/users/u1/partie_1`);
+    const chemin = `data/users/u1/partie_${tete.slot}_1`;
+    const garde = base.get(chemin);
+    base.delete(chemin);
     expect(await mobile.recupererNuage()).toBe(false);
-    expect(mobile.raisonEchecNuage()).toMatch(/incompl/);
-    // taille annoncée différente : partie abîmée
-    base.set(`data/users/u1/partie_1`, {
-      version: base.get(`data/users/u1/sauvegarde`).version,
-      texte: `x`,
-    });
+    expect(mobile.raisonEchecNuage()).toMatch(/absent/);
+    // contenu tronqué : partie abîmée
+    base.set(chemin, { version: tete.version, texte: `x` });
     expect(await mobile.recupererNuage()).toBe(false);
     expect(mobile.raisonEchecNuage()).toMatch(/abîmée/);
+    base.set(chemin, garde);
+    expect(await mobile.recupererNuage()).toBe(true);
+  });
+
+  it(`les envois alternent deux emplacements et une version mélangée valide reste récupérable`, async () => {
+    const pc = await appareil(`Windows`);
+    localStorage.setItem(`rld_meta_v0`, JSON.stringify({ version: 4, dofus: [], runs: 1 }));
+    await pc.envoyerNuage();
+    const premier = base.get(`data/users/u1/sauvegarde`).slot;
+    await pc.envoyerNuage();
+    const second = base.get(`data/users/u1/sauvegarde`).slot;
+    expect(second).not.toBe(premier);
+    // un autre appareil a réécrit le morceau avec sa propre version, mais le contenu est valide
+    const tete = base.get(`data/users/u1/sauvegarde`);
+    const chemin = `data/users/u1/partie_${tete.slot}_0`;
+    base.set(chemin, { ...base.get(chemin), version: `autre` });
+    const mobile = await appareil(`iPhone`);
+    expect(await mobile.recupererNuage()).toBe(true);
+  });
+
+  it(`les anciennes sauvegardes (morceaux partie_k sans emplacement) se récupèrent encore`, async () => {
+    const meta = { version: 4, dofus: [{ id: `dofawa` }], runs: 2 };
+    const texte = JSON.stringify({
+      jeu: `roguefus-lite`,
+      version: 1,
+      donnees: { rld_meta_v0: meta },
+    });
+    base.set(`data/users/u1/sauvegarde`, {
+      version: `v1`,
+      n: 1,
+      date: `2026-01-01`,
+      appareil: `PC`,
+    });
+    base.set(`data/users/u1/partie_0`, { version: `v1`, texte });
+    const mobile = await appareil(`iPhone`);
+    expect(await mobile.recupererNuage()).toBe(true);
+    expect(JSON.parse(localStorage.getItem(`rld_meta_v0`))).toEqual(meta);
   });
 
   it(`hors de l'artefact, tout est indisponible`, async () => {

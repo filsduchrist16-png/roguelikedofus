@@ -135,9 +135,17 @@ export async function envoyerNuage() {
     const version = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
     const morceaux = decouper(texte);
     const n = morceaux.length;
+    // deux emplacements alternés : l'envoi d'un autre appareil ne peut plus écraser les morceaux
+    // que l'en-tête actuel désigne pendant qu'on écrit les nôtres
+    let precedent = null;
+    try {
+      const tete = await c.db.doc(`${c.base}/sauvegarde`).get();
+      precedent = tete.exists ? tete.data()?.slot : null;
+    } catch {}
+    const slot = precedent === `a` ? `b` : `a`;
     // les morceaux d'abord, puis l'en-tête qui pointe vers cette version complète
     for (let k = 0; k < n; k++) {
-      await c.db.doc(`${c.base}/partie_${k}`).set({ version, texte: morceaux[k] });
+      await c.db.doc(`${c.base}/partie_${slot}_${k}`).set({ version, texte: morceaux[k] });
     }
     const date = new Date().toISOString();
     // le résumé (Dofus, quêtes, run) laisse l'autre appareil voir ce qu'il récupérerait
@@ -147,7 +155,7 @@ export async function envoyerNuage() {
     } catch {}
     await c.db
       .doc(`${c.base}/sauvegarde`)
-      .set({ version, n, taille: texte.length, date, appareil: appareil(), resume });
+      .set({ version, n, slot, taille: texte.length, date, appareil: appareil(), resume });
     ecrireSync({ version, date });
     return { date };
   })();
@@ -176,10 +184,13 @@ export async function recupererNuage() {
     return echouer(`absent`);
   }
   let texte = ``;
+  let autreVersion = false;
   for (let k = 0; k < d.n; k++) {
     let md;
+    // anciennes sauvegardes : morceaux sans emplacement (partie_k)
+    const chemin = d.slot ? `partie_${d.slot}_${k}` : `partie_${k}`;
     try {
-      const m = await lireAvecReessais(c.db.doc(`${c.base}/partie_${k}`));
+      const m = await lireAvecReessais(c.db.doc(`${c.base}/${chemin}`));
       md = m.exists ? m.data() : null;
     } catch (e) {
       return echouer(
@@ -187,19 +198,23 @@ export async function recupererNuage() {
         `morceau ${k + 1}/${d.n} : ${String(e?.message ?? e).slice(0, 60)}`,
       );
     }
-    // morceau manquant, ou d'une autre version : un envoi depuis l'autre appareil est en cours
-    if (!md || md.version !== d.version) {
-      return echouer(`incomplet`, `morceau ${k + 1}/${d.n}`);
+    if (!md || typeof md.texte !== `string`) {
+      return echouer(`incomplet`, `morceau ${k + 1}/${d.n} absent`);
     }
+    // un autre appareil a envoyé entre-temps : on n'abandonne pas, la validité du contenu décide
+    autreVersion ||= md.version !== d.version;
     texte += md.texte;
   }
-  if (typeof d.taille === `number` && texte.length !== d.taille) {
+  if (!autreVersion && typeof d.taille === `number` && texte.length !== d.taille) {
     return echouer(`corrompu`, `taille ${texte.length}/${d.taille}`);
   }
   try {
     JSON.parse(texte);
   } catch {
-    return echouer(`corrompu`, `JSON illisible`);
+    return echouer(
+      autreVersion ? `incomplet` : `corrompu`,
+      autreVersion ? `mélange de deux envois` : `JSON illisible`,
+    );
   }
   // la partie d'ici reste récupérable (Paramètres → « Annuler le dernier import »)
   sauvegardeDeSecours();

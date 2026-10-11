@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## Correctif : « partie en ligne incomplète »
+
+- Les envois alternent maintenant deux emplacements de morceaux (a / b) : l'envoi d'un autre appareil
+  ne peut plus écraser les morceaux que l'en-tête en cours désigne (cause probable du message).
+- À la récupération, un morceau écrit par un autre appareil (version différente) n'est plus refusé
+  d'office : si le contenu est complet et valide, il est récupéré. Un morceau réellement absent est
+  signalé comme tel. Les anciennes sauvegardes restent lisibles.
+
 ## Correctif : récupération de la partie en ligne
 
 - Quand « Récupérer » échoue, le message dit maintenant **pourquoi** (morceau manquant, lecture impossible,
