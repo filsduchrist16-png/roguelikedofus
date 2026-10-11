@@ -1,3 +1,4 @@
+import { signalerEchecSauvegarde } from "./echec.js";
 const CLE_PARAMETRES = `rld_settings_v0`;
 const ORDRE_DEFAUT = {
   iop: 1,
@@ -100,7 +101,11 @@ export function chargerParametres() {
 export function sauverParametres(e) {
   try {
     localStorage.setItem(CLE_PARAMETRES, JSON.stringify(e));
-  } catch {}
+    return true;
+  } catch {
+    signalerEchecSauvegarde();
+    return false;
+  }
 }
 export function nomTouche(e) {
   if (e === ` `) {

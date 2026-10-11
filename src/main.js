@@ -1163,5 +1163,8 @@ async function boucleJeu() {
   }
 }
 
+window.addEventListener(`rld-sauvegarde-echec`, () =>
+  afficherBandeau(`⚠ Sauvegarde impossible : le stockage du navigateur est plein ou bloqué`),
+);
 window.addEventListener(`unhandledrejection`, (ev) => console.error(ev.reason));
 boucleJeu();

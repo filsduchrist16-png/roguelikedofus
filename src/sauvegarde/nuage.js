@@ -97,6 +97,9 @@ export function decouper(texte, taille = TAILLE_MORCEAU) {
 // Pourquoi la dernière récupération a échoué (pour l'afficher au joueur).
 let echec = ``;
 export const raisonEchecNuage = () => echec;
+// Remarque à montrer après une récupération réussie (ex. copie de secours supprimée).
+let avertissement = ``;
+export const avertissementNuage = () => avertissement;
 const MESSAGES_ECHEC = {
   absent: `aucune partie en ligne`,
   incomplet: `la partie en ligne est incomplète (un envoi était peut-être en cours)`,
@@ -220,7 +223,13 @@ export async function recupererNuage() {
     );
   }
   // la partie d'ici reste récupérable (Paramètres → « Annuler le dernier import »)
-  sauvegardeDeSecours();
+  avertissement = ``;
+  if (!sauvegardeDeSecours()) {
+    return echouer(
+      `stockage`,
+      `copie de secours impossible : ta partie actuelle ne serait pas récupérable`,
+    );
+  }
   if (!importerSauvegarde(texte)) {
     // le plus souvent : navigateur plein. On libère la copie de secours puis on réessaie une fois.
     try {
@@ -229,6 +238,7 @@ export async function recupererNuage() {
     if (!importerSauvegarde(texte)) {
       return echouer(`stockage`);
     }
+    avertissement = `La copie de secours de ta partie d'avant a été supprimée pour faire de la place.`;
   }
   ecrireSync({ version: d.version, date: d.date });
   return true;

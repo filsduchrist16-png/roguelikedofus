@@ -1,10 +1,13 @@
+import { signalerEchecSauvegarde } from "./echec.js";
 import { signalerChangement } from "./nuage.js";
 import { CLASSES, EQUIPEMENTS, MONDES } from "../data/index.js";
 import { DIFFICULTE_MAX, getMonde, zonesDuMonde } from "../jeu/config.js";
 import { nouvellesStatsRun } from "../jeu/run.js";
 import { EMPLACEMENTS, emplacementsDuType } from "../jeu/emplacements.js";
 const CLE_RUN = `rld_run_v0`;
+/** Enregistre la run. Renvoie false (et prévient une fois) si le navigateur refuse d'écrire. */
 export function sauverRun(zoneIdx, run) {
+  let ecrit = true;
   try {
     localStorage.setItem(
       CLE_RUN,
@@ -14,8 +17,12 @@ export function sauverRun(zoneIdx, run) {
         run,
       }),
     );
-  } catch {}
+  } catch {
+    ecrit = false;
+    signalerEchecSauvegarde();
+  }
   signalerChangement();
+  return ecrit;
 }
 // Une sauvegarde importée peut venir de n'importe où : on ne garde que des champs connus et des
 // nombres (les clés et la rareté finissent dans le HTML de l'inventaire).

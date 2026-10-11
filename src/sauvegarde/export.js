@@ -20,25 +20,59 @@ export function exporterSauvegarde() {
     2,
   );
 }
-export function importerSauvegarde(e) {
+// Une sauvegarde exportée valide : bon jeu, version connue, et des données de type objet.
+function valide(t) {
+  return (
+    t?.jeu === `roguefus-lite` &&
+    (t.version === undefined ||
+      (Number.isInteger(t.version) && t.version >= 1 && t.version <= 1)) &&
+    t.donnees &&
+    typeof t.donnees == `object` &&
+    CLES_SAUVEGARDE.every(
+      (k) => t.donnees[k] === undefined || (t.donnees[k] && typeof t.donnees[k] == `object`),
+    ) &&
+    !!t.donnees.rld_meta_v0
+  );
+}
+// Écrit les trois clés d'un coup : si une écriture échoue (quota), les anciennes valeurs sont remises.
+function ecrireTout(valeurs) {
+  const anciennes = {};
+  for (const k of CLES_SAUVEGARDE) {
+    anciennes[k] = localStorage.getItem(k);
+  }
   try {
-    let t = JSON.parse(e);
-    if (
-      t.jeu !== `roguefus-lite` ||
-      typeof t.donnees != `object` ||
-      !t.donnees ||
-      !t.donnees.rld_meta_v0
-    ) {
-      return false;
-    }
-    for (let e of CLES_SAUVEGARDE) {
-      if (t.donnees[e] === undefined) {
-        localStorage.removeItem(e);
+    for (const k of CLES_SAUVEGARDE) {
+      if (valeurs[k] === null || valeurs[k] === undefined) {
+        localStorage.removeItem(k);
       } else {
-        localStorage.setItem(e, JSON.stringify(t.donnees[e]));
+        localStorage.setItem(k, valeurs[k]);
       }
     }
     return true;
+  } catch {
+    try {
+      for (const k of CLES_SAUVEGARDE) {
+        if (anciennes[k] === null) {
+          localStorage.removeItem(k);
+        } else {
+          localStorage.setItem(k, anciennes[k]);
+        }
+      }
+    } catch {}
+    return false;
+  }
+}
+export function importerSauvegarde(e) {
+  try {
+    const t = JSON.parse(e);
+    if (!valide(t)) {
+      return false;
+    }
+    const valeurs = {};
+    for (const k of CLES_SAUVEGARDE) {
+      valeurs[k] = t.donnees[k] === undefined ? null : JSON.stringify(t.donnees[k]);
+    }
+    return ecrireTout(valeurs);
   } catch {
     return false;
   }
@@ -78,12 +112,7 @@ export function texteResume(r) {
 export function lireSauvegarde(texte) {
   try {
     const t = JSON.parse(texte);
-    return t?.jeu === `roguefus-lite` &&
-      t.donnees &&
-      typeof t.donnees === `object` &&
-      t.donnees.rld_meta_v0
-      ? t
-      : null;
+    return valide(t) ? t : null;
   } catch {
     return null;
   }
@@ -121,17 +150,15 @@ export function restaurerSecours() {
   if (!s) {
     return false;
   }
-  try {
-    for (const k of CLES_SAUVEGARDE) {
-      if (typeof s.donnees[k] === `string`) {
-        localStorage.setItem(k, s.donnees[k]);
-      } else {
-        localStorage.removeItem(k);
-      }
-    }
-    localStorage.removeItem(CLE_SECOURS);
-    return true;
-  } catch {
+  const valeurs = {};
+  for (const k of CLES_SAUVEGARDE) {
+    valeurs[k] = typeof s.donnees[k] === `string` ? s.donnees[k] : null;
+  }
+  if (!ecrireTout(valeurs)) {
     return false;
   }
+  try {
+    localStorage.removeItem(CLE_SECOURS);
+  } catch {}
+  return true;
 }

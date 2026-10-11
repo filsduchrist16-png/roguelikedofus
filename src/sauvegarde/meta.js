@@ -1,3 +1,4 @@
+import { signalerEchecSauvegarde } from "./echec.js";
 import { signalerChangement } from "./nuage.js";
 import { CONFIG_RELIQUES, DOFUS, MONDES, MONSTRES, RELIQUES, SUCCES } from "../data/index.js";
 import { DIFFICULTES, RARETES, getMonde } from "../jeu/config.js";
@@ -97,11 +98,17 @@ export function chargerMeta() {
   }
   return metaVierge();
 }
+/** Enregistre la méta-progression. Renvoie false (et prévient une fois) si l'écriture échoue. */
 export function sauverMeta(e) {
+  let ecrit = true;
   try {
     localStorage.setItem(CLE_META, JSON.stringify(e));
-  } catch {}
+  } catch {
+    ecrit = false;
+    signalerEchecSauvegarde();
+  }
   signalerChangement();
+  return ecrit;
 }
 // ---------- Dofus : chacun dans la tranche de niveau de son monde ----------
 // Chaque Dofus s'obtient dès que son succès est terminé, sans attendre ceux de niveau inférieur :

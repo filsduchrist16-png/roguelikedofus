@@ -18,6 +18,7 @@ import {
   infoNuage,
   nuageDisponible,
   nuagePlusRecent,
+  avertissementNuage,
   raisonEchecNuage,
   recupererNuage,
   syncAuto,
@@ -391,7 +392,9 @@ export function ecranParametres(e) {
         }
         b.disabled = true;
         if (await recupererNuage().catch(() => false)) {
-          message(`✓ Partie récupérée, rechargement…`);
+          message(
+            `✓ Partie récupérée, rechargement…${avertissementNuage() ? ` ${avertissementNuage()}` : ``}`,
+          );
           setTimeout(() => location.reload(), 600);
         } else {
           message(
@@ -438,7 +441,16 @@ export function ecranParametres(e) {
           message(`Import annulé.`);
           return;
         }
-        sauvegardeDeSecours();
+        if (
+          !sauvegardeDeSecours() &&
+          !(await demanderConfirmation(
+            `Le navigateur n'a pas assez de place pour garder une copie de ta partie actuelle : si tu continues, elle ne sera pas récupérable. Importer quand même ?`,
+            `Importer quand même`,
+          ))
+        ) {
+          message(`Import annulé.`);
+          return;
+        }
         if (importerSauvegarde(texte)) {
           message(`✓ Sauvegarde importée, rechargement…`);
           setTimeout(() => location.reload(), 600);
@@ -505,7 +517,9 @@ export function ecranParametres(e) {
             }
             b.disabled = true;
             if (await recupererNuage().catch(() => false)) {
-              message(`✓ Partie récupérée, rechargement…`);
+              message(
+                `✓ Partie récupérée, rechargement…${avertissementNuage() ? ` ${avertissementNuage()}` : ``}`,
+              );
               setTimeout(() => location.reload(), 600);
             } else {
               b.disabled = false;
