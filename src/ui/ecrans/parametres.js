@@ -22,6 +22,13 @@ import {
   recupererNuage,
   syncAuto,
 } from "../../sauvegarde/nuage.js";
+import {
+  compteConfigure,
+  compteConnecte,
+  creerCompte,
+  seConnecter,
+  seDeconnecter,
+} from "../../sauvegarde/compte.js";
 
 export const dateLisible = (iso) => {
   try {
@@ -92,6 +99,29 @@ export function ecranParametres(e) {
           </div>`
               : ``;
           })()}
+          ${(() => {
+            // compte pour la sauvegarde en ligne, seulement hors de claude.ai
+            if (typeof globalThis.claude?.use === `function` || !compteConfigure()) {
+              return ``;
+            }
+            const compte = compteConnecte();
+            return compte
+              ? `<div class="setting-ligne compte-ligne">
+            <span class="setting-lbl">👤 Compte<br><small class="muet">connecté : ${echapperHtml(compte.email)}</small></span>
+            <span class="setting-actions"><button id="set-compte-sortir" class="secondaire">Se déconnecter</button></span>
+          </div>`
+              : `<form id="set-compte-form" class="setting-ligne compte-ligne" autocomplete="on">
+            <span class="setting-lbl">👤 Compte pour la sauvegarde en ligne<br><small class="muet">crée un compte (email + mot de passe) pour retrouver ta partie sur tous tes appareils</small>
+              <input id="set-compte-email" type="email" autocomplete="username" inputmode="email" placeholder="Email" aria-label="Email" required />
+              <input id="set-compte-mdp" type="password" autocomplete="current-password" placeholder="Mot de passe (6 caractères min.)" aria-label="Mot de passe" minlength="6" required />
+              <small id="set-compte-msg" class="muet" role="status"></small>
+            </span>
+            <span class="setting-actions">
+              <button id="set-compte-entrer" type="submit" class="primaire">Se connecter</button>
+              <button id="set-compte-creer" type="button" class="secondaire">Créer un compte</button>
+            </span>
+          </form>`;
+          })()}
           <div id="set-nuage-pause" class="setting-ligne nuage-pause-ligne" style="display:none">
             <span class="setting-lbl">⚠ Synchro auto en pause : une partie plus récente attend ton choix<br><small id="set-nuage-pause-detail" class="muet"></small></span>
             <span class="setting-actions">
@@ -100,7 +130,7 @@ export function ecranParametres(e) {
             </span>
           </div>
           <div id="set-nuage" class="setting-ligne nuage-ligne" style="display:none">
-            <span class="setting-lbl">☁️ Sauvegarde en ligne<br><small class="muet">liée à ton compte claude.ai : ouvre ce même artefact sur PC ou sur mobile pour reprendre ta partie, sans mot de passe</small><br><small id="set-nuage-etat" class="muet"></small></span>
+            <span class="setting-lbl">☁️ Sauvegarde en ligne<br><small class="muet">${typeof globalThis.claude?.use === `function` ? `liée à ton compte claude.ai : ouvre ce même artefact sur PC ou sur mobile pour reprendre ta partie, sans mot de passe` : `liée à ton compte : connecte-toi avec le même email sur tes autres appareils pour reprendre ta partie`}</small><br><small id="set-nuage-etat" class="muet"></small></span>
             <span class="setting-actions">
               <button id="set-nuage-envoyer" class="secondaire">Envoyer cette partie</button>
               <button id="set-nuage-recuperer" class="secondaire">Récupérer</button>
@@ -281,6 +311,55 @@ export function ecranParametres(e) {
             : `Aucune partie en ligne pour l'instant.`;
         }
       };
+      // compte (hors claude.ai) : connexion, création, déconnexion ; on recharge pour tout rebrancher
+      const msgCompte = (t) => {
+        const el = document.getElementById(`set-compte-msg`);
+        if (el) {
+          el.textContent = t;
+        }
+      };
+      const entrerCompte = async (creer) => {
+        const email = document.getElementById(`set-compte-email`)?.value ?? ``;
+        const mdp = document.getElementById(`set-compte-mdp`)?.value ?? ``;
+        if (!email.includes(`@`) || mdp.length < 6) {
+          msgCompte(`Entre un email valide et un mot de passe d'au moins 6 caractères.`);
+          return;
+        }
+        document.querySelectorAll(`#set-compte-form button`).forEach((b) => (b.disabled = true));
+        msgCompte(creer ? `Création du compte…` : `Connexion…`);
+        try {
+          if (creer) {
+            const r = await creerCompte(email, mdp);
+            if (!r.connecte) {
+              msgCompte(
+                `Compte créé. Ouvre le courriel de confirmation reçu, puis reviens ici et touche « Se connecter ».`,
+              );
+              document
+                .querySelectorAll(`#set-compte-form button`)
+                .forEach((b) => (b.disabled = false));
+              return;
+            }
+          } else {
+            await seConnecter(email, mdp);
+          }
+          msgCompte(`✓ Connecté, rechargement…`);
+          setTimeout(() => location.reload(), 500);
+        } catch (e) {
+          msgCompte(`✗ ${e.message}`);
+          document.querySelectorAll(`#set-compte-form button`).forEach((b) => (b.disabled = false));
+        }
+      };
+      document.getElementById(`set-compte-form`)?.addEventListener(`submit`, (ev) => {
+        ev.preventDefault();
+        entrerCompte(false);
+      });
+      document
+        .getElementById(`set-compte-creer`)
+        ?.addEventListener(`click`, () => entrerCompte(true));
+      document.getElementById(`set-compte-sortir`)?.addEventListener(`click`, () => {
+        seDeconnecter();
+        location.reload();
+      });
       etatNuage();
       document.getElementById(`set-nuage-envoyer`)?.addEventListener(`click`, async (ev) => {
         const b = ev.currentTarget;

@@ -1,5 +1,14 @@
 # Journal des modifications
 
+## Compte et sauvegarde en ligne hors de claude.ai (Supabase)
+
+- Nouveau `src/sauvegarde/compte.js` : connexion / création de compte par email + mot de passe et
+  stockage des « documents » de sauvegarde dans une table Supabase protégée (une ligne par document,
+  chacun ne voit que les siennes). `nuage.js` fonctionne tel quel par-dessus.
+- Paramètres : formulaire « Compte pour la sauvegarde en ligne » (hors claude.ai seulement), puis les
+  mêmes boutons Envoyer / Récupérer / Auto qu'avant.
+- `src/config-en-ligne.js` (URL et clé publique du projet) et `outils/supabase.sql` (à exécuter une fois).
+
 ## « Équiper le meilleur » compare les combinaisons complètes
 
 - Pour chaque héros, on cherche le **meilleur ensemble de 8 emplacements** parmi tout ce qui est

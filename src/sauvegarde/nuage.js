@@ -2,6 +2,7 @@
 // emplacement privé propre au compte claude.ai du joueur. Le même compte retrouve donc sa partie sur
 // PC comme sur mobile, sans identifiant ni mot de passe à créer. Hors de l'artefact (version locale),
 // tout est simplement indisponible.
+import { baseDuCompte, compteConfigure } from "./compte.js";
 import {
   exporterSauvegarde,
   importerSauvegarde,
@@ -21,7 +22,9 @@ async function connexion() {
     if (typeof use !== `function`) {
       // le runtime de l'artefact n'est peut-être pas encore là : on retentera plus tard
       setTimeout(() => (pret = null));
-      return null;
+      // hors de claude.ai : compte Supabase s'il est configuré et connecté
+      const base = await baseDuCompte().catch(() => null);
+      return base ? { db: base.db, base: `data/users/${base.id}` } : null;
     }
     try {
       const [db, user] = await Promise.all([
@@ -243,7 +246,7 @@ export async function nuagePlusRecent() {
 // Envoi automatique : quelques secondes après la dernière sauvegarde locale (fin de combat…).
 let minuteur = null;
 export function signalerChangement() {
-  if (!syncAuto() || typeof globalThis.claude?.use !== `function`) {
+  if (!syncAuto() || (typeof globalThis.claude?.use !== `function` && !compteConfigure())) {
     return;
   }
   clearTimeout(minuteur);

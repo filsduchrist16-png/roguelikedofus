@@ -308,3 +308,20 @@
     display: none;
   }
 }
+
+/* ---------- Compte pour la sauvegarde en ligne (hors claude.ai) ---------- */
+.compte-ligne input {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 320px;
+  min-height: 44px;
+  margin: 6px 0 0;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 1rem;
+  border: 2px solid var(--cadre);
+  border-radius: 10px;
+  background: #fffaf0;
+  color: #3a2402;
+}
