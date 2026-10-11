@@ -61,6 +61,22 @@ export function calculerXpCombat(e, t, n) {
 export const RECUPERATION = {
   victoire: 0.1,
 };
+// Facteur de puissance (PV et dégâts des monstres) par type de combat, en plus de celui de la zone
+// (src/data/ajustementsZones.json) : [première zone, dernière zone] d'un monde, interpolé
+// linéairement. Les premières zones restent douces (équipe incomplète, peu d'objets) ; le
+// facteur « donjon » s'ajoute à ajustementsDonjons.json (corrections par donjon). Réglé par
+// simulation (npm run sim).
+export const PUISSANCE_PAR_TYPE = {
+  combat: [1.03, 1.2],
+  combat_dur: [1.03, 1.35],
+  donjon: [0.9, 0.9],
+};
+// Facteur du type de combat pour la zone d'indice `index` (0 à `nb` - 1) de son monde.
+export function facteurType(type, index = 0, nb = 12) {
+  const f = PUISSANCE_PAR_TYPE[type];
+  if (!f) return 1;
+  return f[0] + (f[1] - f[0]) * (nb > 1 ? Math.min(1, Math.max(0, index / (nb - 1))) : 0);
+}
 export const CONFIG_CARTE = {
   lignesMin: 10,
   lignesMax: 12,

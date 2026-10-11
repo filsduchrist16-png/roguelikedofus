@@ -131,7 +131,7 @@ const pvFrac = (run) => {
 async function combat(run, meta, combatId, type, zone, rng, eliteModifs) {
   const heros = run_.combattantsEquipe(run);
   const mons = run_.monstresDuCombat(combatId);
-  run_.appliquerPuissanceZone(mons, zone.id);
+  run_.appliquerPuissanceZone(mons, zone.id, type);
   run_.appliquerDifficulteMonstres(mons, run_.effetsDifficulte(run.ascension), {
     type,
     especesZone: run_.especesNormalesZone(zone),

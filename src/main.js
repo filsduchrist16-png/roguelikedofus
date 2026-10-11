@@ -148,6 +148,7 @@ import "./confort-carte.css";
 import "./confort-combat.css";
 import "./confort-inventaire.css";
 import "./confort-meta.css";
+import "./confort-ecrans.css";
 function initialiserInterface(elementApp) {
   definirRacine(elementApp);
   fondDuMonde(null);
@@ -242,7 +243,7 @@ async function jouerCombat(e, combatId, n) {
     rng: Math.random,
   });
   // après le renfort d'ascension, pour qu'il soit aussi à la puissance de la zone
-  appliquerPuissanceZone(a, n.zone?.id);
+  appliquerPuissanceZone(a, n.zone?.id, n.type);
   if (n.elite) {
     let e = appliquerAffixesElite(a, Math.random, n.eliteModifs);
     r = `${r} · ${e.map((e) => `${e.nom} (${e.desc})`).join(` · `)}`;

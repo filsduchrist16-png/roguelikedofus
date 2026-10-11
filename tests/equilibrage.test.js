@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import {
+  AJUSTEMENTS_DONJONS,
   AJUSTEMENTS_ZONES,
   COMBATS,
   EQUIPEMENTS,
@@ -10,6 +11,7 @@ import {
   SECRETS,
   ZONES,
 } from "../src/data/index.js";
+import { PUISSANCE_PAR_TYPE, RECUPERATION, facteurType } from "../src/jeu/config.js";
 import { genererCarte } from "../src/carte/generation.js";
 import { numeroZoneObjet } from "../src/jeu/economie.js";
 import {
@@ -31,6 +33,7 @@ import {
   monstresDuCombat,
   nouvelleRun,
   pvMaxPerso,
+  puissanceZone,
   recupererApresVictoire,
   tirerArchis,
 } from "../src/jeu/run.js";
@@ -175,6 +178,52 @@ describe(`équilibrage`, () => {
       expect(v).toBeGreaterThan(0.4);
       expect(v).toBeLessThan(2);
     }
+  });
+
+  it(`la puissance par type de combat : élites >= normaux, croissante dans le monde, jamais impossible`, () => {
+    for (const type of Object.keys(PUISSANCE_PAR_TYPE)) {
+      for (let i = 1; i < 12; i++) {
+        expect(facteurType(type, i)).toBeGreaterThanOrEqual(facteurType(type, i - 1) - 1e-9);
+      }
+    }
+    for (let i = 0; i < 12; i++) {
+      // les combats durs sont toujours plus dangereux que les combats normaux
+      expect(facteurType(`combat_dur`, i)).toBeGreaterThanOrEqual(facteurType(`combat`, i));
+    }
+    // le facteur de la dernière zone d'un monde dépasse celui de la première (combats durs)
+    expect(facteurType(`combat_dur`, 11)).toBeGreaterThan(facteurType(`combat_dur`, 0));
+    // aucune zone n'est impossible, ni (en Normal) triviale : facteur total borné pour chaque type
+    for (const m of MONDES) {
+      for (const zid of m.zones) {
+        const i = m.zones.indexOf(zid);
+        for (const type of [`combat`, `combat_dur`, `donjon`]) {
+          let f = puissanceZone(zid) * facteurType(type, i, m.zones.length);
+          if (type === `donjon`) f *= AJUSTEMENTS_DONJONS[zid] ?? 1;
+          expect(f, `${zid} ${type}`).toBeGreaterThan(0.3);
+          expect(f, `${zid} ${type}`).toBeLessThan(2);
+        }
+      }
+    }
+    for (const v of Object.values(AJUSTEMENTS_DONJONS)) {
+      expect(v).toBeGreaterThanOrEqual(0.7);
+      expect(v).toBeLessThanOrEqual(1.25);
+    }
+    // aucun monde n'a une puissance moyenne de zone dérisoire
+    const moy = MONDES.map(
+      (m) => m.zones.reduce((a, z) => a + puissanceZone(z), 0) / m.zones.length,
+    );
+    expect(Math.min(...moy)).toBeGreaterThan(0.5);
+    expect(RECUPERATION.victoire).toBeLessThanOrEqual(0.15);
+  });
+
+  it(`le type de combat s'ajoute à la puissance de la zone (PV des monstres)`, () => {
+    const id = `tofus`;
+    const z = zone(id);
+    const base = monstresDuCombat(z.pools.elite[0]);
+    const dur = monstresDuCombat(z.pools.elite[0]);
+    appliquerPuissanceZone(dur, id, `combat_dur`);
+    const f = puissanceZone(id) * facteurType(`combat_dur`, 3);
+    expect(dur[0].pvMax).toBe(Math.round(base[0].pvMax * f));
   });
 });
 

@@ -1,0 +1,80 @@
+/* Confort des écrans Hôtel de vente, Forgemagie, fin de run. */
+
+/* HDV : verbe d'action au-dessus du prix (acheter / vendre) */
+.item-carte .hdv-prix {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.hdv-verbe,
+.forge-lib {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  opacity: 0.75;
+}
+.hdv-prix.hdv-manque {
+  align-items: flex-end;
+  font-size: 0.8rem;
+}
+/* sauts rapides entre les deux listes : utiles seulement quand elles s'empilent */
+.hdv-saut {
+  display: none;
+  gap: 8px;
+  justify-content: center;
+  margin: 0 0 10px;
+}
+@media (max-width: 700px) {
+  .hdv-saut {
+    display: flex;
+  }
+  #hdv-achats,
+  #hdv-ventes {
+    scroll-margin-top: 8px;
+  }
+}
+
+/* Forgemagie : boutons libellés (prix + mode) */
+.forge-boutons button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  line-height: 1.15;
+}
+.forge-boutons button {
+  min-width: 0;
+  padding-inline: 6px;
+}
+.forge-boutons button .forge-lib {
+  white-space: normal;
+  text-align: center;
+}
+@media (max-width: 480px) {
+  .forge-boutons {
+    gap: 6px;
+  }
+  .forge-boutons button .forge-lib {
+    font-size: 0.6rem;
+  }
+}
+.forge-boutons button:disabled {
+  opacity: 0.5;
+}
+
+/* Fin de run : le retour à l'accueil reste discret, Rejouer est l'action principale */
+.recap-boutons .btn-retour img {
+  height: 40px;
+}
+.recap-debloque {
+  text-align: center;
+  margin: 6px 0 10px;
+  font-size: 1.05rem;
+}
+.recap-titre-degats {
+  text-align: center;
+  margin: 12px 0 4px;
+  font-size: 0.9rem;
+  opacity: 0.85;
+}

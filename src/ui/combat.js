@@ -835,6 +835,25 @@ function badgesCombattant(e) {
   }
   return c;
 }
+// niveau de PV pour colorer les barres : « crit » sous 25 %, « bas » sous 50 %
+export function niveauPv(pct) {
+  return pct <= 25 ? `crit` : pct <= 50 ? `bas` : ``;
+}
+// la barre du bas est collée en bas de l'écran : on fait défiler la page pour que les cibles restent au-dessus
+function degagerCibles() {
+  const barre = document.getElementById(`cb-barre`);
+  const cartes = cartesCiblables();
+  if (!barre || !cartes.length) {
+    return;
+  }
+  const hautBarre = barre.getBoundingClientRect().top;
+  const bas = Math.max(...cartes.map((c) => c.getBoundingClientRect().bottom));
+  const haut = Math.min(...cartes.map((c) => c.getBoundingClientRect().top));
+  const decalage = Math.min(bas - hautBarre + 10, haut - 8);
+  if (decalage > 0) {
+    window.scrollBy({ top: decalage, behavior: `smooth` });
+  }
+}
 function htmlCarteCombattant(e, t) {
   let n = e.pvActuels <= 0;
   let r = Math.max(0, Math.round(e.pvActuels));
@@ -851,7 +870,7 @@ function htmlCarteCombattant(e, t) {
   let s = ELEMENTS.filter((t) => Math.round(resistanceTotale(e, t) * 100) !== 0 || t === o)
     .map((t) => {
       let n = Math.round(resistanceTotale(e, t) * 100);
-      return `<span class="res-chip ${n < 0 ? `faible` : n === 0 ? `zero` : ``}${t === o ? ` vise` : ``}" ${t === o ? `data-tip="Résistance ${NOMS_ELEMENTS[t]} · ton élément de frappe contre cette cible (celui qui lui fait le plus mal)"` : `title="Résistance ${NOMS_ELEMENTS[t]}"`}><img src="${IMGS_RESISTANCE[t]}" alt="" onerror="this.remove()" />${n > 0 ? `+` : ``}${n}%</span>`;
+      return `<span class="res-chip ${n < 0 ? `faible` : n === 0 ? `zero` : `forte`}${t === o ? ` vise` : ``}" ${t === o ? `data-tip="Résistance ${NOMS_ELEMENTS[t]} · ton élément de frappe contre cette cible (celui qui lui fait le plus mal)"` : `title="Résistance ${NOMS_ELEMENTS[t]}"`}><img src="${IMGS_RESISTANCE[t]}" alt="" onerror="this.remove()" />${n > 0 ? `+` : ``}${n}%</span>`;
     })
     .join(``);
   let c = badgesCombattant(e);
@@ -885,7 +904,7 @@ function htmlCarteCombattant(e, t) {
           ${a > 0 ? `<span class="pv-bouclier" title="Bouclier">${a}</span>` : ``}
         </span>
       </div>
-      <div class="pv-barre${n ? ` ko` : ``}" style="--pv-pct:${i}%" title="${r} / ${e.pvMax} PV">
+      <div class="pv-barre${n ? ` ko` : ``}${n ? `` : ` ${niveauPv(i)}`}" style="--pv-pct:${i}%" title="${r} / ${e.pvMax} PV">
         <span class="pv-barre-txt">❤ ${r} / ${e.pvMax}${a > 0 ? ` · 🛡 ${a}` : ``}</span>
         <span class="pa-txt">★ ${e.paActuels} PA</span>
       </div>
@@ -1074,6 +1093,7 @@ function rendreCombat() {
   if (combattantActif && sortChoisi) {
     montrerCibles();
     marquerVisee();
+    degagerCibles();
     racine.querySelectorAll(`.carte.ciblable, .tl-pastille.ciblable`).forEach((e) => {
       e.addEventListener(`click`, (ev) => {
         // un appui pour lire un badge ou une résistance ne lance pas le sort
@@ -1330,10 +1350,11 @@ function htmlBarreSorts() {
   // PV des héros toujours visibles (téléphone) : la barre recouvre les cartes de l'équipe
   const equipeMini = combattants
     .filter((c) => c.camp === `joueur`)
-    .map(
-      (c) =>
-        `<span class="em-heros${c.pvActuels <= 0 ? ` mort` : ``}${c === e ? ` actif` : ``}"><b>${echapperHtml(c.nom)}</b> ${Math.max(0, Math.round(c.pvActuels))}/${c.pvMax}</span>`,
-    )
+    .map((c) => {
+      const pct =
+        c.pvMax > 0 ? Math.max(0, Math.min(100, Math.round((c.pvActuels / c.pvMax) * 100))) : 0;
+      return `<span class="em-heros${c.pvActuels <= 0 ? ` mort` : ` ${niveauPv(pct)}`}${c === e ? ` actif` : ``}" style="--pv-pct:${pct}%"><b>${echapperHtml(c.nom)}</b> <span class="em-pv">${Math.max(0, Math.round(c.pvActuels))}/${c.pvMax}</span></span>`;
+    })
     .join(``);
   return `
     <div class="equipe-mini" aria-hidden="true">${equipeMini}</div>

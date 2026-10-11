@@ -222,3 +222,293 @@
   border: 2px dashed var(--cadre-or);
   border-radius: 14px;
 }
+
+/* ======================================================================
+   Écran Équipement : lisibilité (résumé du héros, panoplies, cartes compactes)
+   ====================================================================== */
+
+/* ---------- Résumé du héros : PA et PV bien visibles ---------- */
+.equip-titre-heros {
+  font-size: 1.15rem;
+}
+.equip-resume {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin: 2px 0 8px;
+}
+.equip-resume > span {
+  padding: 3px 12px;
+  border: 1px solid var(--bord);
+  border-radius: 999px;
+  background: var(--panel-2);
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+.equip-resume b {
+  font-size: 1.2rem;
+}
+.resume-pa {
+  border-color: #c9791a !important;
+  background: #ffe9c4 !important;
+}
+.resume-pa small {
+  color: var(--muet);
+  font-size: 0.78rem;
+}
+
+/* ---------- Emplacements : noms lisibles ---------- */
+.equip-slots.grille .slot-nom {
+  font-size: 0.7rem;
+}
+.equip-slots.grille .slot-objet {
+  font-size: 0.78rem;
+}
+.equip-slots.grille .slot-vide-txt {
+  font-size: 0.78rem;
+}
+.equip-slots.grille .equip-slot.vide {
+  opacity: 0.85;
+}
+.slot-mieux {
+  font-size: 1rem;
+}
+
+/* ---------- Panoplies : pièces portées, palier actif, palier suivant ---------- */
+.equip-pano {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 8px 0 0;
+  padding: 6px 10px;
+  border: 1px solid var(--bord);
+  border-radius: 10px;
+  background: var(--panel-2);
+  font-size: 0.85rem;
+  line-height: 1.35;
+}
+.equip-pano.complete {
+  border-color: var(--or);
+  background: #fff4d6;
+}
+.pano-tete {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pano-nom {
+  flex: 1;
+  min-width: 0;
+  font-weight: 900;
+}
+.pano-pastilles {
+  display: inline-flex;
+  gap: 3px;
+}
+.pano-pastilles i {
+  width: 10px;
+  height: 10px;
+  border: 1px solid #7d6644;
+  border-radius: 50%;
+}
+.pano-pastilles i.on {
+  border-color: #c9791a;
+  background: #e9a02a;
+}
+.pano-nb {
+  font-variant-numeric: tabular-nums;
+}
+.pano-actif {
+  color: #2f6b12;
+  font-weight: 800;
+}
+.pano-suite {
+  color: var(--muet);
+  font-weight: 700;
+}
+.pano-pa {
+  padding: 0 5px;
+  border-radius: 6px;
+  background: #e9a02a;
+  color: #2a1a05;
+}
+.equip-total {
+  margin-top: 10px;
+}
+.equip-total-titre {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--muet);
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.equip-total .ichip {
+  padding: 2px 7px;
+  font-size: 0.82rem;
+}
+
+/* ---------- Filtres et tris : une ligne qui défile au lieu d'un mur de boutons ---------- */
+.equip-filtres {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+.equip-filtres .filtre-btn {
+  flex: none;
+  min-height: 36px;
+}
+.equip-tri {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.equip-tri .tri-btn {
+  min-height: 34px;
+}
+.equip-astuce {
+  font-size: 0.82rem;
+}
+@media (width>700px) {
+  .equip-filtres {
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+}
+
+/* ---------- Cartes d'inventaire : une comparaison nette, sans la liste des stats ---------- */
+.equip-inv > .item-carte.ic {
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 10px;
+  padding: 9px 11px;
+  border-width: 2px;
+}
+.equip-inv > .item-carte.ic.rarete-rare {
+  border-color: #3a7bd5;
+}
+.equip-inv > .item-carte.ic.rarete-epique {
+  border-color: #9b4dca;
+}
+.equip-inv > .item-carte.ic.rarete-legendaire {
+  border-color: #e0a020;
+  background: linear-gradient(135deg, #fff1cc, var(--panel-2) 60%);
+}
+.equip-inv > .item-carte.ic .ic-visuel {
+  position: relative;
+  width: 56px;
+  height: 56px;
+}
+.equip-inv > .item-carte.ic .ic-visuel img {
+  width: 46px;
+  height: 46px;
+}
+.ic-qte {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--txt);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+.equip-inv .ic-nom {
+  font-size: 1rem;
+}
+.equip-inv .ic-ligne1 .verdict {
+  margin-left: 0;
+  font-size: 0.8rem;
+}
+.equip-inv .ic-meta {
+  font-size: 0.82rem;
+}
+.ic-cmp {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 2px;
+  padding-top: 4px;
+  border-top: 1px dashed #00000022;
+}
+.ic-cmp .delta-ref {
+  overflow: hidden;
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ic-deltas {
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1.5;
+}
+.ic-deltas .delta-plus,
+.ic-deltas .delta-moins {
+  margin-right: 8px;
+}
+.delta-cle .delta-plus,
+.delta-cle .delta-moins {
+  padding: 0 6px;
+  border-radius: 6px;
+}
+.delta-cle .delta-plus {
+  background: #d4ecb6;
+}
+.delta-cle .delta-moins {
+  background: #f5cbc4;
+}
+.delta-autres {
+  color: var(--muet);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+.ic-pano {
+  display: block;
+  color: #7a4a0a;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.ic-pano.palier {
+  color: #2f6b12;
+  font-weight: 900;
+}
+.ic-pano .pano-pa {
+  color: #2a1a05;
+}
+.equip-inv .badge-heros {
+  font-size: 0.8rem;
+}
+.verdict-mieux {
+  font-size: 0.8rem;
+}
+
+/* ---------- Fiche d'objet : plus aérée, détails repliés ---------- */
+.fiche-obtention summary {
+  cursor: pointer;
+  font-weight: 800;
+}
+.fiche-obtention p {
+  margin: 6px 0 0;
+}
+.fiche-heros-detail {
+  font-size: 0.9rem;
+}
+.fiche-heros .delta-plus,
+.fiche-heros .delta-moins {
+  margin-right: 8px;
+  font-weight: 800;
+}
+.fiche-heros .delta-cle .delta-plus,
+.fiche-heros .delta-cle .delta-moins {
+  padding: 0 6px;
+}
+@media (width<=700px) {
+  .equip-slots.grille .slot-objet {
+    -webkit-line-clamp: 3;
+  }
+  .ic-deltas {
+    font-size: 0.88rem;
+  }
+}

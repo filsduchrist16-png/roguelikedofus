@@ -1,5 +1,23 @@
 # Journal des modifications
 
+## Combats plus durs, combat et équipement plus lisibles, revue des écrans
+
+- **Difficulté** : les combats normaux et durs sont plus dangereux, surtout en fin de monde (×1,03 → ×1,2
+  et ×1,03 → ×1,35 sur la puissance des monstres), les boss de donjon sont recalibrés un par un
+  (`ajustementsDonjons.json` : les boss trop faciles montent, les « murs » descendent) et le début de
+  chaque monde est un peu adouci. Les héros tombent plus souvent entre deux tavernes.
+- **Combat** : barres de PV vertes (alliés) / rouges (ennemis) qui virent à l'orange puis clignotent
+  quand elles baissent, héros actif marqué « ▶ », cibles mises en avant pendant la visée, PA en
+  pastille bleue, K.O. écrit dans la barre ; sur téléphone, l'équipe en mini-jauges dans la barre du
+  bas, défi compact, seules les résistances utiles des ennemis sont montrées, et la page défile pour
+  garder les cibles visibles au-dessus de la barre.
+- **Équipement** : cartes d'inventaire courtes (verdict « Mieux / Moins / Plutôt… », 4 écarts avec PA
+  et dégâts en tête, progression de panoplie), PA et PV en grandes pastilles, bonus total en pastilles,
+  une carte par panoplie portée (pièces, bonus actif, palier suivant), filtres sur une ligne.
+- **HDV** : « ACHETER » / « VENDRE » sur les prix, boutons de saut Acheter / Vendre sur téléphone.
+  **Forgemagie** : « FORGER · GARANTI » et « TÉMÉRAIRE · 30 % D'ÉCHEC », kamas manquants indiqués.
+  **Fin de run** : « Débloqué » en haut, zones traversées, dégâts par héros, K.O. et recrues.
+
 ## Confort : Règles, Caractéristiques, Bestiaire
 
 - **Règles** : sections repliables (la première est ouverte) avec un bouton « Tout déplier / Tout replier »,

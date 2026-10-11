@@ -41,7 +41,7 @@ export function ecranHdv(e, t, n) {
               return `<button class="item-carte hdv-achat${classeRarete(t.inst)}" data-achat="${n}" ${r ? `` : `disabled`}${attrTipObjet(t.inst.id)}>
               <img src="${imgObjet(t.inst.id)}" alt="" loading="lazy" onerror="this.remove()" />
               <span class="item-nom">${htmlNomObjet(t.inst)}<small><span class="ic-meta">${htmlMetaObjet(t.inst)}</span> ${htmlChipsObjet(t.inst)}</small>${htmlBadgesHeros(t.inst, e.persos)}</span>
-              ${r ? `<span class="hdv-prix">${htmlKamas(t.prix)}</span>` : `<span class="hdv-prix hdv-manque" title="Prix : ${t.prix.toLocaleString(`fr-FR`)} k">il manque ${htmlKamas(t.prix - e.kamas)}</span>`}
+              ${r ? `<span class="hdv-prix"><small class="hdv-verbe">Acheter</small>${htmlKamas(t.prix)}</span>` : `<span class="hdv-prix hdv-manque" title="Prix : ${t.prix.toLocaleString(`fr-FR`)} k">il manque ${htmlKamas(t.prix - e.kamas)}</span>`}
             </button>`;
             })
             .join(``)
@@ -63,7 +63,7 @@ export function ecranHdv(e, t, n) {
               }) => `<button class="item-carte hdv-vente${classeRarete(e_)}${inutile ? ` hdv-inutile` : ``}" data-vente="${indices[0]}"${attrTipObjet(e_.id)}>
               <img src="${imgObjet(e_.id)}" alt="" loading="lazy" onerror="this.remove()" />
               <span class="item-nom">${htmlNomObjet(e_)}${indices.length > 1 ? ` <span class="item-qte">×${indices.length}</span>` : ``}${inutile ? ` <span class="pastille-inutile" title="N'améliore aucun héros : « Vendre l'inutile » le vendra">Inutile</span>` : ``}<small><span class="ic-meta">${htmlMetaObjet(e_)}</span> ${htmlChipsObjet(e_)}</small>${htmlBadgesHeros(e_, e.persos)}</span>
-              <span class="hdv-prix vente">${htmlKamas(prixRevente(e_))}</span>
+              <span class="hdv-prix vente"><small class="hdv-verbe">Vendre</small>${htmlKamas(prixRevente(e_))}</span>
             </button>`,
             )
             .join(``)
@@ -72,12 +72,16 @@ export function ecranHdv(e, t, n) {
         <h1>Hôtel de vente</h1>
         <p class="sous-titre">Tout le catalogue de la zone (exclusifs boss/élite compris) : local en épique+, zone suivante dès le rare. Revente à 50 % du prix.</p>
         <div class="hdv-solde">${htmlKamas(e.kamas)}</div>
+        <div class="hdv-saut" role="group" aria-label="Aller à la liste">
+          <button class="secondaire petit" data-saut="hdv-achats">Acheter (${t.length})</button>
+          <button class="secondaire petit" data-saut="hdv-ventes">Vendre (${e.inventaire.length})</button>
+        </div>
         <div class="equip-corps">
-          <div class="equip-col">
-            <h3>À vendre (${t.length})</h3>
+          <div class="equip-col" id="hdv-achats">
+            <h3>À acheter (${t.length})</h3>
             <div class="equip-inv">${a}</div>
           </div>
-          <div class="equip-col">
+          <div class="equip-col" id="hdv-ventes">
             <h3>Ton inventaire (${e.inventaire.length})
               ${
                 inutiles.length
@@ -92,6 +96,15 @@ export function ecranHdv(e, t, n) {
         </div>
         <div class="boutons-ecran hdv-barre">${htmlBarreAnnulation()}${boutonRetour(`hdv-retour`, `Retour au plateau`)}</div>
       `);
+      racine
+        .querySelectorAll(`[data-saut]`)
+        .forEach((b) =>
+          b.addEventListener(`click`, () =>
+            document
+              .getElementById(b.dataset.saut)
+              ?.scrollIntoView({ behavior: `smooth`, block: `start` }),
+          ),
+        );
       racine.querySelectorAll(`[data-achat]`).forEach((r) =>
         r.addEventListener(`click`, () => {
           let a = Number(r.dataset.achat);

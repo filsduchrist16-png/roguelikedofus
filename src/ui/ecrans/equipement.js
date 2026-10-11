@@ -105,6 +105,77 @@ function htmlDeltasObjet(deltas) {
     .join(` `);
   return [stats, effets].filter(Boolean).join(` `);
 }
+// Priorité d'affichage d'un delta : PA, dégâts d'arme, effets, stats utiles, puis PV, résistances, le reste.
+function prioriteDelta(d) {
+  if (d.cle === `pa`) {
+    return 0;
+  }
+  if (d.cle === `attaque`) {
+    return 1;
+  }
+  if (d.cle.startsWith(`effet_`)) {
+    return 2;
+  }
+  if (!d.utile) {
+    return 9;
+  }
+  if (d.cle === `prospection`) {
+    return 8;
+  }
+  if (d.cle === `pv`) {
+    return 6;
+  }
+  return d.cle.startsWith(`res_`) ? 7 : 4;
+}
+// Les `max` changements les plus importants (PA et dégâts en tête), le reste en « +N autres ».
+function htmlDeltasCompacts(deltas, max = 4) {
+  const tries = [...deltas].sort(
+    (a, b) => prioriteDelta(a) - prioriteDelta(b) || Math.abs(b.valeur) - Math.abs(a.valeur),
+  );
+  const visibles = tries.slice(0, max);
+  const reste = tries.slice(max);
+  const un = (d) => {
+    const html = htmlDeltasObjet([d]);
+    return d.cle === `pa` || d.cle === `attaque` ? `<b class="delta-cle">${html}</b>` : html;
+  };
+  const autres = reste.length
+    ? ` <span class="delta-autres" title="${echapperHtml(reste.map((d) => htmlDeltasObjet([d]).replace(/<[^>]+>/g, ``)).join(`, `))}">+${reste.length} autre${reste.length > 1 ? `s` : ``}</span>`
+    : ``;
+  return visibles.map(un).join(` `) + autres;
+}
+// Verdict en deux mots pour les cartes (le détail chiffré est dans la fiche).
+function htmlVerdictCourt(c) {
+  const v = VERDICTS[c.verdict];
+  const texte =
+    c.verdict === `mieux`
+      ? `Mieux`
+      : c.verdict === `moins`
+        ? `Moins`
+        : c.verdict === `mitige`
+          ? c.tendance === `plus`
+            ? `Plutôt mieux`
+            : `Plutôt moins`
+          : v.texte;
+  return `<span class="verdict verdict-${c.verdict}${c.tendance ? ` tendance-${c.tendance}` : ``}" title="${v.texte}${c.score ? ` (${signe(c.score)})` : ``}">${v.icone} ${texte}</span>`;
+}
+// Progression de panoplie qu'apporterait un objet pour ce héros : « ⬡ Rat Blanc 1→2/7 », palier atteint ou non.
+function htmlPanoCarte(inst, perso) {
+  const nom = EQUIPEMENTS[inst.id]?.panoplie;
+  if (!nom) {
+    return ``;
+  }
+  const portees = Object.values(perso.equipement).filter(Boolean);
+  const nb = compterPanoplies(perso)[nom] ?? 0;
+  const dejaPorte = portees.some((x) => x.id === inst.id);
+  const court = nom.replace(/^Panoplie (du |de la |de l'|des |de |d')?/i, ``);
+  if (dejaPorte) {
+    return `<span class="ic-pano">⬡ ${echapperHtml(court)} ${nb}/${taillePanoplie(nom)}</span>`;
+  }
+  const apres = nb + 1;
+  const palier = paliersPanoplie(nom).includes(apres);
+  const bonus = palier ? bonusPanoplie(nom, apres) : null;
+  return `<span class="ic-pano${palier ? ` palier` : ``}" title="${echapperHtml(nom)}">⬡ ${echapperHtml(court)} ${nb}→${apres}/${taillePanoplie(nom)}${bonus ? ` : ${texteBonusPanoplie(bonus).replace(/\+(\d+) PA/, `<b class="pano-pa">+$1 PA</b>`)}` : ``}</span>`;
+}
 function htmlComparaison(c) {
   if (c.verdict === `impossible`) {
     return `<span class="item-delta"><span class="delta-ref">Équipable seulement en ligne avant.</span></span>`;
@@ -116,25 +187,32 @@ function htmlComparaison(c) {
 }
 // « Bonus total » avec le vrai signe (−10 Agilité, pas +-10) et les PA d'équipement.
 const NOMS_BONUS = { ...NOMS_STATS, crit: `% Critique` };
-function texteBonusTotal(b) {
+// Pastilles du « Bonus total » (PA d'abord).
+function htmlBonusTotal(b) {
+  const pastille = (cls, texte) => `<span class="ichip ${cls}">${texte}</span>`;
   const r = [];
+  if (b.paBonus) {
+    r.push(pastille(`ichip-pa`, `${signe(b.paBonus)} PA`));
+  }
   if (b.pvBonus) {
-    r.push(`${signe(b.pvBonus)} PV`);
+    r.push(pastille(`ichip-vitalite`, `${signe(b.pvBonus)} PV`));
   }
   for (const [k, v] of Object.entries(b.stats)) {
     if (v) {
-      r.push(`${signe(v)} ${NOMS_BONUS[k] ?? k}`);
+      r.push(pastille(`ichip-${k}${v < 0 ? ` malus` : ``}`, `${signe(v)} ${NOMS_BONUS[k] ?? k}`));
     }
   }
   for (const [el, v] of Object.entries(b.resistances)) {
     if (v) {
-      r.push(`${signe(Math.round(v * 100))} % rés. ${NOMS_ELEMENTS[el] ?? el}`);
+      r.push(
+        pastille(
+          `ichip-res elem-${el}${v < 0 ? ` malus` : ``}`,
+          `${signe(Math.round(v * 100))} % ${NOMS_ELEMENTS[el] ?? el}`,
+        ),
+      );
     }
   }
-  if (b.paBonus) {
-    r.push(`${signe(b.paBonus)} PA (max +${PA_MAX_EQUIPEMENT})`);
-  }
-  return r.join(` · `);
+  return r.length ? r.join(``) : `<span class="muet">aucun bonus</span>`;
 }
 // Fiche d'un objet : tout ce qu'il donne, d'où il vient, et ce qu'il changerait pour chaque héros.
 function htmlFicheObjet(inst, persos, perso, porteePar, quantite, emplacementPorte) {
@@ -161,7 +239,7 @@ function htmlFicheObjet(inst, persos, perso, porteePar, quantite, emplacementPor
            return `<li class="${p === perso ? `courant` : ``}">
              <span class="fiche-heros-nom"><img src="${imgSymboleClasse(p.classeId)}" alt="" onerror="this.remove()" />${echapperHtml(nomClasse(p))}</span>
              ${htmlVerdict(c)}
-             <span class="fiche-heros-detail">${c.verdict === `impossible` ? `Équipable seulement en ligne avant.` : `${actuel} : ${htmlDeltasObjet(c.deltas) || `aucun changement de stats`}`}</span>
+             <span class="fiche-heros-detail">${c.verdict === `impossible` ? `Équipable seulement en ligne avant.` : `${actuel} : ${htmlDeltasCompacts(c.deltas, 6) || `aucun changement de stats`}`}</span>
              <span class="fiche-heros-boutons"><button class="primaire" data-equiper-sur="${i}" data-emplacement="${c.emplacement ?? ``}" ${c.verdict === `impossible` ? `disabled` : ``}>Équiper</button>${c.verdict === `impossible` ? `` : autreAnneau(p, c)}</span>
            </li>`;
          })
@@ -172,13 +250,13 @@ function htmlFicheObjet(inst, persos, perso, porteePar, quantite, emplacementPor
         <img class="fiche-img" src="${imgObjet(inst.id)}" alt="" onerror="this.remove()" />
         <div class="fiche-titre">
           <h3>${htmlNomObjet(inst)}${quantite > 1 ? ` <span class="item-qte">×${quantite}</span>` : ``}</h3>
-          <span class="muet ic-meta">${htmlMetaObjet(inst)} · trouvé en toile ${numeroZoneObjet(inst.id)}${def.panoplie ? ` · ${echapperHtml(def.panoplie)}` : ``}</span>
+          <span class="muet ic-meta">${htmlMetaObjet(inst)}${def.panoplie ? ` · ⬡ ${echapperHtml(def.panoplie)}` : ``}</span>
         </div>
         <button class="fiche-fermer" data-fermer-fiche aria-label="Fermer">✕</button>
       </div>
       <div class="fiche-chips">${htmlChipsObjet(inst, perso.classeId)}</div>
       ${lignesHeros}
-      <p class="fiche-obtention">${echapperHtml(texteObtentionObjet(inst.id)).replace(/\n/g, `<br>`)}</p>
+      <details class="fiche-obtention"><summary>Où le trouver</summary><p>${echapperHtml(texteObtentionObjet(inst.id)).replace(/\n/g, `<br>`)}</p></details>
     </section>`;
 }
 export function ecranEquipement(e, t) {
@@ -269,12 +347,12 @@ export function ecranEquipement(e, t) {
               let n = EQUIPEMENTS[inst.id];
               let possible = comparaison.verdict !== `impossible`;
               return `<button class="item-carte ic${classeRarete(inst)}${possible ? `` : ` inequipable`}" data-index="${indices[0]}" draggable="${possible}" aria-label="${echapperHtml(n.nom)} : voir la fiche">
-              <span class="ic-visuel"><img src="${imgObjet(inst.id)}" alt="" loading="lazy" onerror="this.remove()" /></span>
+              <span class="ic-visuel"><img src="${imgObjet(inst.id)}" alt="" loading="lazy" onerror="this.remove()" />${indices.length > 1 ? `<b class="ic-qte">×${indices.length}</b>` : ``}</span>
               <span class="ic-corps">
-                <span class="ic-ligne1"><span class="ic-nom">${htmlNomObjet(inst)}${indices.length > 1 ? ` <span class="item-qte">×${indices.length}</span>` : ``}</span>${htmlVerdict(comparaison)}</span>
+                <span class="ic-ligne1"><span class="ic-nom">${htmlNomObjet(inst)}</span>${possible ? htmlVerdictCourt(comparaison) : ``}</span>
                 <span class="ic-meta">${htmlMetaObjet(inst)}</span>
-                <span class="ic-stats">${htmlChipsObjet(inst, s.classeId)}</span>
-                ${possible ? htmlComparaison(comparaison) : ``}${htmlBadgesHeros(inst, e, s)}
+                ${possible ? `<span class="ic-cmp">${comparaison.actuel ? `<span class="delta-ref" title="Remplace ${echapperHtml(EQUIPEMENTS[comparaison.actuel.id]?.nom ?? comparaison.actuel.id)}">↔ ${echapperHtml(EQUIPEMENTS[comparaison.actuel.id]?.nom ?? comparaison.actuel.id)}</span>` : `<span class="delta-ref">Emplacement vide</span>`}<span class="ic-deltas">${htmlDeltasCompacts(comparaison.deltas) || `<span class="muet">aucun changement</span>`}</span></span>` : `<span class="ic-stats">${htmlChipsObjet(inst, s.classeId)}</span><span class="delta-ref">Équipable seulement en ligne avant.</span>`}
+                ${htmlPanoCarte(inst, s)}${htmlBadgesHeros(inst, e, s)}
               </span>
             </button>`;
             })
@@ -283,7 +361,6 @@ export function ecranEquipement(e, t) {
           ? `<p class="muet equip-vide">Aucun objet de ce type. <button class="secondaire petit" data-filtre="tout">Voir tout (${t.length})</button></p>`
           : `<p class="muet">Inventaire vide : gagne des combats pour trouver de l'équipement.</p>`;
       let f = bonusEquipement(s);
-      let p = texteBonusTotal(f) || `aucun bonus`;
       let fiche = ``;
       if (selection?.inst && t.includes(selection.inst)) {
         fiche = htmlFicheObjet(
@@ -305,22 +382,33 @@ export function ecranEquipement(e, t) {
         <div class="equip-onglets">${c}</div>
         <div class="equip-corps">
           <div class="equip-col">
-            <h3 class="equip-titre-heros"><span>${echapperHtml(nomClasse(s))} · PV max ${pvMaxPerso(s)} · PA ${CLASSES[s.classeId].pa + f.paBonus} <small class="equip-pa">(équip. +${f.paBonus}/${PA_MAX_EQUIPEMENT})</small></span>
+            <h3 class="equip-titre-heros"><span>${echapperHtml(nomClasse(s))}</span>
               ${boutonAuto}
             </h3>
+            <p class="equip-resume"><span class="resume-pa" title="PA de base ${CLASSES[s.classeId].pa} + équipement ${f.paBonus} (max +${PA_MAX_EQUIPEMENT})"><b>${CLASSES[s.classeId].pa + f.paBonus}</b> PA <small>(équip. +${f.paBonus}/${PA_MAX_EQUIPEMENT})</small></span><span class="resume-pv"><b>${pvMaxPerso(s)}</b> PV max</span></p>
             ${messageAuto ? `<p class="equip-auto-msg" role="status">${messageAuto}</p>` : ``}
             <div class="equip-slots grille">${l}</div>
             ${Object.entries(compterPanoplies(s))
               .map(([nom, nb]) => {
                 const b = bonusPanoplie(nom, nb);
+                const taille = taillePanoplie(nom);
                 const prochain = paliersPanoplie(nom).find((k) => k > nb);
+                const avecPa = (txt) => txt.replace(/\+(\d+) PA/, `<b class="pano-pa">+$1 PA</b>`);
+                const pastilles = Array.from(
+                  { length: taille },
+                  (_, k) => `<i class="${k < nb ? `on` : ``}"></i>`,
+                ).join(``);
                 const suite = prochain
-                  ? ` · à ${prochain} pièces : ${texteBonusPanoplie(PANOPLIES[nom].paliers[prochain])}`
-                  : ``;
-                return `<p class="equip-pano${b ? ` complete` : ` muet`}" title="${echapperHtml(descriptionPanoplie(nom))}">⬡ ${echapperHtml(nom)} ${nb}/${taillePanoplie(nom)}${b ? ` : ${texteBonusPanoplie(b)}` : ``}${suite}</p>`;
+                  ? `<span class="pano-suite">Encore ${prochain - nb} pièce${prochain - nb > 1 ? `s` : ``} : ${avecPa(texteBonusPanoplie(PANOPLIES[nom].paliers[prochain]))}</span>`
+                  : `<span class="pano-suite">Panoplie au maximum</span>`;
+                return `<div class="equip-pano${b ? ` complete` : ``}" title="${echapperHtml(descriptionPanoplie(nom))}">
+                  <span class="pano-tete"><span class="pano-nom">⬡ ${echapperHtml(nom)}</span><span class="pano-pastilles" aria-label="${nb} pièces sur ${taille}">${pastilles}</span><b class="pano-nb">${nb}/${taille}</b></span>
+                  ${b ? `<span class="pano-actif">Actif (${b.palier} p.) : ${avecPa(texteBonusPanoplie(b))}</span>` : ``}
+                  ${suite}
+                </div>`;
               })
               .join(``)}
-            <p class="equip-total">Bonus total : ${p}</p>
+            <div class="equip-total"><span class="equip-total-titre">Bonus total</span><div class="ichips">${htmlBonusTotal(f)}</div></div>
           </div>
           <div class="equip-col">
             <h3>Inventaire (${t.length})</h3>
@@ -332,7 +420,7 @@ export function ecranEquipement(e, t) {
                 ${TRIS.map(([id, nom, aide]) => `<button class="tri-btn${triArmurerie === id ? ` actif` : ``}" data-tri="${id}" aria-pressed="${triArmurerie === id}" title="${aide}">${nom}</button>`).join(``)}
               </div>
             </div>
-            <p class="equip-astuce muet">Touche un objet pour voir sa fiche et l'équiper sur n'importe quel héros${ecranTactile() ? `` : ` (double-clic : équiper directement, ou glisser-déposer)`}.</p>`
+            <p class="equip-astuce muet">Les chiffres comparent chaque objet à ce que porte ${echapperHtml(nomClasse(s))}. ${ecranTactile() ? `Touche un objet : fiche et choix du héros.` : `Clic : fiche · double-clic : équiper · glisser-déposer possible.`}</p>`
                 : `<p class="equip-vide muet">🎒 Ton sac est vide. Les objets viennent des combats, des coffres et de l'HDV : ils apparaîtront ici.</p>`
             }
             <div class="equip-inv">${d}</div>

@@ -1,4 +1,11 @@
-import { AJUSTEMENTS_ZONES, CLASSES, COMBATS, EQUIPEMENTS, MONSTRES } from "../data/index.js";
+import {
+  AJUSTEMENTS_DONJONS,
+  AJUSTEMENTS_ZONES,
+  CLASSES,
+  COMBATS,
+  EQUIPEMENTS,
+  MONSTRES,
+} from "../data/index.js";
 import {
   AFFIXES_GROUPE,
   CONFIG_ARCHI,
@@ -9,7 +16,9 @@ import {
   RECUPERATION,
   TAUX_BUTIN,
   butinDeZone,
+  facteurType,
   getMonde,
+  trouverZoneDansMonde,
 } from "./config.js";
 import {
   STAT_PAR_ELEMENT,
@@ -705,9 +714,18 @@ export function appliquerDifficulteMonstres(e, t, n) {
 }
 // Puissance des monstres d'une zone (src/data/ajustementsZones.json, réglée par simulation) : PV et
 // dégâts multipliés par le même facteur.
+function facteurTypeZone(type, zoneId) {
+  const t = trouverZoneDansMonde(zoneId);
+  let f = facteurType(type, t?.index ?? 0, t?.tranche.zones.length ?? 12);
+  if (type === `donjon`) {
+    f *= AJUSTEMENTS_DONJONS[zoneId] ?? 1;
+  }
+  return f;
+}
 export const puissanceZone = (zoneId) => AJUSTEMENTS_ZONES[zoneId] ?? 1;
-export function appliquerPuissanceZone(monstres, zoneId) {
-  let f = puissanceZone(zoneId);
+export function appliquerPuissanceZone(monstres, zoneId, type) {
+  // facteur de la zone × facteur du type de combat (normal / difficile / donjon)
+  let f = puissanceZone(zoneId) * facteurTypeZone(type, zoneId);
   if (f === 1) {
     return;
   }

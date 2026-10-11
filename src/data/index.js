@@ -10,6 +10,7 @@ import CREATURES from "./creatures.json";
 import RELIQUES from "./reliques.json";
 import PANOPLIES from "./panoplies.json";
 import SECRETS from "./secrets.json";
+import AJUSTEMENTS_DONJONS from "./ajustementsDonjons.json";
 import AJUSTEMENTS_ZONES from "./ajustementsZones.json";
 export const CONFIG_RELIQUES = {
   base: 0.01,
@@ -539,5 +540,6 @@ export {
   CREATURES,
   PANOPLIES,
   SECRETS,
+  AJUSTEMENTS_DONJONS,
   AJUSTEMENTS_ZONES,
 };

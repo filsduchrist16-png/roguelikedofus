@@ -41,7 +41,7 @@ export function ecranRecap(e, t, n = [], debloques = []) {
         let n = Math.round((t / a) * 100);
         return `<div class="recap-ligne">
           <img class="recap-sym" src="${imgSymboleClasse(e.classeId)}" alt="" onerror="this.remove()" />
-          <span class="recap-nom">${echapperHtml(CLASSES[e.classeId].nom)}${e.classeId === o ? ` 👑` : ``}<small>Niv. ${e.progression.niveau}</small></span>
+          <span class="recap-nom">${echapperHtml(CLASSES[e.classeId].nom)}${e.classeId === o ? ` 👑` : ``}<small>Niv. ${e.progression.niveau}${e.pvActuels <= 0 ? ` · ☠ K.O.` : ``}</small></span>
           <div class="recap-barre"><div class="recap-barre-rempli" style="width:${n}%"></div><span>${t.toLocaleString(`fr-FR`)} dégâts</span></div>
         </div>`;
       })
@@ -49,18 +49,22 @@ export function ecranRecap(e, t, n = [], debloques = []) {
     afficherEcran(`
       <h1 class="${t ? `` : `defaite`}">${t ? `🏆 Krosmoz traversé !` : `Équipe anéantie`}</h1>
       ${e.ascension >= 1 ? `<p class="asc-record">${echapperHtml(DIFFICULTES[e.ascension].nom)} <span class="asc-badge">${etoilesDifficulte(e.ascension)}</span></p>` : ``}
-      <p class="sous-titre">${t ? `Toutes les zones du monde sont vaincues.` : `La run s'arrête ici. Tes Dofus et tes captures, eux, sont conservés.`}</p>
+      <p class="sous-titre">${t ? `Toutes les zones du monde sont vaincues.` : `La run s'arrête ici${e_stats.zones ? ` après ${e_stats.zones} zone${e_stats.zones > 1 ? `s` : ``} traversée${e_stats.zones > 1 ? `s` : ``}` : ``}. Tes Dofus et tes captures, eux, sont conservés.`}</p>
+      ${debloques.length ? `<p class="recap-debloque">🔓 Débloqué : ${debloques.map((d) => `<b>${echapperHtml(d)}</b>`).join(` · `)}</p>` : ``}
       <div class="recap-compteurs">
         <span class="recap-chip">🗺️ ${e_stats.zones} zone${e_stats.zones > 1 ? `s` : ``}</span>
         <span class="recap-chip">⚔️ ${e_stats.combats} combat${e_stats.combats > 1 ? `s` : ``} gagné${e_stats.combats > 1 ? `s` : ``}</span>
         <span class="recap-chip">🎒 ${e_stats.objets} objet${e_stats.objets > 1 ? `s` : ``}</span>
         <span class="recap-chip">✨ ${e_stats.archis} âme${e_stats.archis > 1 ? `s` : ``} capturée${e_stats.archis > 1 ? `s` : ``}</span>
         <span class="recap-chip">${htmlKamas(e_stats.kamasGagnes ?? 0)} gagnés</span>
+        ${e_stats.recrutements ? `<span class="recap-chip">🍺 ${e_stats.recrutements} recrue${e_stats.recrutements > 1 ? `s` : ``}</span>` : ``}
       </div>
+      <h3 class="recap-titre-degats">Dégâts infligés · ${Object.values(e_stats.degats)
+        .reduce((x, y) => x + y, 0)
+        .toLocaleString(`fr-FR`)}</h3>
       <div class="recap-degats">${s}</div>
       ${e_stats.reliques?.length ? `<div class="recap-succes">${e_stats.reliques.map((e) => `<span class="succes-chip nouveau">Relique : ${echapperHtml(RELIQUES[e]?.nom ?? e)}</span>`).join(``)}</div>` : ``}
       ${n.length ? `<div class="recap-succes">${n.map((e) => `<span class="succes-chip nouveau">✓ ${echapperHtml(e.nom)}</span>`).join(``)}</div>` : ``}
-      ${debloques.length ? `<p class="recap-debloque">🔓 Débloqué : ${debloques.map((d) => `<b>${echapperHtml(d)}</b>`).join(` · `)}</p>` : ``}
       <div class="boutons-ecran recap-boutons">
         ${boutonRetour(`recap-retour`, `Retour à l'accueil`)}
         <button id="recap-choix" class="secondaire">Autre équipe</button>

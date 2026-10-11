@@ -119,8 +119,8 @@ export function ecranForgemagie(e, t) {
                 ${porte ? `` : htmlBadgesApresForge(apercu, e.persos)}
               </span>
               <span class="forge-boutons">
-                <button class="secondaire" data-forge="${r}" ${e.kamas < prix ? `disabled` : ``} title="Forge garantie">${htmlKamas(prix)}</button>
-                <button class="secondaire forge-temeraire" data-temeraire="${r}" ${e.kamas < prixTemeraire ? `disabled` : ``} title="Forgemage téméraire : ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % d'échec (kamas perdus, objet intact)">🎲 ${htmlKamas(prixTemeraire)}</button>
+                <button class="secondaire" data-forge="${r}" ${e.kamas < prix ? `disabled` : ``} title="Forge garantie${e.kamas < prix ? ` : il manque ${kamasTexte(prix - e.kamas)}` : ``}"><small class="forge-lib">Forger · garanti</small>${htmlKamas(prix)}</button>
+                <button class="secondaire forge-temeraire" data-temeraire="${r}" ${e.kamas < prixTemeraire ? `disabled` : ``} title="Forgemage téméraire : ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % d'échec (kamas perdus, objet intact)${e.kamas < prixTemeraire ? ` · il manque ${kamasTexte(prixTemeraire - e.kamas)}` : ``}"><small class="forge-lib">🎲 Téméraire · ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % d'échec</small>${htmlKamas(prixTemeraire)}</button>
               </span>
             </div>`;
       };
