@@ -1,5 +1,12 @@
 # Journal des modifications
 
+## Correctif : flèches ▲ et « Équiper le meilleur » ne se contredisent plus
+
+- Les ▲ (emplacements, onglets des héros) utilisent maintenant exactement le même critère que le bouton :
+  ils n'apparaissent que si l'objet serait vraiment équipé d'office.
+- Un objet meilleur en stats mais qui éloigne d'un palier de panoplie à PA (par ex. remplacer une pièce
+  d'une panoplie 5/7 dont le +1 PA est à 7 pièces) est étiqueté « éloigne d'un bonus » au lieu de « Mieux ».
+
 ## Correctif : « partie en ligne incomplète »
 
 - Les envois alternent maintenant deux emplacements de morceaux (a / b) : l'envoi d'un autre appareil

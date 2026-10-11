@@ -84,9 +84,16 @@ function trierGroupes(groupes, perso) {
 }
 const nomClasse = (perso) => CLASSES[perso.classeId].nom;
 const signe = (n) => (n > 0 ? `+${n}` : n < 0 ? `−${Math.abs(n)}` : `±0`);
+// Un objet meilleur en stats n'est pas équipé d'office s'il éloigne d'un palier de panoplie à PA
+// ou fait perdre des dégâts : on le dit au lieu d'afficher un « mieux » trompeur.
+const TEXTE_COURT_PAS_SUR = `éloigne d'un bonus`;
+const TEXTE_PAS_SUR = `Meilleur en stats, mais il éloigne d'un bonus de panoplie (PA) ou fait perdre des dégâts : « Équiper le meilleur » ne le met pas. À toi de voir.`;
 // Verdict d'une comparaison ; un « mitigé » est chiffré : plutôt mieux ou plutôt moins.
 function htmlVerdict(c) {
   const v = VERDICTS[c.verdict];
+  if (c.verdict === `mieux` && !c.sure) {
+    return `<span class="verdict verdict-mitige tendance-moins" title="${TEXTE_PAS_SUR}">${v.icone} Mieux en stats, mais ${TEXTE_COURT_PAS_SUR}</span>`;
+  }
   if (c.verdict === `mitige` && c.score) {
     const texte = c.tendance === `plus` ? `Plutôt mieux` : `Plutôt moins`;
     return `<span class="verdict verdict-mitige tendance-${c.tendance}" title="Gains et pertes : bilan chiffré ${signe(c.score)}">${v.icone} ${texte} (${signe(c.score)})</span>`;
@@ -146,6 +153,9 @@ function htmlDeltasCompacts(deltas, max = 4) {
 // Verdict en deux mots pour les cartes (le détail chiffré est dans la fiche).
 function htmlVerdictCourt(c) {
   const v = VERDICTS[c.verdict];
+  if (c.verdict === `mieux` && !c.sure) {
+    return `<span class="verdict verdict-mitige tendance-moins" title="${TEXTE_PAS_SUR}">${v.icone} ${TEXTE_COURT_PAS_SUR}</span>`;
+  }
   const texte =
     c.verdict === `mieux`
       ? `Mieux`
@@ -288,9 +298,7 @@ export function ecranEquipement(e, t) {
       let c = e
         .map((p, idx) => {
           const portes = EMPLACEMENTS.filter((slot) => p.equipement[slot]).length;
-          const ameliorations = groupes.filter(
-            (g) => comparerObjet(g.inst, p).verdict === `mieux`,
-          ).length;
+          const ameliorations = groupes.filter((g) => comparerObjet(g.inst, p).sure).length;
           return `<button class="equip-onglet ${idx === r ? `sel` : ``}" data-perso="${idx}" aria-pressed="${idx === r}">
           <img src="${imgSymboleClasse(p.classeId)}" alt="" onerror="this.remove()" />
           <span class="onglet-texte">${echapperHtml(nomClasse(p))}<small>${portes}/${EMPLACEMENTS.length} équipés${ameliorations ? ` · <b class="onglet-mieux">▲ ${ameliorations}</b>` : ``}</small></span></button>`;
@@ -307,7 +315,7 @@ export function ecranEquipement(e, t) {
         const mieux = groupes.some(
           (g) =>
             EQUIPEMENTS[g.inst.id]?.slot === type &&
-            g.comparaison.verdict === `mieux` &&
+            g.comparaison.sure &&
             g.comparaison.emplacement === slot,
         );
         return n && inst

@@ -189,6 +189,8 @@ export function comparerObjet(inst, perso, emplacement) {
   if (verdict === `mitige`) {
     resultat.tendance = score > 0 ? `plus` : `moins`;
   }
+  // « sure » : ce que « Équiper le meilleur » ferait d'office (c'est aussi ce que montrent les ▲)
+  resultat.sure = ameliorationSure(resultat);
   return resultat;
 }
 

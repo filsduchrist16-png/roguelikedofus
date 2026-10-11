@@ -142,6 +142,29 @@ describe(`comparaisons chiffrées`, async () => {
       { ...piece, stats: {}, adaptatif: 0, pa: 0 };
     expect(valeurEquipement(perso)).toBeGreaterThan(avant + 20);
   });
+  it(`un objet meilleur en stats mais qui éloigne d'un palier de panoplie à PA n'est ni équipé ni signalé « sûr »`, async () => {
+    const { PANOPLIES } = await import(`../src/data/index.js`);
+    const { equiperMeilleur } = await import(`../src/jeu/inventaire.js`);
+    const run = nouvelleRun([`eniripsa`]);
+    const perso = run.persos[0];
+    // 5 pièces de la panoplie du Bouftou (le +1 PA est au palier de 7 pièces)
+    const pieces = PANOPLIES[`Panoplie du Bouftou`].pieces.slice(0, 5);
+    for (const id of pieces) {
+      perso.equipement[EQUIPEMENTS[id].slot === `anneau` ? `anneau` : EQUIPEMENTS[id].slot] = objet(
+        id,
+        `epique`,
+      );
+    }
+    // une amulette banale ne remplace que l'amulette du Bouftou : meilleure en PV, mais la panoplie
+    // passerait de 5 à 4 pièces
+    const inst = objet(`amulette_de_logram`, `epique`);
+    const c = comparerObjet(inst, perso);
+    expect(c.verdict).toBe(`mieux`);
+    expect(c.offensif).toBeLessThan(0);
+    expect(c.sure).toBe(false);
+    run.inventaire.push(inst);
+    expect(equiperMeilleur(run)).toBe(0);
+  });
   it(`un mitigé à score négatif pour tous est inutile, pas un mitigé à score positif`, () => {
     const run = runAvecCape({ intelligence: 20 });
     const perte = cape({ intelligence: 10, soin: 1 });
