@@ -52,86 +52,92 @@ import { resumePartieLocale, texteResume } from "../../sauvegarde/export.js";
 import { dateLisible } from "./parametres.js";
 import { VERSION } from "../../version.js";
 const LIEN_DISCORD = `https://discord.gg/jxfWpRB7Rp`;
-const numeroMonde = (id) => MONDES.findIndex((m) => m.id === id) + 1;
+const numeroMonde = (id) => MONDES.findIndex((monde) => monde.id === id) + 1;
 // Plus haute difficulté ouverte dans ce monde (une run gagnée débloque la suivante).
 function palierDebloque(meta, trancheId) {
-  const a = ascensionMonde(meta, trancheId);
-  return a === undefined ? 0 : Math.min(a + 1, DIFFICULTE_MAX);
+  const ascensionMax = ascensionMonde(meta, trancheId);
+  return ascensionMax === undefined ? 0 : Math.min(ascensionMax + 1, DIFFICULTE_MAX);
 }
 const mondeOuvert = (meta, id) =>
-  MONDES.some((m) => m.id === id) && mondePrecedentTermine(meta, id) && mondeJouable(meta, id);
+  MONDES.some((monde) => monde.id === id) &&
+  mondePrecedentTermine(meta, id) &&
+  mondeJouable(meta, id);
 // Ce qu'il faut faire pour débloquer la difficulté n dans ce monde (palier : plus haute ouverte).
 // Une victoire n'ouvre que le palier suivant : au-delà, on rappelle par où commencer.
-export function conditionVerrou(trancheId, palier, n) {
+export function conditionVerrou(trancheId, palier, cran) {
   const monde = `Monde ${numeroMonde(trancheId)}`;
-  if (n <= palier + 1) {
-    return `🔒 Gagne une run du ${monde} en ${DIFFICULTES[n - 1].nom} pour débloquer ${DIFFICULTES[n].nom}.`;
+  if (cran <= palier + 1) {
+    return `🔒 Gagne une run du ${monde} en ${DIFFICULTES[cran - 1].nom} pour débloquer ${DIFFICULTES[cran].nom}.`;
   }
-  return `🔒 Gagne une run du ${monde} en ${DIFFICULTES[n - 1].nom} pour débloquer ${DIFFICULTES[n].nom}. Les paliers s'ouvrent un à un : commence par gagner en ${DIFFICULTES[palier].nom}.`;
+  return `🔒 Gagne une run du ${monde} en ${DIFFICULTES[cran - 1].nom} pour débloquer ${DIFFICULTES[cran].nom}. Les paliers s'ouvrent un à un : commence par gagner en ${DIFFICULTES[palier].nom}.`;
 }
-export function ecranAccueil(e, onReset, n = null) {
+export function ecranAccueil(meta, onReset, reprise = null) {
   return new Promise((resolve) => {
     // dernier départ retenu (monde et difficulté), s'il est encore possible
     const depart = parametres.dernierDepart;
     let trancheId =
-      n?.trancheId ??
-      (depart?.trancheId && mondeOuvert(e, depart.trancheId) ? depart.trancheId : `t1`);
-    let ascension = n
+      reprise?.trancheId ??
+      (depart?.trancheId && mondeOuvert(meta, depart.trancheId) ? depart.trancheId : `t1`);
+    let ascension = reprise
       ? 0
-      : Math.max(0, Math.min(Math.trunc(depart?.ascension) || 0, palierDebloque(e, trancheId)));
+      : Math.max(0, Math.min(Math.trunc(depart?.ascension) || 0, palierDebloque(meta, trancheId)));
     // idoles de départ cochées (cumulables) et section dépliée ou non
     const idoles = new Set(idolesDepartValides(parametres.idolesChoisies));
     let idolesOuvert = false;
     // élément à refocaliser après un nouveau rendu (navigation au clavier)
     let focusApres = null;
-    let o = () => {
-      let s = ascensionMonde(e, trancheId);
+    let afficher = () => {
+      let meilleurPalier = ascensionMonde(meta, trancheId);
       let diff = DIFFICULTES[ascension] ?? DIFFICULTES[0];
-      let recap = n
-        ? `Reprendre · Zone ${n.zoneNum}/${n.nbZones} : ${n.zoneNom}`
+      let recap = reprise
+        ? `Reprendre · Zone ${reprise.zoneNum}/${reprise.nbZones} : ${reprise.zoneNom}`
         : `Monde ${numeroMonde(trancheId)} · ${`★`.repeat(ascension + 1)} ${diff.nom}`;
-      let c = n
+      let htmlBoutons = reprise
         ? `<button id="btn-reprendre" class="btn-jouer btn-reprendre" aria-label="${echapperHtml(recap)}"><img src="${IMG_JOUER}" alt="Reprendre" onerror="this.remove()" /></button>
            <button id="btn-abandon" class="btn-jouer btn-abandon" title="Abandonner la run"><img src="${IMG_ABANDONNER}" alt="Abandonner la run" onerror="this.replaceWith(this.alt)" /></button>`
         : `<button id="btn-start" class="btn-jouer" aria-label="${echapperHtml(`Jouer : ${recap}`)}"><img src="${IMG_JOUER}" alt="Jouer" onerror="this.remove()" /></button>`;
       // run du jour : mêmes cartes pour tous aujourd'hui, une bénédiction imposée, record du jour
       const jourDate = dateDuJour();
       const benediction = BENEDICTIONS[benedictionDuJour(jourDate)];
-      const recordJour = recordMonde(e, cleRecordJour(jourDate, trancheId));
-      const htmlJour = n
+      const recordJour = recordMonde(meta, cleRecordJour(jourDate, trancheId));
+      const htmlJour = reprise
         ? ``
         : `<div class="run-du-jour">
           <button id="btn-jour" class="secondaire btn-run-jour" aria-label="${echapperHtml(`Run du jour, Monde ${numeroMonde(trancheId)}`)}">📅 Run du jour</button>
           <p class="run-du-jour-info">Mêmes cartes pour tous aujourd'hui · ${echapperHtml(benediction.nom)} imposée (${echapperHtml(benediction.desc)})${recordJour ? ` · Record du jour : ${recordJour.score} points` : ``}</p>
         </div>`;
-      c += `<p class="jouer-recap${diff.effets.mortDefinitive && !n ? ` mort-definitive` : ``}">${echapperHtml(recap)}</p>`;
-      let l = (t) => {
-        let r = palierDebloque(e, t);
-        let o = t === trancheId;
-        return DIFFICULTES.map((e, n) => {
-          let i = n > r;
-          let s = [`asc-etoile`, o && n <= ascension ? `pleine` : ``, i ? `verrou` : ``]
+      htmlBoutons += `<p class="jouer-recap${diff.effets.mortDefinitive && !reprise ? ` mort-definitive` : ``}">${echapperHtml(recap)}</p>`;
+      let htmlEtoiles = (mondeId) => {
+        let palier = palierDebloque(meta, mondeId);
+        let actif = mondeId === trancheId;
+        return DIFFICULTES.map((difficulte, indice) => {
+          let verrouille = indice > palier;
+          let classes = [
+            `asc-etoile`,
+            actif && indice <= ascension ? `pleine` : ``,
+            verrouille ? `verrou` : ``,
+          ]
             .filter(Boolean)
             .join(` `);
-          return `<button class="${s}" ${i ? `aria-disabled="true" data-verrou="${n}" data-palier="${r}"` : `data-asc="${n}"`} data-asc-tranche="${t}" aria-label="${echapperHtml(i ? `${e.nom} (verrouillé)` : e.nom)}"${o && n === ascension ? ` aria-pressed="true"` : ``}>
+          return `<button class="${classes}" ${verrouille ? `aria-disabled="true" data-verrou="${indice}" data-palier="${palier}"` : `data-asc="${indice}"`} data-asc-tranche="${mondeId}" aria-label="${echapperHtml(verrouille ? `${difficulte.nom} (verrouillé)` : difficulte.nom)}"${actif && indice === ascension ? ` aria-pressed="true"` : ``}>
             <img src="${IMG_ETOILE}" alt="" onerror="this.parentElement.textContent='★'" />
           </button>`;
         }).join(``);
       };
-      const record = recordMonde(e, trancheId);
-      let u = n
+      const record = recordMonde(meta, trancheId);
+      let htmlDifficultes = reprise
         ? ``
         : `<div class="asc-section">
           <div class="asc-textes">${DIFFICULTES.map(
             (
-              e,
-              t,
-            ) => `<div class="asc-texte${t === ascension ? ` visible` : ``}" data-asc-texte="${t}">
-            <p class="asc-nom">${echapperHtml(e.nom)}</p>
-            <p class="asc-desc" data-desc="${echapperHtml(e.desc)}">${echapperHtml(e.desc)}</p>
+              difficulte,
+              indice,
+            ) => `<div class="asc-texte${indice === ascension ? ` visible` : ``}" data-asc-texte="${indice}">
+            <p class="asc-nom">${echapperHtml(difficulte.nom)}</p>
+            <p class="asc-desc" data-desc="${echapperHtml(difficulte.desc)}">${echapperHtml(difficulte.desc)}</p>
           </div>`,
           ).join(``)}</div>
-          ${s !== undefined && s >= 1 ? `<p class="asc-record">Meilleur palier : ${etoilesDifficulte(s)} ${echapperHtml(DIFFICULTES[s].nom)}</p>` : ``}
+          ${meilleurPalier !== undefined && meilleurPalier >= 1 ? `<p class="asc-record">Meilleur palier : ${etoilesDifficulte(meilleurPalier)} ${echapperHtml(DIFFICULTES[meilleurPalier].nom)}</p>` : ``}
           ${
             record
               ? `<p class="asc-record">Record du monde : ${record.score} points${record.idoles.length ? ` (${record.idoles.map((id) => echapperHtml(IDOLES_DEPART[id].nom)).join(`, `)})` : ``}</p>`
@@ -170,44 +176,47 @@ export function ecranAccueil(e, onReset, n = null) {
         </div>
         <img class="logo-accueil" src="${IMG_LOGO}" alt="Roguefus Lite" onerror="this.remove()" />
         <div class="mondes-rack">
-          ${MONDES.map((t, r) => {
-            let a = mondePrecedentTermine(e, t.id);
-            let o = mondeJouable(e, t.id);
-            let s = [
+          ${MONDES.map((monde, indice) => {
+            let precedentTermine = mondePrecedentTermine(meta, monde.id);
+            let jouable = mondeJouable(meta, monde.id);
+            let classes = [
               `monde-carte`,
-              t.id === trancheId ? `active` : ``,
-              a ? `` : `locked`,
-              a && !o ? `chantier` : ``,
-              a && o ? `jouable` : ``,
+              monde.id === trancheId ? `active` : ``,
+              precedentTermine ? `` : `locked`,
+              precedentTermine && !jouable ? `chantier` : ``,
+              precedentTermine && jouable ? `jouable` : ``,
             ]
               .filter(Boolean)
               .join(` `);
-            let c = a
-              ? o
-                ? n && t.id === n.trancheId
+            let badge = precedentTermine
+              ? jouable
+                ? reprise && monde.id === reprise.trancheId
                   ? `Run en cours`
                   : ``
                 : `Bientôt`
-              : `🔒 Finis le monde ${r}`;
-            let u = n
+              : `🔒 Finis le monde ${indice}`;
+            let tipRun = reprise
               ? `Run en cours
-Zone ${n.zoneNum}/${n.nbZones} : ${n.zoneNom}
-Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
+Zone ${reprise.zoneNum}/${reprise.nbZones} : ${reprise.zoneNom}
+Difficulté : ${DIFFICULTES[reprise.ascension]?.nom ?? `Normal`}`
               : ``;
-            let d =
-              a && o && !n
-                ? `<span class="asc-rangee monde-etoiles" data-rangee="${t.id}">${l(t.id)}</span>`
+            let etoilesMonde =
+              precedentTermine && jouable && !reprise
+                ? `<span class="asc-rangee monde-etoiles" data-rangee="${monde.id}">${htmlEtoiles(monde.id)}</span>`
                 : ``;
-            let f = statsMonde(e, t.id);
-            let [p, m] = progressionArchisMonde(e.archis, t.id);
-            let h = reliquesDuMonde(t.id);
-            let length = h.filter((t) => e.reliques?.includes(t)).length;
-            let _ = t.zones.length
+            let stats = statsMonde(meta, monde.id);
+            let [archisFaits, archisTotal] = progressionArchisMonde(meta.archis, monde.id);
+            let reliques = reliquesDuMonde(monde.id);
+            let nbReliques = reliques.filter((id) => meta.reliques?.includes(id)).length;
+            let lignesStats = monde.zones.length
               ? [
-                  [`Zone max atteinte`, f.toileMax ? `${f.toileMax}/${t.zones.length}` : `—`],
-                  [`Runs réussies`, String(f.victoires)],
-                  [`Archimonstres`, m ? `${p}/${m}` : `—`],
-                  [`Reliques`, h.length ? `${length}/${h.length}` : `—`],
+                  [
+                    `Zone max atteinte`,
+                    stats.toileMax ? `${stats.toileMax}/${monde.zones.length}` : `—`,
+                  ],
+                  [`Runs réussies`, String(stats.victoires)],
+                  [`Archimonstres`, archisTotal ? `${archisFaits}/${archisTotal}` : `—`],
+                  [`Reliques`, reliques.length ? `${nbReliques}/${reliques.length}` : `—`],
                 ]
               : [
                   [`Zone max atteinte`, `—`],
@@ -215,22 +224,22 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
                   [`Archimonstres`, `—`],
                   [`Reliques`, `—`],
                 ];
-            let choisissable = o && !n;
-            return `<div class="${s}" ${choisissable ? `data-tranche="${t.id}" role="button" tabindex="0" aria-pressed="${t.id === trancheId}"` : ``}${t.id === n?.trancheId ? ` data-tip="${echapperHtml(u)}"` : ``}>
+            let choisissable = jouable && !reprise;
+            return `<div class="${classes}" ${choisissable ? `data-tranche="${monde.id}" role="button" tabindex="0" aria-pressed="${monde.id === trancheId}"` : ``}${monde.id === reprise?.trancheId ? ` data-tip="${echapperHtml(tipRun)}"` : ``}>
               <div class="monde-medaillon">
-                <img class="monde-img" src="${imgMonde(r + 1)}" alt="" onerror="this.remove()" />
-                ${d}${c ? `<span class="monde-badge">${c}</span>` : ``}
+                <img class="monde-img" src="${imgMonde(indice + 1)}" alt="" onerror="this.remove()" />
+                ${etoilesMonde}${badge ? `<span class="monde-badge">${badge}</span>` : ``}
               </div>
-              <span class="monde-nom">Monde ${r + 1}</span>
-              <span class="monde-niveaux">Niveau ${t.niveaux[0]}${t.niveaux[1] === t.niveaux[0] ? `` : ` - ${t.niveaux[1]}`}</span>
-              <span class="monde-stats">${_.map(([e, t]) => `<span>${e} : <b>${t}</b></span>`).join(``)}</span>
+              <span class="monde-nom">Monde ${indice + 1}</span>
+              <span class="monde-niveaux">Niveau ${monde.niveaux[0]}${monde.niveaux[1] === monde.niveaux[0] ? `` : ` - ${monde.niveaux[1]}`}</span>
+              <span class="monde-stats">${lignesStats.map(([libelle, valeur]) => `<span>${libelle} : <b>${valeur}</b></span>`).join(``)}</span>
             </div>`;
           }).join(``)}
         </div>
-        ${u}
-        ${htmlProchainDofus(e)}
+        ${htmlDifficultes}
+        ${htmlProchainDofus(meta)}
         <div class="boutons-ecran">
-          ${c}
+          ${htmlBoutons}
         </div>
         ${htmlJour}
         <div class="accueil-mentions">
@@ -242,34 +251,34 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
       );
       document.getElementById(`btn-disclaimer`)?.addEventListener(`click`, async () => {
         await ecranMentionsLegales();
-        o();
+        afficher();
       });
       document.getElementById(`btn-settings`)?.addEventListener(`click`, async () => {
         await ecranParametres({
-          nb: () => e.dofus.length,
+          nb: () => meta.dofus.length,
           onReset,
         });
-        o();
+        afficher();
       });
       document.getElementById(`btn-regles`)?.addEventListener(`click`, async () => {
         await ecranRegles();
-        o();
+        afficher();
       });
       document.getElementById(`btn-succes`)?.addEventListener(`click`, async () => {
-        await ecranSucces(e);
-        o();
+        await ecranSucces(meta);
+        afficher();
       });
       document.getElementById(`btn-bestiaire`)?.addEventListener(`click`, async () => {
-        await ecranBestiaire(e);
-        o();
+        await ecranBestiaire(meta);
+        afficher();
       });
       document.getElementById(`btn-encyclopedie`)?.addEventListener(`click`, async () => {
         await ecranEncyclopedie();
-        o();
+        afficher();
       });
       document.getElementById(`btn-armurerie`)?.addEventListener(`click`, async () => {
-        await ecranArmurerie(e);
-        o();
+        await ecranArmurerie(meta);
+        afficher();
       });
       // l'encart « Dofus à portée » ouvre les Succès sur le Dofus touché
       document.querySelector(`.prochain-dofus`)?.addEventListener(`click`, async (ev) => {
@@ -278,8 +287,8 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
           return;
         }
         const id = ev.target.closest(`[data-dofus]`)?.dataset.dofus;
-        await ecranSucces(e, id ? `d:${id}` : undefined);
-        o();
+        await ecranSucces(meta, id ? `d:${id}` : undefined);
+        afficher();
       });
       // une partie plus récente envoyée depuis l'autre appareil (sauvegarde en ligne)
       nuagePlusRecent()
@@ -296,16 +305,16 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
         })
         .catch(() => {});
       document.getElementById(`btn-dofus`)?.addEventListener(`click`, async () => {
-        await ecranDofus(e);
-        o();
+        await ecranDofus(meta);
+        afficher();
       });
-      let d = [...racine.querySelectorAll(`[data-asc-texte]`)];
+      let textes = [...racine.querySelectorAll(`[data-asc-texte]`)];
       // texte de difficulté affiché ; condition : message de déblocage à la place de la description
-      let f = (e, condition = null) => {
-        d.forEach((t) => {
-          let visible = Number(t.dataset.ascTexte) === e;
-          t.classList.toggle(`visible`, visible);
-          let desc = t.querySelector(`.asc-desc`);
+      let afficherTexte = (cran, condition = null) => {
+        textes.forEach((texte) => {
+          let visible = Number(texte.dataset.ascTexte) === cran;
+          texte.classList.toggle(`visible`, visible);
+          let desc = texte.querySelector(`.asc-desc`);
           if (desc) {
             desc.textContent = visible && condition ? condition : desc.dataset.desc;
             desc.classList.toggle(`asc-condition`, visible && !!condition);
@@ -316,14 +325,14 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
       let conditionAffichee = false;
       // pendant le défilement qui suit le clic, un survol « subi » ne doit pas l'effacer
       let conditionDepuis = 0;
-      let p = (e, t, texte = true) => {
-        e.querySelectorAll(`.asc-etoile`).forEach((e, n) => {
-          if (!e.classList.contains(`verrou`)) {
-            e.classList.toggle(`pleine`, n <= t);
+      let survolerRangee = (rangee, cran, texte = true) => {
+        rangee.querySelectorAll(`.asc-etoile`).forEach((etoile, indice) => {
+          if (!etoile.classList.contains(`verrou`)) {
+            etoile.classList.toggle(`pleine`, indice <= cran);
           }
         });
         if (texte) {
-          f(Math.max(0, t));
+          afficherTexte(Math.max(0, cran));
         }
       };
       // fait remonter la section au-dessus de la barre « Jouer » collante
@@ -335,83 +344,86 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
         let barre = racine.querySelector(`.ecran-accueil > .boutons-ecran`);
         let bas = barre ? barre.getBoundingClientRect().top : window.innerHeight;
         bas = Math.min(bas, window.innerHeight) - 8;
-        let r = section.getBoundingClientRect();
-        let delta = r.bottom > bas ? r.bottom - bas : r.top < 0 ? r.top - 8 : 0;
+        let cadre = section.getBoundingClientRect();
+        let delta = cadre.bottom > bas ? cadre.bottom - bas : cadre.top < 0 ? cadre.top - 8 : 0;
         if (delta) {
           window.scrollBy({ top: delta, behavior: comportementDefilement() });
         }
       };
-      racine.querySelectorAll(`[data-rangee]`).forEach((e) => {
-        e.querySelectorAll(`.asc-etoile[data-asc]`).forEach((t) => {
-          let n = Number(t.dataset.asc);
-          t.addEventListener(`click`, (e) => {
-            e.stopPropagation();
-            trancheId = t.dataset.ascTranche;
-            ascension = n;
-            focusApres = `.asc-etoile[data-asc="${n}"][data-asc-tranche="${trancheId}"]`;
-            o();
+      racine.querySelectorAll(`[data-rangee]`).forEach((rangee) => {
+        rangee.querySelectorAll(`.asc-etoile[data-asc]`).forEach((etoile) => {
+          let cran = Number(etoile.dataset.asc);
+          etoile.addEventListener(`click`, (evenement) => {
+            evenement.stopPropagation();
+            trancheId = etoile.dataset.ascTranche;
+            ascension = cran;
+            focusApres = `.asc-etoile[data-asc="${cran}"][data-asc-tranche="${trancheId}"]`;
+            afficher();
           });
-          t.addEventListener(`mouseenter`, () => {
+          etoile.addEventListener(`mouseenter`, () => {
             if (ecranTactile() || performance.now() - conditionDepuis < 900) {
               return;
             }
             conditionAffichee = false;
-            p(e, n);
+            survolerRangee(rangee, cran);
           });
         });
         // étoile verrouillée : dire comment la débloquer plutôt que ne rien faire
-        e.querySelectorAll(`.asc-etoile[data-verrou]`).forEach((t) => {
-          t.addEventListener(`click`, (ev) => {
+        rangee.querySelectorAll(`.asc-etoile[data-verrou]`).forEach((etoile) => {
+          etoile.addEventListener(`click`, (ev) => {
             ev.stopPropagation();
-            let n = Number(t.dataset.verrou);
-            f(n, conditionVerrou(t.dataset.ascTranche, Number(t.dataset.palier), n));
+            let cran = Number(etoile.dataset.verrou);
+            afficherTexte(
+              cran,
+              conditionVerrou(etoile.dataset.ascTranche, Number(etoile.dataset.palier), cran),
+            );
             conditionAffichee = true;
             conditionDepuis = performance.now();
             montrerSection();
           });
         });
         // survol à la souris seulement : au toucher, le défilement ne doit pas effacer le message
-        e.addEventListener(`mouseleave`, () => {
+        rangee.addEventListener(`mouseleave`, () => {
           if (ecranTactile()) {
             return;
           }
-          p(e, e.dataset.rangee === trancheId ? ascension : -1, false);
+          survolerRangee(rangee, rangee.dataset.rangee === trancheId ? ascension : -1, false);
           if (!conditionAffichee) {
-            f(ascension);
+            afficherTexte(ascension);
           }
         });
       });
       racine.querySelector(`.idoles-depart`)?.addEventListener(`toggle`, (ev) => {
         idolesOuvert = ev.target.open;
       });
-      racine.querySelectorAll(`input[data-idole]`).forEach((c) => {
-        c.addEventListener(`change`, () => {
-          if (c.checked) {
-            idoles.add(c.dataset.idole);
+      racine.querySelectorAll(`input[data-idole]`).forEach((caseIdole) => {
+        caseIdole.addEventListener(`change`, () => {
+          if (caseIdole.checked) {
+            idoles.add(caseIdole.dataset.idole);
           } else {
-            idoles.delete(c.dataset.idole);
+            idoles.delete(caseIdole.dataset.idole);
           }
           // le choix est mémorisé pour la prochaine run
           parametres.idolesChoisies = [...idoles];
           sauverParametres(parametres);
-          focusApres = `input[data-idole="${c.dataset.idole}"]`;
-          o();
+          focusApres = `input[data-idole="${caseIdole.dataset.idole}"]`;
+          afficher();
         });
       });
-      racine.querySelectorAll(`[data-tranche]`).forEach((e) => {
-        e.addEventListener(`click`, () => {
+      racine.querySelectorAll(`[data-tranche]`).forEach((carte) => {
+        carte.addEventListener(`click`, () => {
           // un appui à côté d'une étoile sur le monde déjà choisi ne remet pas la difficulté à zéro
-          if (e.dataset.tranche !== trancheId) {
-            trancheId = e.dataset.tranche;
+          if (carte.dataset.tranche !== trancheId) {
+            trancheId = carte.dataset.tranche;
             ascension = 0;
           }
-          focusApres = document.activeElement === e ? `[data-tranche="${trancheId}"]` : null;
-          o();
+          focusApres = document.activeElement === carte ? `[data-tranche="${trancheId}"]` : null;
+          afficher();
         });
-        e.addEventListener(`keydown`, (ev) => {
-          if ((ev.key === `Enter` || ev.key === ` `) && ev.target === e) {
+        carte.addEventListener(`keydown`, (ev) => {
+          if ((ev.key === `Enter` || ev.key === ` `) && ev.target === carte) {
             ev.preventDefault();
-            e.click();
+            carte.click();
           }
         });
       });
@@ -452,7 +464,7 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
         resolve({
           action: `reprendre`,
           ascension: 0,
-          trancheId: n.trancheId,
+          trancheId: reprise.trancheId,
         }),
       );
       document.getElementById(`btn-abandon`)?.addEventListener(`click`, async () => {
@@ -465,12 +477,12 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
           resolve({
             action: `abandonner`,
             ascension: 0,
-            trancheId: n.trancheId,
+            trancheId: reprise.trancheId,
           });
         }
       });
     };
-    o();
+    afficher();
   });
 }
 
@@ -490,7 +502,7 @@ function htmlBandeauNuage(info) {
 function brancherBandeauNuage(div, info) {
   const enLigne = info.resume ? texteResume(info.resume) : `partie en ligne`;
   div.querySelector(`[data-nuage="recuperer"]`).addEventListener(`click`, async (ev) => {
-    const b = ev.currentTarget;
+    const bouton = ev.currentTarget;
     if (
       !(await demanderConfirmation(
         `Récupérer la partie en ligne (${enLigne}) ? Elle remplacera celle d'ici, qui reste récupérable dans Paramètres (« Annuler le dernier import »).`,
@@ -499,17 +511,17 @@ function brancherBandeauNuage(div, info) {
     ) {
       return;
     }
-    b.disabled = true;
+    bouton.disabled = true;
     // recupererNuage garde une copie de secours de la partie d'ici avant d'écrire
     if (await recupererNuage().catch(() => false)) {
       location.reload();
     } else {
-      b.disabled = false;
+      bouton.disabled = false;
       div.firstElementChild.textContent = `Récupération impossible : ${raisonEchecNuage() || `erreur inconnue`}. Réessaie dans un moment.`;
     }
   });
   div.querySelector(`[data-nuage="garder"]`).addEventListener(`click`, async (ev) => {
-    const b = ev.currentTarget;
+    const bouton = ev.currentTarget;
     if (
       !(await demanderConfirmation(
         `Garder la partie d'ici ? Elle sera envoyée en ligne et remplacera celle de l'autre appareil (${enLigne}).`,
@@ -518,13 +530,13 @@ function brancherBandeauNuage(div, info) {
     ) {
       return;
     }
-    b.disabled = true;
+    bouton.disabled = true;
     try {
       await envoyerNuage();
       div.remove();
     } catch {
       // le bandeau reste : le joueur peut réessayer
-      b.disabled = false;
+      bouton.disabled = false;
       afficherBandeau(
         `✗ Envoi impossible pour l'instant : ta partie n'est pas partie en ligne. Réessaie dans un moment.`,
       );
