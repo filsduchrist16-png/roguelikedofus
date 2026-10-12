@@ -110,8 +110,8 @@ const EFFETS_DOFUS = {
     resAll: 0.05,
   },
   dofus_ebene: {
-    desc: `+1 % de dégâts finaux.`,
-    degatsPct: 0.01,
+    desc: `+5 % de dégâts finaux.`,
+    degatsPct: 0.05,
   },
   dofus_turquoise: {
     desc: `+10 % de chance de coup critique.`,
@@ -122,11 +122,11 @@ const EFFETS_DOFUS = {
     perceResistances: 0.05,
   },
   dofawa: {
-    desc: `+1 PV max.`,
-    pvBonus: 1,
+    desc: `+15 PV max.`,
+    pvBonus: 15,
   },
   dofus_kaliptus: {
-    desc: `+1 à 30 en prospection, selon le meilleur exemplaire obtenu.`,
+    desc: `+1 à 30 en prospection (jet tiré à l'obtention du Dofus).`,
     prospectionJet: [1, 30],
   },
   dofus_argente: {
@@ -159,7 +159,7 @@ const EFFETS_DOFUS = {
     desc: `Quand il inflige des dégâts, octroie 5 en force, intelligence, agilité et chance à ses alliés pour 1 tour. Non cumulable.`,
   },
   domakuro: {
-    desc: `S'il n'inflige aucun dégât lors de son premier tour, gagne 1 % de dégâts finaux pour le reste du combat.`,
+    desc: `S'il n'inflige aucun dégât lors de son premier tour, gagne 8 % de dégâts finaux pour le reste du combat.`,
   },
   dofus_du_cauchemar: {
     desc: `Le premier personnage de l'équipe joue toujours en premier.`,

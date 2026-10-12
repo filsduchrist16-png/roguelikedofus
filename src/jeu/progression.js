@@ -207,7 +207,7 @@ export function effetsFinTourReliques(e, t, n) {
     }
   }
   if (n.has(`domakuro`) && (e.toursJoues ?? 0) === 1 && !e.aFrappeCeTour) {
-    e.degatsPctPermanent = (e.degatsPctPermanent ?? 0) + 0.01;
+    e.degatsPctPermanent = (e.degatsPctPermanent ?? 0) + 0.08;
   }
   e.aFrappeCeTour = false;
   return r;
