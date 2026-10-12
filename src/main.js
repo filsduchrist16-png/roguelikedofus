@@ -1,19 +1,14 @@
 import { ctxMeta, etatRun, meta, quetesMeta } from "./deroule/etat.js";
 import { DOFUS } from "./data/index.js";
 import { getMonde, zonesDuMonde } from "./jeu/config.js";
-import { genererCarte } from "./carte/generation.js";
 import { verifierQuetesMeta, verifierQuetesRun, verifierQuetesZone } from "./jeu/quetes.js";
-import { noeudsExclus, nouvelleRun, soignerEquipe } from "./jeu/run.js";
+import { nouvelleRun, soignerEquipe } from "./jeu/run.js";
 import { chargerRun, effacerRun, sauverRun } from "./sauvegarde/run.js";
-import { numeroZone } from "./jeu/economie.js";
 import {
   enregistrerAscension,
-  enregistrerRecord,
   enregistrerRun,
-  enregistrerToileMax,
   reinitialiserDofus,
   rendreDofusSuspendus,
-  sauverMeta,
 } from "./sauvegarde/meta.js";
 import {
   definirRacine,
@@ -25,22 +20,18 @@ import {
   parametres,
 } from "./ui/commun.js";
 import { installerInfobulleSorts, installerRaccourcisCombat } from "./ui/combat.js";
-import { scoreRun } from "./jeu/idolesDepart.js";
-import { benedictionDuJour, cleRecordJour, dateDuJour, rngCarteDuJour } from "./jeu/runDuJour.js";
-import { effetsEnCours } from "./jeu/rencontres.js";
+import { benedictionDuJour, dateDuJour } from "./jeu/runDuJour.js";
 import { afficherBandeau } from "./ui/ecrans/succes.js";
 import { ecranAccueil } from "./ui/ecrans/accueil.js";
 import { ecranChoixEquipe } from "./ui/ecrans/choixEquipe.js";
 import { ecranMessage } from "./ui/ecrans/message.js";
 import { ecranConnexion } from "./ui/ecrans/connexion.js";
 import { connexionRequise } from "./sauvegarde/compte.js";
-import { ecranCarte } from "./ui/ecrans/carte.js";
 import { deblocagesVictoire, ecranRecap, etatDeblocage } from "./ui/ecrans/recap.js";
 import { installerSons } from "./son.js";
 import { CLES_TUTO, appliquerAccessibilite, sauverParametres } from "./sauvegarde/parametres.js";
 import { traiterQuetes, contexteRun, quetesDeLaRun } from "./deroule/quetes.js";
-import { jouerDonjonSecret } from "./deroule/secret.js";
-import { resoudreNoeud, resoudreZaap } from "./deroule/noeud.js";
+import { jouerZone, noterRecord } from "./deroule/zone.js";
 import "./style.css";
 import "./interface.css";
 import "./visuel.css";
@@ -72,91 +63,6 @@ initialiserInterface(elementApp);
 if (parametres.vuTuto === null) {
   parametres.vuTuto = Object.fromEntries(CLES_TUTO.map((k) => [k, meta.runs > 0]));
   sauverParametres(parametres);
-}
-// Hors combat seulement : en plein combat l'état est partiel, la run reprend au dernier nœud.
-document.addEventListener(`visibilitychange`, () => {
-  if (
-    document.visibilityState === `hidden` &&
-    etatRun.active &&
-    !document.querySelector(`#app .combat`)
-  ) {
-    sauverRun(etatRun.active.zoneIdx, etatRun.active.run);
-  }
-});
-async function jouerZone(e, t, n) {
-  etatRun.active = { zoneIdx: n, run: e };
-  enregistrerToileMax(meta, e.trancheId, n + 1);
-  sauverMeta(meta);
-  if (!e.carte) {
-    // run du jour : la carte de la zone vient de la graine du jour
-    e.carte = genererCarte(
-      e.jour ? rngCarteDuJour(e.jour, e.trancheId, n) : Math.random,
-      t.pools,
-      noeudsExclus(e, t),
-      { premiereZone: n === 0 },
-    );
-    sauverRun(n, e);
-  }
-  while (true) {
-    let r = await ecranCarte(
-      e.carte,
-      e.persos,
-      meta,
-      t.nom,
-      e.inventaire,
-      e.kamas,
-      e.ascension,
-      e.philtres,
-      () => sauverRun(n, e),
-      effetsEnCours(e, t.id),
-      {
-        zoneNum: n + 1,
-        nbZones: zonesDuMonde(getMonde(e.trancheId)).length,
-        tierObjets: numeroZone(t.id),
-      },
-    );
-    if (r === `accueil`) {
-      return `accueil`;
-    }
-    if (r === `recommencer-memes` || r === `recommencer-choix`) {
-      return r;
-    }
-    let { type } = r;
-    let a = r.combatId;
-    let o = r.xp ?? 0;
-    if (type === `zaap`) {
-      ({ type, combatId: a, xp: o } = await resoudreZaap(t.pools, noeudsExclus(e, t)));
-    }
-    let s = await resoudreNoeud(e, type, a, o, t, r.eliteModifs);
-    r.visite = true;
-    e.carte.courant = r.id;
-    if (s === `wipe`) {
-      return `wipe`;
-    }
-    if (s === `victoire`) {
-      await jouerDonjonSecret(e, t);
-      return `clear`;
-    }
-    sauverRun(n, e);
-  }
-}
-// Score record du monde (zones franchies, difficulté et idoles de départ) : prévient s'il est battu.
-function noterRecord(run, trancheId, zones, victoire) {
-  const score = scoreRun({
-    zones,
-    victoire,
-    ascension: run.ascension,
-    idoles: run.idolesDepart,
-  });
-  // run du jour : son propre record (par jour et par monde), à part du record du monde
-  const cle = run.jour ? cleRecordJour(run.jour, trancheId) : trancheId;
-  if (enregistrerRecord(meta, cle, score, run.idolesDepart, run.ascension)) {
-    afficherBandeau(
-      run.jour
-        ? `🏆 Nouveau record de la run du jour : ${score} points`
-        : `🏆 Nouveau record du monde : ${score} points`,
-    );
-  }
 }
 async function jouerRun(e, t, n = 0, r = `t1`, idoles = [], jour = false) {
   let i = getMonde(e ? e.run.trancheId : r);
