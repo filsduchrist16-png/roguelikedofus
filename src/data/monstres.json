@@ -9300,7 +9300,8 @@
       "attraction_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Stalagmitor le Perforant"
   },
   "karkanik": {
     "id": "karkanik",
@@ -9355,7 +9356,8 @@
       "sape_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Verglaçon le Glissant"
   },
   "kanimate": {
     "id": "kanimate",
@@ -9410,7 +9412,8 @@
       "drain_vital_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Brikodur le Bâtisseur"
   },
   "mansordide": {
     "id": "mansordide",
@@ -9439,7 +9442,8 @@
       "drain_vital_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Mansordurum le Crasseux"
   },
   "mecanofoux": {
     "id": "mecanofoux",
@@ -9604,7 +9608,8 @@
       "drain_vital_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Peunchline le Cogneur"
   },
   "empaille": {
     "id": "empaille",
@@ -9631,7 +9636,8 @@
       "attraction_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Empailletou le Rembourré"
   },
   "nessil": {
     "id": "nessil",
@@ -9658,7 +9664,8 @@
       "drain_vital_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Nessilence le Discret"
   },
   "krakal": {
     "id": "krakal",
@@ -9739,7 +9746,8 @@
       "drain_vital_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Termistral le Mystérieux"
   },
   "klime": {
     "id": "klime",
@@ -9850,7 +9858,8 @@
       "attraction_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Strigrave le Hululant"
   },
   "cycloide": {
     "id": "cycloide",
@@ -9877,7 +9886,8 @@
       "drain_vital_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Cycloplex l'Œil Unique"
   },
   "sinistrofu": {
     "id": "sinistrofu",
@@ -9932,7 +9942,8 @@
       "drain_vital_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Nocturlune l'Insomniaque"
   },
   "comte_harebourg": {
     "id": "comte_harebourg",
@@ -10016,7 +10027,8 @@
       "drain_vital_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Harpomuet le Silencieux"
   },
   "krabouilleur": {
     "id": "krabouilleur",
@@ -10043,7 +10055,8 @@
       "drain_vital_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Krabouillis le Brouillon"
   },
   "eskoglyphe": {
     "id": "eskoglyphe",
@@ -10127,7 +10140,8 @@
       "attraction_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Crabyolo le Téméraire"
   },
   "gambaf": {
     "id": "gambaf",
@@ -10154,7 +10168,8 @@
       "sape_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Gambafouille le Boiteux"
   },
   "mantaze": {
     "id": "mantaze",
@@ -10291,7 +10306,8 @@
       "entrave_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "N'yalgique le Douloureux"
   },
   "shokkoth": {
     "id": "shokkoth",
@@ -10344,7 +10360,8 @@
     "sorts": [
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Lifolie le Dément"
   },
   "tourthon": {
     "id": "tourthon",
@@ -10371,7 +10388,8 @@
       "sape_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Tourtonnade le Fourré"
   },
   "poulpee": {
     "id": "poulpee",
@@ -10453,7 +10471,8 @@
       "toxine_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Rilurk le Moqueur"
   },
   "larve_de_koutoulou": {
     "id": "larve_de_koutoulou",
@@ -10588,7 +10607,8 @@
     "sorts": [
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Lévitrophée l'Aérien"
   },
   "paspartou": {
     "id": "paspartou",
@@ -10614,7 +10634,8 @@
     "sorts": [
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Paspartoutou l'Encadré"
   },
   "machassin": {
     "id": "machassin",
@@ -10641,7 +10662,8 @@
       "sape_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Mâchassassin le Vorace"
   },
   "terristocrate": {
     "id": "terristocrate",
@@ -10723,7 +10745,8 @@
       "attraction_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Bourôlistaire le Cuisant"
   },
   "roi_nidas": {
     "id": "roi_nidas",
@@ -10833,7 +10856,8 @@
       "coup_repoussant_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Méjaurèle le Dédaigneux"
   },
   "harpille": {
     "id": "harpille",
@@ -10860,7 +10884,8 @@
       "toxine_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Harpillon le Pillard"
   },
   "buboxor": {
     "id": "buboxor",
@@ -10916,7 +10941,8 @@
       "sape_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Soldafortuné le Mercenaire"
   },
   "cavalier_chanceux": {
     "id": "cavalier_chanceux",
@@ -10996,7 +11022,8 @@
     "sorts": [
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Hasardame la Capricieuse"
   },
   "vortex": {
     "id": "vortex",
@@ -11106,7 +11133,8 @@
       "attraction_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Trépavoisin l'Écu Brisé"
   },
   "hacharne": {
     "id": "hacharne",
@@ -11161,7 +11189,8 @@
       "coup_repoussant_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Moribomba le Détonant"
   },
   "zombruth": {
     "id": "zombruth",
@@ -11216,7 +11245,8 @@
       "coup_repoussant_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Tournoyaldo le Vertigineux"
   },
   "funespadon": {
     "id": "funespadon",
@@ -11244,7 +11274,8 @@
       "entrave_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Funespadassin le Maudit"
   },
   "cranonier": {
     "id": "cranonier",
@@ -11381,7 +11412,8 @@
       "attraction_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Imorokan le Coriace"
   },
   "imiyama": {
     "id": "imiyama",
@@ -11436,7 +11468,8 @@
       "sape_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Imetsuki le Tranchant"
   },
   "shinlam": {
     "id": "shinlam",
@@ -11491,7 +11524,8 @@
       "coup_repoussant_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Rokorambo le Caillouteux"
   },
   "mabram": {
     "id": "mabram",
@@ -11520,7 +11554,8 @@
       "coup_repoussant_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Mabrambois le Bourru"
   },
   "tsunam": {
     "id": "tsunam",
@@ -11632,7 +11667,8 @@
       "drain_vital_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Gyraforcené le Tourbillonnant"
   },
   "lapilope": {
     "id": "lapilope",
@@ -11715,7 +11751,8 @@
       "toxine_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Gropotamus le Massif"
   },
   "chause": {
     "id": "chause",
@@ -11742,7 +11779,8 @@
       "sape_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Chausson l'Ensorcelé"
   },
   "ectorche": {
     "id": "ectorche",
@@ -11823,7 +11861,8 @@
       "attraction_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Feutômatique le Spectral"
   },
   "venerable_endormi": {
     "id": "venerable_endormi",
@@ -12288,7 +12327,8 @@
       "entrave_t5",
       "morsure",
       "grignotage"
-    ]
+    ],
+    "archiNom": "Olgothique l'Obscur"
   },
   "pistilangue_2": {
     "id": "pistilangue_2",

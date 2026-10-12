@@ -2,6 +2,7 @@
 
 ## Version 1.2.0
 
+- **E1** : 40 monstres du Monde 5 deviennent des archimonstres (`archiNom`, espèces des combats normaux et élites hors boss) ; nouveau succès « Chasseur d'âmes du Monde 5 » (`t5_5_archimonstres`, quête `t5_archis_tous`), les anciens identifiants (dont `ocre_t5`) sont inchangés ; Otomai, le Philtre et la Traque servent donc aussi au Monde 5 (le test B8 est adapté).
 - **Bug « Véloces »** : non reproduit (le moteur applique l'affixe et la pastille s'affiche, vérifié en navigateur sur une case élite Véloces comme Cuirassés) ; tests ajoutés (`tests/affixes-elite.test.js`) pour garder le nom, la description et l'effet de chaque affixe.
 - **C10** : option « Réduire les animations » dans Paramètres (classe `reduire-animations` sur `body`, aussi suivie via la préférence du système) ; `comportementDefilement()` choisit `auto` ou `smooth` pour tous les défilements animés.
 - **C11** : le bouton et le geste « retour » du téléphone ne quittent plus le jeu : ils activent le bouton Retour de l'écran, ou demandent confirmation en combat et sur les écrans sans Retour (accueil et connexion laissent quitter) ; la run est sauvegardée quand la page passe en arrière-plan (hors combat).

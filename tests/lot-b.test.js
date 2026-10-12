@@ -2,8 +2,13 @@
 import { describe, expect, it } from "vitest";
 import { CLASSES, EQUIPEMENTS, SORTS } from "../src/data/index.js";
 import { XP_PAR_COMBAT } from "../src/jeu/config.js";
-import { genererCarte } from "../src/carte/generation.js";
-import { combattantsEquipe, monstresDuCombat, nouvelleRun, noeudsExclus } from "../src/jeu/run.js";
+import {
+  combattantsEquipe,
+  monstresDuCombat,
+  mondeSansArchimonstre,
+  nouvelleRun,
+  noeudsExclus,
+} from "../src/jeu/run.js";
 import { instancierObjet } from "../src/jeu/run.js";
 import { multiplicateurSoin, statsDeNiveau } from "../src/jeu/progression.js";
 import { chanceEsquive, multiplicateurRelance, reinitialiserTour } from "../src/combat/stats.js";
@@ -92,16 +97,12 @@ describe(`B5 : « Équiper le meilleur » et la Chance d'Ecaflip`, () => {
   });
 });
 
-describe(`B8 : pas d'Otomai là où il n'y a pas d'archimonstre`, () => {
-  it(`Monde 5 : la case otomai est exclue et ne sort jamais`, () => {
+describe(`B8 / E1 : Otomai selon la présence d'archimonstres`, () => {
+  it(`Monde 5 : depuis E1 il a des archimonstres, donc Otomai et le Philtre y sont possibles`, () => {
     const run = nouvelleRun([`iop`, `cra`], 0, `t5`);
     const zone = ZONES.find((z) => z.id === MONDES.find((m) => m.id === `t5`).zones[0]);
-    const exclus = noeudsExclus(run, zone);
-    expect(exclus).toContain(`otomai`);
-    for (let i = 0; i < 40; i++) {
-      const carte = genererCarte(Math.random, zone.pools, exclus, { premiereZone: false });
-      expect(JSON.stringify(carte)).not.toContain(`"otomai"`);
-    }
+    expect(mondeSansArchimonstre(`t5`)).toBe(false);
+    expect(noeudsExclus(run, zone)).not.toContain(`otomai`);
   });
   it(`Monde 1 : Otomai reste possible`, () => {
     const run = nouvelleRun([`iop`, `cra`], 0, `t1`);

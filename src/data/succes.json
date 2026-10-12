@@ -2737,6 +2737,23 @@
       }
     ]
   },
+  "t5_5_archimonstres": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Monde 5 · Donjons niveaux 191 à 200"
+    },
+    "nom": "Chasseur d'âmes du Monde 5",
+    "quetes": [
+      {
+        "id": "t5_archis_tous",
+        "nom": "Capturer tous les archimonstres du monde 5.",
+        "critere": {
+          "type": "archi_capture",
+          "tranche": "t5"
+        }
+      }
+    ]
+  },
   "t5_6_conquete": {
     "categorie": {
       "general": true,
