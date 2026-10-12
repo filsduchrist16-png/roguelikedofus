@@ -125,7 +125,7 @@ export function ecranForgemagie(e, t) {
               </span>
               <span class="forge-boutons">
                 <button class="secondaire" data-forge="${r}" ${e.kamas < prix ? `disabled` : ``} title="Forge garantie"><small class="forge-lib">Forger · garanti</small>${htmlKamas(prix)}${manque(prix)}</button>
-                <button class="secondaire forge-temeraire" data-temeraire="${r}" ${e.kamas < prixTemeraire ? `disabled` : ``} title="Forgemage téméraire : ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % d'échec (kamas perdus, objet intact)"><small class="forge-lib">🎲 Téméraire · ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % d'échec</small>${htmlKamas(prixTemeraire)}${manque(prixTemeraire)}</button>
+                <button class="secondaire forge-temeraire" data-temeraire="${r}" ${e.kamas < prixTemeraire ? `disabled` : ``} title="Forgemagie téméraire : ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % d'échec (kamas perdus, objet intact)"><small class="forge-lib">🎲 Téméraire · ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % d'échec</small>${htmlKamas(prixTemeraire)}${manque(prixTemeraire)}</button>
               </span>
             </div>`;
       };
@@ -140,7 +140,7 @@ export function ecranForgemagie(e, t) {
         : `<p class="muet">${equipesSeulement ? `Rien à forger parmi les objets équipés.` : `Rien à forger : tout ton équipement à rareté est déjà au maximum.`}</p>`;
       afficherEnGardantScroll(`
         <h1>Forgemagie</h1>
-        <p class="sous-titre">Le Forgemage monte un objet au palier de rareté supérieur, même équipé. Son apprenti téméraire fait moitié prix… mais rate ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % de ses forges.</p>
+        <p class="sous-titre">La Forgemagie monte un objet au palier de rareté supérieur, même équipé. Sa version téméraire fait moitié prix… mais rate ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % des forges.</p>
         <div class="hdv-solde forge-solde">${htmlKamas(e.kamas)}</div>
         <div class="forge-filtres"><button id="forge-filtre" class="${equipesSeulement ? `primaire` : `secondaire`}" aria-pressed="${equipesSeulement}" title="${equipesSeulement ? `Afficher aussi l'inventaire` : `N'afficher que les objets équipés par l'équipe`}">⚔️ Équipés seulement</button></div>
         <div class="equip-inv forge-liste">${s}</div>

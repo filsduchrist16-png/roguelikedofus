@@ -517,11 +517,11 @@ const ARTICLES_NOEUDS = {
   combat: `un combat`,
   combat_dur: `un combat dur`,
   taverne: `une taverne`,
-  otomai: `un Otomai`,
+  otomai: `un Otomaï`,
   zaap: `un zaap`,
   donjon: `le donjon`,
   hdv: `un Hôtel de vente`,
-  forgemagie: `un Forgemage`,
+  forgemagie: `une Forgemagie`,
   rencontre: `une rencontre`,
 };
 async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
@@ -617,13 +617,13 @@ async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
     case `otomai`:
       if ((e.philtres ?? 0) >= CONFIG_ARCHI.philtresMax) {
         afficherBandeau(
-          `🧪 Otomai : tes philtres sont déjà au maximum (${CONFIG_ARCHI.philtresMax}/${CONFIG_ARCHI.philtresMax})`,
+          `🧪 Otomaï : tes philtres sont déjà au maximum (${CONFIG_ARCHI.philtresMax}/${CONFIG_ARCHI.philtresMax})`,
         );
         return `continue`;
       }
       e.philtres = (e.philtres ?? 0) + 1;
       afficherBandeau(
-        `🧪 Otomai : philtre ${e.philtres}/${CONFIG_ARCHI.philtresMax}, archimonstres à ${Math.round(chanceArchi(e) * 1000) / 10} %`,
+        `🧪 Otomaï : philtre ${e.philtres}/${CONFIG_ARCHI.philtresMax}, archimonstres à ${Math.round(chanceArchi(e) * 1000) / 10} %`,
       );
       return `continue`;
     case `donjon`: {

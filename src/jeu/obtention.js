@@ -75,7 +75,7 @@ export function texteObtentionObjet(id) {
   }
   const paliers = Object.keys(EQUIPEMENTS[id]?.tiers ?? {}).length;
   if (paliers > 1) {
-    lignes.push(`Le Forgemage peut monter sa rareté.`);
+    lignes.push(`La Forgemagie peut monter sa rareté.`);
   }
   return lignes.join(`\n`);
 }
@@ -107,13 +107,13 @@ export const AIDE_OBTENTION = `
     l'équipe augmente ces chances (jusqu'à +${Math.round(TAUX_BUTIN.capProspection * 100)} %). Chaque zone a ses objets ; les
     combats durs et les donjons donnent aussi les objets d'élite et de boss. Survole un objet (ou touche-le) pour voir où il tombe.</p>
   <p><b>Hôtel de vente.</b> Il vend les objets de la zone en cours (épiques et plus) et de la zone suivante (rares et plus),
-    et rachète ton inventaire à moitié prix. Le <b>Forgemage</b> monte la rareté d'un objet, même équipé.</p>
+    et rachète ton inventaire à moitié prix. La <b>Forgemagie</b> monte la rareté d'un objet, même équipé.</p>
   <p><b>Dofus.</b> Chaque Dofus récompense un succès (menu Succès sur l'accueil), repris des succès de Dofus 3. Chacun
     a ses quêtes dans le monde de sa tranche de niveau réelle (Dofawa, Argenté, Jyfus et Cacao dans le Monde 1… jusqu'aux
     Dofus de niveau 200 dans le Monde 5) et s'obtient dès que son succès est terminé, sans attendre les autres. Ils
     restent acquis pour toutes les runs.</p>
   <p><b>Archimonstres.</b> Un monstre a ${pct(CONFIG_ARCHI.chance)} de chance d'apparaître sous sa forme d'archimonstre,
-    plus ${pct(CONFIG_ARCHI.philtre)} par philtre d'Otomai bu pendant la run (${CONFIG_ARCHI.philtresMax} au maximum).
+    plus ${pct(CONFIG_ARCHI.philtre)} par philtre d'Otomaï bu pendant la run (${CONFIG_ARCHI.philtresMax} au maximum).
     Un archimonstre <b>jamais capturé</b> apparaît ${CONFIG_ARCHI.multNouveau} fois plus souvent, et chaque combat sans
     archi inédit remplit la <b>jauge de traque</b> (+${pct(CONFIG_ARCHI.bonusParCombatSansNouveau)} par combat, jusqu'à
     +${pct(CONFIG_ARCHI.bonusSansNouveauMax)}, gardée d'une run à l'autre). Un avis de recherche vise d'abord un archi
@@ -291,7 +291,7 @@ function lignesQuete(c) {
       lignes.push([
         `Comment`,
         c.tranche
-          ? `bats les archimonstres du ${nomMonde(c.tranche)} : ils apparaissent au hasard dans ses zones (plus souvent avec des philtres d'Otomai). Le Bestiaire montre ceux qui manquent.`
+          ? `bats les archimonstres du ${nomMonde(c.tranche)} : ils apparaissent au hasard dans ses zones (plus souvent avec des philtres d'Otomaï). Le Bestiaire montre ceux qui manquent.`
           : c.zone
             ? `bats tous les archimonstres de « ${nomZone(c.zone)} » (voir le Bestiaire).`
             : `bats tous les archimonstres d'une même zone : ils apparaissent au hasard, le Bestiaire montre ceux qui manquent.`,
