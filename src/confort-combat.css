@@ -123,7 +123,7 @@
 }
 .aide-clavier kbd {
   padding: 0 4px;
-  font-size: 0.9em;
+  font-size: max(11px, 0.9em);
 }
 .aide-refus {
   margin: 4px 0 0;

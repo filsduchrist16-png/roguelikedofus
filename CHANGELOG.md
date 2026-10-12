@@ -7,6 +7,7 @@
 - **C12** : astuces de première partie (bandeaux non bloquants, une fois chacune) : 1er écran de carte, 1er tour de combat, 1er butin, 1re taverne ; drapeau `vuTuto` dans les réglages (absent = décidé au lancement : déjà une run finie, pas d'astuces) ; bouton « Revoir les astuces » dans Paramètres.
 - **Accueil** : les étoiles de difficulté font 44 × 44 px sur mobile ; les cinq cibles passent sur deux lignes (3 + 2) dans la carte du monde.
 - **Vocabulaire** : « Otomaï » et « Forgemagie » partout dans les textes affichés (Forgemagie, obtention, zaap, bandeaux).
+- **Combat (PC)** : les touches de l'aide clavier (Entrée, flèches) font au moins 11 px.
 
 ## Version 1.1.0
 
