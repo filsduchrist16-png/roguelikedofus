@@ -80,14 +80,6 @@ button.danger-arme,
   margin-top: 6px;
   font-size: 0.8rem;
 }
-.aide-sort-detail .tip-nom {
-  display: none;
-}
-.aide-sort-detail .tip-stat {
-  align-items: baseline;
-  gap: 8px;
-  display: flex;
-}
 .aide-sort-detail .tip-stat,
 .aide-sort-detail .tip-effet,
 .aide-sort-detail .tip-cible {
@@ -161,9 +153,6 @@ button.danger-arme,
   .coin-gauche {
     margin-bottom: 8px;
   }
-  .coin-menu {
-    gap: 4px;
-  }
   .coin-param {
     width: 42px;
     height: 42px;
@@ -179,18 +168,13 @@ button.danger-arme,
   .map-topbar {
     flex-wrap: wrap;
     justify-content: center;
-    gap: 8px;
   }
   .map-topbar .zone-titre {
     text-align: center;
     width: 100%;
   }
   .topbar-actions {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 4px;
     margin-left: 0;
-    padding: 6px;
   }
   .aside-icone {
     flex: none;
@@ -247,32 +231,19 @@ button.danger-arme,
     padding: 0 6px;
     display: flex;
   }
-  .titre-combat {
-    margin: 4px 0 8px;
-    font-size: 1.15rem;
-  }
   #cb-timeline {
     order: 1;
   }
   .plateau {
     order: 2;
     grid-template-columns: 1fr;
-    gap: 10px;
-    margin-bottom: 10px;
     overflow: visible;
-  }
-  .colonne {
-    padding: 8px;
   }
   /* les ennemis (qu'on vise le plus souvent) passent au-dessus de l'équipe */
   .plateau .colonne:nth-child(2) {
     order: -1;
   }
-  .colonne h3 {
-    margin: 0 0 4px;
-  }
   .colonne h3 .hint {
-    display: block;
     margin-top: 2px;
   }
   .camp-lignes {
@@ -310,43 +281,20 @@ button.danger-arme,
   }
   .zone-bas .journal {
     order: 3;
-    height: 130px;
-    margin-bottom: 10px;
   }
   .zone-bas .barre-sorts {
     z-index: 50;
     order: 4;
     max-height: 42vh;
-    padding: 8px;
     position: sticky;
     bottom: 0;
     overflow-y: auto;
     box-shadow: 0 -8px 20px #0006;
   }
-  .sorts-rangee {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .sorts-rangee .barre-actions-fin {
-    flex: 1 1 100%;
-  }
-  .sorts-rangee .fin-tour {
-    width: 100%;
-  }
-  .sorts-liste {
-    justify-content: center;
-    gap: 6px;
-  }
-  .sort {
-    width: 46px;
-    height: 46px;
-  }
 
   /* l'ordre de jeu n'est plus une pastille flottante qui couvrait les sorts */
   .timeline {
     max-width: 100%;
-    margin-bottom: 8px;
-    padding: 6px 8px;
     position: static;
   }
 }
@@ -367,7 +315,6 @@ button,
   gap: 12px;
   font-size: 0.96rem;
   font-weight: 900;
-  display: flex;
 }
 .aide-sort-detail .tip-pa {
   background: var(--pa);
@@ -442,7 +389,6 @@ button,
 /* bandeau de crédits sur l'accueil */
 .bandeau-credits {
   color: var(--muet);
-  background: #fffbf066;
   border: 1px solid var(--bord);
   border-radius: 10px;
   margin: 8px auto 0;
@@ -461,10 +407,6 @@ button,
 
 /* ---------- combat sur téléphone : cartes horizontales lisibles ---------- */
 @media (width<=700px) {
-  .combat .camp-lignes {
-    flex-direction: column;
-    gap: 8px;
-  }
   .combat .ligne-sep {
     display: none;
   }
@@ -479,28 +421,14 @@ button,
     align-items: baseline;
     gap: 8px;
   }
-  .combat .ligne-label {
-    margin: 0 0 4px 2px;
-    font-size: 0.78rem;
-  }
   .combat .ligne-cards {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 6px;
     display: grid;
   }
   .combat .ligne-cards .carte {
     container-type: normal;
     grid-template-columns: 58px minmax(0, 1fr);
-    grid-template-areas:
-      "portrait tete"
-      "portrait pv"
-      "portrait res"
-      "badges badges";
-    column-gap: 10px;
-    row-gap: 3px;
     width: 100%;
     max-width: none;
-    padding: 8px 10px;
     display: grid;
   }
   .combat .carte .carte-tete {
@@ -508,10 +436,7 @@ button,
     min-width: 0;
   }
   .combat .carte .carte-nom {
-    white-space: nowrap;
     text-overflow: ellipsis;
-    overflow: hidden;
-    font-size: 1rem;
   }
   .combat .carte .rang {
     padding: 2px 7px;
@@ -534,18 +459,12 @@ button,
   }
   .combat .carte .pv-barre {
     grid-area: pv;
-    background: linear-gradient(90deg, #c0392b var(--pv-pct), #5a3a2a40 var(--pv-pct));
     border: 1px solid #6b2a1f;
     border-radius: 8px;
     justify-content: space-between;
     align-items: center;
     gap: 6px;
-    min-height: 26px;
-    padding: 2px 8px;
     display: flex;
-  }
-  .combat .carte .pv-barre.ko {
-    background: #8a7a6a;
   }
   .combat .carte .pv-barre-txt,
   .combat .carte .pa-txt {
@@ -553,21 +472,11 @@ button,
     text-shadow: 0 1px 2px #000;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
-    font-size: 0.85rem;
     font-weight: 900;
   }
   .combat .carte .res-row {
     grid-area: res;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    margin-top: 2px;
-  }
-  .combat .carte .res-chip {
-    padding: 2px 4px;
-    font-size: 0.78rem;
-  }
-  .combat .carte .res-chip img {
-    width: 16px;
-    height: 16px;
   }
   .combat .carte .badges {
     grid-area: badges;
@@ -575,10 +484,6 @@ button,
   }
   .combat .carte .badges:empty {
     display: none;
-  }
-  .combat .carte .badge {
-    padding: 2px 6px;
-    font-size: 0.76rem;
   }
   .combat .carte .ko-label {
     grid-area: pv;
@@ -874,7 +779,6 @@ button,
 }
 .equip-filtres {
   display: flex;
-  flex-wrap: wrap;
   gap: 6px;
 }
 .filtre-btn {
@@ -918,7 +822,6 @@ button,
 }
 .equip-astuce {
   margin: 0 0 8px;
-  font-size: 0.82rem;
 }
 .equip-total {
   font-size: 0.9rem;
@@ -1003,7 +906,6 @@ button,
   width: min(560px, 100%);
   max-height: 88vh;
   padding: 14px 16px 20px;
-  border: 2px solid var(--bord);
   border-bottom: 0;
   border-radius: 18px 18px 0 0;
   background: linear-gradient(180deg, var(--panel-solide), var(--panel-2));
@@ -1105,7 +1007,6 @@ button,
 .fiche-heros-detail {
   grid-area: detail;
   color: var(--muet);
-  font-size: 0.85rem;
   font-weight: 600;
   line-height: 1.5;
 }
@@ -1343,10 +1244,6 @@ button,
 }
 
 /* ---------- Bandeaux (quêtes, défis) : compacts, 3 au plus ---------- */
-#bandeaux-quete {
-  width: min(92vw, 520px);
-  align-items: center;
-}
 .bandeau-quete {
   max-width: 100%;
   border-radius: 14px;
@@ -1363,7 +1260,6 @@ button,
   .bandeau-quete {
     font-size: 0.72rem;
     padding: 4px 10px;
-    background: #3a2c1af2;
   }
 }
 
@@ -1557,9 +1453,6 @@ button,
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
-  .cc-apercu {
-    font-size: 0.74rem;
-  }
   .combat .carte .portrait-wrap,
   .combat .carte .portrait {
     width: 34px;
@@ -1574,7 +1467,6 @@ button,
     font-size: 0.7rem;
   }
   .combat .carte .res-row {
-    gap: 2px;
     margin-top: 0;
   }
   .combat .carte .res-chip {
@@ -1843,10 +1735,6 @@ button,
   color: #ffd27a;
 }
 /* en visée : les cartes qu'on ne peut pas viser s'effacent */
-.combat.ciblage .carte:not(.ciblable):not(.actif) {
-  opacity: 0.72;
-  filter: saturate(0.7);
-}
 .combat .carte.ciblable {
   animation: cible-pulse 1.2s ease-in-out infinite;
 }
@@ -1950,10 +1838,6 @@ button,
     padding: 2px 10px;
     border: 1px solid #6b2a1f;
     border-radius: 8px;
-    background: linear-gradient(90deg, #c0392b var(--pv-pct), #5a3a2a40 var(--pv-pct));
-  }
-  .combat .carte .pv-barre.ko {
-    background: #8a7a6a;
   }
   .combat .carte .pv-barre-txt,
   .combat .carte .pa-txt {
@@ -2205,7 +2089,6 @@ button,
   position: relative;
 }
 .equip-slots.grille .equip-slot.vide {
-  opacity: 0.75;
   border-style: dashed;
 }
 .equip-slots.grille .ic-visuel {
@@ -2219,7 +2102,6 @@ button,
 }
 .equip-slots.grille .slot-nom {
   width: auto;
-  font-size: 0.62rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   line-height: 1.1;
@@ -2229,13 +2111,9 @@ button,
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  font-size: 0.72rem;
   line-height: 1.15;
   max-width: 100%;
   overflow-wrap: anywhere;
-}
-.equip-slots.grille .slot-vide-txt {
-  font-size: 0.7rem;
 }
 .equip-slots.grille .ic-tier {
   position: absolute;
@@ -2248,7 +2126,6 @@ button,
   left: -4px;
   top: -4px;
   color: #2f9e44;
-  font-size: 0.8rem;
   line-height: 1;
   text-shadow: 0 0 2px #fff;
 }
@@ -2274,9 +2151,6 @@ button,
     width: 36px;
     height: 36px;
   }
-  .equip-slots.grille .slot-objet {
-    font-size: 0.66rem;
-  }
 }
 .best-jauge {
   margin: -4px auto 10px;
@@ -2290,9 +2164,7 @@ button,
 
 /* ---------- Accueil : prochain Dofus ---------- */
 .prochain-dofus {
-  display: flex;
   align-items: flex-start;
-  gap: 12px;
   max-width: 560px;
   margin: 10px auto 4px;
   padding: 10px 14px;
