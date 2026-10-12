@@ -5,6 +5,7 @@ import { RARETES_INFO, bossDeZone, zonesDuMonde, zoneSecrete } from "../../jeu/c
 import { numeroZone } from "../../jeu/economie.js";
 import { descriptionPanoplie } from "../../jeu/panoplies.js";
 import {
+  comportementDefilement,
   NOMS_SLOTS,
   afficherEcran,
   attrTipObjet,
@@ -146,14 +147,14 @@ export function ecranArmurerie(e) {
           if (window.matchMedia(ECRAN_ETROIT).matches) {
             racine
               .querySelector(`.best-detail`)
-              ?.scrollIntoView({ block: `start`, behavior: `smooth` });
+              ?.scrollIntoView({ block: `start`, behavior: comportementDefilement() });
           }
         }),
       );
       racine.querySelector(`.best-vers-zones`)?.addEventListener(`click`, () => {
         const zone =
           racine.querySelector(`.best-zone.actif`) ?? racine.querySelector(`.best-zones`);
-        zone?.scrollIntoView({ block: `center`, behavior: `smooth` });
+        zone?.scrollIntoView({ block: `center`, behavior: comportementDefilement() });
         zone?.focus({ preventScroll: true });
       });
       racine.querySelector(`#armu-retour`)?.addEventListener(`click`, () => resolve());

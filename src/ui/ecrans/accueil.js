@@ -8,6 +8,7 @@ import {
   statsMonde,
 } from "../../sauvegarde/meta.js";
 import {
+  comportementDefilement,
   IMG_ABANDONNER,
   IMG_ARMURERIE,
   IMG_BESTIAIRE,
@@ -300,7 +301,7 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
         let r = section.getBoundingClientRect();
         let delta = r.bottom > bas ? r.bottom - bas : r.top < 0 ? r.top - 8 : 0;
         if (delta) {
-          window.scrollBy({ top: delta, behavior: `smooth` });
+          window.scrollBy({ top: delta, behavior: comportementDefilement() });
         }
       };
       racine.querySelectorAll(`[data-rangee]`).forEach((e) => {

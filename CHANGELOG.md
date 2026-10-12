@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## Version 1.2.0
+
+- **C10** : option « Réduire les animations » dans Paramètres (classe `reduire-animations` sur `body`, aussi suivie via la préférence du système) ; `comportementDefilement()` choisit `auto` ou `smooth` pour tous les défilements animés.
+
 ## Version 1.1.0
 
 - Le numéro de version s'affiche sur l'accueil (bas de page) et sur la page de connexion (`src/version.js`, identique à `package.json` : un test le vérifie).

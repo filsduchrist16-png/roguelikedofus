@@ -29,6 +29,12 @@ export const normaliserTaillePolice = (v) => {
   return TAILLES_POLICE.includes(n) ? n : 100;
 };
 export const normaliserCouleursAdaptees = (v) => v === true;
+// Lecture tolérante : seul `true` active l'option (ancienne sauvegarde ou valeur étrangère : désactivée).
+export const normaliserReduireAnimations = (v) => v === true;
+// Comportement des défilements : instantané si le joueur a réduit les animations (réglage du jeu ou
+// préférence du système), progressif sinon.
+export const comportementDefilement = (reduire, systemeReduit = false) =>
+  reduire === true || systemeReduit === true ? `auto` : `smooth`;
 // Pose la taille du texte (tout est en rem) et la classe des couleurs adaptées.
 export function appliquerAccessibilite(p) {
   try {
@@ -37,6 +43,10 @@ export function appliquerAccessibilite(p) {
     document.body?.classList.toggle(
       `couleurs-adaptees`,
       normaliserCouleursAdaptees(p?.couleursAdaptees),
+    );
+    document.body?.classList.toggle(
+      `reduire-animations`,
+      normaliserReduireAnimations(p?.reduireAnimations),
     );
   } catch {}
 }
@@ -49,6 +59,8 @@ const PARAMETRES_DEFAUT = {
   // accessibilité : taille du texte (100, 115 ou 130 %) et couleurs doublées par des signes
   taillePolice: 100,
   couleursAdaptees: false,
+  // animations réduites (effets de combat, défilements instantanés)
+  reduireAnimations: false,
   formation: {
     iop: `avant`,
     feca: `avant`,
@@ -100,6 +112,7 @@ export function chargerParametres() {
       };
       t.taillePolice = normaliserTaillePolice(t.taillePolice);
       t.couleursAdaptees = normaliserCouleursAdaptees(t.couleursAdaptees);
+      t.reduireAnimations = normaliserReduireAnimations(t.reduireAnimations);
       let n = t.ordre && typeof t.ordre === `object` && !Array.isArray(t.ordre) ? t.ordre : {};
       t.ordre = {
         ...ORDRE_DEFAUT,

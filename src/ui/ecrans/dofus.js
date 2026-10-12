@@ -1,7 +1,13 @@
 import { DOFUS } from "../../data/index.js";
 import { mondeDuDofus, succesDuDofus, texteObtentionDofus } from "../../jeu/obtention.js";
 import { progressionSucces } from "../../jeu/quetes.js";
-import { afficherEcran, barreRetour, echapperHtml, htmlRackDofus } from "../commun.js";
+import {
+  comportementDefilement,
+  afficherEcran,
+  barreRetour,
+  echapperHtml,
+  htmlRackDofus,
+} from "../commun.js";
 import { ecranSucces } from "./succes.js";
 
 // Détail d'un Dofus touché dans la collection : effet, où il s'obtient, avancement des quêtes.
@@ -46,7 +52,7 @@ export function ecranDofus(e) {
           afficher();
           document
             .querySelector(`.dofus-detail`)
-            ?.scrollIntoView({ block: `nearest`, behavior: `smooth` });
+            ?.scrollIntoView({ block: `nearest`, behavior: comportementDefilement() });
         };
         slot.addEventListener(`click`, ouvrir);
         slot.addEventListener(`keydown`, (ev) => {

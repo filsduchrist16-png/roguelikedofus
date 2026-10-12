@@ -21,13 +21,24 @@ import {
   multiplicateurRelance,
   statsEffectives,
 } from "../combat/stats.js";
-import { chargerParametres } from "../sauvegarde/parametres.js";
+import {
+  chargerParametres,
+  comportementDefilement as choisirDefilement,
+} from "../sauvegarde/parametres.js";
 import { herosAmeliores } from "../jeu/inventaire.js";
 export let racine;
 export function definirRacine(e) {
   racine = e;
 }
 export const parametres = chargerParametres();
+// `auto` ou `smooth` pour scrollIntoView / scrollBy : instantané si les animations sont réduites.
+export function comportementDefilement() {
+  let systeme = false;
+  try {
+    systeme = !!window.matchMedia?.(`(prefers-reduced-motion: reduce)`).matches;
+  } catch {}
+  return choisirDefilement(parametres.reduireAnimations, systeme);
+}
 export function echapperHtml(e) {
   return String(e).replace(
     /[&<>"']/g,

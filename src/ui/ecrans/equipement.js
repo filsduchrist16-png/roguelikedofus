@@ -28,6 +28,7 @@ import { PA_MAX_EQUIPEMENT } from "../../jeu/emplacements.js";
 import { afficherBandeau } from "./succes.js";
 import { texteObtentionObjet } from "../../jeu/obtention.js";
 import {
+  comportementDefilement,
   EMPLACEMENTS,
   NOMS_EMPLACEMENTS,
   NOMS_SLOTS,
@@ -550,7 +551,7 @@ export function ecranEquipement(e, t) {
           i();
           racine
             .querySelector(`.equip-outils`)
-            ?.scrollIntoView({ block: `start`, behavior: `smooth` });
+            ?.scrollIntoView({ block: `start`, behavior: comportementDefilement() });
         });
         // clavier : Entrée et Espace font comme le clic
         b.addEventListener(`keydown`, (ev) => {

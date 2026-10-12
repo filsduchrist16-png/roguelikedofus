@@ -9,6 +9,7 @@ import {
 } from "../../jeu/quetes.js";
 import { decrireQuete, mondeDuDofus } from "../../jeu/obtention.js";
 import {
+  comportementDefilement,
   afficherEcran,
   barreContinuer,
   barreRetour,
@@ -176,14 +177,14 @@ export function ecranSucces(e, selection) {
           if (window.matchMedia(ECRAN_ETROIT).matches) {
             document
               .querySelector(`.succes-panneau`)
-              ?.scrollIntoView({ behavior: `smooth`, block: `start` });
+              ?.scrollIntoView({ behavior: comportementDefilement(), block: `start` });
           }
         }),
       );
       // téléphone : retour à la carte active dans la liste
       document.querySelector(`.succes-vers-liste`)?.addEventListener(`click`, () => {
         const carte = document.querySelector(`.succes-galerie .actif`);
-        carte?.scrollIntoView({ behavior: `smooth`, block: `center` });
+        carte?.scrollIntoView({ behavior: comportementDefilement(), block: `center` });
         carte?.focus({ preventScroll: true });
       });
       document.getElementById(`succes-retour`)?.addEventListener(`click`, () => resolve());

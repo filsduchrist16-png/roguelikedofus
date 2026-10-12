@@ -110,6 +110,10 @@ export function ecranParametres(e) {
             <button id="set-couleurs" class="secondaire ${parametres.couleursAdaptees ? `on` : ``}" aria-pressed="${!!parametres.couleursAdaptees}">${parametres.couleursAdaptees ? `Activé` : `Désactivé`}</button>
           </div>
           <div class="setting-ligne">
+            <span class="setting-lbl">Réduire les animations<br><small class="muet">effets de combat atténués, défilements instantanés</small></span>
+            <button id="set-animations" class="secondaire ${parametres.reduireAnimations ? `on` : ``}" aria-pressed="${!!parametres.reduireAnimations}">${parametres.reduireAnimations ? `Activé` : `Désactivé`}</button>
+          </div>
+          <div class="setting-ligne">
             <span class="setting-lbl">Sauvegarde<br><small class="muet">Dofus, succès, réglages et run en cours, pour changer de PC</small></span>
             <span class="setting-actions">
               <button id="set-export" class="secondaire">Exporter</button>
@@ -302,6 +306,12 @@ export function ecranParametres(e) {
       );
       document.getElementById(`set-couleurs`)?.addEventListener(`click`, () => {
         parametres.couleursAdaptees = !parametres.couleursAdaptees;
+        sauverParametres(parametres);
+        appliquerAccessibilite(parametres);
+        i();
+      });
+      document.getElementById(`set-animations`)?.addEventListener(`click`, () => {
+        parametres.reduireAnimations = !parametres.reduireAnimations;
         sauverParametres(parametres);
         appliquerAccessibilite(parametres);
         i();

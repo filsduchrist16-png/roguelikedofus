@@ -18,6 +18,7 @@ import { ETATS_CLASSE, ICONES_MARQUES } from "../combat/classes.js";
 import { nomTouche, sauverParametres } from "../sauvegarde/parametres.js";
 import { replierObjectifsCombat } from "./objectifs.js";
 import {
+  comportementDefilement,
   AIDE_PIEGE,
   IMGS_RESISTANCE,
   IMG_COEUR,
@@ -872,7 +873,7 @@ function degagerCibles() {
   const haut = Math.min(...cartes.map((c) => c.getBoundingClientRect().top));
   const decalage = Math.min(bas - hautBarre + 10, haut - 8);
   if (decalage > 0) {
-    window.scrollBy({ top: decalage, behavior: `smooth` });
+    window.scrollBy({ top: decalage, behavior: comportementDefilement() });
   }
 }
 function htmlCarteCombattant(e, t) {

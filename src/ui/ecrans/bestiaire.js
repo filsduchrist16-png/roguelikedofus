@@ -10,7 +10,14 @@ import {
 import { numeroZone } from "../../jeu/economie.js";
 import { CONFIG_ARCHI } from "../../jeu/config.js";
 import { bonusJaugeArchi } from "../../jeu/run.js";
-import { afficherEcran, barreRetour, cheminAsset, echapperHtml, racine } from "../commun.js";
+import {
+  comportementDefilement,
+  afficherEcran,
+  barreRetour,
+  cheminAsset,
+  echapperHtml,
+  racine,
+} from "../commun.js";
 import { pastilleReliques, rendreEnGardantScroll } from "../collection.js";
 const ECRAN_ETROIT = `(max-width: 760px)`;
 export function ecranBestiaire(e) {
@@ -147,14 +154,14 @@ export function ecranBestiaire(e) {
           if (window.matchMedia(ECRAN_ETROIT).matches) {
             racine
               .querySelector(`.best-detail`)
-              ?.scrollIntoView({ block: `start`, behavior: `smooth` });
+              ?.scrollIntoView({ block: `start`, behavior: comportementDefilement() });
           }
         }),
       );
       racine.querySelector(`.best-vers-zones`)?.addEventListener(`click`, () => {
         const zone =
           racine.querySelector(`.best-zone.actif`) ?? racine.querySelector(`.best-zones`);
-        zone?.scrollIntoView({ block: `center`, behavior: `smooth` });
+        zone?.scrollIntoView({ block: `center`, behavior: comportementDefilement() });
         zone?.focus({ preventScroll: true });
       });
       racine.querySelector(`#best-retour`)?.addEventListener(`click`, () => resolve());

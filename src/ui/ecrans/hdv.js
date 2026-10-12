@@ -12,6 +12,7 @@ import { grouperInventaire, herosAmeliores, objetsInutiles } from "../../jeu/inv
 import { emplacementCible, equiperObjet } from "../../jeu/run.js";
 import { enregistrerCollection, sauverMeta } from "../../sauvegarde/meta.js";
 import {
+  comportementDefilement,
   afficherEnGardantScroll,
   attrTipObjet,
   boutonRetour,
@@ -102,7 +103,7 @@ export function ecranHdv(e, t, n) {
           b.addEventListener(`click`, () =>
             document
               .getElementById(b.dataset.saut)
-              ?.scrollIntoView({ behavior: `smooth`, block: `start` }),
+              ?.scrollIntoView({ behavior: comportementDefilement(), block: `start` }),
           ),
         );
       racine.querySelectorAll(`[data-achat]`).forEach((r) =>

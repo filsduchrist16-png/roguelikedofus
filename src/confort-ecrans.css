@@ -144,3 +144,27 @@
 .btn-continuer .kbd-entree {
   font-size: max(11px, 0.62rem);
 }
+
+/* ---------- Animations réduites (réglage du jeu ou préférence du système) ---------- */
+/* Durées quasi nulles plutôt que « animation: none » : les écouteurs « animationend » qui retirent
+   les effets de combat (dégâts flottants, flashs) se déclenchent toujours. */
+body.reduire-animations *,
+body.reduire-animations *::before,
+body.reduire-animations *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  animation-delay: 0s !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  body *,
+  body *::before,
+  body *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
