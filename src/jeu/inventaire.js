@@ -70,14 +70,14 @@ const deltaCle = (apres, avant) => [
   apres.sec - avant.sec,
 ];
 // Ordre des différences : PA d'abord, puis dégâts (hors égalité), puis survie. > 0 si a est mieux que b.
-function comparerDeltas(a, b) {
-  if (a[0] !== b[0]) {
-    return a[0] - b[0];
+function comparerDeltas(premier, second) {
+  if (premier[0] !== second[0]) {
+    return premier[0] - second[0];
   }
-  if (Math.abs(a[1] - b[1]) > TOLERANCE_DEGATS) {
-    return a[1] - b[1];
+  if (Math.abs(premier[1] - second[1]) > TOLERANCE_DEGATS) {
+    return premier[1] - second[1];
   }
-  return a[2] - b[2];
+  return premier[2] - second[2];
 }
 const ZERO = [0, 0, 0];
 const effetsDe = (perso) =>
@@ -96,7 +96,7 @@ export function estProgres(avant, apres, cleAvant = cleEquipement(avant)) {
   }
   const anciens = effetsDe(avant);
   const nouveaux = effetsDe(apres);
-  if ([...anciens].some((k) => !nouveaux.has(k))) {
+  if ([...anciens].some((effet) => !nouveaux.has(effet))) {
     return false;
   }
   return pvMaxPerso(apres) >= pvMaxPerso(avant) * (1 - CHUTE_PV_MAX);
@@ -140,23 +140,23 @@ export function comparerObjet(inst, perso, emplacement) {
       Math.round(((apres.resistances[el] ?? 0) - (avant.resistances[el] ?? 0)) * 100),
     );
   }
-  const utiles = deltas.filter((d) => d.utile);
-  const gains = utiles.some((d) => d.valeur > 0);
-  const pertes = utiles.some((d) => d.valeur < 0);
+  const utiles = deltas.filter((delta) => delta.utile);
+  const gains = utiles.some((delta) => delta.valeur > 0);
+  const pertes = utiles.some((delta) => delta.valeur < 0);
   let verdict = gains && !pertes ? `mieux` : pertes && !gains ? `moins` : gains ? `mitige` : `egal`;
   // un effet spécial gagné ou perdu (riposte, renaissance…) rend la comparaison discutable
   const nouveaux = effetsSpeciaux(inst.id);
   const anciens = actuel ? effetsSpeciaux(actuel.id) : [];
-  const gagnes = nouveaux.some((k) => !anciens.includes(k));
-  const perdus = anciens.some((k) => !nouveaux.includes(k));
+  const gagnes = nouveaux.some((effet) => !anciens.includes(effet));
+  const perdus = anciens.some((effet) => !nouveaux.includes(effet));
   if ((verdict === `mieux` && perdus) || ((verdict === `moins` || verdict === `egal`) && gagnes)) {
     verdict = `mitige`;
   }
-  for (const k of nouveaux.filter((k) => !anciens.includes(k))) {
-    ajouter(`effet_${k}`, 1);
+  for (const effet of nouveaux.filter((candidat) => !anciens.includes(candidat))) {
+    ajouter(`effet_${effet}`, 1);
   }
-  for (const k of anciens.filter((k) => !nouveaux.includes(k))) {
-    ajouter(`effet_${k}`, -1);
+  for (const effet of anciens.filter((candidat) => !nouveaux.includes(candidat))) {
+    ajouter(`effet_${effet}`, -1);
   }
   const score = Math.round(valeurEquipement(essai) - valeurEquipement(perso));
   const offensif = Math.round((cleEquipement(essai).off - cleEquipement(perso).off) * 10) / 10;
@@ -171,7 +171,7 @@ export function comparerObjet(inst, perso, emplacement) {
 
 // Les héros pour qui cet objet est une nette amélioration.
 export function herosAmeliores(inst, persos) {
-  return persos.filter((p) => comparerObjet(inst, p).verdict === `mieux`);
+  return persos.filter((heros) => comparerObjet(inst, heros).verdict === `mieux`);
 }
 
 // Regroupe les exemplaires identiques : [{ inst, indices }] dans l'ordre de première apparition.
@@ -179,28 +179,28 @@ const cleObjet = (inst) =>
   JSON.stringify([inst.id, inst.rarete, inst.stats, inst.adaptatif, inst.resistances, inst.pa]);
 export function grouperInventaire(inventaire) {
   const groupes = new Map();
-  inventaire.forEach((inst, i) => {
+  inventaire.forEach((inst, indice) => {
     const cle = cleObjet(inst);
     if (!groupes.has(cle)) {
       groupes.set(cle, { inst, indices: [] });
     }
-    groupes.get(cle).indices.push(i);
+    groupes.get(cle).indices.push(indice);
   });
   return [...groupes.values()];
 }
 
 const RANG_RARETE = [`commun`, `rare`, `epique`, `legendaire`];
-const copiePerso = (p) => ({ ...p, equipement: { ...p.equipement } });
+const copiePerso = (perso) => ({ ...perso, equipement: { ...perso.equipement } });
 const rang = (inst) => RANG_RARETE.indexOf(inst.rarete);
 
 // Le chargement `a` (sa clé) est-il meilleur que `b` ? PA, puis dégâts, puis survie.
-const meilleureCle = (a, b) => comparerDeltas(deltaCle(a, b), ZERO) > 0;
+const meilleureCle = (premier, second) => comparerDeltas(deltaCle(premier, second), ZERO) > 0;
 
 // Un chargement est valide s'il ne fait perdre aucun effet spécial ni ne vide les PV max (voir estProgres).
 function chargementValide(origine, effetsOrigine, pvOrigine, essai) {
   const effets = effetsDe(essai);
   return (
-    [...effetsOrigine].every((k) => effets.has(k)) &&
+    [...effetsOrigine].every((effet) => effets.has(effet)) &&
     pvMaxPerso(essai) >= pvOrigine * (1 - CHUTE_PV_MAX)
   );
 }
@@ -233,10 +233,10 @@ function grimper(perso, depart, verrous, pool, contexte) {
         if (!chargementValide(perso, contexte.effets, contexte.pv, essai)) {
           continue;
         }
-        const c = cleEquipement(essai);
-        if (meilleureCle(c, cle)) {
+        const cleEssai = cleEquipement(essai);
+        if (meilleureCle(cleEssai, cle)) {
           eq = essai.equipement;
-          cle = c;
+          cle = cleEssai;
           ameliore = true;
         }
       }
@@ -255,18 +255,20 @@ function departForce(perso, depart, verrousDepart, inventaire, nom) {
   const verrous = new Set(verrousDepart);
   let nouvelles = 0;
   for (const id of PANOPLIES[nom].pieces) {
-    const porte = Object.entries(eq).find(([, i]) => i?.id === id);
+    const porte = Object.entries(eq).find(([, piece]) => piece?.id === id);
     if (porte) {
       verrous.add(porte[0]);
       continue;
     }
     const inst = inventaire
-      .filter((i) => i.id === id && !Object.values(eq).includes(i))
-      .sort((x, y) => rang(y) - rang(x))[0];
+      .filter((candidat) => candidat.id === id && !Object.values(eq).includes(candidat))
+      .sort((premier, second) => rang(second) - rang(premier))[0];
     if (!inst || !peutEquiper(perso, id)) {
       continue;
     }
-    const libres = emplacementsDuType(EQUIPEMENTS[id].slot).filter((k) => !verrous.has(k));
+    const libres = emplacementsDuType(EQUIPEMENTS[id].slot).filter(
+      (emplacement) => !verrous.has(emplacement),
+    );
     const cible = emplacementCible({ ...perso, equipement: eq }, inst);
     const slot = libres.includes(cible) ? cible : libres[0];
     if (!slot) {
@@ -289,11 +291,13 @@ function meilleurChargement(perso, inventaire) {
   const pool = [...inventaire, ...Object.values(perso.equipement)];
   // panoplies jouables : au moins deux pièces disponibles dont une dans l'inventaire
   const disponible = (nom) =>
-    PANOPLIES[nom].pieces.filter((id) => pool.some((i) => i.id === id) && peutEquiper(perso, id));
+    PANOPLIES[nom].pieces.filter(
+      (id) => pool.some((objet) => objet.id === id) && peutEquiper(perso, id),
+    );
   const jouables = Object.keys(PANOPLIES).filter(
     (nom) =>
       disponible(nom).length >= 2 &&
-      PANOPLIES[nom].pieces.some((id) => inventaire.some((i) => i.id === id)),
+      PANOPLIES[nom].pieces.some((id) => inventaire.some((objet) => objet.id === id)),
   );
   const piecesJouables = new Set(jouables.flatMap((nom) => PANOPLIES[nom].pieces));
   // par type d'objet : les objets portés, les pièces des panoplies jouables et les 4 meilleurs
@@ -313,10 +317,10 @@ function meilleurChargement(perso, inventaire) {
         cleEquipement({ ...perso, equipement: { ...perso.equipement, [slot]: inst } }),
       ]),
     );
-    const classes = [...liste].sort((x, y) =>
-      meilleureCle(notes.get(x), notes.get(y))
+    const classes = [...liste].sort((premier, second) =>
+      meilleureCle(notes.get(premier), notes.get(second))
         ? -1
-        : meilleureCle(notes.get(y), notes.get(x))
+        : meilleureCle(notes.get(second), notes.get(premier))
           ? 1
           : 0,
     );
@@ -333,31 +337,36 @@ function meilleurChargement(perso, inventaire) {
   const departs = [grimper(perso, perso.equipement, aucun, pool, contexte)];
   const seuls = [];
   for (const nom of jouables) {
-    const d = departForce(perso, perso.equipement, aucun, inventaire, nom);
-    if (d) {
-      const r = grimper(perso, d.eq, d.verrous, pool, contexte);
-      departs.push(r);
-      seuls.push({ nom, r });
+    const force = departForce(perso, perso.equipement, aucun, inventaire, nom);
+    if (force) {
+      const resultat = grimper(perso, force.eq, force.verrous, pool, contexte);
+      departs.push(resultat);
+      seuls.push({ nom, r: resultat });
     }
   }
   // paires de panoplies, parmi les 4 meilleures prises seules
-  seuls.sort((x, y) =>
-    meilleureCle(x.r.cle, y.r.cle) ? -1 : meilleureCle(y.r.cle, x.r.cle) ? 1 : 0,
+  seuls.sort((premier, second) =>
+    meilleureCle(premier.r.cle, second.r.cle)
+      ? -1
+      : meilleureCle(second.r.cle, premier.r.cle)
+        ? 1
+        : 0,
   );
   const top = seuls.slice(0, 3);
-  for (let i = 0; i < top.length; i++) {
-    for (let j = i + 1; j < top.length; j++) {
-      const a = departForce(perso, perso.equipement, aucun, inventaire, top[i].nom);
-      const b = a && departForce(perso, a.eq, a.verrous, inventaire, top[j].nom);
-      if (b) {
-        departs.push(grimper(perso, b.eq, b.verrous, pool, contexte));
+  for (let indice = 0; indice < top.length; indice++) {
+    for (let indiceB = indice + 1; indiceB < top.length; indiceB++) {
+      const departA = departForce(perso, perso.equipement, aucun, inventaire, top[indice].nom);
+      const departB =
+        departA && departForce(perso, departA.eq, departA.verrous, inventaire, top[indiceB].nom);
+      if (departB) {
+        departs.push(grimper(perso, departB.eq, departB.verrous, pool, contexte));
       }
     }
   }
   let meilleur = departs[0];
-  for (const d of departs) {
-    if (meilleureCle(d.cle, meilleur.cle)) {
-      meilleur = d;
+  for (const candidat of departs) {
+    if (meilleureCle(candidat.cle, meilleur.cle)) {
+      meilleur = candidat;
     }
   }
   const actuel = cleEquipement(perso);
@@ -366,7 +375,9 @@ function meilleurChargement(perso, inventaire) {
 
 // Les équipements à poser pour atteindre le chargement : [{ inst, emplacement }] dans un ordre jouable.
 function actionsVers(perso, inventaire, eq) {
-  const restant = EMPLACEMENTS.filter((k) => eq[k] && eq[k] !== perso.equipement[k]);
+  const restant = EMPLACEMENTS.filter(
+    (emplacement) => eq[emplacement] && eq[emplacement] !== perso.equipement[emplacement],
+  );
   const actions = [];
   const simule = copiePerso(perso);
   const stock = inventaire.slice();
@@ -389,17 +400,17 @@ function actionsVers(perso, inventaire, eq) {
 }
 
 function jouerCoups(run, persos, enregistrer) {
-  let n = 0;
+  let total = 0;
   for (let tour = 0; tour < 24; tour++) {
     let meilleur = null;
     for (const perso of persos) {
-      const c = meilleurChargement(perso, run.inventaire);
-      if (!c) {
+      const chargement = meilleurChargement(perso, run.inventaire);
+      if (!chargement) {
         continue;
       }
-      const delta = deltaCle(c.cle, cleEquipement(perso));
+      const delta = deltaCle(chargement.cle, cleEquipement(perso));
       if (!meilleur || comparerDeltas(delta, meilleur.delta) > 0) {
-        meilleur = { perso, c, delta };
+        meilleur = { perso, c: chargement, delta };
       }
     }
     if (!meilleur) {
@@ -419,9 +430,9 @@ function jouerCoups(run, persos, enregistrer) {
     if (!fait) {
       break;
     }
-    n += fait;
+    total += fait;
   }
-  return n;
+  return total;
 }
 
 /**
@@ -442,48 +453,51 @@ export function equiperMeilleur(run, persos = run.persos) {
  */
 const idsInstances = new WeakMap();
 let prochainId = 1;
-const idDe = (x) => {
-  if (!x) {
+const idDe = (instance) => {
+  if (!instance) {
     return 0;
   }
-  if (!idsInstances.has(x)) {
-    idsInstances.set(x, prochainId++);
+  if (!idsInstances.has(instance)) {
+    idsInstances.set(instance, prochainId++);
   }
   // la forgemagie modifie l'objet sur place : la rareté fait partie de son identité pour le cache
-  return `${idsInstances.get(x)}${x.rarete ?? ``}`;
+  return `${idsInstances.get(instance)}${instance.rarete ?? ``}`;
 };
 let memo = { cle: ``, plan: [] };
 export function planEquiper(run, persos = run.persos) {
   // même inventaire, mêmes pièces portées, mêmes niveaux : même plan (l'écran se redessine souvent)
   const cle = JSON.stringify([
     run.inventaire.map(idDe),
-    persos.map((p) => [
-      p.classeId,
-      p.position,
-      p.progression?.niveau,
-      EMPLACEMENTS.map((k) => idDe(p.equipement[k])),
+    persos.map((perso) => [
+      perso.classeId,
+      perso.position,
+      perso.progression?.niveau,
+      EMPLACEMENTS.map((emplacement) => idDe(perso.equipement[emplacement])),
     ]),
   ]);
-  if (memo.cle === cle && memo.persos?.every((p, i) => p === persos[i])) {
+  if (memo.cle === cle && memo.persos?.every((perso, indice) => perso === persos[indice])) {
     return memo.plan;
   }
   const copie = persos.map(copiePerso);
   const essai = { inventaire: run.inventaire.slice() };
   const coups = [];
-  jouerCoups(essai, copie, (c) => coups.push({ ...c, perso: persos[copie.indexOf(c.perso)] }));
+  jouerCoups(essai, copie, (coup) =>
+    coups.push({ ...coup, perso: persos[copie.indexOf(coup.perso)] }),
+  );
   memo = { cle, plan: coups, persos: persos.slice() };
   return coups;
 }
 
 // L'objet n'apporte rien à ce héros : moins bien, pareil, impossible, ou mitigé à score négatif.
 export function inutilePour(inst, perso) {
-  const c = comparerObjet(inst, perso);
+  const comparaison = comparerObjet(inst, perso);
   return (
-    [`moins`, `egal`, `impossible`].includes(c.verdict) || (c.verdict === `mitige` && c.score <= 0)
+    [`moins`, `egal`, `impossible`].includes(comparaison.verdict) ||
+    (comparaison.verdict === `mitige` && comparaison.score <= 0)
   );
 }
 
 /** Objets de l'inventaire qui n'améliorent aucun héros (ni nettement, ni « plutôt mieux »). */
 export function objetsInutiles(run) {
-  return run.inventaire.filter((inst) => run.persos.every((p) => inutilePour(inst, p)));
+  return run.inventaire.filter((inst) => run.persos.every((perso) => inutilePour(inst, perso)));
 }
