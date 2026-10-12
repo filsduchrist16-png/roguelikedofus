@@ -26,21 +26,24 @@ export const secretDuMonde = (trancheId) => SECRETS[trancheId] ?? null;
 export const nomCle = (trancheId) => NOMS_CLES[trancheId] ?? `Clef de donjon`;
 
 const STATS_OFF = [`force`, `intelligence`, `agilite`, `chance`];
-const statMax = (m) => Math.max(...STATS_OFF.map((k) => m.stats?.[k] ?? 0));
-const moyenne = (l) => (l.length ? l.reduce((a, b) => a + b, 0) / l.length : 0);
+const statMax = (monstre) => Math.max(...STATS_OFF.map((stat) => monstre.stats?.[stat] ?? 0));
+const moyenne = (liste) =>
+  liste.length ? liste.reduce((somme, valeur) => somme + valeur, 0) / liste.length : 0;
 
 // Puissance de référence d'une zone : PV totaux des boss de son donjon, statistique offensive des boss
 // et des monstres de ses combats normaux.
 function referenceZone(zone) {
   const combatBoss = COMBATS[zone.pools.boss[0]];
-  const boss = combatBoss.ennemis.map((e) => MONSTRES[e.monstre]).filter((m) => m?.boss);
-  const normaux = zone.pools.normales.flatMap((c) =>
-    COMBATS[c].ennemis.map((e) => MONSTRES[e.monstre]),
+  const boss = combatBoss.ennemis
+    .map((ennemi) => MONSTRES[ennemi.monstre])
+    .filter((monstre) => monstre?.boss);
+  const normaux = zone.pools.normales.flatMap((combatId) =>
+    COMBATS[combatId].ennemis.map((ennemi) => MONSTRES[ennemi.monstre]),
   );
   return {
-    pvBoss: boss.reduce((a, m) => a + m.pv, 0),
+    pvBoss: boss.reduce((somme, monstre) => somme + monstre.pv, 0),
     statBoss: moyenne(boss.map(statMax)),
-    pvNormal: moyenne(normaux.map((m) => m.pv)),
+    pvNormal: moyenne(normaux.map((monstre) => monstre.pv)),
     statNormal: moyenne(normaux.map(statMax)),
   };
 }
@@ -50,19 +53,22 @@ export function monstresSecrets(trancheId, zone) {
   const secret = secretDuMonde(trancheId);
   const mons = monstresDuCombat(secret.combat);
   const ref = referenceZone(zone);
-  const nbBoss = mons.filter((m) => MONSTRES[m.monstreId]?.boss).length || 1;
-  const pvBossData = moyenne(mons.filter((m) => MONSTRES[m.monstreId]?.boss).map((m) => m.pvMax));
-  for (const m of mons) {
-    const boss = !!MONSTRES[m.monstreId]?.boss;
+  const nbBoss = mons.filter((monstre) => MONSTRES[monstre.monstreId]?.boss).length || 1;
+  const pvBossData = moyenne(
+    mons.filter((monstre) => MONSTRES[monstre.monstreId]?.boss).map((monstre) => monstre.pvMax),
+  );
+  for (const monstre of mons) {
+    const boss = !!MONSTRES[monstre.monstreId]?.boss;
     // chaque boss garde sa part relative (le Kolosso et le Professeur Xa se partagent les PV)
     const pv = boss
-      ? (ref.pvBoss / nbBoss) * (m.pvMax / pvBossData) * PUISSANCE_SECRET.pv
+      ? (ref.pvBoss / nbBoss) * (monstre.pvMax / pvBossData) * PUISSANCE_SECRET.pv
       : ref.pvNormal * PUISSANCE_SECRET.pv;
-    const k = ((boss ? ref.statBoss : ref.statNormal) * PUISSANCE_SECRET.stats) / (statMax(m) || 1);
-    m.pvBase = m.pvMax = m.pvActuels = Math.max(10, Math.round(pv));
+    const facteur =
+      ((boss ? ref.statBoss : ref.statNormal) * PUISSANCE_SECRET.stats) / (statMax(monstre) || 1);
+    monstre.pvBase = monstre.pvMax = monstre.pvActuels = Math.max(10, Math.round(pv));
     for (const st of [...STATS_OFF, `vitalite`]) {
-      if (m.stats[st] !== undefined) {
-        m.stats[st] = Math.round(m.stats[st] * k);
+      if (monstre.stats[st] !== undefined) {
+        monstre.stats[st] = Math.round(monstre.stats[st] * facteur);
       }
     }
   }
@@ -71,9 +77,9 @@ export function monstresSecrets(trancheId, zone) {
 
 /** Récompenses d'une victoire dans le donjon secret, utilisé en toile `toile`. */
 export function recompensesSecret(toile) {
-  const t = 1 + ECONOMIE.gainParToile * (toile - 1);
+  const facteur = 1 + ECONOMIE.gainParToile * (toile - 1);
   return {
-    kamas: Math.round(ECONOMIE.gain.donjon * 3 * t),
+    kamas: Math.round(ECONOMIE.gain.donjon * 3 * facteur),
     xp: Math.round(XP_PAR_COMBAT.combat_dur * 2.5),
     // rareté de l'objet garanti
     raretes: { epique: 0.65, legendaire: 0.35 },

@@ -24,9 +24,9 @@ let sourcesParObjet = null;
 function indexerSources() {
   sourcesParObjet = new Map();
   for (const monde of MONDES) {
-    monde.zones.forEach((zoneId, i) => {
-      const butin = BUTIN_ZONES[indexDebutMonde(monde.id) + i + 1];
-      const zone = ZONES.find((z) => z.id === zoneId);
+    monde.zones.forEach((zoneId, indice) => {
+      const butin = BUTIN_ZONES[indexDebutMonde(monde.id) + indice + 1];
+      const zone = ZONES.find((zoneData) => zoneData.id === zoneId);
       if (!butin || !zone) {
         return;
       }
@@ -54,8 +54,8 @@ export function texteObtentionObjet(id) {
   const lignes = [];
   if (sources.length) {
     const parZone = new Map();
-    for (const s of sources) {
-      parZone.set(s.zone, [...(parZone.get(s.zone) ?? []), s.categorie]);
+    for (const source of sources) {
+      parZone.set(source.zone, [...(parZone.get(source.zone) ?? []), source.categorie]);
     }
     lignes.push(
       `Butin : ${[...parZone].map(([zone, cats]) => `${zone} (${[...new Set(cats)].join(`, `)})`).join(` · `)}.`,
@@ -64,10 +64,10 @@ export function texteObtentionObjet(id) {
       `Aussi en vente à l'Hôtel de vente de ces zones (épique et plus) et de la zone précédente (rare et plus).`,
     );
   } else {
-    const secret = Object.entries(SECRETS).find(([, d]) => d.butin.includes(id));
+    const secret = Object.entries(SECRETS).find(([, secretDef]) => secretDef.butin.includes(id));
     lignes.push(
       secret
-        ? `Récompense du donjon secret ${secret[1].nom} (${MONDES.find((m) => m.id === secret[0])?.nom}) : il s'ouvre avec une clé trouvée dans un coffre, chez un contrebandier (case Rencontre) ou sur un monstre de combat dur.`
+        ? `Récompense du donjon secret ${secret[1].nom} (${MONDES.find((monde) => monde.id === secret[0])?.nom}) : il s'ouvre avec une clé trouvée dans un coffre, chez un contrebandier (case Rencontre) ou sur un monstre de combat dur.`
         : EQUIPEMENTS[id]?.retire
           ? `Pièce d'une ancienne version du jeu : elle ne tombe plus, mais reste utilisable (Tier ${EQUIPEMENTS[id].toile ?? 1}).`
           : `Ne tombe dans aucune zone actuelle.`,
@@ -82,12 +82,12 @@ export function texteObtentionObjet(id) {
 
 // Succès qui donne un Dofus, et ses quêtes.
 export function succesDuDofus(dofusId) {
-  return Object.values(SUCCES).find((s) => s.categorie?.dofus === dofusId);
+  return Object.values(SUCCES).find((succes) => succes.categorie?.dofus === dofusId);
 }
 
 export function mondeDuDofus(dofusId) {
   const succes = succesDuDofus(dofusId);
-  return MONDES.find((m) => m.id === succes?.categorie?.monde);
+  return MONDES.find((monde) => monde.id === succes?.categorie?.monde);
 }
 
 export function texteObtentionDofus(dofusId) {
@@ -96,11 +96,11 @@ export function texteObtentionDofus(dofusId) {
     return `Pas encore obtenable.`;
   }
   const monde = mondeDuDofus(dofusId);
-  return `${monde ? `${monde.nom} — ` : ``}succès « ${succes.nom} » : ${succes.quetes.map((q) => decrireQuete(q).titre).join(` ; `)}.`;
+  return `${monde ? `${monde.nom} — ` : ``}succès « ${succes.nom} » : ${succes.quetes.map((quete) => decrireQuete(quete).titre).join(` ; `)}.`;
 }
 
 // Règles d'obtention, avec les chiffres réels du jeu.
-const pct = (x) => `${Math.round(x * 1000) / 10} %`;
+const pct = (ratio) => `${Math.round(ratio * 1000) / 10} %`;
 export const AIDE_OBTENTION = `
   <p><b>Équipement.</b> Après chaque victoire, jusqu'à ${TAUX_BUTIN.tiragesMax} tirages de butin : chance par tirage de ${pct(TAUX_BUTIN.taux.combat)}
     en combat, ${pct(TAUX_BUTIN.taux.combat_dur)} en combat dur et ${pct(TAUX_BUTIN.taux.donjon)} au donjon. La prospection de
@@ -131,8 +131,8 @@ const TYPES_POOL = [
 function indexerLieux() {
   lieuxParMonstre = new Map();
   for (const monde of MONDES) {
-    monde.zones.forEach((zoneId, i) => {
-      const zone = ZONES.find((z) => z.id === zoneId);
+    monde.zones.forEach((zoneId, indice) => {
+      const zone = ZONES.find((zoneData) => zoneData.id === zoneId);
       if (!zone?.pools) {
         return;
       }
@@ -140,8 +140,14 @@ function indexerLieux() {
         for (const combatId of zone.pools[cle] ?? []) {
           for (const { monstre } of COMBATS[combatId]?.ennemis ?? []) {
             const lieux = lieuxParMonstre.get(monstre) ?? [];
-            if (!lieux.some((l) => l.zoneId === zoneId && l.type === libelle)) {
-              lieux.push({ zoneId, zone: zone.nom, monde: monde.nom, num: i + 1, type: libelle });
+            if (!lieux.some((lieu) => lieu.zoneId === zoneId && lieu.type === libelle)) {
+              lieux.push({
+                zoneId,
+                zone: zone.nom,
+                monde: monde.nom,
+                num: indice + 1,
+                type: libelle,
+              });
             }
             lieuxParMonstre.set(monstre, lieux);
           }
@@ -175,64 +181,68 @@ export function texteLieuxMonstre(id) {
     return `n'apparaît dans aucune zone pour l'instant`;
   }
   return lieux
-    .map((l) =>
-      l.secret
-        ? `« ${l.zone} », donjon secret du ${l.monde} (il s'ouvre avec une clé, après le boss d'une zone)`
-        : `« ${l.zone} » (${l.monde}, zone ${l.num}), ${l.type}`,
+    .map((lieu) =>
+      lieu.secret
+        ? `« ${lieu.zone} », donjon secret du ${lieu.monde} (il s'ouvre avec une clé, après le boss d'une zone)`
+        : `« ${lieu.zone} » (${lieu.monde}, zone ${lieu.num}), ${lieu.type}`,
     )
     .join(` ; ou `);
 }
-const nomZone = (id) => ZONES.find((z) => z.id === id)?.nom ?? id;
-const nomMonde = (id) => MONDES.find((m) => m.id === id)?.nom ?? id;
+const nomZone = (id) => ZONES.find((zoneData) => zoneData.id === id)?.nom ?? id;
+const nomMonde = (id) => MONDES.find((monde) => monde.id === id)?.nom ?? id;
 const nomClasse = (id) => CLASSES[id]?.nom ?? id;
 const nomDifficulte = (cran) => DIFFICULTES[cran]?.nom ?? `?`;
 const ELEMENTS_NOMS = { terre: `Terre`, feu: `Feu`, eau: `Eau`, air: `Air` };
 
 // Conditions particulières d'une quête, en phrases courtes.
-function conditionsQuete(c) {
-  const l = [];
-  if (c.sansKO) {
-    l.push(`aucun héros ne doit tomber`);
+function conditionsQuete(critere) {
+  const conditions = [];
+  if (critere.sansKO) {
+    conditions.push(`aucun héros ne doit tomber`);
   }
-  if (c.toursMax !== undefined) {
-    l.push(`gagne en ${c.toursMax} rondes au plus (joue offensif)`);
+  if (critere.toursMax !== undefined) {
+    conditions.push(`gagne en ${critere.toursMax} rondes au plus (joue offensif)`);
   }
-  if (c.equipeMax !== undefined) {
-    l.push(`${c.equipeMax} héros au plus dans l'équipe (avant d'en recruter d'autres)`);
+  if (critere.equipeMax !== undefined) {
+    conditions.push(
+      `${critere.equipeMax} héros au plus dans l'équipe (avant d'en recruter d'autres)`,
+    );
   }
-  if (c.bossPremier) {
-    l.push(`le boss doit tomber en premier, avant ses alliés`);
+  if (critere.bossPremier) {
+    conditions.push(`le boss doit tomber en premier, avant ses alliés`);
   }
-  if (c.bossDernier) {
-    l.push(`le boss doit tomber en dernier, après ses alliés`);
+  if (critere.bossDernier) {
+    conditions.push(`le boss doit tomber en dernier, après ses alliés`);
   }
-  if (c.classe !== undefined) {
-    l.push(`un ${nomClasse(c.classe)} doit être dans l'équipe`);
+  if (critere.classe !== undefined) {
+    conditions.push(`un ${nomClasse(critere.classe)} doit être dans l'équipe`);
   }
-  if (c.ascensionMin) {
-    l.push(`difficulté ${nomDifficulte(c.ascensionMin)} ou plus, choisie au lancement de la run`);
+  if (critere.ascensionMin) {
+    conditions.push(
+      `difficulté ${nomDifficulte(critere.ascensionMin)} ou plus, choisie au lancement de la run`,
+    );
   }
-  return l;
+  return conditions;
 }
 
 // Texte « Où / Comment » d'une quête, selon son critère : [[étiquette, texte], …].
-function lignesQuete(c) {
+function lignesQuete(critere) {
   const lignes = [];
-  const conditions = conditionsQuete(c);
-  switch (c.type) {
+  const conditions = conditionsQuete(critere);
+  switch (critere.type) {
     case `vaincre`:
-      if (c.boss) {
-        lignes.push([`Où`, `${texteLieuxMonstre(c.boss)}.`]);
-      } else if (c.noeud === `combat_dur`) {
+      if (critere.boss) {
+        lignes.push([`Où`, `${texteLieuxMonstre(critere.boss)}.`]);
+      } else if (critere.noeud === `combat_dur`) {
         lignes.push([`Où`, `sur une case rouge de la carte (combat dur : ennemis renforcés).`]);
-      } else if (c.zone && c.noeud === `donjon`) {
-        const monde = MONDES.find((m) => m.zones.includes(c.zone));
+      } else if (critere.zone && critere.noeud === `donjon`) {
+        const monde = MONDES.find((mondeCandidat) => mondeCandidat.zones.includes(critere.zone));
         lignes.push([
           `Où`,
-          `dernière case (donjon) de « ${nomZone(c.zone)} »${monde ? `, ${monde.nom} (zone ${monde.zones.indexOf(c.zone) + 1})` : ``}.`,
+          `dernière case (donjon) de « ${nomZone(critere.zone)} »${monde ? `, ${monde.nom} (zone ${monde.zones.indexOf(critere.zone) + 1})` : ``}.`,
         ]);
-      } else if (c.zone) {
-        lignes.push([`Où`, `n'importe quel combat de la zone « ${nomZone(c.zone)} ».`]);
+      } else if (critere.zone) {
+        lignes.push([`Où`, `n'importe quel combat de la zone « ${nomZone(critere.zone)} ».`]);
       } else {
         lignes.push([`Où`, `n'importe quel combat.`]);
       }
@@ -240,26 +250,26 @@ function lignesQuete(c) {
     case `zone_terminee`:
       lignes.push([
         `Où`,
-        `bats le donjon (dernière case) de « ${nomZone(c.zone)} » pendant une run.`,
+        `bats le donjon (dernière case) de « ${nomZone(critere.zone)} » pendant une run.`,
       ]);
       break;
     case `run_gagnee`: {
       lignes.push([
         `Comment`,
-        c.tranche
-          ? `bats le dernier donjon du ${nomMonde(c.tranche)} pour gagner la run.`
+        critere.tranche
+          ? `bats le dernier donjon du ${nomMonde(critere.tranche)} pour gagner la run.`
           : `gagne une run, dans n'importe quel monde.`,
       ]);
-      if (c.sansTaverne) {
+      if (critere.sansTaverne) {
         conditions.push(`n'entre dans aucune taverne (évite ces cases sur la carte)`);
       }
-      if (c.sansRecrutement) {
+      if (critere.sansRecrutement) {
         conditions.push(`ne recrute personne en taverne (tu peux y entrer pour te soigner)`);
       }
-      if (c.equipeMax !== undefined && c.type === `run_gagnee`) {
-        conditions.push(`pas plus de ${c.equipeMax} héros`);
+      if (critere.equipeMax !== undefined && critere.type === `run_gagnee`) {
+        conditions.push(`pas plus de ${critere.equipeMax} héros`);
       }
-      if (c.quatreHerosEquipes) {
+      if (critere.quatreHerosEquipes) {
         conditions.push(
           `4 héros avec leurs 8 emplacements remplis à la fin (arme, coiffe, cape, amulette, 2 anneaux, ceinture, bottes)`,
         );
@@ -267,15 +277,15 @@ function lignesQuete(c) {
       break;
     }
     case `compteur`:
-      if (c.evenement === `degats_element`) {
+      if (critere.evenement === `degats_element`) {
         const classes = Object.values(CLASSES)
-          .filter((k) => k.elements?.includes(c.element))
-          .map((k) => k.nom);
+          .filter((classe) => classe.elements?.includes(critere.element))
+          .map((classe) => classe.nom);
         lignes.push([
           `Comment`,
-          `inflige ces dégâts avec des sorts ${ELEMENTS_NOMS[c.element] ?? c.element} (${classes.join(`, `)}). Le total se cumule d'une run à l'autre.`,
+          `inflige ces dégâts avec des sorts ${ELEMENTS_NOMS[critere.element] ?? critere.element} (${classes.join(`, `)}). Le total se cumule d'une run à l'autre.`,
         ]);
-      } else if (c.evenement === `soins`) {
+      } else if (critere.evenement === `soins`) {
         lignes.push([
           `Comment`,
           `soigne tes héros en combat (Eniripsa en tête, puis Pandawa, Sadida, Ouginak, Éliotrope). Le total se cumule d'une run à l'autre.`,
@@ -290,24 +300,24 @@ function lignesQuete(c) {
     case `archi_capture`:
       lignes.push([
         `Comment`,
-        c.tranche
-          ? `bats les archimonstres du ${nomMonde(c.tranche)} : ils apparaissent au hasard dans ses zones (plus souvent avec des philtres d'Otomaï). Le Bestiaire montre ceux qui manquent.`
-          : c.zone
-            ? `bats tous les archimonstres de « ${nomZone(c.zone)} » (voir le Bestiaire).`
+        critere.tranche
+          ? `bats les archimonstres du ${nomMonde(critere.tranche)} : ils apparaissent au hasard dans ses zones (plus souvent avec des philtres d'Otomaï). Le Bestiaire montre ceux qui manquent.`
+          : critere.zone
+            ? `bats tous les archimonstres de « ${nomZone(critere.zone)} » (voir le Bestiaire).`
             : `bats tous les archimonstres d'une même zone : ils apparaissent au hasard, le Bestiaire montre ceux qui manquent.`,
       ]);
       break;
     case `record_ascension`:
       lignes.push([
         `Comment`,
-        `choisis la difficulté ${nomDifficulte(c.min)} au lancement d'une run du ${nomMonde(c.tranche)}, puis gagne-la.`,
+        `choisis la difficulté ${nomDifficulte(critere.min)} au lancement d'une run du ${nomMonde(critere.tranche)}, puis gagne-la.`,
       ]);
       break;
     case `relique_obtenue`:
-      lignes.push([`Où`, `${texteLieuxMonstre(c.boss)}.`]);
+      lignes.push([`Où`, `${texteLieuxMonstre(critere.boss)}.`]);
       lignes.push([
         `Astuce`,
-        `${MONSTRES[c.boss]?.nom ?? c.boss} ne la lâche que parfois : la difficulté et la prospection augmentent la chance.`,
+        `${MONSTRES[critere.boss]?.nom ?? critere.boss} ne la lâche que parfois : la difficulté et la prospection augmentent la chance.`,
       ]);
       break;
     case `archis_total`:
@@ -317,12 +327,12 @@ function lignesQuete(c) {
       ]);
       break;
     case `objet_obtenu`:
-      lignes.push([`Où`, texteObtentionObjet(c.objet).split(`\n`)[0]]);
+      lignes.push([`Où`, texteObtentionObjet(critere.objet).split(`\n`)[0]]);
       break;
     case `dofus_possede`:
       lignes.push([
         `Comment`,
-        `obtiens d'abord le ${DOFUS[c.dofus]?.nom ?? c.dofus} : ${texteObtentionDofus(c.dofus)}`,
+        `obtiens d'abord le ${DOFUS[critere.dofus]?.nom ?? critere.dofus} : ${texteObtentionDofus(critere.dofus)}`,
       ]);
       break;
     case `dofus_possedes`:
@@ -338,7 +348,7 @@ function lignesQuete(c) {
   return lignes;
 }
 
-const majuscule = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+const majuscule = (texte) => texte.charAt(0).toUpperCase() + texte.slice(1);
 
 /**
  * Description d'une quête en clair : { titre, lore, lignes }.
@@ -366,5 +376,5 @@ export function decrireQuete(quete) {
 // Indice en une chaîne (infobulles) : « Où : … Condition : … ».
 export function indiceQuete(quete) {
   const { lignes } = decrireQuete(quete);
-  return lignes.map(([e, t]) => `${e} : ${t}`).join(` `);
+  return lignes.map(([etiquette, texte]) => `${etiquette} : ${texte}`).join(` `);
 }

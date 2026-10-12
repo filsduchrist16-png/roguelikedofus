@@ -1,0 +1,17 @@
+# fichier: src/jeu/defis.js
+10 d defi
+15 d defi
+20 d defi
+33 h perso
+39 d defi
+47 h perso
+48 l liste
+54 id idDefi
+59 e ennemi
+80 r resultat
+96 v degats
+114 c combattant
+116 e ennemi
+128 e ennemi
+137 c combattant
+149 v degats

@@ -7,17 +7,17 @@ export const BONUS_DEFI = 0.3;
 const DEFIS = {
   premier: {
     nom: `Premier`,
-    texte: (d) => `Achève ${d.cibleNom} avant tous ses alliés.`,
+    texte: (defi) => `Achève ${defi.cibleNom} avant tous ses alliés.`,
     possible: ({ ennemis }) => ennemis.length >= 2,
   },
   dernier: {
     nom: `Dernier`,
-    texte: (d) => `Achève ${d.cibleNom} après tous ses alliés.`,
+    texte: (defi) => `Achève ${defi.cibleNom} après tous ses alliés.`,
     possible: ({ ennemis }) => ennemis.length >= 2,
   },
   blitzkrieg: {
     nom: `Blitzkrieg`,
-    texte: (d) => `Gagne en ${d.rondesMax} rondes au plus.`,
+    texte: (defi) => `Gagne en ${defi.rondesMax} rondes au plus.`,
     possible: () => true,
   },
   survivant: {
@@ -30,13 +30,13 @@ const DEFIS = {
     texte: () => `Gagne sans qu'aucun héros ne soit soigné (vol de vie compris).`,
     // seulement si l'équipe sait soigner : sinon le défi serait gratuit
     possible: ({ heros }) =>
-      heros.some((h) =>
-        h.sorts.some((id) => SORTS[id]?.type === `soin` || SORTS[id]?.soinEquipeRatio),
+      heros.some((perso) =>
+        perso.sorts.some((id) => SORTS[id]?.type === `soin` || SORTS[id]?.soinEquipeRatio),
       ),
   },
   elementaire: {
     nom: `Élémentaire`,
-    texte: (d) => `N'inflige des dégâts qu'en ${d.elementNom}.`,
+    texte: (defi) => `N'inflige des dégâts qu'en ${defi.elementNom}.`,
     possible: ({ heros }) => elementCommun(heros) !== undefined,
   },
 };
@@ -44,19 +44,19 @@ const DEFIS = {
 const NOMS_ELEMENTS = { terre: `Terre`, feu: `Feu`, eau: `Eau`, air: `Air` };
 
 function elementCommun(heros) {
-  const listes = heros.map((h) => h.elements ?? []);
-  return listes[0]?.find((el) => listes.every((l) => l.includes(el)));
+  const listes = heros.map((perso) => perso.elements ?? []);
+  return listes[0]?.find((el) => listes.every((liste) => liste.includes(el)));
 }
 
 /** Tire un défi adapté au combat. `ennemis` et `heros` sont les combattants du début du combat. */
 export function tirerDefi(rng, ennemis, heros) {
   const ctx = { ennemis, heros };
-  const ids = Object.keys(DEFIS).filter((id) => DEFIS[id].possible(ctx));
+  const ids = Object.keys(DEFIS).filter((idDefi) => DEFIS[idDefi].possible(ctx));
   const id = ids[Math.floor(rng() * ids.length)];
   const defi = { id, nom: DEFIS[id].nom };
   if (id === `premier` || id === `dernier`) {
     // de préférence le boss, sinon un ennemi au hasard
-    const boss = ennemis.find((e) => e.boss);
+    const boss = ennemis.find((ennemi) => ennemi.boss);
     const cible = boss && rng() < 0.6 ? boss : ennemis[Math.floor(rng() * ennemis.length)];
     defi.cible = cible.ref;
     defi.cibleNom = cible.nom;
@@ -74,26 +74,28 @@ export function tirerDefi(rng, ennemis, heros) {
 
 /**
  * @param {object} defi
- * @param {object} r résultat du combat : gagne, rondes, herosKO, soins, degatsParElement,
+ * @param {object} resultat résultat du combat : gagne, rondes, herosKO, soins, degatsParElement,
  *   ordreMorts (refs des ennemis achevés, dans l'ordre)
  */
-export function defiReussi(defi, r) {
-  if (!defi || !r.gagne) {
+export function defiReussi(defi, resultat) {
+  if (!defi || !resultat.gagne) {
     return false;
   }
   switch (defi.id) {
     case `premier`:
-      return r.ordreMorts[0] === defi.cible;
+      return resultat.ordreMorts[0] === defi.cible;
     case `dernier`:
-      return r.ordreMorts.at(-1) === defi.cible;
+      return resultat.ordreMorts.at(-1) === defi.cible;
     case `blitzkrieg`:
-      return r.rondes <= defi.rondesMax;
+      return resultat.rondes <= defi.rondesMax;
     case `survivant`:
-      return !r.herosKO;
+      return !resultat.herosKO;
     case `abnegation`:
-      return (r.soins ?? 0) === 0;
+      return (resultat.soins ?? 0) === 0;
     case `elementaire`:
-      return Object.entries(r.degatsParElement ?? {}).every(([el, v]) => el === defi.element || !v);
+      return Object.entries(resultat.degatsParElement ?? {}).every(
+        ([el, degats]) => el === defi.element || !degats,
+      );
   }
   return false;
 }
@@ -111,9 +113,14 @@ export function etatDefi(defi, suivi, combattants) {
   }
   // les invocations ne comptent pas (comme dans les quêtes)
   const ennemis = combattants.filter(
-    (c) => c.camp === `ennemi` && c.monstreId && !c.estLance && !c.estInvocation && !c.invoquePar,
+    (combattant) =>
+      combattant.camp === `ennemi` &&
+      combattant.monstreId &&
+      !combattant.estLance &&
+      !combattant.estInvocation &&
+      !combattant.invoquePar,
   );
-  const morts = [...suivi.morts].filter((ref) => ennemis.some((e) => e.ref === ref));
+  const morts = [...suivi.morts].filter((ref) => ennemis.some((ennemi) => ennemi.ref === ref));
   switch (defi.id) {
     case `premier`: {
       if (!morts.length) {
@@ -125,7 +132,9 @@ export function etatDefi(defi, suivi, combattants) {
       if (!morts.includes(defi.cible)) {
         return { etat: `en_cours`, detail: `${morts.length}/${ennemis.length - 1} alliés achevés` };
       }
-      const restants = ennemis.filter((e) => e.ref !== defi.cible && e.pvActuels > 0);
+      const restants = ennemis.filter(
+        (ennemi) => ennemi.ref !== defi.cible && ennemi.pvActuels > 0,
+      );
       return restants.length ? { etat: `rate` } : { etat: `assure` };
     }
     case `blitzkrieg`:
@@ -134,19 +143,21 @@ export function etatDefi(defi, suivi, combattants) {
         : { etat: `en_cours`, detail: `ronde ${Math.max(1, suivi.rondes)}/${defi.rondesMax}` };
     case `survivant`:
       return combattants.some(
-        (c) =>
-          c.camp === `joueur` &&
-          !c.creature &&
-          c.pvActuels <= 0 &&
+        (combattant) =>
+          combattant.camp === `joueur` &&
+          !combattant.creature &&
+          combattant.pvActuels <= 0 &&
           // les héros déjà K.O. avant le combat ne comptent pas
-          (!suivi.herosDepart || suivi.herosDepart.includes(c.ref)),
+          (!suivi.herosDepart || suivi.herosDepart.includes(combattant.ref)),
       )
         ? { etat: `rate` }
         : { etat: `en_cours` };
     case `abnegation`:
       return (suivi.soins ?? 0) > 0 ? { etat: `rate` } : { etat: `en_cours` };
     case `elementaire`:
-      return Object.entries(suivi.degats ?? {}).some(([el, v]) => el !== defi.element && v)
+      return Object.entries(suivi.degats ?? {}).some(
+        ([el, degats]) => el !== defi.element && degats,
+      )
         ? { etat: `rate` }
         : { etat: `en_cours` };
   }

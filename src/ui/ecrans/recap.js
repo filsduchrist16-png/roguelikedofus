@@ -13,9 +13,9 @@ import {
 // sauvegardes n'ont pas ce compteur : on le crée au besoin ; la liste reste bornée.
 export function noterObjetsObtenus(stats, objets) {
   stats.butin = stats.butin ?? [];
-  for (const o of objets) {
+  for (const objet of objets) {
     if (stats.butin.length < 500) {
-      stats.butin.push({ id: o.id, rarete: o.rarete });
+      stats.butin.push({ id: objet.id, rarete: objet.rarete });
     }
   }
 }
@@ -26,27 +26,27 @@ export function noterEnnemisVaincus(stats, nombre) {
 // Objets du bilan, regroupés par (objet, rareté) et classés des plus rares aux plus communs.
 export function htmlObjetsObtenus(butin = []) {
   const groupes = new Map();
-  for (const o of butin) {
-    const cle = `${o.id}|${o.rarete}`;
-    groupes.set(cle, { ...o, n: (groupes.get(cle)?.n ?? 0) + 1 });
+  for (const objet of butin) {
+    const cle = `${objet.id}|${objet.rarete}`;
+    groupes.set(cle, { ...objet, n: (groupes.get(cle)?.n ?? 0) + 1 });
   }
   const lignes = [...groupes.values()]
-    .filter((g) => EQUIPEMENTS[g.id])
-    .sort((a, b) => RARETES.indexOf(b.rarete) - RARETES.indexOf(a.rarete));
+    .filter((groupe) => EQUIPEMENTS[groupe.id])
+    .sort((premier, second) => RARETES.indexOf(second.rarete) - RARETES.indexOf(premier.rarete));
   if (!lignes.length) {
     return ``;
   }
   return `<details class="recap-objets"><summary>🎒 Objets obtenus (${butin.length})</summary><ul>${lignes
     .map(
-      (g) =>
-        `<li class="recap-objet"><span class="inom-${g.rarete}">${echapperHtml(EQUIPEMENTS[g.id].nom)}</span>${g.n > 1 ? ` <b>×${g.n}</b>` : ``}</li>`,
+      (groupe) =>
+        `<li class="recap-objet"><span class="inom-${groupe.rarete}">${echapperHtml(EQUIPEMENTS[groupe.id].nom)}</span>${groupe.n > 1 ? ` <b>×${groupe.n}</b>` : ``}</li>`,
     )
     .join(``)}</ul></details>`;
 }
 // Ce qui est débloqué pour un monde : plus haute difficulté accessible et monde suivant jouable.
 export function etatDeblocage(meta, trancheId) {
   const record = ascensionMonde(meta, trancheId);
-  const suivant = MONDES[MONDES.findIndex((m) => m.id === trancheId) + 1];
+  const suivant = MONDES[MONDES.findIndex((monde) => monde.id === trancheId) + 1];
   return {
     difficulte: record === undefined ? 0 : Math.min(record + 1, DIFFICULTE_MAX),
     mondeSuivant: suivant && mondeJouable(meta, suivant.id) ? suivant.id : null,
@@ -59,48 +59,50 @@ export function deblocagesVictoire(avant, apres) {
     lignes.push(`difficulté ${DIFFICULTES[apres.difficulte].nom}`);
   }
   if (apres.mondeSuivant && apres.mondeSuivant !== avant.mondeSuivant) {
-    lignes.push(MONDES.find((m) => m.id === apres.mondeSuivant)?.nom ?? apres.mondeSuivant);
+    lignes.push(MONDES.find((monde) => monde.id === apres.mondeSuivant)?.nom ?? apres.mondeSuivant);
   }
   return lignes;
 }
 // Résout 'memes' (rejouer avec les mêmes héros), 'choix' (autre équipe) ou null (accueil).
-export function ecranRecap(e, t, n = [], debloques = []) {
+export function ecranRecap(run, victoire, quetes = [], debloques = []) {
   return new Promise((resolve) => {
-    let e_stats = e.stats;
-    let a = Math.max(1, ...Object.values(e_stats.degats));
-    let o = Object.entries(e_stats.degats).sort((e, t) => t[1] - e[1])[0]?.[0];
-    let s = e.persos
-      .map((e) => {
-        let t = e_stats.degats[e.classeId] ?? 0;
-        let n = Math.round((t / a) * 100);
+    let stats = run.stats;
+    let maxDegats = Math.max(1, ...Object.values(stats.degats));
+    let meilleureClasse = Object.entries(stats.degats).sort(
+      (premier, second) => second[1] - premier[1],
+    )[0]?.[0];
+    let htmlLignes = run.persos
+      .map((perso) => {
+        let degats = stats.degats[perso.classeId] ?? 0;
+        let pct = Math.round((degats / maxDegats) * 100);
         return `<div class="recap-ligne">
-          <img class="recap-sym" src="${imgSymboleClasse(e.classeId)}" alt="" onerror="this.remove()" />
-          <span class="recap-nom">${echapperHtml(CLASSES[e.classeId].nom)}${e.classeId === o ? ` 👑` : ``}<small>Niv. ${e.progression.niveau}${e.pvActuels <= 0 ? ` · ☠ K.O.` : ``}</small></span>
-          <div class="recap-barre"><div class="recap-barre-rempli" style="width:${n}%"></div><span>${t.toLocaleString(`fr-FR`)} dégâts</span></div>
+          <img class="recap-sym" src="${imgSymboleClasse(perso.classeId)}" alt="" onerror="this.remove()" />
+          <span class="recap-nom">${echapperHtml(CLASSES[perso.classeId].nom)}${perso.classeId === meilleureClasse ? ` 👑` : ``}<small>Niv. ${perso.progression.niveau}${perso.pvActuels <= 0 ? ` · ☠ K.O.` : ``}</small></span>
+          <div class="recap-barre"><div class="recap-barre-rempli" style="width:${pct}%"></div><span>${degats.toLocaleString(`fr-FR`)} dégâts</span></div>
         </div>`;
       })
       .join(``);
     afficherEcran(`
-      <h1 class="${t ? `` : `defaite`}">${t ? `🏆 Krosmoz traversé !` : `Équipe anéantie`}</h1>
-      ${e.ascension >= 1 ? `<p class="asc-record">${echapperHtml(DIFFICULTES[e.ascension].nom)} <span class="asc-badge">${etoilesDifficulte(e.ascension)}</span></p>` : ``}
-      <p class="sous-titre">${t ? `Toutes les zones du monde sont vaincues.` : `La run s'arrête ici${e_stats.zones ? ` après ${e_stats.zones} zone${e_stats.zones > 1 ? `s` : ``} traversée${e_stats.zones > 1 ? `s` : ``}` : ``}. Tes Dofus et tes captures, eux, sont conservés.`}</p>
-      ${debloques.length ? `<p class="recap-debloque">🔓 Débloqué : ${debloques.map((d) => `<b>${echapperHtml(d)}</b>`).join(` · `)}</p>` : ``}
+      <h1 class="${victoire ? `` : `defaite`}">${victoire ? `🏆 Krosmoz traversé !` : `Équipe anéantie`}</h1>
+      ${run.ascension >= 1 ? `<p class="asc-record">${echapperHtml(DIFFICULTES[run.ascension].nom)} <span class="asc-badge">${etoilesDifficulte(run.ascension)}</span></p>` : ``}
+      <p class="sous-titre">${victoire ? `Toutes les zones du monde sont vaincues.` : `La run s'arrête ici${stats.zones ? ` après ${stats.zones} zone${stats.zones > 1 ? `s` : ``} traversée${stats.zones > 1 ? `s` : ``}` : ``}. Tes Dofus et tes captures, eux, sont conservés.`}</p>
+      ${debloques.length ? `<p class="recap-debloque">🔓 Débloqué : ${debloques.map((nom) => `<b>${echapperHtml(nom)}</b>`).join(` · `)}</p>` : ``}
       <div class="recap-compteurs">
-        <span class="recap-chip">🗺️ ${e_stats.zones} zone${e_stats.zones > 1 ? `s` : ``}</span>
-        <span class="recap-chip">⚔️ ${e_stats.combats} combat${e_stats.combats > 1 ? `s` : ``} gagné${e_stats.combats > 1 ? `s` : ``}</span>
-        <span class="recap-chip">💀 ${e_stats.ennemis ?? 0} ennemi${(e_stats.ennemis ?? 0) > 1 ? `s` : ``} vaincu${(e_stats.ennemis ?? 0) > 1 ? `s` : ``}</span>
-        <span class="recap-chip">🎒 ${e_stats.objets} objet${e_stats.objets > 1 ? `s` : ``}</span>
-        <span class="recap-chip">✨ ${e_stats.archis} âme${e_stats.archis > 1 ? `s` : ``} capturée${e_stats.archis > 1 ? `s` : ``}</span>
-        <span class="recap-chip">${htmlKamas(e_stats.kamasGagnes ?? 0)} gagnés</span>
-        ${e_stats.recrutements ? `<span class="recap-chip">🍺 ${e_stats.recrutements} recrue${e_stats.recrutements > 1 ? `s` : ``}</span>` : ``}
+        <span class="recap-chip">🗺️ ${stats.zones} zone${stats.zones > 1 ? `s` : ``}</span>
+        <span class="recap-chip">⚔️ ${stats.combats} combat${stats.combats > 1 ? `s` : ``} gagné${stats.combats > 1 ? `s` : ``}</span>
+        <span class="recap-chip">💀 ${stats.ennemis ?? 0} ennemi${(stats.ennemis ?? 0) > 1 ? `s` : ``} vaincu${(stats.ennemis ?? 0) > 1 ? `s` : ``}</span>
+        <span class="recap-chip">🎒 ${stats.objets} objet${stats.objets > 1 ? `s` : ``}</span>
+        <span class="recap-chip">✨ ${stats.archis} âme${stats.archis > 1 ? `s` : ``} capturée${stats.archis > 1 ? `s` : ``}</span>
+        <span class="recap-chip">${htmlKamas(stats.kamasGagnes ?? 0)} gagnés</span>
+        ${stats.recrutements ? `<span class="recap-chip">🍺 ${stats.recrutements} recrue${stats.recrutements > 1 ? `s` : ``}</span>` : ``}
       </div>
-      ${htmlObjetsObtenus(e_stats.butin)}
-      <h3 class="recap-titre-degats">Dégâts infligés · ${Object.values(e_stats.degats)
-        .reduce((x, y) => x + y, 0)
+      ${htmlObjetsObtenus(stats.butin)}
+      <h3 class="recap-titre-degats">Dégâts infligés · ${Object.values(stats.degats)
+        .reduce((somme, valeur) => somme + valeur, 0)
         .toLocaleString(`fr-FR`)}</h3>
-      <div class="recap-degats">${s}</div>
-      ${e_stats.reliques?.length ? `<div class="recap-succes">${e_stats.reliques.map((e) => `<span class="succes-chip nouveau">Relique : ${echapperHtml(RELIQUES[e]?.nom ?? e)}</span>`).join(``)}</div>` : ``}
-      ${n.length ? `<div class="recap-succes">${n.map((e) => `<span class="succes-chip nouveau">✓ ${echapperHtml(e.nom)}</span>`).join(``)}</div>` : ``}
+      <div class="recap-degats">${htmlLignes}</div>
+      ${stats.reliques?.length ? `<div class="recap-succes">${stats.reliques.map((id) => `<span class="succes-chip nouveau">Relique : ${echapperHtml(RELIQUES[id]?.nom ?? id)}</span>`).join(``)}</div>` : ``}
+      ${quetes.length ? `<div class="recap-succes">${quetes.map((quete) => `<span class="succes-chip nouveau">✓ ${echapperHtml(quete.nom)}</span>`).join(``)}</div>` : ``}
       <div class="boutons-ecran recap-boutons">
         ${boutonRetour(`recap-retour`, `Retour à l'accueil`)}
         <button id="recap-choix" class="secondaire">Autre équipe</button>

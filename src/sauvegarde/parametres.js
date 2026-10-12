@@ -25,53 +25,53 @@ const ORDRE_DEFAUT = {
 // Tailles de texte proposées (en % de la taille de base).
 export const TAILLES_POLICE = [100, 115, 130];
 // Lecture tolérante : toute valeur inconnue (texte, nombre hors liste, null…) donne 100.
-export const normaliserTaillePolice = (v) => {
-  const n = typeof v === `string` && v.trim() !== `` ? Number(v) : v;
-  return TAILLES_POLICE.includes(n) ? n : 100;
+export const normaliserTaillePolice = (valeur) => {
+  const nombre = typeof valeur === `string` && valeur.trim() !== `` ? Number(valeur) : valeur;
+  return TAILLES_POLICE.includes(nombre) ? nombre : 100;
 };
-export const normaliserCouleursAdaptees = (v) => v === true;
+export const normaliserCouleursAdaptees = (valeur) => valeur === true;
 // Lecture tolérante : seul `true` active l'option (ancienne sauvegarde ou valeur étrangère : désactivée).
-export const normaliserReduireAnimations = (v) => v === true;
+export const normaliserReduireAnimations = (valeur) => valeur === true;
 // Sons synthétisés : seul `true` les active (par défaut et pour toute valeur étrangère : coupés).
-export const normaliserSons = (v) => v === true;
+export const normaliserSons = (valeur) => valeur === true;
 // Idoles de départ cochées à l'accueil, mémorisées d'une run à l'autre : liste d'identifiants connus
 // sans doublon (valeur absente, abîmée ou idole inconnue : ignorée, donc aucune par défaut).
-export const normaliserIdolesChoisies = (v) => idolesDepartValides(v);
+export const normaliserIdolesChoisies = (valeur) => idolesDepartValides(valeur);
 // Astuces de première partie : une par moment clé. `vuTuto` vaut null tant que le jeu n'a pas
 // décidé (anciens réglages), puis un objet { cle: true } des astuces déjà affichées.
 export const CLES_TUTO = [`carte`, `combat`, `butin`, `taverne`];
 // Lecture tolérante : `true` (ancien drapeau unique) = tout vu ; objet = on ne garde que les clés
 // connues à `true` ; toute autre valeur = null (à décider selon la progression du joueur).
-export const normaliserVuTuto = (v) => {
-  if (v === true) {
-    return Object.fromEntries(CLES_TUTO.map((k) => [k, true]));
+export const normaliserVuTuto = (valeur) => {
+  if (valeur === true) {
+    return Object.fromEntries(CLES_TUTO.map((cle) => [cle, true]));
   }
-  if (v && typeof v === `object` && !Array.isArray(v)) {
-    return Object.fromEntries(CLES_TUTO.map((k) => [k, v[k] === true]));
+  if (valeur && typeof valeur === `object` && !Array.isArray(valeur)) {
+    return Object.fromEntries(CLES_TUTO.map((cle) => [cle, valeur[cle] === true]));
   }
   return null;
 };
-export const tutoVu = (v, cle) => normaliserVuTuto(v)?.[cle] === true;
+export const tutoVu = (valeur, cle) => normaliserVuTuto(valeur)?.[cle] === true;
 // Comportement des défilements : instantané si le joueur a réduit les animations (réglage du jeu ou
 // préférence du système), progressif sinon.
 export const comportementDefilement = (reduire, systemeReduit = false) =>
   reduire === true || systemeReduit === true ? `auto` : `smooth`;
 // Pose la taille du texte (tout est en rem) et la classe des couleurs adaptées.
-export function appliquerAccessibilite(p) {
+export function appliquerAccessibilite(reglages) {
   try {
-    const pct = normaliserTaillePolice(p?.taillePolice);
+    const pct = normaliserTaillePolice(reglages?.taillePolice);
     document.documentElement.style.fontSize = pct === 100 ? `` : `${pct}%`;
     document.body?.classList.toggle(
       `couleurs-adaptees`,
-      normaliserCouleursAdaptees(p?.couleursAdaptees),
+      normaliserCouleursAdaptees(reglages?.couleursAdaptees),
     );
     document.body?.classList.toggle(
       `reduire-animations`,
-      normaliserReduireAnimations(p?.reduireAnimations),
+      normaliserReduireAnimations(reglages?.reduireAnimations),
     );
   } catch {}
 }
-export const rangOrdre = (e, t) => e[t] ?? 99;
+export const rangOrdre = (ordre, cle) => ordre[cle] ?? 99;
 const PARAMETRES_DEFAUT = {
   toucheFinTour: ` `,
   autoFinTour: true,
@@ -116,42 +116,47 @@ const formationValide = (formation) =>
   typeof formation === `object` &&
   !!formation &&
   !Array.isArray(formation) &&
-  Object.values(formation).every((e) => e === `avant` || e === `arriere` || typeof e === `number`);
+  Object.values(formation).every(
+    (valeur) => valeur === `avant` || valeur === `arriere` || typeof valeur === `number`,
+  );
 const normaliserFormation = (formation) => {
-  let t = {};
-  for (let [n, r] of Object.entries(formation)) {
-    t[n] = typeof r === `number` ? (r < 4 ? `avant` : `arriere`) : r;
+  let resultat = {};
+  for (let [cle, valeur] of Object.entries(formation)) {
+    resultat[cle] = typeof valeur === `number` ? (valeur < 4 ? `avant` : `arriere`) : valeur;
   }
-  return t;
+  return resultat;
 };
 export function chargerParametres() {
   try {
-    let e = localStorage.getItem(CLE_PARAMETRES);
-    if (e) {
-      let t = {
+    let brut = localStorage.getItem(CLE_PARAMETRES);
+    if (brut) {
+      let reglages = {
         ...PARAMETRES_DEFAUT,
-        ...JSON.parse(e),
+        ...JSON.parse(brut),
       };
-      t.formation = {
+      reglages.formation = {
         ...PARAMETRES_DEFAUT.formation,
-        ...(formationValide(t.formation) ? normaliserFormation(t.formation) : {}),
+        ...(formationValide(reglages.formation) ? normaliserFormation(reglages.formation) : {}),
       };
-      t.taillePolice = normaliserTaillePolice(t.taillePolice);
-      t.couleursAdaptees = normaliserCouleursAdaptees(t.couleursAdaptees);
-      t.reduireAnimations = normaliserReduireAnimations(t.reduireAnimations);
-      t.sons = normaliserSons(t.sons);
-      t.idolesChoisies = normaliserIdolesChoisies(t.idolesChoisies);
-      t.vuTuto = normaliserVuTuto(t.vuTuto);
-      let n = t.ordre && typeof t.ordre === `object` && !Array.isArray(t.ordre) ? t.ordre : {};
-      t.ordre = {
+      reglages.taillePolice = normaliserTaillePolice(reglages.taillePolice);
+      reglages.couleursAdaptees = normaliserCouleursAdaptees(reglages.couleursAdaptees);
+      reglages.reduireAnimations = normaliserReduireAnimations(reglages.reduireAnimations);
+      reglages.sons = normaliserSons(reglages.sons);
+      reglages.idolesChoisies = normaliserIdolesChoisies(reglages.idolesChoisies);
+      reglages.vuTuto = normaliserVuTuto(reglages.vuTuto);
+      let ordre =
+        reglages.ordre && typeof reglages.ordre === `object` && !Array.isArray(reglages.ordre)
+          ? reglages.ordre
+          : {};
+      reglages.ordre = {
         ...ORDRE_DEFAUT,
       };
-      for (let [e, r] of Object.entries(n)) {
-        if (typeof r === `number` && Number.isFinite(r)) {
-          t.ordre[e] = r;
+      for (let [cle, valeur] of Object.entries(ordre)) {
+        if (typeof valeur === `number` && Number.isFinite(valeur)) {
+          reglages.ordre[cle] = valeur;
         }
       }
-      return t;
+      return reglages;
     }
   } catch {}
   return {
@@ -165,40 +170,40 @@ export function chargerParametres() {
     },
   };
 }
-export function sauverParametres(e) {
+export function sauverParametres(reglages) {
   try {
-    localStorage.setItem(CLE_PARAMETRES, JSON.stringify(e));
+    localStorage.setItem(CLE_PARAMETRES, JSON.stringify(reglages));
     return true;
   } catch {
     signalerEchecSauvegarde();
     return false;
   }
 }
-export function nomTouche(e) {
-  if (e === ` `) {
+export function nomTouche(touche) {
+  if (touche === ` `) {
     return `Espace`;
   }
-  if (e === `Enter`) {
+  if (touche === `Enter`) {
     return `Entrée`;
   }
-  if (e === `Escape`) {
+  if (touche === `Escape`) {
     return `Échap`;
   }
-  if (e === `Tab`) {
+  if (touche === `Tab`) {
     return `Tab`;
   }
-  if (e.startsWith(`Arrow`)) {
+  if (touche.startsWith(`Arrow`)) {
     return (
       {
         ArrowUp: `↑`,
         ArrowDown: `↓`,
         ArrowLeft: `←`,
         ArrowRight: `→`,
-      }[e] ?? e
+      }[touche] ?? touche
     );
   }
-  if (e.length === 1) {
-    return e.toUpperCase();
+  if (touche.length === 1) {
+    return touche.toUpperCase();
   }
-  return e;
+  return touche;
 }
