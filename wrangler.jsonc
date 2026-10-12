@@ -1,0 +1,9 @@
+{
+  // Déploiement Cloudflare (Worker avec fichiers statiques) : on publie le dossier construit par `npm run build`.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "roguelikedofus",
+  "compatibility_date": "2026-10-06",
+  "assets": {
+    "directory": "./dist"
+  }
+}
