@@ -30,6 +30,7 @@ import {
   statsDeNiveau,
 } from "./progression.js";
 import { etatCombatInitial } from "../combat/stats.js";
+import { valeurEquipement } from "./evaluation.js";
 import { bonusPanoplie, compterPanoplies } from "./panoplies.js";
 import { PA_MAX_EQUIPEMENT, PA_MAX_PANOPLIES, emplacementsDuType } from "./emplacements.js";
 export { compterPanoplies };
@@ -550,20 +551,6 @@ export function tirerButin(e, t, n, r, i = n, a = 0) {
 export function peutEquiper(e, t) {
   let n = EQUIPEMENTS[t];
   return !(!n || (n.ligneAvant && e.position >= 4));
-}
-// Valeur approximative de l'équipement d'un héros, pour choisir quel anneau remplacer.
-function valeurEquipement(perso) {
-  const b = bonusEquipement(perso);
-  const el = CLASSES[perso.classeId].elements.map((x) => b.stats[STAT_PAR_ELEMENT[x]] ?? 0);
-  const res = Object.values(b.resistances).reduce((a, v) => a + v, 0);
-  return (
-    Math.max(0, ...el) +
-    (b.stats.vitalite ?? 0) * 0.5 +
-    (b.stats.crit ?? 0) * 2 +
-    (b.stats.soin ?? 0) * 0.5 +
-    res * 100 +
-    b.paBonus * 60
-  );
 }
 /**
  * Emplacement où irait l'objet `inst` sur `perso` : celui de son type, ou pour un anneau, un

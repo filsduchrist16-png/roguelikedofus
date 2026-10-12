@@ -3,6 +3,7 @@
 ## Lot D (partiel)
 
 - **D1** : le plan « Équiper le meilleur » tient compte de la rareté d'un objet : il n'est plus périmé après une forgemagie.
+- **D2** : une seule évaluation d'équipement (`src/jeu/evaluation.js`), utilisée par l'inventaire et par la run (choix de l'anneau remplacé).
 
 ## Lot A terminé (A4 à A9)
 
