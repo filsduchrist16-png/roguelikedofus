@@ -153,11 +153,6 @@ body.avec-fond .map-zone {
 .combat .carte {
   border-width: 2px;
 }
-.combat .carte.actif {
-  box-shadow:
-    0 0 0 2px #ffc75a,
-    0 0 16px #f59a2499;
-}
 
 /* ---------- Accueil : légende sous chaque icône du menu ---------- */
 .coin-menu .coin-param {
