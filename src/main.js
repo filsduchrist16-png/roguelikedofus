@@ -33,7 +33,6 @@ import {
   combattantsEquipe,
   effetsDifficulte,
   especesNormalesZone,
-  gagnerXpPerso,
   peutGagnerXp,
   herosVivants,
   monstresDuCombat,
@@ -48,7 +47,6 @@ import {
   synchroniserPv,
   tirerArchis,
   chanceArchiNouveau,
-  tirerButin,
   tirerMonstreRare,
   tirerObjet,
   tirerRecrues,
@@ -63,16 +61,9 @@ import {
   tirerIdsButinSecret,
   tirerRareteSecret,
 } from "./jeu/secret.js";
-import {
-  ajouterKamas,
-  gainKamas,
-  genererStockHdv,
-  numeroZone,
-  rareteSuivante,
-} from "./jeu/economie.js";
+import { ajouterKamas, genererStockHdv, numeroZone, rareteSuivante } from "./jeu/economie.js";
 import {
   appliquerBonusDofus,
-  capturerArchi,
   chanceRelique,
   dofusPossedes,
   enregistrerAscension,
@@ -142,7 +133,7 @@ import {
   zoneAArchis,
 } from "./jeu/rencontres.js";
 import { ecranRencontre } from "./ui/ecrans/rencontre.js";
-import { ecranCaptureArchi, ecranReliques } from "./ui/ecrans/recompenses.js";
+import { ecranReliques } from "./ui/ecrans/recompenses.js";
 import { afficherBandeau } from "./ui/ecrans/succes.js";
 import { ecranAccueil } from "./ui/ecrans/accueil.js";
 import { ecranChoixEquipe } from "./ui/ecrans/choixEquipe.js";
@@ -164,6 +155,13 @@ import { CLES_TUTO, appliquerAccessibilite, sauverParametres } from "./sauvegard
 import { ecranHdv } from "./ui/ecrans/hdv.js";
 import { ecranForgemagie } from "./ui/ecrans/forgemagie.js";
 import { traiterQuetes, contexteRun, quetesDeLaRun } from "./deroule/quetes.js";
+import {
+  gagnerXpEquipe,
+  capturerArchis,
+  distribuerButin,
+  distribuerKamas,
+  soignerAvecGain,
+} from "./deroule/recompenses.js";
 import "./style.css";
 import "./interface.css";
 import "./visuel.css";
@@ -403,67 +401,6 @@ async function jouerCombat(e, combatId, n) {
     defiOk,
     prime,
   };
-}
-// Renvoie l'XP donnée à chaque héros (0 si tous sont au niveau max du monde)
-// et le nombre de héros qui ont gagné au moins un niveau.
-function gagnerXpEquipe(e, t) {
-  let niveaux = 0;
-  const profite = e.persos.some((p) => peutGagnerXp(p, e.trancheId));
-  for (let n of e.persos) {
-    if (gagnerXpPerso(n, t, e.trancheId) > 0) {
-      n.flashNiveau = true;
-      niveaux += 1;
-    }
-  }
-  return { xp: profite ? t : 0, niveaux };
-}
-async function capturerArchis(e) {
-  let t = [];
-  for (let n of e) {
-    if (n.camp === `ennemi` && n.archi && n.monstreId && capturerArchi(meta, n.monstreId)) {
-      t.push(MONSTRES[n.monstreId]?.nom ?? n.monstreId);
-    }
-  }
-  if (t.length) {
-    await ecranCaptureArchi(t);
-  }
-  return t.length;
-}
-// bilan : texte XP / kamas du combat, en sous-titre du butin (ou en bandeau s'il n'y a rien).
-async function distribuerButin(e, t, n, r, bilan) {
-  if (!t) {
-    if (bilan) {
-      afficherBandeau(`Victoire : ${bilan}`);
-    }
-    return;
-  }
-  let prospection = bonusEquipeRun(meta, e).prospection + (idoleActive(e, t)?.prospection ?? 0);
-  let a = tirerButin(e, t, n, Math.random, r, prospection);
-  enregistrerCollection(meta, a);
-  e.stats.objets += a.length;
-  noterObjetsObtenus(e.stats, a);
-  if (a.length) {
-    await ecranButin(a, e, bilan);
-  } else if (bilan) {
-    afficherBandeau(`Victoire : ${bilan}`);
-  }
-}
-// Renvoie le montant ajouté à la bourse.
-function distribuerKamas(e, t, n, mult = 1) {
-  let montant = Math.round(
-    gainKamas(t, n, Math.random) *
-      multiplicateurKamas(e) *
-      bonusEquipeRun(meta, e).multKamas *
-      mult,
-  );
-  ajouterKamas(e, montant);
-  return montant;
-}
-// Soigne l'équipe et renvoie le total de PV rendus.
-function soignerAvecGain(e, pct) {
-  let avant = e.persos.reduce((s, p) => s + Math.max(0, p.pvActuels), 0);
-  soignerEquipe(e, pct);
-  return e.persos.reduce((s, p) => s + Math.max(0, p.pvActuels), 0) - avant;
 }
 const ARTICLES_NOEUDS = {
   combat: `un combat`,
