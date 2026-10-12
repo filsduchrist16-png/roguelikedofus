@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## Version 1.4.0
+
+- **D7 (déroulé de la run)** : `src/main.js` (1385 → 52 lignes) ne garde que l'initialisation ; le déroulé est déplacé tel quel dans `src/deroule/` (`etat.js` méta et run active partagées, `quetes.js`, `recompenses.js`, `combat.js`, `rencontres.js`, `secret.js`, `noeud.js`, `zone.js`, `run.js`, `boucle.js`), sans changement de comportement ni de sauvegarde. Le partage de `simrun.mjs` avec ce déroulé reste à faire.
+- **D9 (consolidation CSS)** : retrait de 114 déclarations écrasées par une règle plus tardive du même sélecteur (style.css 31, interface.css 78, visuel.css, confort-run.css, confort-inventaire.css 1 chacun), de 29 blocs vides et de 4 règles mortes (`.sort-nom`, `.map-equipe h2`, `.equip-pa`). Captures iPhone 13 et 1280 px de 16 écrans avant/après identiques au pixel. CSS construit : 131,08 ko → 128,24 ko (gzip 26,87 → 26,45).
+
 ## Version 1.3.0
 
 - **D10 (chargement différé)** : les portraits de classe et les Dofus du rack (`src/ui/commun.js`) reçoivent `loading="lazy"` et `decoding="async"` ; les listes Bestiaire, Armurerie, HDV, Butin, Forgemagie et Équipement avaient déjà `loading="lazy"`. Pas de chargement des données par monde (trop risqué).
