@@ -16,7 +16,7 @@ import {
 } from "../../jeu/run.js";
 import { emplacementsDuType, typeDeEmplacement } from "../../jeu/emplacements.js";
 import { numeroZoneObjet } from "../../jeu/economie.js";
-import { RARETES, RARETES_INFO } from "../../jeu/config.js";
+import { RARETES } from "../../jeu/config.js";
 import {
   comparerObjet,
   equiperMeilleur,

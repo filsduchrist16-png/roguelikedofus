@@ -72,7 +72,7 @@ export function chargerRun() {
     }
     let t = JSON.parse(e);
     if (
-      typeof t.version != `number` ||
+      typeof t.version !== `number` ||
       t.version < 1 ||
       t.version > 2 ||
       !Number.isInteger(t.zoneIdx) ||

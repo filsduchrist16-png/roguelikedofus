@@ -22,7 +22,7 @@ import {
   statsEffectives,
 } from "../combat/stats.js";
 import { chargerParametres } from "../sauvegarde/parametres.js";
-import { comparerObjet, herosAmeliores } from "../jeu/inventaire.js";
+import { herosAmeliores } from "../jeu/inventaire.js";
 export let racine;
 export function definirRacine(e) {
   racine = e;

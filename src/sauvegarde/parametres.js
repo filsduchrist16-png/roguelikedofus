@@ -25,7 +25,7 @@ const ORDRE_DEFAUT = {
 export const TAILLES_POLICE = [100, 115, 130];
 // Lecture tolérante : toute valeur inconnue (texte, nombre hors liste, null…) donne 100.
 export const normaliserTaillePolice = (v) => {
-  const n = typeof v == `string` && v.trim() !== `` ? Number(v) : v;
+  const n = typeof v === `string` && v.trim() !== `` ? Number(v) : v;
   return TAILLES_POLICE.includes(n) ? n : 100;
 };
 export const normaliserCouleursAdaptees = (v) => v === true;
@@ -75,14 +75,14 @@ const PARAMETRES_DEFAUT = {
   },
 };
 const formationValide = (formation) =>
-  typeof formation == `object` &&
+  typeof formation === `object` &&
   !!formation &&
   !Array.isArray(formation) &&
-  Object.values(formation).every((e) => e === `avant` || e === `arriere` || typeof e == `number`);
+  Object.values(formation).every((e) => e === `avant` || e === `arriere` || typeof e === `number`);
 const normaliserFormation = (formation) => {
   let t = {};
   for (let [n, r] of Object.entries(formation)) {
-    t[n] = typeof r == `number` ? (r < 4 ? `avant` : `arriere`) : r;
+    t[n] = typeof r === `number` ? (r < 4 ? `avant` : `arriere`) : r;
   }
   return t;
 };
@@ -100,12 +100,12 @@ export function chargerParametres() {
       };
       t.taillePolice = normaliserTaillePolice(t.taillePolice);
       t.couleursAdaptees = normaliserCouleursAdaptees(t.couleursAdaptees);
-      let n = t.ordre && typeof t.ordre == `object` && !Array.isArray(t.ordre) ? t.ordre : {};
+      let n = t.ordre && typeof t.ordre === `object` && !Array.isArray(t.ordre) ? t.ordre : {};
       t.ordre = {
         ...ORDRE_DEFAUT,
       };
       for (let [e, r] of Object.entries(n)) {
-        if (typeof r == `number` && Number.isFinite(r)) {
+        if (typeof r === `number` && Number.isFinite(r)) {
           t.ordre[e] = r;
         }
       }

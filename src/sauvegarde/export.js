@@ -27,9 +27,9 @@ function valide(t) {
     (t.version === undefined ||
       (Number.isInteger(t.version) && t.version >= 1 && t.version <= 1)) &&
     t.donnees &&
-    typeof t.donnees == `object` &&
+    typeof t.donnees === `object` &&
     CLES_SAUVEGARDE.every(
-      (k) => t.donnees[k] === undefined || (t.donnees[k] && typeof t.donnees[k] == `object`),
+      (k) => t.donnees[k] === undefined || (t.donnees[k] && typeof t.donnees[k] === `object`),
     ) &&
     !!t.donnees.rld_meta_v0
   );

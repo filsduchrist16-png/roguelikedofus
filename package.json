@@ -7,11 +7,16 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "format": "prettier --write \"src/**/*.{js,css}\" index.html",
+    "format": "prettier --write \"src/**/*.{js,css}\" \"tests/**/*.js\" \"outils/**/*.{js,mjs}\" index.html",
     "test": "vitest run",
-    "sim": "vite-node outils/simulation/simrun.mjs --"
+    "sim": "vite-node outils/simulation/simrun.mjs --",
+    "lint": "eslint .",
+    "check": "prettier --check . && eslint . && vitest run"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.12.0",
+    "globals": "^17.13.0",
     "prettier": "^3.6.0",
     "vite": "^7.1.0",
     "vitest": "^3.2.7"

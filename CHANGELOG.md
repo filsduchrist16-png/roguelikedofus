@@ -7,6 +7,7 @@
 - **D3** : la barre des sorts du combat utilise un seul écouteur délégué (plus d'écouteurs en double si deux rendus se suivent) ; les boutons de l'alerte de synchro en ligne ne sont branchés qu'une fois. La capture de touche retirait déjà son écouteur.
 - **D4** : code mort retiré (`IMG_TERMINER`, `resumeBonus`, `htmlComparaisonObjet`, `ecranZaap`, 10 classes CSS inutilisées, images `carte_au_tresor.png` et `Terminer.png`).
 - **D6** : tests ajoutés (sauvegarde de la run, migrations de la méta, réglages de formation et d'ordre, donjon atteignable sur 200 graines par zone) ; `confort-meta` ne dépend plus d'un `localStorage` laissé par un autre test, `nuage` remet les vrais minuteurs dans un `afterEach`.
+- **D8** : ESLint ajouté (`eslint.config.js`, règles `no-shadow`, `no-unused-vars`, `no-sequences`, `eqeqeq` en avertissements : les ~640 `no-shadow` viennent du code minifié et relèvent de D5), scripts `lint` et `check`, `format` étendu à `tests/` et `outils/`, README mis à jour ; imports inutilisés et `==` sûrs corrigés.
 
 ## Lot A terminé (A4 à A9)
 

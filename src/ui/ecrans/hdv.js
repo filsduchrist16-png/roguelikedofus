@@ -221,7 +221,7 @@ export function ecranHdv(e, t, n) {
       if (!annulable) {
         return ``;
       }
-      let texte = ``;
+      let texte;
       let extra = ``;
       let possible = true;
       if (annulable.type === `vente`) {

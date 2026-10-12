@@ -1,6 +1,6 @@
 import { signalerEchecSauvegarde } from "./echec.js";
 import { signalerChangement } from "./nuage.js";
-import { CONFIG_RELIQUES, DOFUS, MONDES, MONSTRES, RELIQUES, SUCCES } from "../data/index.js";
+import { CONFIG_RELIQUES, DOFUS, MONDES, RELIQUES, SUCCES } from "../data/index.js";
 import { DIFFICULTES, RARETES, getMonde } from "../jeu/config.js";
 import { dofusDeSucces, nouvelEtatQuetes, progressionSucces } from "../jeu/quetes.js";
 import { ajouterResistanceTous, effetsDifficulte, prospectionEquipe } from "../jeu/run.js";
@@ -35,7 +35,7 @@ export function chargerMeta() {
     brut = localStorage.getItem(CLE_META);
     if (brut) {
       let t = JSON.parse(brut);
-      if (!t || typeof t != `object` || Array.isArray(t)) {
+      if (!t || typeof t !== `object` || Array.isArray(t)) {
         throw new Error(`méta illisible`);
       }
       let n =
@@ -49,14 +49,14 @@ export function chargerMeta() {
       let ascension = n && (r ? Object.fromEntries(Object.keys(n).map((e) => [e, 0])) : n);
       // champ par champ : une valeur abîmée ne fait pas perdre les autres
       let dofus = (Array.isArray(t.dofus) ? t.dofus : [])
-        .map((e) => (typeof e == `string` ? { id: e } : e))
-        .filter((e) => e && typeof e == `object` && DOFUS[e.id]);
+        .map((e) => (typeof e === `string` ? { id: e } : e))
+        .filter((e) => e && typeof e === `object` && DOFUS[e.id]);
       let quetes = {
         faites: Array.isArray(t.quetes?.faites)
-          ? t.quetes.faites.filter((x) => typeof x == `string`)
+          ? t.quetes.faites.filter((x) => typeof x === `string`)
           : [],
         compteurs: {
-          ...(t.quetes?.compteurs && typeof t.quetes.compteurs == `object`
+          ...(t.quetes?.compteurs && typeof t.quetes.compteurs === `object`
             ? t.quetes.compteurs
             : {}),
         },
@@ -72,7 +72,7 @@ export function chargerMeta() {
       return {
         version: 4,
         dofus,
-        archis: Array.isArray(t.archis) ? t.archis.filter((x) => typeof x == `string`) : [],
+        archis: Array.isArray(t.archis) ? t.archis.filter((x) => typeof x === `string`) : [],
         runs: Number.isFinite(t.runs) ? t.runs : 0,
         victoires: Number.isFinite(t.victoires) ? t.victoires : 0,
         quetes,
@@ -241,23 +241,23 @@ export function tirerReliques(e, t, n, r, i) {
 }
 function normaliserReliques(reliques) {
   if (Array.isArray(reliques)) {
-    return [...new Set(reliques.filter((e) => typeof e == `string` && !!RELIQUES[e]))];
+    return [...new Set(reliques.filter((e) => typeof e === `string` && !!RELIQUES[e]))];
   }
   return [];
 }
 function normaliserStatsMonde(statsMonde) {
   let t = {};
-  if (!statsMonde || typeof statsMonde != `object`) {
+  if (!statsMonde || typeof statsMonde !== `object`) {
     return t;
   }
   let n = (e) => {
-    if (typeof e == `number` && Number.isFinite(e) && e > 0) {
+    if (typeof e === `number` && Number.isFinite(e) && e > 0) {
       return Math.floor(e);
     }
     return 0;
   };
   for (let [r, i] of Object.entries(statsMonde)) {
-    let e = i && typeof i == `object` ? i : {};
+    let e = i && typeof i === `object` ? i : {};
     t[r] = {
       toileMax: n(e.toileMax),
       victoires: n(e.victoires),

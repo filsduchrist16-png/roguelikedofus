@@ -17,6 +17,10 @@ npm run dev      # serveur de développement (http://localhost:5173)
 npm run build    # version de production dans dist/
 npm run preview  # sert dist/ en local
 npm test         # tests : cohérence des données + 600 combats simulés au hasard
+npm run lint     # ESLint (règles no-shadow, no-unused-vars, no-sequences, eqeqeq)
+npm run check    # prettier --check, ESLint puis tous les tests
+npm run format   # prettier --write sur src, tests, outils
+npm run sim -- t1,t3,t5 30   # simulation de 30 runs complètes par monde (lente, plusieurs minutes)
 ```
 
 `FUZZ_N=5000 npm test` simule plus de combats (plus lent, plus exhaustif).
@@ -37,7 +41,8 @@ src/
   main.js                point d'entrée : boucle du jeu, déroulé d'une run, d'une zone, d'un nœud
   style.css              styles d'origine
   interface.css          mise en page mobile, boîte de confirmation, aide du sort choisi
-  visuel.css             habillage (parchemin, cadres, boutons), chargé en dernier
+  visuel.css             habillage (parchemin, cadres, boutons)
+  confort-*.css          retouches de confort (carte, combat, écrans, inventaire, méta, run), chargées après visuel.css
   data/                  contenu du jeu (à modifier pour équilibrer / ajouter du contenu)
     sorts.json           sorts des classes et des monstres
     classes.json         classes jouables (stats, éléments, sorts)
@@ -63,6 +68,7 @@ src/
     obtention.js         textes d'aide : où trouver un objet, un boss, comment faire une quête
     objectifs.js         objectifs de succès réalisables dans le combat qui commence
     inventaire.js        comparer un objet à celui porté, regrouper les doublons
+    evaluation.js        valeur chiffrée d'un équipement (clé PA / dégâts / survie), partagée avec run.js
     defis.js             défis de combat (Premier, Dernier, Blitzkrieg, Survivant…)
     rencontres.js        cases « Rencontre » : bénédictions, idoles, coffre, marchand, traque, clé
     secret.js            donjons secrets : clé, monstres à la puissance de la zone, récompenses
@@ -76,7 +82,8 @@ src/
     ia.js                comportement des monstres (et des créatures invoquées par les héros)
     classes.js           mécaniques des classes ajoutées : infection, créatures, états, marques…
   carte/generation.js    génération de la carte d'une zone
-  sauvegarde/            localStorage : paramètres, run en cours, progression (meta), export/import, sauvegarde en ligne (nuage.js)
+  sauvegarde/            localStorage : paramètres, run en cours, progression (meta), export/import,
+                         sauvegarde en ligne (nuage.js, compte.js), téléchargement de fichiers (telechargement.js)
   ui/                    affichage
     commun.js            utilitaires d'affichage, images, infobulles, fiches d'objets
     combat.js            écran de combat
@@ -85,6 +92,13 @@ src/
     prochainDofus.js     encart « Prochain Dofus » de l'accueil
     ecrans/              un fichier par écran (accueil, carte, rencontre, taverne, HDV, succès…)
 ```
+
+## Outils
+
+- `outils/simulation/simrun.mjs` : simulation de runs complètes (`npm run sim -- t1,t3,t5 30`).
+- `outils/artefact/construire.sh` : construit la version claude.ai (`dist-artefact/roguefus-lite.html`,
+  `assets/` et `paquets/`) à partir du **dernier commit** : commiter avant de lancer
+  `bash outils/artefact/construire.sh`.
 
 ## Tests
 
@@ -101,7 +115,8 @@ src/
 ## Sauvegardes
 
 Les sauvegardes des joueurs sont dans le `localStorage` du navigateur, sous les clés
-`rld_meta_v0`, `rld_settings_v0` et `rld_run_v0`. Elles restent compatibles avec la version
+`rld_meta_v0`, `rld_settings_v0`, `rld_run_v0`, `rld_sync_v0` (état de la sauvegarde en ligne) et
+`rld_backup_v0` (copie de secours avant un import). Elles restent compatibles avec la version
 actuellement en ligne tant que le jeu est publié sur le même nom de domaine.
 
 ## Historique de cette version du code
