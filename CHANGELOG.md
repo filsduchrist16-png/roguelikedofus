@@ -2,6 +2,7 @@
 
 ## Version 1.2.0
 
+- **E3** : idoles de départ à l'accueil (Rage, Bastion, Fortune, Gloire ; cumulables, malus sur les monstres contre bonus d'XP, de kamas et de prospection pour toute la run ; `src/jeu/idolesDepart.js`, champ `idolesDepart` de la run, vide pour les anciennes sauvegardes) et score record par monde enregistré dans la méta (`records`, absent = aucun) et affiché sur l'accueil. `idoleActive` cumule désormais l'idole de la zone et celles du départ (`idoleZone` : l'autel seul).
 - **E1** : 40 monstres du Monde 5 deviennent des archimonstres (`archiNom`, espèces des combats normaux et élites hors boss) ; nouveau succès « Chasseur d'âmes du Monde 5 » (`t5_5_archimonstres`, quête `t5_archis_tous`), les anciens identifiants (dont `ocre_t5`) sont inchangés ; Otomai, le Philtre et la Traque servent donc aussi au Monde 5 (le test B8 est adapté).
 - **Bug « Véloces »** : non reproduit (le moteur applique l'affixe et la pastille s'affiche, vérifié en navigateur sur une case élite Véloces comme Cuirassés) ; tests ajoutés (`tests/affixes-elite.test.js`) pour garder le nom, la description et l'effet de chaque affixe.
 - **C10** : option « Réduire les animations » dans Paramètres (classe `reduire-animations` sur `body`, aussi suivie via la préférence du système) ; `comportementDefilement()` choisit `auto` ou `smooth` pour tous les défilements animés.

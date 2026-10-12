@@ -4,6 +4,7 @@ import { MONSTRES } from "../data/index.js";
 import { ECONOMIE, monstresDeZone } from "./config.js";
 import { bonusDofus } from "../sauvegarde/meta.js";
 import { nomCle, secretDuMonde } from "./secret.js";
+import { IDOLES_DEPART, cumulerIdoles, idolesDepartDeRun } from "./idolesDepart.js";
 
 // Bénédictions des dieux du Krosmoz : elles durent toute la run.
 export const BENEDICTIONS = {
@@ -131,8 +132,20 @@ export function prixMarchand(toile) {
 
 export const zoneAArchis = (zone) => monstresDeZone(zone).some((id) => MONSTRES[id]?.archiNom);
 
-export function idoleActive(run, zoneId) {
+// Idole de l'autel de la zone (rencontre), sans les idoles de départ.
+export function idoleZone(run, zoneId) {
   return run.idole?.zone === zoneId ? IDOLES[run.idole.id] : null;
+}
+
+// Effets des idoles en cours : celle de la zone et celles choisies au départ, cumulées. Sans idole
+// de départ, c'est exactement l'idole de la zone (ou null).
+export function idoleActive(run, zoneId) {
+  const zone = idoleZone(run, zoneId);
+  const depart = idolesDepartDeRun(run).map((id) => IDOLES_DEPART[id]);
+  if (!depart.length) {
+    return zone;
+  }
+  return cumulerIdoles(zone ? [zone, ...depart] : depart);
 }
 
 export function traqueActive(run, zoneId) {
@@ -164,7 +177,14 @@ export function effetsEnCours(run, zoneId) {
     nom: BENEDICTIONS[id].nom,
     desc: `Bénédiction de ${BENEDICTIONS[id].dieu} pour toute la run : ${BENEDICTIONS[id].desc}.`,
   }));
-  const idole = idoleActive(run, zoneId);
+  for (const id of idolesDepartDeRun(run)) {
+    out.push({
+      icone: `🗿`,
+      nom: IDOLES_DEPART[id].nom,
+      desc: `Pour toute la run : ${IDOLES_DEPART[id].malus} ; ${IDOLES_DEPART[id].bonus}.`,
+    });
+  }
+  const idole = idoleZone(run, zoneId);
   if (idole) {
     out.push({
       icone: `🗿`,

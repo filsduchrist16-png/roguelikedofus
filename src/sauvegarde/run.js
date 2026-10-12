@@ -3,6 +3,7 @@ import { signalerChangement } from "./nuage.js";
 import { CLASSES, EQUIPEMENTS, MONDES } from "../data/index.js";
 import { DIFFICULTE_MAX, getMonde, zonesDuMonde } from "../jeu/config.js";
 import { nouvellesStatsRun } from "../jeu/run.js";
+import { idolesDepartValides } from "../jeu/idolesDepart.js";
 import { EMPLACEMENTS, emplacementsDuType } from "../jeu/emplacements.js";
 const CLE_RUN = `rld_run_v0`;
 /** Enregistre la run. Renvoie false (et prévient une fois) si le navigateur refuse d'écrire. */
@@ -109,6 +110,8 @@ export function chargerRun() {
     t.run.ascension =
       t.version < 2 ? 0 : Math.max(0, Math.min(t.run.ascension ?? 0, DIFFICULTE_MAX));
     t.run.philtres = t.run.philtres ?? 0;
+    // ancienne sauvegarde sans idoles de départ : aucune
+    t.run.idolesDepart = idolesDepartValides(t.run.idolesDepart);
     t.run.trancheId = t.run.trancheId ?? `t1`;
     for (let e of t.run.carte?.noeuds ?? []) {
       let t = e.eliteModif;

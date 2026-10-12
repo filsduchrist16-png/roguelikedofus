@@ -1,10 +1,12 @@
 import { MONDES } from "../../data/index.js";
 import { DIFFICULTES, DIFFICULTE_MAX, reliquesDuMonde } from "../../jeu/config.js";
 import { progressionArchisMonde } from "../../jeu/quetes.js";
+import { IDOLES_DEPART } from "../../jeu/idolesDepart.js";
 import {
   ascensionMonde,
   mondeJouable,
   mondePrecedentTermine,
+  recordMonde,
   statsMonde,
 } from "../../sauvegarde/meta.js";
 import {
@@ -74,6 +76,9 @@ export function ecranAccueil(e, onReset, n = null) {
     let ascension = n
       ? 0
       : Math.max(0, Math.min(Math.trunc(depart?.ascension) || 0, palierDebloque(e, trancheId)));
+    // idoles de départ cochées (cumulables) et section dépliée ou non
+    const idoles = new Set();
+    let idolesOuvert = false;
     // élément à refocaliser après un nouveau rendu (navigation au clavier)
     let focusApres = null;
     let o = () => {
@@ -100,6 +105,7 @@ export function ecranAccueil(e, onReset, n = null) {
           </button>`;
         }).join(``);
       };
+      const record = recordMonde(e, trancheId);
       let u = n
         ? ``
         : `<div class="asc-section">
@@ -113,6 +119,26 @@ export function ecranAccueil(e, onReset, n = null) {
           </div>`,
           ).join(``)}</div>
           ${s !== undefined && s >= 1 ? `<p class="asc-record">Meilleur palier : ${etoilesDifficulte(s)} ${echapperHtml(DIFFICULTES[s].nom)}</p>` : ``}
+          ${
+            record
+              ? `<p class="asc-record">Record du monde : ${record.score} points${record.idoles.length ? ` (${record.idoles.map((id) => echapperHtml(IDOLES_DEPART[id].nom)).join(`, `)})` : ``}</p>`
+              : ``
+          }
+          <details class="idoles-depart" style="margin: 6px 12px"${idolesOuvert ? ` open` : ``}>
+            <summary>🗿 Idoles de départ${idoles.size ? ` (${idoles.size})` : ``}</summary>
+            <p>Des malus pour toute la run contre des bonus : cumulables, le score du monde augmente.</p>
+            ${Object.entries(IDOLES_DEPART)
+              .map(
+                ([
+                  id,
+                  idole,
+                ]) => `<label class="idole-depart" style="display: block; margin: 6px 0; text-align: left">
+              <input type="checkbox" data-idole="${id}"${idoles.has(id) ? ` checked` : ``} />
+              <b>${echapperHtml(idole.nom)}</b> : ${echapperHtml(idole.malus)} · ${echapperHtml(idole.bonus)}
+            </label>`,
+              )
+              .join(``)}
+          </details>
         </div>`;
       afficherEcran(
         `
@@ -344,6 +370,20 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
           }
         });
       });
+      racine.querySelector(`.idoles-depart`)?.addEventListener(`toggle`, (ev) => {
+        idolesOuvert = ev.target.open;
+      });
+      racine.querySelectorAll(`input[data-idole]`).forEach((c) => {
+        c.addEventListener(`change`, () => {
+          if (c.checked) {
+            idoles.add(c.dataset.idole);
+          } else {
+            idoles.delete(c.dataset.idole);
+          }
+          focusApres = `input[data-idole="${c.dataset.idole}"]`;
+          o();
+        });
+      });
       racine.querySelectorAll(`[data-tranche]`).forEach((e) => {
         e.addEventListener(`click`, () => {
           // un appui à côté d'une étoile sur le monde déjà choisi ne remet pas la difficulté à zéro
@@ -379,6 +419,7 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
           action: `nouvelle`,
           ascension,
           trancheId,
+          idoles: [...idoles],
         });
       });
       document.getElementById(`btn-reprendre`)?.addEventListener(`click`, () =>

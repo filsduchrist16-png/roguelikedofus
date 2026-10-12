@@ -71,6 +71,7 @@ import {
   dofusDebloquables,
   dofusPossedes,
   enregistrerAscension,
+  enregistrerRecord,
   enregistrerCollection,
   enregistrerRun,
   enregistrerToileMax,
@@ -110,6 +111,7 @@ import {
 } from "./ui/objectifs.js";
 import { objectifsDuCombat } from "./jeu/objectifs.js";
 import { BONUS_DEFI, defiReussi, etatDefi, tirerDefi } from "./jeu/defis.js";
+import { scoreRun } from "./jeu/idolesDepart.js";
 import {
   BENEDICTIONS,
   IDOLES,
@@ -118,6 +120,7 @@ import {
   effetsEnCours,
   gainBase,
   idoleActive,
+  idoleZone,
   idolesProposees,
   peutCrocheter,
   prixMarchand,
@@ -677,7 +680,7 @@ async function jouerRencontre(e, zone) {
   let toile = zone ? numeroZone(zone.id) : 1;
   let type = tirerRencontre(Math.random, e.cle || !secretDuMonde(e.trancheId) ? [`cle`] : []);
   if (
-    (type === `idoles` && idoleActive(e, zone?.id)) ||
+    (type === `idoles` && idoleZone(e, zone?.id)) ||
     (type === `traque` && traqueActive(e, zone?.id))
   ) {
     type = `coffre`;
@@ -1100,7 +1103,19 @@ async function jouerZone(e, t, n) {
     sauverRun(n, e);
   }
 }
-async function jouerRun(e, t, n = 0, r = `t1`) {
+// Score record du monde (zones franchies, difficulté et idoles de départ) : prévient s'il est battu.
+function noterRecord(run, trancheId, zones, victoire) {
+  const score = scoreRun({
+    zones,
+    victoire,
+    ascension: run.ascension,
+    idoles: run.idolesDepart,
+  });
+  if (enregistrerRecord(meta, trancheId, score, run.idolesDepart, run.ascension)) {
+    afficherBandeau(`🏆 Nouveau record du monde : ${score} points`);
+  }
+}
+async function jouerRun(e, t, n = 0, r = `t1`, idoles = []) {
   let i = getMonde(e ? e.run.trancheId : r);
   let a = zonesDuMonde(i);
   if (!a.length) {
@@ -1120,7 +1135,7 @@ async function jouerRun(e, t, n = 0, r = `t1`) {
     if (!e) {
       return null;
     }
-    o = nouvelleRun(e, n, i.id);
+    o = nouvelleRun(e, n, i.id, idoles);
     // dernier départ retenu : l'accueil et le choix d'équipe le proposent par défaut
     parametres.dernierDepart = { trancheId: i.id, ascension: n, classes: [...e] };
     sauverParametres(parametres);
@@ -1132,9 +1147,10 @@ async function jouerRun(e, t, n = 0, r = `t1`) {
           relancer: o.choixDepart ?? o.persos.slice(0, 2).map((e) => e.classeId),
           ascension: o.ascension,
           trancheId: i.id,
+          idoles: o.idolesDepart,
         }
       : choix === `choix`
-        ? { relancer: `selection`, ascension: o.ascension, trancheId: i.id }
+        ? { relancer: `selection`, ascension: o.ascension, trancheId: i.id, idoles: o.idolesDepart }
         : null;
   fondDuMonde(i.id);
   try {
@@ -1157,12 +1173,14 @@ async function jouerRun(e, t, n = 0, r = `t1`) {
               : `selection`,
           ascension: o.ascension,
           trancheId: i.id,
+          idoles: o.idolesDepart,
         };
       }
       if (n === `wipe`) {
         runActive = null;
         effacerRun();
         enregistrerRun(meta, false);
+        noterRecord(o, i.id, o.stats.zones, false);
         await traiterQuetes(o, verifierQuetesMeta(quetesMeta(), ctxMeta()));
         return relance(await ecranRecap(o, false, quetesDeLaRun(o)));
       }
@@ -1190,6 +1208,7 @@ async function jouerRun(e, t, n = 0, r = `t1`) {
     enregistrerRun(meta, true, i.id);
     let avant = etatDeblocage(meta, i.id);
     enregistrerAscension(meta, i.id, o.ascension);
+    noterRecord(o, i.id, a.length, true);
     let debloques = deblocagesVictoire(avant, etatDeblocage(meta, i.id));
     await traiterQuetes(o, verifierQuetesRun(quetesMeta(), contexteRun(o, i.id, true)));
     await traiterQuetes(o, verifierQuetesMeta(quetesMeta(), ctxMeta()));
@@ -1216,7 +1235,7 @@ async function boucleJeu() {
     try {
       let e = chargerRun();
       let t = zonesDuMonde(getMonde(e?.run.trancheId ?? `t1`));
-      let { action, ascension, trancheId } = await ecranAccueil(
+      let { action, ascension, trancheId, idoles } = await ecranAccueil(
         meta,
         () => reinitialiserDofus(meta),
         e
@@ -1234,13 +1253,20 @@ async function boucleJeu() {
         enregistrerRun(meta, false);
         continue;
       }
-      let a = await jouerRun(action === `reprendre` ? e : null, undefined, ascension, trancheId);
+      let a = await jouerRun(
+        action === `reprendre` ? e : null,
+        undefined,
+        ascension,
+        trancheId,
+        idoles,
+      );
       while (a?.relancer) {
         a = await jouerRun(
           null,
           a.relancer === `selection` ? undefined : a.relancer,
           a.ascension,
           a.trancheId,
+          a.idoles,
         );
       }
     } catch (erreur) {

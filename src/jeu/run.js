@@ -6,6 +6,7 @@ import {
   EQUIPEMENTS,
   MONSTRES,
 } from "../data/index.js";
+import { idolesDepartValides } from "./idolesDepart.js";
 import {
   AFFIXES_GROUPE,
   CONFIG_ARCHI,
@@ -107,7 +108,7 @@ function insererSelonOrdre(persos, t, ordre) {
     persos.splice(i, 0, t);
   }
 }
-export function nouvelleRun(e = EQUIPE_DEFAUT, ascension = 0, trancheId = `t1`) {
+export function nouvelleRun(e = EQUIPE_DEFAUT, ascension = 0, trancheId = `t1`, idolesDepart = []) {
   let r = positionsInitiales(e);
   let i = getMonde(trancheId).niveaux[0];
   return {
@@ -127,6 +128,7 @@ export function nouvelleRun(e = EQUIPE_DEFAUT, ascension = 0, trancheId = `t1`) 
     ascension,
     philtres: 0,
     trancheId,
+    idolesDepart: idolesDepartValides(idolesDepart),
   };
 }
 // Héros encore debout (les tombés de la mort définitive ne comptent pas pour l'équipe « pleine »).

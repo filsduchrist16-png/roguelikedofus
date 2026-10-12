@@ -4,6 +4,7 @@ import { CONFIG_RELIQUES, DOFUS, MONDES, RELIQUES, SUCCES } from "../data/index.
 import { DIFFICULTES, RARETES, getMonde } from "../jeu/config.js";
 import { dofusDeSucces, nouvelEtatQuetes, progressionSucces } from "../jeu/quetes.js";
 import { ajouterResistanceTous, effetsDifficulte, prospectionEquipe } from "../jeu/run.js";
+import { idolesDepartValides } from "../jeu/idolesDepart.js";
 const CLE_META = `rld_meta_v0`;
 const MIGRATION_SUCCES = {
   bapteme_du_feu: `g_premiere_run`,
@@ -86,6 +87,7 @@ export function chargerMeta() {
         dofusSuspendus: Array.isArray(t.dofusSuspendus) ? t.dofusSuspendus : [],
         secrets: Array.isArray(t.secrets) ? t.secrets : [],
         jaugeArchi: Number.isFinite(t.jaugeArchi) ? Math.max(0, t.jaugeArchi) : 0,
+        records: normaliserRecords(t.records),
       };
     }
   } catch {
@@ -215,6 +217,38 @@ function statsMondeModifiable(e, t) {
 export function enregistrerToileMax(e, t, n) {
   let r = statsMondeModifiable(e, t);
   r.toileMax = Math.max(r.toileMax, n);
+}
+// Score record par monde (runs avec ou sans idoles de départ) : { score, idoles, ascension }.
+function normaliserRecords(records) {
+  const out = {};
+  if (!records || typeof records !== `object` || Array.isArray(records)) {
+    return out;
+  }
+  for (const [monde, r] of Object.entries(records)) {
+    if (r && typeof r === `object` && Number.isFinite(r.score) && r.score > 0) {
+      out[monde] = {
+        score: Math.floor(r.score),
+        idoles: idolesDepartValides(r.idoles),
+        ascension: Number.isFinite(r.ascension) ? Math.max(0, Math.floor(r.ascension)) : 0,
+      };
+    }
+  }
+  return out;
+}
+export function recordMonde(e, t) {
+  return e.records?.[t];
+}
+/** Garde le score s'il bat le record du monde. Renvoie true si c'est un nouveau record. */
+export function enregistrerRecord(e, t, score, idoles = [], ascension = 0) {
+  if (!(score > (e.records?.[t]?.score ?? 0))) {
+    return false;
+  }
+  e.records = {
+    ...(e.records ?? {}),
+    [t]: { score, idoles: idolesDepartValides(idoles), ascension },
+  };
+  sauverMeta(e);
+  return true;
 }
 export function chanceRelique(e, t) {
   return (
