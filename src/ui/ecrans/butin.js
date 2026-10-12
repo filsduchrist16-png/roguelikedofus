@@ -1,4 +1,5 @@
 import { CLASSES } from "../../data/index.js";
+
 import { equiperMeilleur, planEquiper } from "../../jeu/inventaire.js";
 import {
   afficherEcran,
@@ -15,11 +16,15 @@ import {
   photoEquipement,
   restaurerEquipement,
 } from "../commun.js";
-import { afficherBandeau } from "./succes.js";
+import { afficherAstuce, afficherBandeau } from "./succes.js";
 // run (facultatif) : pour montrer à qui sert chaque objet et proposer de l'équiper tout de suite.
 // bilan (facultatif) : XP et kamas gagnés au combat, en sous-titre.
 export function ecranButin(e, run, bilan) {
   return new Promise((resolve) => {
+    afficherAstuce(
+      `butin`,
+      `Prends ce qui te sert : dans l'inventaire, ⚡ Équiper le meilleur équipe tes héros en un geste.`,
+    );
     let n = e
       .map((e, k) => {
         return `<div class="drop-item${classeRarete(e)}"${attrTipObjet(e.id)} data-drop="${k}">

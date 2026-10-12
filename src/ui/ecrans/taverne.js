@@ -1,4 +1,5 @@
 import { CLASSES } from "../../data/index.js";
+import { afficherAstuce } from "./succes.js";
 import { apercuSoin, niveauMoyen, pvMaxPerso } from "../../jeu/run.js";
 import { htmlBarreEquipe } from "../barreEquipe.js";
 import {
@@ -14,6 +15,10 @@ const nomClasse = (id) => CLASSES[id]?.nom ?? id;
 const carteAvecInfo = (html, info) => html.replace(/<\/button>\s*$/, `${info}</button>`);
 export function ecranTaverne(e, t, n, r = false, i = false) {
   return new Promise((resolve) => {
+    afficherAstuce(
+      `taverne`,
+      `La taverne recrute un héros : une équipe plus large encaisse et frappe plus.`,
+    );
     let classeId = null;
     // recrue sélectionnée au premier appui (écran tactile)
     let selection = null;

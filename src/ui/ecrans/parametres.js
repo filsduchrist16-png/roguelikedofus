@@ -1,11 +1,13 @@
 import { CLASSES } from "../../data/index.js";
 import {
+  CLES_TUTO,
   TAILLES_POLICE,
   appliquerAccessibilite,
   nomTouche,
   rangOrdre,
   sauverParametres,
 } from "../../sauvegarde/parametres.js";
+import { reinitialiserAstuces } from "./succes.js";
 import { classesJouables } from "../../jeu/run.js";
 import {
   exporterSauvegarde,
@@ -112,6 +114,10 @@ export function ecranParametres(e) {
           <div class="setting-ligne">
             <span class="setting-lbl">Réduire les animations<br><small class="muet">effets de combat atténués, défilements instantanés</small></span>
             <button id="set-animations" class="secondaire ${parametres.reduireAnimations ? `on` : ``}" aria-pressed="${!!parametres.reduireAnimations}">${parametres.reduireAnimations ? `Activé` : `Désactivé`}</button>
+          </div>
+          <div class="setting-ligne">
+            <span class="setting-lbl">Astuces de première partie<br><small class="muet">${parametres.vuTuto && CLES_TUTO.every((k) => parametres.vuTuto[k]) ? `déjà toutes vues` : `affichées une fois, au fil de la partie`}</small></span>
+            <button id="set-astuces" class="secondaire">Revoir les astuces</button>
           </div>
           <div class="setting-ligne">
             <span class="setting-lbl">Sauvegarde<br><small class="muet">Dofus, succès, réglages et run en cours, pour changer de PC</small></span>
@@ -314,6 +320,10 @@ export function ecranParametres(e) {
         parametres.reduireAnimations = !parametres.reduireAnimations;
         sauverParametres(parametres);
         appliquerAccessibilite(parametres);
+        i();
+      });
+      document.getElementById(`set-astuces`)?.addEventListener(`click`, () => {
+        reinitialiserAstuces();
         i();
       });
       document.getElementById(`set-rapide`)?.addEventListener(`click`, () => {

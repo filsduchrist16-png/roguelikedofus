@@ -31,6 +31,21 @@ export const normaliserTaillePolice = (v) => {
 export const normaliserCouleursAdaptees = (v) => v === true;
 // Lecture tolérante : seul `true` active l'option (ancienne sauvegarde ou valeur étrangère : désactivée).
 export const normaliserReduireAnimations = (v) => v === true;
+// Astuces de première partie : une par moment clé. `vuTuto` vaut null tant que le jeu n'a pas
+// décidé (anciens réglages), puis un objet { cle: true } des astuces déjà affichées.
+export const CLES_TUTO = [`carte`, `combat`, `butin`, `taverne`];
+// Lecture tolérante : `true` (ancien drapeau unique) = tout vu ; objet = on ne garde que les clés
+// connues à `true` ; toute autre valeur = null (à décider selon la progression du joueur).
+export const normaliserVuTuto = (v) => {
+  if (v === true) {
+    return Object.fromEntries(CLES_TUTO.map((k) => [k, true]));
+  }
+  if (v && typeof v === `object` && !Array.isArray(v)) {
+    return Object.fromEntries(CLES_TUTO.map((k) => [k, v[k] === true]));
+  }
+  return null;
+};
+export const tutoVu = (v, cle) => normaliserVuTuto(v)?.[cle] === true;
 // Comportement des défilements : instantané si le joueur a réduit les animations (réglage du jeu ou
 // préférence du système), progressif sinon.
 export const comportementDefilement = (reduire, systemeReduit = false) =>
@@ -61,6 +76,8 @@ const PARAMETRES_DEFAUT = {
   couleursAdaptees: false,
   // animations réduites (effets de combat, défilements instantanés)
   reduireAnimations: false,
+  // astuces de première partie déjà vues (null : pas encore décidé, voir main.js)
+  vuTuto: null,
   formation: {
     iop: `avant`,
     feca: `avant`,
@@ -113,6 +130,7 @@ export function chargerParametres() {
       t.taillePolice = normaliserTaillePolice(t.taillePolice);
       t.couleursAdaptees = normaliserCouleursAdaptees(t.couleursAdaptees);
       t.reduireAnimations = normaliserReduireAnimations(t.reduireAnimations);
+      t.vuTuto = normaliserVuTuto(t.vuTuto);
       let n = t.ordre && typeof t.ordre === `object` && !Array.isArray(t.ordre) ? t.ordre : {};
       t.ordre = {
         ...ORDRE_DEFAUT,

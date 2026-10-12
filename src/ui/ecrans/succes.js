@@ -15,7 +15,14 @@ import {
   barreRetour,
   cheminAsset,
   echapperHtml,
+  parametres,
 } from "../commun.js";
+import {
+  CLES_TUTO,
+  normaliserVuTuto,
+  sauverParametres,
+  tutoVu,
+} from "../../sauvegarde/parametres.js";
 import { dofusAPortee } from "../prochainDofus.js";
 const ECRAN_ETROIT = `(max-width: 900px)`;
 function succesParDofus() {
@@ -272,6 +279,20 @@ export function afficherBandeau(texte) {
   });
   n.addEventListener(`pointerleave`, lancer);
   lancer();
+}
+// Astuce de première partie : un bandeau non bloquant, une seule fois par moment clé (`cle`).
+export function afficherAstuce(cle, texte) {
+  if (!parametres.vuTuto || tutoVu(parametres.vuTuto, cle)) {
+    return;
+  }
+  parametres.vuTuto = { ...normaliserVuTuto(parametres.vuTuto), [cle]: true };
+  sauverParametres(parametres);
+  afficherBandeau(`💡 ${texte}`);
+}
+// « Revoir les astuces » (Paramètres) : toutes les astuces redeviennent disponibles.
+export function reinitialiserAstuces() {
+  parametres.vuTuto = Object.fromEntries(CLES_TUTO.map((k) => [k, false]));
+  sauverParametres(parametres);
 }
 export function afficherBandeauQuete(e) {
   afficherBandeau(`✓ Quête accomplie : ${e}`);

@@ -4,6 +4,7 @@
 
 - **C10** : option « Réduire les animations » dans Paramètres (classe `reduire-animations` sur `body`, aussi suivie via la préférence du système) ; `comportementDefilement()` choisit `auto` ou `smooth` pour tous les défilements animés.
 - **C11** : le bouton et le geste « retour » du téléphone ne quittent plus le jeu : ils activent le bouton Retour de l'écran, ou demandent confirmation en combat et sur les écrans sans Retour (accueil et connexion laissent quitter) ; la run est sauvegardée quand la page passe en arrière-plan (hors combat).
+- **C12** : astuces de première partie (bandeaux non bloquants, une fois chacune) : 1er écran de carte, 1er tour de combat, 1er butin, 1re taverne ; drapeau `vuTuto` dans les réglages (absent = décidé au lancement : déjà une run finie, pas d'astuces) ; bouton « Revoir les astuces » dans Paramètres.
 
 ## Version 1.1.0
 

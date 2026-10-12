@@ -148,7 +148,7 @@ import {
   noterEnnemisVaincus,
 } from "./ui/ecrans/recap.js";
 import { afficherFinCombat, texteBilan } from "./ui/finCombat.js";
-import { appliquerAccessibilite, sauverParametres } from "./sauvegarde/parametres.js";
+import { CLES_TUTO, appliquerAccessibilite, sauverParametres } from "./sauvegarde/parametres.js";
 import { ecranHdv } from "./ui/ecrans/hdv.js";
 import { ecranForgemagie } from "./ui/ecrans/forgemagie.js";
 import "./style.css";
@@ -180,6 +180,11 @@ if (!elementApp) {
 }
 initialiserInterface(elementApp);
 const meta = chargerMeta();
+// astuces de première partie : un joueur qui a déjà fini une run (ancienne sauvegarde) ne les revoit pas
+if (parametres.vuTuto === null) {
+  parametres.vuTuto = Object.fromEntries(CLES_TUTO.map((k) => [k, meta.runs > 0]));
+  sauverParametres(parametres);
+}
 const quetesMeta = () => (meta.quetes ??= nouvelEtatQuetes());
 const ctxMeta = () => contexteMeta(meta);
 async function traiterQuetes(e, t) {

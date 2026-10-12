@@ -1,4 +1,5 @@
 import { SORTS } from "../data/index.js";
+import { afficherAstuce } from "./ecrans/succes.js";
 import { statElement } from "../jeu/progression.js";
 import {
   ELEMENTS,
@@ -460,6 +461,10 @@ export function controleurJoueur(e, t) {
     }
     rendreCombat();
     montrerHerosActif();
+    afficherAstuce(
+      `combat`,
+      `Les héros de l'avant encaissent, ceux de l'arrière sont protégés. Chaque sort coûte des PA : touche un sort puis une cible.`,
+    );
   });
 }
 // Téléphone : au début du tour d'un héros, sa carte ne doit pas rester cachée sous la barre

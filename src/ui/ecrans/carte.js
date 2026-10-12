@@ -1,4 +1,5 @@
 import { CLASSES, COMBATS, MONDES, MONSTRES, ZONES } from "../../data/index.js";
+import { afficherAstuce } from "./succes.js";
 import { AFFIXES_GROUPE, CONFIG_ARCHI, DIFFICULTES } from "../../jeu/config.js";
 import { cheminVisite, noeudsAtteignables, trouverNoeud } from "../../carte/generation.js";
 import { effetsDifficulte, pvMaxPerso } from "../../jeu/run.js";
@@ -189,6 +190,10 @@ export function ecranCarte(
   infosZone = {},
 ) {
   return new Promise((resolveBrut) => {
+    afficherAstuce(
+      `carte`,
+      `Touche un nœud accessible pour avancer. Pense à équiper tes héros avant les combats.`,
+    );
     const mortDefinitive = !!effetsDifficulte(o).mortDefinitive;
     const niveauMax = infosZone.niveauMax ?? niveauMaxDeZone(r);
     // Clavier : retiré à chaque re-rendu, à l'ouverture d'un sous-écran et à la sortie.
