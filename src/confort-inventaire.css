@@ -32,11 +32,6 @@
 .delta-effet {
   font-style: italic;
 }
-.equip-pa {
-  color: var(--muet);
-  font-size: 0.78em;
-  font-weight: 700;
-}
 .equip-vide {
   display: flex;
   flex-wrap: wrap;
@@ -508,9 +503,6 @@
   .equip-slots.grille .slot-objet {
     -webkit-line-clamp: 3;
   }
-  .ic-deltas {
-    font-size: 0.88rem;
-  }
 }
 
 /* ---------- Cibles tactiles de 44 px (C2) ---------- */
@@ -561,8 +553,7 @@
 .ic-tier {
   font-size: max(11px, 0.7rem);
 }
-.pastille-inutile,
-.equip-pa {
+.pastille-inutile {
   font-size: max(11px, 0.72rem);
 }
 
