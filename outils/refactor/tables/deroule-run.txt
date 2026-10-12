@@ -1,0 +1,15 @@
+# fichier: src/deroule/run.js
+16 e sauvegarde
+16 t classesImposees
+16 n ascension
+16 r trancheIdDemande
+17 i monde
+18 a zones
+26 o run
+27 s zoneDepart
+32 e classes
+53 e perso
+63 e indexZone
+64 t zone
+65 n issue
+78 e perso

@@ -23,61 +23,61 @@ document.addEventListener(`visibilitychange`, () => {
     sauverRun(etatRun.active.zoneIdx, etatRun.active.run);
   }
 });
-export async function jouerZone(e, t, n) {
-  etatRun.active = { zoneIdx: n, run: e };
-  enregistrerToileMax(meta, e.trancheId, n + 1);
+export async function jouerZone(run, zone, indexZone) {
+  etatRun.active = { zoneIdx: indexZone, run };
+  enregistrerToileMax(meta, run.trancheId, indexZone + 1);
   sauverMeta(meta);
-  if (!e.carte) {
+  if (!run.carte) {
     // run du jour : la carte de la zone vient de la graine du jour
-    e.carte = genererCarte(
-      e.jour ? rngCarteDuJour(e.jour, e.trancheId, n) : Math.random,
-      t.pools,
-      noeudsExclus(e, t),
-      { premiereZone: n === 0 },
+    run.carte = genererCarte(
+      run.jour ? rngCarteDuJour(run.jour, run.trancheId, indexZone) : Math.random,
+      zone.pools,
+      noeudsExclus(run, zone),
+      { premiereZone: indexZone === 0 },
     );
-    sauverRun(n, e);
+    sauverRun(indexZone, run);
   }
   while (true) {
-    let r = await ecranCarte(
-      e.carte,
-      e.persos,
+    let noeud = await ecranCarte(
+      run.carte,
+      run.persos,
       meta,
-      t.nom,
-      e.inventaire,
-      e.kamas,
-      e.ascension,
-      e.philtres,
-      () => sauverRun(n, e),
-      effetsEnCours(e, t.id),
+      zone.nom,
+      run.inventaire,
+      run.kamas,
+      run.ascension,
+      run.philtres,
+      () => sauverRun(indexZone, run),
+      effetsEnCours(run, zone.id),
       {
-        zoneNum: n + 1,
-        nbZones: zonesDuMonde(getMonde(e.trancheId)).length,
-        tierObjets: numeroZone(t.id),
+        zoneNum: indexZone + 1,
+        nbZones: zonesDuMonde(getMonde(run.trancheId)).length,
+        tierObjets: numeroZone(zone.id),
       },
     );
-    if (r === `accueil`) {
+    if (noeud === `accueil`) {
       return `accueil`;
     }
-    if (r === `recommencer-memes` || r === `recommencer-choix`) {
-      return r;
+    if (noeud === `recommencer-memes` || noeud === `recommencer-choix`) {
+      return noeud;
     }
-    let { type } = r;
-    let a = r.combatId;
-    let o = r.xp ?? 0;
+    let { type } = noeud;
+    let combatId = noeud.combatId;
+    let xp = noeud.xp ?? 0;
     if (type === `zaap`) {
-      ({ type, combatId: a, xp: o } = await resoudreZaap(t.pools, noeudsExclus(e, t)));
+      ({ type, combatId, xp } = await resoudreZaap(zone.pools, noeudsExclus(run, zone)));
     }
-    let s = await resoudreNoeud(e, type, a, o, t, r.eliteModifs);
-    r.visite = true;
-    e.carte.courant = r.id;
-    if (s === `wipe`) {
+    let issue = await resoudreNoeud(run, type, combatId, xp, zone, noeud.eliteModifs);
+    noeud.visite = true;
+    run.carte.courant = noeud.id;
+    if (issue === `wipe`) {
       return `wipe`;
     }
-    if (s === `victoire`) {
-      await jouerDonjonSecret(e, t);
+    if (issue === `victoire`) {
+      await jouerDonjonSecret(run, zone);
       return `clear`;
     }
-    sauverRun(n, e);
+    sauverRun(indexZone, run);
   }
 }
 // Score record du monde (zones franchies, difficulté et idoles de départ) : prévient s'il est battu.

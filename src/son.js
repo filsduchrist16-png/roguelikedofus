@@ -76,19 +76,19 @@ export function jouerSon(nom) {
       return;
     }
     const debut = ctx.currentTime;
-    for (const n of notesDuSon(nom)) {
+    for (const note of notesDuSon(nom)) {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = n.type;
-      osc.frequency.value = n.f;
-      const t0 = debut + n.t;
+      osc.type = note.type;
+      osc.frequency.value = note.f;
+      const t0 = debut + note.t;
       gain.gain.setValueAtTime(0.0001, t0);
-      gain.gain.exponentialRampToValueAtTime(VOLUME_SONS * n.v, t0 + 0.01);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + n.d);
+      gain.gain.exponentialRampToValueAtTime(VOLUME_SONS * note.v, t0 + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + note.d);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(t0);
-      osc.stop(t0 + n.d + 0.02);
+      osc.stop(t0 + note.d + 0.02);
     }
   } catch {}
 }
@@ -102,15 +102,15 @@ function surGeste() {
 
 // Son d'un élément ajouté à la page (effets de combat, voile de fin de combat).
 function sonDeNoeud(el) {
-  const c = el.classList;
-  if (c.contains(`fin-combat-voile`)) {
-    return c.contains(`victoire`) ? `victoire` : `defaite`;
+  const classes = el.classList;
+  if (classes.contains(`fin-combat-voile`)) {
+    return classes.contains(`victoire`) ? `victoire` : `defaite`;
   }
-  if (c.contains(`fx-num`)) {
-    if (c.contains(`soin`)) {
+  if (classes.contains(`fx-num`)) {
+    if (classes.contains(`soin`)) {
       return `soin`;
     }
-    if (c.contains(`dmg`) || c.contains(`crit`)) {
+    if (classes.contains(`dmg`) || classes.contains(`crit`)) {
       return `coup`;
     }
   }
@@ -139,12 +139,12 @@ export function installerSons(actifAuDepart = false) {
     new MutationObserver((lots) => {
       let son = null;
       for (const lot of lots) {
-        for (const n of lot.addedNodes) {
-          if (n.nodeType === 1) {
-            const s = sonDeNoeud(n);
+        for (const noeud of lot.addedNodes) {
+          if (noeud.nodeType === 1) {
+            const sonDuNoeud = sonDeNoeud(noeud);
             // un seul son par lot, le plus marquant (victoire/défaite avant coup avant soin)
-            if (s && (!son || s === `victoire` || s === `defaite`)) {
-              son = s;
+            if (sonDuNoeud && (!son || sonDuNoeud === `victoire` || sonDuNoeud === `defaite`)) {
+              son = sonDuNoeud;
             }
           }
         }

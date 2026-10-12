@@ -53,15 +53,15 @@ export const idolesDepartDeRun = (run) => idolesDepartValides(run?.idolesDepart)
 
 /** Cumule des idoles : multiplicateurs multipliés, prospection additionnée. */
 export function cumulerIdoles(liste) {
-  const t = { pvMult: 1, degatsMult: 1, xpMult: 1, kamasMult: 1, prospection: 0 };
-  for (const i of liste) {
-    t.pvMult *= i.pvMult ?? 1;
-    t.degatsMult *= i.degatsMult ?? 1;
-    t.xpMult *= i.xpMult ?? 1;
-    t.kamasMult *= i.kamasMult ?? 1;
-    t.prospection += i.prospection ?? 0;
+  const total = { pvMult: 1, degatsMult: 1, xpMult: 1, kamasMult: 1, prospection: 0 };
+  for (const idole of liste) {
+    total.pvMult *= idole.pvMult ?? 1;
+    total.degatsMult *= idole.degatsMult ?? 1;
+    total.xpMult *= idole.xpMult ?? 1;
+    total.kamasMult *= idole.kamasMult ?? 1;
+    total.prospection += idole.prospection ?? 0;
   }
-  return t;
+  return total;
 }
 
 /**
@@ -69,7 +69,10 @@ export function cumulerIdoles(liste) {
  * idoles de départ (chaque point d'idole compte comme un quart de palier).
  */
 export function scoreRun({ zones = 0, victoire = false, ascension = 0, idoles = [] }) {
-  const points = idolesDepartValides(idoles).reduce((a, id) => a + IDOLES_DEPART[id].points, 0);
+  const points = idolesDepartValides(idoles).reduce(
+    (somme, id) => somme + IDOLES_DEPART[id].points,
+    0,
+  );
   const base = Math.max(0, zones) * 100 + (victoire ? 500 : 0);
   return Math.round(base * (1 + 0.25 * ascension + 0.25 * points));
 }

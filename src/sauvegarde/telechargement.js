@@ -33,12 +33,12 @@ export async function telechargerTexte(nomFichier, texte) {
     return `indisponible`;
   }
   const url = URL.createObjectURL(new Blob([texte], { type: `application/json` }));
-  const a = document.createElement(`a`);
-  a.href = url;
-  a.download = nomFichier;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
+  const lien = document.createElement(`a`);
+  lien.href = url;
+  lien.download = nomFichier;
+  document.body.appendChild(lien);
+  lien.click();
+  lien.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
   return `saved`;
 }

@@ -13,112 +13,124 @@ import { traiterQuetes, quetesDeLaRun, contexteRun } from "./quetes.js";
 import { verifierQuetesMeta, verifierQuetesZone, verifierQuetesRun } from "../jeu/quetes.js";
 import { ecranRecap, etatDeblocage, deblocagesVictoire } from "../ui/ecrans/recap.js";
 
-export async function jouerRun(e, t, n = 0, r = `t1`, idoles = [], jour = false) {
-  let i = getMonde(e ? e.run.trancheId : r);
-  let a = zonesDuMonde(i);
-  if (!a.length) {
+export async function jouerRun(
+  sauvegarde,
+  classesImposees,
+  ascension = 0,
+  trancheIdDemande = `t1`,
+  idoles = [],
+  jour = false,
+) {
+  let monde = getMonde(sauvegarde ? sauvegarde.run.trancheId : trancheIdDemande);
+  let zones = zonesDuMonde(monde);
+  if (!zones.length) {
     await ecranMessage(
       `🚧 En construction`,
-      `${i.nom} n'a pas encore de zone : son contenu arrive dans un prochain chantier.`,
+      `${monde.nom} n'a pas encore de zone : son contenu arrive dans un prochain chantier.`,
     );
     return null;
   }
-  let o;
-  let s = 0;
-  if (e) {
-    o = e.run;
-    s = e.zoneIdx;
+  let run;
+  let zoneDepart = 0;
+  if (sauvegarde) {
+    run = sauvegarde.run;
+    zoneDepart = sauvegarde.zoneIdx;
   } else {
-    let e = t ?? (await ecranChoixEquipe());
-    if (!e) {
+    let classes = classesImposees ?? (await ecranChoixEquipe());
+    if (!classes) {
       return null;
     }
     // run du jour : graine et bénédiction du jour, sans idole de départ (scores comparables)
     let date = jour ? dateDuJour() : null;
-    o = nouvelleRun(
-      e,
-      n,
-      i.id,
+    run = nouvelleRun(
+      classes,
+      ascension,
+      monde.id,
       jour ? [] : idoles,
       date ? { date, benediction: benedictionDuJour(date) } : null,
     );
     // dernier départ retenu : l'accueil et le choix d'équipe le proposent par défaut
-    parametres.dernierDepart = { trancheId: i.id, ascension: n, classes: [...e] };
+    parametres.dernierDepart = { trancheId: monde.id, ascension, classes: [...classes] };
     sauverParametres(parametres);
   }
   // relance demandée depuis le récapitulatif de fin de run
   let relance = (choix) =>
     choix === `memes`
       ? {
-          relancer: o.choixDepart ?? o.persos.slice(0, 2).map((e) => e.classeId),
-          ascension: o.ascension,
-          trancheId: i.id,
-          idoles: o.idolesDepart,
+          relancer: run.choixDepart ?? run.persos.slice(0, 2).map((perso) => perso.classeId),
+          ascension: run.ascension,
+          trancheId: monde.id,
+          idoles: run.idolesDepart,
         }
       : choix === `choix`
-        ? { relancer: `selection`, ascension: o.ascension, trancheId: i.id, idoles: o.idolesDepart }
+        ? {
+            relancer: `selection`,
+            ascension: run.ascension,
+            trancheId: monde.id,
+            idoles: run.idolesDepart,
+          }
         : null;
-  fondDuMonde(i.id);
+  fondDuMonde(monde.id);
   try {
-    for (let e = s; e < a.length; e++) {
-      let t = a[e];
-      let n = await jouerZone(o, t, e);
+    for (let indexZone = zoneDepart; indexZone < zones.length; indexZone++) {
+      let zone = zones[indexZone];
+      let issue = await jouerZone(run, zone, indexZone);
       etatRun.active = null;
-      if (n === `accueil`) {
+      if (issue === `accueil`) {
         return null;
       }
-      if (n === `recommencer-memes` || n === `recommencer-choix`) {
+      if (issue === `recommencer-memes` || issue === `recommencer-choix`) {
         etatRun.active = null;
         effacerRun();
         enregistrerRun(meta, false);
-        await traiterQuetes(o, verifierQuetesMeta(quetesMeta(), ctxMeta()));
+        await traiterQuetes(run, verifierQuetesMeta(quetesMeta(), ctxMeta()));
         return {
           relancer:
-            n === `recommencer-memes`
-              ? (o.choixDepart ?? o.persos.slice(0, 2).map((e) => e.classeId))
+            issue === `recommencer-memes`
+              ? (run.choixDepart ?? run.persos.slice(0, 2).map((perso) => perso.classeId))
               : `selection`,
-          ascension: o.ascension,
-          trancheId: i.id,
-          idoles: o.idolesDepart,
+          ascension: run.ascension,
+          trancheId: monde.id,
+          idoles: run.idolesDepart,
         };
       }
-      if (n === `wipe`) {
+      if (issue === `wipe`) {
         etatRun.active = null;
         effacerRun();
         enregistrerRun(meta, false);
-        noterRecord(o, i.id, o.stats.zones, false);
-        await traiterQuetes(o, verifierQuetesMeta(quetesMeta(), ctxMeta()));
-        return relance(await ecranRecap(o, false, quetesDeLaRun(o)));
+        noterRecord(run, monde.id, run.stats.zones, false);
+        await traiterQuetes(run, verifierQuetesMeta(quetesMeta(), ctxMeta()));
+        return relance(await ecranRecap(run, false, quetesDeLaRun(run)));
       }
-      soignerEquipe(o, 1);
-      o.stats.zones += 1;
+      soignerEquipe(run, 1);
+      run.stats.zones += 1;
       await traiterQuetes(
-        o,
+        run,
         verifierQuetesZone(quetesMeta(), {
-          zoneId: t.id,
-          ascension: o.ascension,
+          zoneId: zone.id,
+          ascension: run.ascension,
         }),
       );
-      o.carte = null;
-      if (e < a.length - 1) {
-        sauverRun(e + 1, o);
-        etatRun.active = { zoneIdx: e + 1, run: o };
+      run.carte = null;
+      if (indexZone < zones.length - 1) {
+        sauverRun(indexZone + 1, run);
+        etatRun.active = { zoneIdx: indexZone + 1, run };
         await ecranMessage(
-          `${t.nom} — vaincu !`,
-          `Équipe soignée à 100 %. Zone ${e + 2}/${a.length} : tu pénètres dans ${a[e + 1].nom}.`,
+          `${zone.nom} — vaincu !`,
+          `Équipe soignée à 100 %. Zone ${indexZone + 2}/${zones.length} : tu pénètres dans ${zones[indexZone + 1].nom}.`,
         );
       }
     }
     etatRun.active = null;
     effacerRun();
-    enregistrerRun(meta, true, i.id);
-    let avant = etatDeblocage(meta, i.id);
-    enregistrerAscension(meta, i.id, o.ascension);
-    noterRecord(o, i.id, a.length, true);
-    let debloques = deblocagesVictoire(avant, etatDeblocage(meta, i.id));
-    await traiterQuetes(o, verifierQuetesRun(quetesMeta(), contexteRun(o, i.id, true)));
-    await traiterQuetes(o, verifierQuetesMeta(quetesMeta(), ctxMeta()));
-    return relance(await ecranRecap(o, true, quetesDeLaRun(o), debloques));
+    enregistrerRun(meta, true, monde.id);
+    let avant = etatDeblocage(meta, monde.id);
+    enregistrerAscension(meta, monde.id, run.ascension);
+    noterRecord(run, monde.id, zones.length, true);
+    let debloques = deblocagesVictoire(avant, etatDeblocage(meta, monde.id));
+    await traiterQuetes(run, verifierQuetesRun(quetesMeta(), contexteRun(run, monde.id, true)));
+    await traiterQuetes(run, verifierQuetesMeta(quetesMeta(), ctxMeta()));
+    return relance(await ecranRecap(run, true, quetesDeLaRun(run), debloques));
   } finally {
     etatRun.active = null;
     fondDuMonde(null);

@@ -1,0 +1,4 @@
+# fichier: src/jeu/idolesDepart.js
+56 t total
+57 i idole
+72 a somme

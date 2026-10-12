@@ -1,0 +1,8 @@
+# fichier: src/deroule/zone.js
+26 e run
+26 t zone
+26 n indexZone
+41 r noeud
+65 a combatId
+66 o xp
+70 s issue

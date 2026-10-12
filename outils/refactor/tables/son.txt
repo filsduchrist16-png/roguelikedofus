@@ -1,0 +1,5 @@
+# fichier: src/son.js
+79 n note
+105 c classes
+142 n noeud
+144 s sonDuNoeud

@@ -26,18 +26,18 @@ export async function boucleJeu() {
   }
   for (await traiterQuetes(null, verifierQuetesMeta(quetesMeta(), ctxMeta())); ;) {
     try {
-      let e = chargerRun();
-      let t = zonesDuMonde(getMonde(e?.run.trancheId ?? `t1`));
+      let sauvegarde = chargerRun();
+      let zones = zonesDuMonde(getMonde(sauvegarde?.run.trancheId ?? `t1`));
       let { action, ascension, trancheId, idoles, jour } = await ecranAccueil(
         meta,
         () => reinitialiserDofus(meta),
-        e
+        sauvegarde
           ? {
-              zoneNom: t[e.zoneIdx]?.nom ?? `?`,
-              zoneNum: e.zoneIdx + 1,
-              nbZones: t.length,
-              ascension: e.run.ascension,
-              trancheId: e.run.trancheId,
+              zoneNom: zones[sauvegarde.zoneIdx]?.nom ?? `?`,
+              zoneNum: sauvegarde.zoneIdx + 1,
+              nbZones: zones.length,
+              ascension: sauvegarde.run.ascension,
+              trancheId: sauvegarde.run.trancheId,
             }
           : null,
       );
@@ -46,21 +46,21 @@ export async function boucleJeu() {
         enregistrerRun(meta, false);
         continue;
       }
-      let a = await jouerRun(
-        action === `reprendre` ? e : null,
+      let suite = await jouerRun(
+        action === `reprendre` ? sauvegarde : null,
         undefined,
         ascension,
         trancheId,
         idoles,
         !!jour,
       );
-      while (a?.relancer) {
-        a = await jouerRun(
+      while (suite?.relancer) {
+        suite = await jouerRun(
           null,
-          a.relancer === `selection` ? undefined : a.relancer,
-          a.ascension,
-          a.trancheId,
-          a.idoles,
+          suite.relancer === `selection` ? undefined : suite.relancer,
+          suite.ascension,
+          suite.trancheId,
+          suite.idoles,
         );
       }
     } catch (erreur) {

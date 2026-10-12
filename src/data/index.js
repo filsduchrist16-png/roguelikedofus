@@ -424,9 +424,9 @@ export const ZONES = [
     id: `tempete_eliocalypse`,
     nom: `Tempête de l'Eliocalypse`,
   },
-].map((e) => ({
-  ...e,
-  pools: POOLS_ZONES[e.id],
+].map((zone) => ({
+  ...zone,
+  pools: POOLS_ZONES[zone.id],
 }));
 export const MONDES = [
   {

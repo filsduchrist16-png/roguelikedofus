@@ -2,8 +2,8 @@
 import { chargerMeta } from "../sauvegarde/meta.js";
 import { contexteMeta, nouvelEtatQuetes } from "../jeu/quetes.js";
 
-export const attendre = (e) => new Promise((resolve) => setTimeout(resolve, e));
-export const choixAleatoireMath = (e) => e[Math.floor(Math.random() * e.length)];
+export const attendre = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+export const choixAleatoireMath = (liste) => liste[Math.floor(Math.random() * liste.length)];
 export const meta = chargerMeta();
 export const quetesMeta = () => (meta.quetes ??= nouvelEtatQuetes());
 export const ctxMeta = () => contexteMeta(meta);

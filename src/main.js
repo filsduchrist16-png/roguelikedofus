@@ -22,8 +22,8 @@ import "./confort-combat.css";
 import "./confort-inventaire.css";
 import "./confort-meta.css";
 import "./confort-ecrans.css";
-function initialiserInterface(elementApp) {
-  definirRacine(elementApp);
+function initialiserInterface(racine) {
+  definirRacine(racine);
   fondDuMonde(null);
   // taille du texte et couleurs adaptées (réglages d'accessibilité)
   appliquerAccessibilite(parametres);
@@ -42,7 +42,7 @@ if (!elementApp) {
 initialiserInterface(elementApp);
 // astuces de première partie : un joueur qui a déjà fini une run (ancienne sauvegarde) ne les revoit pas
 if (parametres.vuTuto === null) {
-  parametres.vuTuto = Object.fromEntries(CLES_TUTO.map((k) => [k, meta.runs > 0]));
+  parametres.vuTuto = Object.fromEntries(CLES_TUTO.map((cle) => [cle, meta.runs > 0]));
   sauverParametres(parametres);
 }
 window.addEventListener(`rld-sauvegarde-echec`, () =>
