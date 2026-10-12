@@ -182,7 +182,6 @@
 
 /* ---------- Récapitulatif : relancer en un appui ---------- */
 .recap-debloque {
-  margin: 10px auto 0;
   padding: 6px 12px;
   width: fit-content;
   max-width: 100%;
