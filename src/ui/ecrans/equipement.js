@@ -66,110 +66,123 @@ function trierGroupes(groupes, perso) {
   const slot = (inst) => SLOTS.indexOf(EQUIPEMENTS[inst.id]?.slot ?? `arme`);
   const toile = (inst) => numeroZoneObjet(inst.id);
   const rarete = (inst) => -RARETES.indexOf(inst.rarete);
-  const interet = (g) => g.meilleurScore;
+  const interet = (groupe) => groupe.meilleurScore;
   const criteres = {
-    toile: (a, b) => [
-      toile(b.inst) - toile(a.inst),
-      rarete(a.inst) - rarete(b.inst),
-      slot(a.inst) - slot(b.inst),
+    toile: (premier, second) => [
+      toile(second.inst) - toile(premier.inst),
+      rarete(premier.inst) - rarete(second.inst),
+      slot(premier.inst) - slot(second.inst),
     ],
-    type: (a, b) => [slot(a.inst) - slot(b.inst), toile(a.inst) - toile(b.inst)],
-    rarete: (a, b) => [rarete(a.inst) - rarete(b.inst), toile(b.inst) - toile(a.inst)],
-    interet: (a, b) => [
-      interet(b) - interet(a),
-      ORDRE_VERDICT.indexOf(a.comparaison.verdict) - ORDRE_VERDICT.indexOf(b.comparaison.verdict),
-      toile(b.inst) - toile(a.inst),
+    type: (premier, second) => [
+      slot(premier.inst) - slot(second.inst),
+      toile(premier.inst) - toile(second.inst),
+    ],
+    rarete: (premier, second) => [
+      rarete(premier.inst) - rarete(second.inst),
+      toile(second.inst) - toile(premier.inst),
+    ],
+    interet: (premier, second) => [
+      interet(second) - interet(premier),
+      ORDRE_VERDICT.indexOf(premier.comparaison.verdict) -
+        ORDRE_VERDICT.indexOf(second.comparaison.verdict),
+      toile(second.inst) - toile(premier.inst),
     ],
   }[triArmurerie];
   return groupes.sort(
-    (a, b) => criteres(a, b).find((x) => x !== 0) ?? nom(a.inst).localeCompare(nom(b.inst)),
+    (premier, second) =>
+      criteres(premier, second).find((ecart) => ecart !== 0) ??
+      nom(premier.inst).localeCompare(nom(second.inst)),
   );
 }
 const nomClasse = (perso) => CLASSES[perso.classeId].nom;
-const signe = (n) => (n > 0 ? `+${n}` : n < 0 ? `−${Math.abs(n)}` : `±0`);
+const signe = (nombre) => (nombre > 0 ? `+${nombre}` : nombre < 0 ? `−${Math.abs(nombre)}` : `±0`);
 // Un objet « mieux » qui n'ajoute ni PA ni dégâts n'est pas équipé d'office : on le dit au lieu
 // d'afficher un « mieux » trompeur.
 const TEXTE_COURT_PAS_SUR = `sans dégâts en plus`;
 const TEXTE_PAS_SUR = `Meilleur en stats de survie, mais il n'ajoute ni PA ni dégâts : « Équiper le meilleur » ne le met pas. À toi de voir.`;
 // Verdict d'une comparaison ; un « mitigé » est chiffré : plutôt mieux ou plutôt moins.
-function htmlVerdict(c) {
-  const v = VERDICTS[c.verdict];
-  if (c.verdict === `mieux` && !c.sure) {
-    return `<span class="verdict verdict-mitige tendance-moins" data-tip="${TEXTE_PAS_SUR}">${v.icone} Mieux en stats, mais ${TEXTE_COURT_PAS_SUR}</span>`;
+function htmlVerdict(comparaison) {
+  const verdict = VERDICTS[comparaison.verdict];
+  if (comparaison.verdict === `mieux` && !comparaison.sure) {
+    return `<span class="verdict verdict-mitige tendance-moins" data-tip="${TEXTE_PAS_SUR}">${verdict.icone} Mieux en stats, mais ${TEXTE_COURT_PAS_SUR}</span>`;
   }
-  if (c.verdict === `mitige` && c.score) {
-    const texte = c.tendance === `plus` ? `Plutôt mieux` : `Plutôt moins`;
-    return `<span class="verdict verdict-mitige tendance-${c.tendance}" data-tip="Gains et pertes : bilan chiffré ${signe(c.score)}">${v.icone} ${texte} (${signe(c.score)})</span>`;
+  if (comparaison.verdict === `mitige` && comparaison.score) {
+    const texte = comparaison.tendance === `plus` ? `Plutôt mieux` : `Plutôt moins`;
+    return `<span class="verdict verdict-mitige tendance-${comparaison.tendance}" data-tip="Gains et pertes : bilan chiffré ${signe(comparaison.score)}">${verdict.icone} ${texte} (${signe(comparaison.score)})</span>`;
   }
-  return `<span class="verdict verdict-${c.verdict}">${v.icone} ${v.texte}</span>`;
+  return `<span class="verdict verdict-${comparaison.verdict}">${verdict.icone} ${verdict.texte}</span>`;
 }
 // Deltas de stats, puis effets spéciaux gagnés (+ riposte) ou perdus (− riposte).
 function htmlDeltasObjet(deltas) {
-  const stats = htmlDeltas(deltas.filter((d) => !d.cle.startsWith(`effet_`)));
+  const stats = htmlDeltas(deltas.filter((delta) => !delta.cle.startsWith(`effet_`)));
   const effets = deltas
-    .filter((d) => d.cle.startsWith(`effet_`))
+    .filter((delta) => delta.cle.startsWith(`effet_`))
     .map(
-      (d) =>
-        `<span class="${d.valeur > 0 ? `delta-plus` : `delta-moins`} delta-effet">${d.valeur > 0 ? `+` : `−`} ${echapperHtml(nomEffet(d.cle.slice(6)))}</span>`,
+      (delta) =>
+        `<span class="${delta.valeur > 0 ? `delta-plus` : `delta-moins`} delta-effet">${delta.valeur > 0 ? `+` : `−`} ${echapperHtml(nomEffet(delta.cle.slice(6)))}</span>`,
     )
     .join(` `);
   return [stats, effets].filter(Boolean).join(` `);
 }
 // Priorité d'affichage d'un delta : PA, dégâts d'arme, effets, stats utiles, puis PV, résistances, le reste.
-function prioriteDelta(d) {
-  if (d.cle === `pa`) {
+function prioriteDelta(delta) {
+  if (delta.cle === `pa`) {
     return 0;
   }
-  if (d.cle === `attaque`) {
+  if (delta.cle === `attaque`) {
     return 1;
   }
-  if (d.cle.startsWith(`effet_`)) {
+  if (delta.cle.startsWith(`effet_`)) {
     return 2;
   }
-  if (!d.utile) {
+  if (!delta.utile) {
     return 9;
   }
-  if (d.cle === `prospection`) {
+  if (delta.cle === `prospection`) {
     return 8;
   }
-  if (d.cle === `pv`) {
+  if (delta.cle === `pv`) {
     return 6;
   }
-  return d.cle.startsWith(`res_`) ? 7 : 4;
+  return delta.cle.startsWith(`res_`) ? 7 : 4;
 }
 // Les `max` changements les plus importants (PA et dégâts en tête), le reste en « +N autres ».
 function htmlDeltasCompacts(deltas, max = 4) {
   const tries = [...deltas].sort(
-    (a, b) => prioriteDelta(a) - prioriteDelta(b) || Math.abs(b.valeur) - Math.abs(a.valeur),
+    (premier, second) =>
+      prioriteDelta(premier) - prioriteDelta(second) ||
+      Math.abs(second.valeur) - Math.abs(premier.valeur),
   );
   const visibles = tries.slice(0, max);
   const reste = tries.slice(max);
-  const un = (d) => {
-    const html = htmlDeltasObjet([d]);
-    return d.cle === `pa` || d.cle === `attaque` ? `<b class="delta-cle">${html}</b>` : html;
+  const un = (delta) => {
+    const html = htmlDeltasObjet([delta]);
+    return delta.cle === `pa` || delta.cle === `attaque`
+      ? `<b class="delta-cle">${html}</b>`
+      : html;
   };
   const autres = reste.length
-    ? ` <span class="delta-autres" data-tip="${echapperHtml(reste.map((d) => htmlDeltasObjet([d]).replace(/<[^>]+>/g, ``)).join(`, `))}">+${reste.length} autre${reste.length > 1 ? `s` : ``}</span>`
+    ? ` <span class="delta-autres" data-tip="${echapperHtml(reste.map((delta) => htmlDeltasObjet([delta]).replace(/<[^>]+>/g, ``)).join(`, `))}">+${reste.length} autre${reste.length > 1 ? `s` : ``}</span>`
     : ``;
   return visibles.map(un).join(` `) + autres;
 }
 // Verdict en deux mots pour les cartes (le détail chiffré est dans la fiche).
-function htmlVerdictCourt(c) {
-  const v = VERDICTS[c.verdict];
-  if (c.verdict === `mieux` && !c.sure) {
-    return `<span class="verdict verdict-mitige tendance-moins" data-tip="${TEXTE_PAS_SUR}">${v.icone} ${TEXTE_COURT_PAS_SUR}</span>`;
+function htmlVerdictCourt(comparaison) {
+  const verdict = VERDICTS[comparaison.verdict];
+  if (comparaison.verdict === `mieux` && !comparaison.sure) {
+    return `<span class="verdict verdict-mitige tendance-moins" data-tip="${TEXTE_PAS_SUR}">${verdict.icone} ${TEXTE_COURT_PAS_SUR}</span>`;
   }
   const texte =
-    c.verdict === `mieux`
+    comparaison.verdict === `mieux`
       ? `Mieux`
-      : c.verdict === `moins`
+      : comparaison.verdict === `moins`
         ? `Moins`
-        : c.verdict === `mitige`
-          ? c.tendance === `plus`
+        : comparaison.verdict === `mitige`
+          ? comparaison.tendance === `plus`
             ? `Plutôt mieux`
             : `Plutôt moins`
-          : v.texte;
-  return `<span class="verdict verdict-${c.verdict}${c.tendance ? ` tendance-${c.tendance}` : ``}" title="${v.texte}${c.score ? ` (${signe(c.score)})` : ``}">${v.icone} ${texte}</span>`;
+          : verdict.texte;
+  return `<span class="verdict verdict-${comparaison.verdict}${comparaison.tendance ? ` tendance-${comparaison.tendance}` : ``}" title="${verdict.texte}${comparaison.score ? ` (${signe(comparaison.score)})` : ``}">${verdict.icone} ${texte}</span>`;
 }
 // Progression de panoplie qu'apporterait un objet pour ce héros : « ⬡ Rat Blanc 1→2/7 », palier atteint ou non.
 function htmlPanoCarte(inst, perso) {
@@ -179,7 +192,7 @@ function htmlPanoCarte(inst, perso) {
   }
   const portees = Object.values(perso.equipement).filter(Boolean);
   const nb = compterPanoplies(perso)[nom] ?? 0;
-  const dejaPorte = portees.some((x) => x.id === inst.id);
+  const dejaPorte = portees.some((piece) => piece.id === inst.id);
   const court = nom.replace(/^Panoplie (du |de la |de l'|des |de |d')?/i, ``);
   if (dejaPorte) {
     return `<span class="ic-pano">⬡ ${echapperHtml(court)} ${nb}/${taillePanoplie(nom)}</span>`;
@@ -189,71 +202,82 @@ function htmlPanoCarte(inst, perso) {
   const bonus = palier ? bonusPanoplie(nom, apres) : null;
   return `<span class="ic-pano${palier ? ` palier` : ``}" data-tip="${echapperHtml(nom)}">⬡ ${echapperHtml(court)} ${nb}→${apres}/${taillePanoplie(nom)}${bonus ? ` : ${texteBonusPanoplie(bonus).replace(/\+(\d+) PA/, `<b class="pano-pa">+$1 PA</b>`)}` : ``}</span>`;
 }
-function htmlComparaison(c) {
-  if (c.verdict === `impossible`) {
+function htmlComparaison(comparaison) {
+  if (comparaison.verdict === `impossible`) {
     return `<span class="item-delta"><span class="delta-ref">Équipable seulement en ligne avant.</span></span>`;
   }
-  const ref = c.actuel
-    ? `À la place de ${echapperHtml(EQUIPEMENTS[c.actuel.id]?.nom ?? c.actuel.id)} (T${numeroZoneObjet(c.actuel.id)})`
+  const ref = comparaison.actuel
+    ? `À la place de ${echapperHtml(EQUIPEMENTS[comparaison.actuel.id]?.nom ?? comparaison.actuel.id)} (T${numeroZoneObjet(comparaison.actuel.id)})`
     : `Emplacement vide`;
-  return `<span class="item-delta"><span class="delta-ref">${ref} :</span> ${htmlDeltasObjet(c.deltas) || `<span class="muet">aucun changement de stats</span>`}</span>`;
+  return `<span class="item-delta"><span class="delta-ref">${ref} :</span> ${htmlDeltasObjet(comparaison.deltas) || `<span class="muet">aucun changement de stats</span>`}</span>`;
 }
 // « Bonus total » avec le vrai signe (−10 Agilité, pas +-10) et les PA d'équipement.
 const NOMS_BONUS = { ...NOMS_STATS, crit: `% Critique` };
 // Pastilles du « Bonus total » (PA d'abord).
-function htmlBonusTotal(b) {
+function htmlBonusTotal(bonus) {
   const pastille = (cls, texte) => `<span class="ichip ${cls}">${texte}</span>`;
-  const r = [];
-  if (b.paBonus) {
-    r.push(pastille(`ichip-pa`, `${signe(b.paBonus)} PA`));
+  const pastilles = [];
+  if (bonus.paBonus) {
+    pastilles.push(pastille(`ichip-pa`, `${signe(bonus.paBonus)} PA`));
   }
-  if (b.pvBonus) {
-    r.push(pastille(`ichip-vitalite`, `${signe(b.pvBonus)} PV`));
+  if (bonus.pvBonus) {
+    pastilles.push(pastille(`ichip-vitalite`, `${signe(bonus.pvBonus)} PV`));
   }
-  for (const [k, v] of Object.entries(b.stats)) {
-    if (v) {
-      r.push(pastille(`ichip-${k}${v < 0 ? ` malus` : ``}`, `${signe(v)} ${NOMS_BONUS[k] ?? k}`));
-    }
-  }
-  for (const [el, v] of Object.entries(b.resistances)) {
-    if (v) {
-      r.push(
+  for (const [stat, valeur] of Object.entries(bonus.stats)) {
+    if (valeur) {
+      pastilles.push(
         pastille(
-          `ichip-res elem-${el}${v < 0 ? ` malus` : ``}`,
-          `${signe(Math.round(v * 100))} % ${NOMS_ELEMENTS[el] ?? el}`,
+          `ichip-${stat}${valeur < 0 ? ` malus` : ``}`,
+          `${signe(valeur)} ${NOMS_BONUS[stat] ?? stat}`,
         ),
       );
     }
   }
-  return r.length ? r.join(``) : `<span class="muet">aucun bonus</span>`;
+  for (const [el, valeur] of Object.entries(bonus.resistances)) {
+    if (valeur) {
+      pastilles.push(
+        pastille(
+          `ichip-res elem-${el}${valeur < 0 ? ` malus` : ``}`,
+          `${signe(Math.round(valeur * 100))} % ${NOMS_ELEMENTS[el] ?? el}`,
+        ),
+      );
+    }
+  }
+  return pastilles.length ? pastilles.join(``) : `<span class="muet">aucun bonus</span>`;
 }
 // Fiche d'un objet : tout ce qu'il donne, d'où il vient, et ce qu'il changerait pour chaque héros.
 function htmlFicheObjet(inst, persos, perso, porteePar, quantite, emplacementPorte) {
   const def = EQUIPEMENTS[inst.id];
   // pour un anneau : proposer aussi de remplacer l'autre anneau porté
-  const autreAnneau = (p, c) => {
-    const autre = emplacementsDuType(def.slot).find((k) => k !== c.emplacement);
-    if (!autre || !p.equipement[c.emplacement] || !emplacementPossible(p, inst, autre)) {
+  const autreAnneau = (heros, comparaison) => {
+    const autre = emplacementsDuType(def.slot).find(
+      (emplacement) => emplacement !== comparaison.emplacement,
+    );
+    if (
+      !autre ||
+      !heros.equipement[comparaison.emplacement] ||
+      !emplacementPossible(heros, inst, autre)
+    ) {
       return ``;
     }
-    const porte = p.equipement[autre];
-    return `<button class="secondaire petit" data-equiper-sur="${persos.indexOf(p)}" data-emplacement="${autre}">À la place de ${echapperHtml(EQUIPEMENTS[porte?.id]?.nom ?? NOMS_EMPLACEMENTS[autre])}</button>`;
+    const porte = heros.equipement[autre];
+    return `<button class="secondaire petit" data-equiper-sur="${persos.indexOf(heros)}" data-emplacement="${autre}">À la place de ${echapperHtml(EQUIPEMENTS[porte?.id]?.nom ?? NOMS_EMPLACEMENTS[autre])}</button>`;
   };
   const lignesHeros = porteePar
     ? `<p class="fiche-porte">Porté par <b>${echapperHtml(nomClasse(porteePar))}</b>${emplacementPorte && emplacementPorte !== def.slot ? ` (${NOMS_EMPLACEMENTS[emplacementPorte]})` : ``}.</p>
        <div class="fiche-actions"><button class="secondaire" data-retirer="${emplacementPorte ?? def.slot}">Retirer (retourne dans l'inventaire)</button></div>`
     : `<h4 class="fiche-sous-titre">Sur quel héros ?</h4>
        <ul class="fiche-heros">${persos
-         .map((p, i) => {
-           const c = comparerObjet(inst, p);
-           const actuel = c.actuel
-             ? `remplace ${echapperHtml(EQUIPEMENTS[c.actuel.id]?.nom ?? c.actuel.id)}`
+         .map((heros, indice) => {
+           const comparaison = comparerObjet(inst, heros);
+           const actuel = comparaison.actuel
+             ? `remplace ${echapperHtml(EQUIPEMENTS[comparaison.actuel.id]?.nom ?? comparaison.actuel.id)}`
              : `emplacement vide`;
-           return `<li class="${p === perso ? `courant` : ``}">
-             <span class="fiche-heros-nom"><img src="${imgSymboleClasse(p.classeId)}" alt="" onerror="this.remove()" />${echapperHtml(nomClasse(p))}</span>
-             ${htmlVerdict(c)}
-             <span class="fiche-heros-detail">${c.verdict === `impossible` ? `Équipable seulement en ligne avant.` : `${actuel} : ${htmlDeltasCompacts(c.deltas, 6) || `aucun changement de stats`}`}</span>
-             <span class="fiche-heros-boutons"><button class="primaire" data-equiper-sur="${i}" data-emplacement="${c.emplacement ?? ``}" ${c.verdict === `impossible` ? `disabled` : ``}>Équiper</button>${c.verdict === `impossible` ? `` : autreAnneau(p, c)}</span>
+           return `<li class="${heros === perso ? `courant` : ``}">
+             <span class="fiche-heros-nom"><img src="${imgSymboleClasse(heros.classeId)}" alt="" onerror="this.remove()" />${echapperHtml(nomClasse(heros))}</span>
+             ${htmlVerdict(comparaison)}
+             <span class="fiche-heros-detail">${comparaison.verdict === `impossible` ? `Équipable seulement en ligne avant.` : `${actuel} : ${htmlDeltasCompacts(comparaison.deltas, 6) || `aucun changement de stats`}`}</span>
+             <span class="fiche-heros-boutons"><button class="primaire" data-equiper-sur="${indice}" data-emplacement="${comparaison.emplacement ?? ``}" ${comparaison.verdict === `impossible` ? `disabled` : ``}>Équiper</button>${comparaison.verdict === `impossible` ? `` : autreAnneau(heros, comparaison)}</span>
            </li>`;
          })
          .join(``)}</ul>`;
@@ -272,11 +296,11 @@ function htmlFicheObjet(inst, persos, perso, porteePar, quantite, emplacementPor
       <details class="fiche-obtention"><summary>Où le trouver</summary><p>${echapperHtml(texteObtentionObjet(inst.id)).replace(/\n/g, `<br>`)}</p></details>
     </section>`;
 }
-export function ecranEquipement(e, t) {
+export function ecranEquipement(persos, inventaire) {
   // à chaque ouverture, le filtre repart sur « Tout » (le tri, lui, est gardé)
   filtreSlot = `tout`;
   return new Promise((resolve) => {
-    let r = 0;
+    let indexPerso = 0;
     // PC : un clic ouvre la fiche après un court délai, annulé par un double-clic (équiper/retirer)
     let minuterieClic = null;
     // objet ouvert dans la fiche : { inst } (inventaire) ou { slot } (porté)
@@ -301,7 +325,7 @@ export function ecranEquipement(e, t) {
       }
       return null;
     };
-    let i = () => {
+    let afficher = () => {
       // l'élément qui a le focus : dans la fiche, c'est celui qui l'a ouverte
       const actif = document.activeElement;
       const dansFiche = !!actif?.closest?.(`#fiche-equip`);
@@ -312,43 +336,47 @@ export function ecranEquipement(e, t) {
           : null;
       const photoAnnul = annulerAuto;
       annulerAuto = null;
-      let a = racine.querySelector(`.equip-inv`)?.scrollTop ?? 0;
-      let o = document.scrollingElement?.scrollTop ?? 0;
-      let s = e[r];
+      let scrollInv = racine.querySelector(`.equip-inv`)?.scrollTop ?? 0;
+      let scrollPage = document.scrollingElement?.scrollTop ?? 0;
+      let heros = persos[indexPerso];
       clearTimeout(minuterieClic);
-      let groupes = grouperInventaire(t).map((g) => {
-        const scores = e
-          .map((p) => comparerObjet(g.inst, p))
-          .filter((c) => c.verdict !== `impossible`)
-          .map((c) => c.score);
+      let groupes = grouperInventaire(inventaire).map((groupe) => {
+        const scores = persos
+          .map((perso) => comparerObjet(groupe.inst, perso))
+          .filter((comparaison) => comparaison.verdict !== `impossible`)
+          .map((comparaison) => comparaison.score);
         return {
-          ...g,
-          comparaison: comparerObjet(g.inst, s),
+          ...groupe,
+          comparaison: comparerObjet(groupe.inst, heros),
           meilleurScore: scores.length ? Math.max(...scores) : -Infinity,
         };
       });
-      const plan = planEquiper({ inventaire: t }, e);
-      let c = e
-        .map((p, idx) => {
-          const portes = EMPLACEMENTS.filter((slot) => p.equipement[slot]).length;
-          const ameliorations = plan.filter((m) => m.perso === p).length;
-          return `<button class="equip-onglet ${idx === r ? `sel` : ``}" data-perso="${idx}" aria-pressed="${idx === r}">
-          <img src="${imgSymboleClasse(p.classeId)}" alt="" onerror="this.remove()" />
-          <span class="onglet-texte">${echapperHtml(nomClasse(p))}<small>${portes}/${EMPLACEMENTS.length} équipés${ameliorations ? ` · <b class="onglet-mieux">▲ ${ameliorations}</b>` : ``}</small></span></button>`;
+      const plan = planEquiper({ inventaire }, persos);
+      let htmlOnglets = persos
+        .map((membre, idx) => {
+          const portes = EMPLACEMENTS.filter((slot) => membre.equipement[slot]).length;
+          const ameliorations = plan.filter((amelioration) => amelioration.perso === membre).length;
+          return `<button class="equip-onglet ${idx === indexPerso ? `sel` : ``}" data-perso="${idx}" aria-pressed="${idx === indexPerso}">
+          <img src="${imgSymboleClasse(membre.classeId)}" alt="" onerror="this.remove()" />
+          <span class="onglet-texte">${echapperHtml(nomClasse(membre))}<small>${portes}/${EMPLACEMENTS.length} équipés${ameliorations ? ` · <b class="onglet-mieux">▲ ${ameliorations}</b>` : ``}</small></span></button>`;
         })
         .join(``);
       // les 8 emplacements en grille compacte : icône, emplacement, Tier ; la fiche donne le détail
-      let l = EMPLACEMENTS.map((slot) => {
-        let inst = s.equipement[slot];
-        let n = inst ? EQUIPEMENTS[inst.id] : undefined;
+      let htmlSlots = EMPLACEMENTS.map((slot) => {
+        let inst = heros.equipement[slot];
+        let def = inst ? EQUIPEMENTS[inst.id] : undefined;
         const type = typeDeEmplacement(slot);
         const dispo = groupes.some(
-          (g) => EQUIPEMENTS[g.inst.id]?.slot === type && g.comparaison.verdict !== `impossible`,
+          (groupe) =>
+            EQUIPEMENTS[groupe.inst.id]?.slot === type &&
+            groupe.comparaison.verdict !== `impossible`,
         );
-        const mieux = plan.some((m) => m.perso === s && m.emplacement === slot);
-        return n && inst
-          ? `<div class="equip-slot rempli${classeRarete(inst)}" data-slot="${slot}" data-desequip="${slot}" draggable="true" role="button" tabindex="0" aria-label="${NOMS_EMPLACEMENTS[slot]} : ${echapperHtml(n.nom)}, voir la fiche" title="${echapperHtml(n.nom)}">
-              <span class="ic-visuel"><img src="${imgObjet(n.id)}" alt="" onerror="this.remove()" />${mieux ? `<b class="slot-mieux" data-tip="Un objet de l'inventaire ferait mieux">▲</b>` : ``}</span>
+        const mieux = plan.some(
+          (amelioration) => amelioration.perso === heros && amelioration.emplacement === slot,
+        );
+        return def && inst
+          ? `<div class="equip-slot rempli${classeRarete(inst)}" data-slot="${slot}" data-desequip="${slot}" draggable="true" role="button" tabindex="0" aria-label="${NOMS_EMPLACEMENTS[slot]} : ${echapperHtml(def.nom)}, voir la fiche" title="${echapperHtml(def.nom)}">
+              <span class="ic-visuel"><img src="${imgObjet(def.id)}" alt="" onerror="this.remove()" />${mieux ? `<b class="slot-mieux" data-tip="Un objet de l'inventaire ferait mieux">▲</b>` : ``}</span>
               <span class="slot-nom">${NOMS_EMPLACEMENTS[slot]}</span>
               <span class="slot-objet ic-nom">${htmlNomObjet(inst)}</span>
               <b class="ic-tier">T${numeroZoneObjet(inst.id)}</b>
@@ -359,55 +387,67 @@ export function ecranEquipement(e, t) {
               <span class="slot-vide-txt">${dispo ? `à équiper` : `vide`}</span>
             </div>`;
       }).join(``);
-      const compteSlot = (slot) => t.filter((inst) => EQUIPEMENTS[inst.id]?.slot === slot).length;
+      const compteSlot = (slot) =>
+        inventaire.filter((inst) => EQUIPEMENTS[inst.id]?.slot === slot).length;
       // un filtre devenu vide (objet équipé, vendu) ne bloque pas l'inventaire : retour à « Tout »
       if (filtreSlot !== `tout` && compteSlot(filtreSlot) === 0) {
         filtreSlot = `tout`;
       }
       let filtres = [
-        [`tout`, `Tout`, t.length],
+        [`tout`, `Tout`, inventaire.length],
         ...SLOTS.map((slot) => [slot, NOMS_SLOTS[slot], compteSlot(slot)]),
       ]
         .map(
-          ([id, nom, n]) =>
-            `<button class="filtre-btn${filtreSlot === id ? ` actif` : ``}" data-filtre="${id}" aria-pressed="${filtreSlot === id}" ${n || id === `tout` || filtreSlot === id ? `` : `disabled`}>${nom} <small>${n}</small></button>`,
+          ([id, nom, nb]) =>
+            `<button class="filtre-btn${filtreSlot === id ? ` actif` : ``}" data-filtre="${id}" aria-pressed="${filtreSlot === id}" ${nb || id === `tout` || filtreSlot === id ? `` : `disabled`}>${nom} <small>${nb}</small></button>`,
         )
         .join(``);
       let visibles = trierGroupes(
-        groupes.filter((g) => filtreSlot === `tout` || EQUIPEMENTS[g.inst.id]?.slot === filtreSlot),
-        s,
+        groupes.filter(
+          (groupe) => filtreSlot === `tout` || EQUIPEMENTS[groupe.inst.id]?.slot === filtreSlot,
+        ),
+        heros,
       );
-      let d = visibles.length
+      let htmlCartes = visibles.length
         ? visibles
             .map(({ inst, indices, comparaison }) => {
-              let n = EQUIPEMENTS[inst.id];
+              let def = EQUIPEMENTS[inst.id];
               let possible = comparaison.verdict !== `impossible`;
-              return `<button class="item-carte ic${classeRarete(inst)}${possible ? `` : ` inequipable`}" data-index="${indices[0]}" draggable="${possible}" aria-label="${echapperHtml(n.nom)} : voir la fiche">
+              return `<button class="item-carte ic${classeRarete(inst)}${possible ? `` : ` inequipable`}" data-index="${indices[0]}" draggable="${possible}" aria-label="${echapperHtml(def.nom)} : voir la fiche">
               <span class="ic-visuel"><img src="${imgObjet(inst.id)}" alt="" loading="lazy" onerror="this.remove()" />${indices.length > 1 ? `<b class="ic-qte">×${indices.length}</b>` : ``}</span>
               <span class="ic-corps">
                 <span class="ic-ligne1"><span class="ic-nom">${htmlNomObjet(inst)}</span>${possible ? htmlVerdictCourt(comparaison) : ``}</span>
                 <span class="ic-meta">${htmlMetaObjet(inst)}</span>
-                ${possible ? `<span class="ic-cmp">${comparaison.actuel ? `<span class="delta-ref" data-tip="Remplace ${echapperHtml(EQUIPEMENTS[comparaison.actuel.id]?.nom ?? comparaison.actuel.id)}">↔ ${echapperHtml(EQUIPEMENTS[comparaison.actuel.id]?.nom ?? comparaison.actuel.id)}</span>` : `<span class="delta-ref">Emplacement vide</span>`}<span class="ic-deltas">${htmlDeltasCompacts(comparaison.deltas) || `<span class="muet">aucun changement</span>`}</span></span>` : `<span class="ic-stats">${htmlChipsObjet(inst, s.classeId)}</span><span class="delta-ref">Équipable seulement en ligne avant.</span>`}
-                ${htmlPanoCarte(inst, s)}${htmlBadgesHeros(inst, e, s)}
+                ${possible ? `<span class="ic-cmp">${comparaison.actuel ? `<span class="delta-ref" data-tip="Remplace ${echapperHtml(EQUIPEMENTS[comparaison.actuel.id]?.nom ?? comparaison.actuel.id)}">↔ ${echapperHtml(EQUIPEMENTS[comparaison.actuel.id]?.nom ?? comparaison.actuel.id)}</span>` : `<span class="delta-ref">Emplacement vide</span>`}<span class="ic-deltas">${htmlDeltasCompacts(comparaison.deltas) || `<span class="muet">aucun changement</span>`}</span></span>` : `<span class="ic-stats">${htmlChipsObjet(inst, heros.classeId)}</span><span class="delta-ref">Équipable seulement en ligne avant.</span>`}
+                ${htmlPanoCarte(inst, heros)}${htmlBadgesHeros(inst, persos, heros)}
               </span>
             </button>`;
             })
             .join(``)
-        : t.length
-          ? `<p class="muet equip-vide">Aucun objet de ce type. <button class="secondaire petit" data-filtre="tout">Voir tout (${t.length})</button></p>`
+        : inventaire.length
+          ? `<p class="muet equip-vide">Aucun objet de ce type. <button class="secondaire petit" data-filtre="tout">Voir tout (${inventaire.length})</button></p>`
           : ``; // inventaire vide : le message « sac vide » est affiché plus bas, une seule fois
-      let f = bonusEquipement(s);
+      let bonus = bonusEquipement(heros);
       let fiche = ``;
-      if (selection?.inst && t.includes(selection.inst)) {
+      if (selection?.inst && inventaire.includes(selection.inst)) {
         fiche = htmlFicheObjet(
           selection.inst,
-          e,
-          s,
+          persos,
+          heros,
           null,
-          groupes.find((g) => g.indices.some((x) => t[x] === selection.inst))?.indices.length ?? 1,
+          groupes.find((groupe) =>
+            groupe.indices.some((indice) => inventaire[indice] === selection.inst),
+          )?.indices.length ?? 1,
         );
-      } else if (selection?.slot && s.equipement[selection.slot]) {
-        fiche = htmlFicheObjet(s.equipement[selection.slot], e, s, s, 1, selection.slot);
+      } else if (selection?.slot && heros.equipement[selection.slot]) {
+        fiche = htmlFicheObjet(
+          heros.equipement[selection.slot],
+          persos,
+          heros,
+          heros,
+          1,
+          selection.slot,
+        );
       } else {
         selection = null;
       }
@@ -415,51 +455,51 @@ export function ecranEquipement(e, t) {
       const boutonAuto = `<button id="equip-auto" class="primaire petit"${nbAuto ? `` : ` disabled`} title="${nbAuto ? `Équipe sur chaque héros les objets qui font gagner des PA (objet ou panoplie qui se complète) ou des dégâts, sans en faire perdre` : `Rien à améliorer dans l'inventaire pour le moment`}">⚡ Équiper le meilleur${nbAuto ? ` (${nbAuto})` : ``}</button>`;
       afficherEcran(`
         <h1>Équipement</h1>
-        <div class="equip-onglets">${c}</div>
+        <div class="equip-onglets">${htmlOnglets}</div>
         <div class="equip-corps">
           <div class="equip-col">
-            <h3 class="equip-titre-heros"><span>${echapperHtml(nomClasse(s))}</span>
+            <h3 class="equip-titre-heros"><span>${echapperHtml(nomClasse(heros))}</span>
               ${boutonAuto}
             </h3>
-            <p class="equip-resume"><span class="resume-pa" data-tip="PA de base ${CLASSES[s.classeId].pa} + équipement ${f.paBonus} (max +${PA_MAX_EQUIPEMENT})"><b>${CLASSES[s.classeId].pa + f.paBonus}</b> PA <small>(équip. +${f.paBonus}/${PA_MAX_EQUIPEMENT})</small></span><span class="resume-pv"><b>${pvMaxPerso(s)}</b> PV max</span></p>
+            <p class="equip-resume"><span class="resume-pa" data-tip="PA de base ${CLASSES[heros.classeId].pa} + équipement ${bonus.paBonus} (max +${PA_MAX_EQUIPEMENT})"><b>${CLASSES[heros.classeId].pa + bonus.paBonus}</b> PA <small>(équip. +${bonus.paBonus}/${PA_MAX_EQUIPEMENT})</small></span><span class="resume-pv"><b>${pvMaxPerso(heros)}</b> PV max</span></p>
             ${messageAuto ? `<p class="equip-auto-msg" role="status">${messageAuto}${photoAnnul ? ` · <button id="equip-annuler" class="secondaire petit">Annuler</button>` : ``}</p>` : ``}
-            <div class="equip-slots grille">${l}</div>
-            ${Object.entries(compterPanoplies(s))
+            <div class="equip-slots grille">${htmlSlots}</div>
+            ${Object.entries(compterPanoplies(heros))
               .map(([nom, nb]) => {
-                const b = bonusPanoplie(nom, nb);
+                const bonusActif = bonusPanoplie(nom, nb);
                 const taille = taillePanoplie(nom);
-                const prochain = paliersPanoplie(nom).find((k) => k > nb);
+                const prochain = paliersPanoplie(nom).find((seuil) => seuil > nb);
                 const avecPa = (txt) => txt.replace(/\+(\d+) PA/, `<b class="pano-pa">+$1 PA</b>`);
                 const pastilles = Array.from(
                   { length: taille },
-                  (_, k) => `<i class="${k < nb ? `on` : ``}"></i>`,
+                  (_palier, indice) => `<i class="${indice < nb ? `on` : ``}"></i>`,
                 ).join(``);
                 const suite = prochain
                   ? `<span class="pano-suite">Encore ${prochain - nb} pièce${prochain - nb > 1 ? `s` : ``} : ${avecPa(texteBonusPanoplie(PANOPLIES[nom].paliers[prochain]))}</span>`
                   : `<span class="pano-suite">Panoplie au maximum</span>`;
-                return `<div class="equip-pano${b ? ` complete` : ``}" data-tip="${echapperHtml(descriptionPanoplie(nom))}">
+                return `<div class="equip-pano${bonusActif ? ` complete` : ``}" data-tip="${echapperHtml(descriptionPanoplie(nom))}">
                   <span class="pano-tete"><span class="pano-nom">⬡ ${echapperHtml(nom)}</span><span class="pano-pastilles" aria-label="${nb} pièces sur ${taille}">${pastilles}</span><b class="pano-nb">${nb}/${taille}</b></span>
-                  ${b ? `<span class="pano-actif">Actif (${b.palier} p.) : ${avecPa(texteBonusPanoplie(b))}</span>` : ``}
+                  ${bonusActif ? `<span class="pano-actif">Actif (${bonusActif.palier} p.) : ${avecPa(texteBonusPanoplie(bonusActif))}</span>` : ``}
                   ${suite}
                 </div>`;
               })
               .join(``)}
-            <div class="equip-total"><span class="equip-total-titre">Bonus total</span><div class="ichips">${htmlBonusTotal(f)}</div></div>
+            <div class="equip-total"><span class="equip-total-titre">Bonus total</span><div class="ichips">${htmlBonusTotal(bonus)}</div></div>
           </div>
           <div class="equip-col equip-col-inv">
-            <h3>Inventaire (${t.length})</h3>
+            <h3>Inventaire (${inventaire.length})</h3>
             ${
-              t.length
+              inventaire.length
                 ? `<div class="equip-outils">
               <div class="equip-filtres" role="group" aria-label="Filtrer par emplacement">${filtres}</div>
               <div class="equip-tri" role="group" aria-label="Trier">Tri :
                 ${TRIS.map(([id, nom, aide]) => `<button class="tri-btn${triArmurerie === id ? ` actif` : ``}" data-tri="${id}" aria-pressed="${triArmurerie === id}" title="${aide}">${nom}</button>`).join(``)}
               </div>
             </div>
-            <p class="equip-astuce muet">Les chiffres comparent chaque objet à ce que porte ${echapperHtml(nomClasse(s))}. ${ecranTactile() ? `Touche un objet : fiche et choix du héros.` : `Clic : fiche · double-clic : équiper · glisser-déposer possible.`}</p>`
+            <p class="equip-astuce muet">Les chiffres comparent chaque objet à ce que porte ${echapperHtml(nomClasse(heros))}. ${ecranTactile() ? `Touche un objet : fiche et choix du héros.` : `Clic : fiche · double-clic : équiper · glisser-déposer possible.`}</p>`
                 : `<p class="equip-vide muet">🎒 Ton sac est vide. Les objets viennent des combats, des coffres et de l'HDV : ils apparaîtront ici.</p>`
             }
-            <div class="equip-inv">${d}</div>
+            <div class="equip-inv">${htmlCartes}</div>
           </div>
         </div>
         ${barreRetour(`equip-retour`, `Retour au plateau`)}
@@ -472,22 +512,24 @@ export function ecranEquipement(e, t) {
         conteneur.innerHTML = fiche;
         document.body.appendChild(conteneur);
       }
-      let m = (e, emplacement, confirmer = false) => {
-        if (e >= 0 && e < t.length) {
-          const inst = t[e];
-          equiperObjet(t, s, e, emplacement);
+      let equiperIndex = (index, emplacement, confirmer = false) => {
+        if (index >= 0 && index < inventaire.length) {
+          const inst = inventaire[index];
+          equiperObjet(inventaire, heros, index, emplacement);
           selection = null;
-          i();
-          if (confirmer && !t.includes(inst)) {
-            afficherBandeau(`✓ ${EQUIPEMENTS[inst.id]?.nom ?? inst.id} équipé sur ${nomClasse(s)}`);
+          afficher();
+          if (confirmer && !inventaire.includes(inst)) {
+            afficherBandeau(
+              `✓ ${EQUIPEMENTS[inst.id]?.nom ?? inst.id} équipé sur ${nomClasse(heros)}`,
+            );
           }
         }
       };
-      let h = (e, confirmer = false) => {
-        const inst = s.equipement[e];
-        desequiper(t, s, e);
+      let desequiperSlot = (emplacement, confirmer = false) => {
+        const inst = heros.equipement[emplacement];
+        desequiper(inventaire, heros, emplacement);
         selection = null;
-        i();
+        afficher();
         if (confirmer && inst) {
           afficherBandeau(`↩ ${EQUIPEMENTS[inst.id]?.nom ?? inst.id} retiré (dans l'inventaire)`);
         }
@@ -508,171 +550,173 @@ export function ecranEquipement(e, t) {
         }
       };
       document.getElementById(`equip-auto`)?.addEventListener(`click`, () => {
-        const photo = photoEquipement({ inventaire: t, persos: e });
-        const n = equiperMeilleur({ inventaire: t, persos: e });
-        messageAuto = n
-          ? `✓ ${n} objet${n > 1 ? `s` : ``} équipé${n > 1 ? `s` : ``} (PA et dégâts d'abord ; les échanges douteux restent à ton choix).`
+        const photo = photoEquipement({ inventaire, persos });
+        const nbEquipes = equiperMeilleur({ inventaire, persos });
+        messageAuto = nbEquipes
+          ? `✓ ${nbEquipes} objet${nbEquipes > 1 ? `s` : ``} équipé${nbEquipes > 1 ? `s` : ``} (PA et dégâts d'abord ; les échanges douteux restent à ton choix).`
           : `Rien à améliorer.`;
-        annulerAuto = n ? photo : null;
+        annulerAuto = nbEquipes ? photo : null;
         selection = null;
-        i();
+        afficher();
         messageAuto = ``;
       });
       // Annuler : remet les anciens objets (échanges de planEquiper : `remplace`) comme avant
       document.getElementById(`equip-annuler`)?.addEventListener(`click`, () => {
-        restaurerEquipement({ inventaire: t, persos: e }, photoAnnul);
+        restaurerEquipement({ inventaire, persos }, photoAnnul);
         messageAuto = `↩ Équipement remis comme avant.`;
         selection = null;
-        i();
+        afficher();
         messageAuto = ``;
       });
-      racine.querySelectorAll(`.equip-onglet`).forEach((e) =>
-        e.addEventListener(`click`, () => {
-          r = Number(e.dataset.perso);
-          i();
+      racine.querySelectorAll(`.equip-onglet`).forEach((onglet) =>
+        onglet.addEventListener(`click`, () => {
+          indexPerso = Number(onglet.dataset.perso);
+          afficher();
         }),
       );
-      racine.querySelectorAll(`[data-tri]`).forEach((b) =>
-        b.addEventListener(`click`, () => {
-          triArmurerie = b.dataset.tri;
-          i();
+      racine.querySelectorAll(`[data-tri]`).forEach((bouton) =>
+        bouton.addEventListener(`click`, () => {
+          triArmurerie = bouton.dataset.tri;
+          afficher();
         }),
       );
-      racine.querySelectorAll(`[data-filtre]`).forEach((b) =>
-        b.addEventListener(`click`, () => {
-          filtreSlot = b.dataset.filtre;
-          i();
+      racine.querySelectorAll(`[data-filtre]`).forEach((bouton) =>
+        bouton.addEventListener(`click`, () => {
+          filtreSlot = bouton.dataset.filtre;
+          afficher();
         }),
       );
       // emplacement vide : on filtre l'inventaire sur cet emplacement et on y descend
-      racine.querySelectorAll(`.equip-slot.vide`).forEach((b) => {
-        b.addEventListener(`click`, () => {
-          filtreSlot = typeDeEmplacement(b.dataset.slot);
-          i();
+      racine.querySelectorAll(`.equip-slot.vide`).forEach((bouton) => {
+        bouton.addEventListener(`click`, () => {
+          filtreSlot = typeDeEmplacement(bouton.dataset.slot);
+          afficher();
           racine
             .querySelector(`.equip-outils`)
             ?.scrollIntoView({ block: `start`, behavior: comportementDefilement() });
         });
         // clavier : Entrée et Espace font comme le clic
-        b.addEventListener(`keydown`, (ev) => {
+        bouton.addEventListener(`keydown`, (ev) => {
           if (ev.key === `Enter` || ev.key === ` `) {
             ev.preventDefault();
-            b.click();
+            bouton.click();
           }
         });
       });
-      racine.querySelectorAll(`.item-carte`).forEach((e) => {
-        let t_ = Number(e.dataset.index);
-        e.addEventListener(`click`, (ev) => {
+      racine.querySelectorAll(`.item-carte`).forEach((carte) => {
+        let indexInv = Number(carte.dataset.index);
+        carte.addEventListener(`click`, (ev) => {
           // clavier (Entrée) : pas de double-clic possible, ouverture immédiate
-          origineFiche = cleFocus(e);
+          origineFiche = cleFocus(carte);
           if (ev.detail === 0) {
-            selection = { inst: t[t_] };
-            i();
+            selection = { inst: inventaire[indexInv] };
+            afficher();
             return;
           }
           if (ev.detail > 1) {
             return;
           }
           clicDiffere(() => {
-            selection = { inst: t[t_] };
-            i();
+            selection = { inst: inventaire[indexInv] };
+            afficher();
           });
         });
-        e.addEventListener(`dblclick`, () => doubleClic(() => m(t_, undefined, true)));
-        e.addEventListener(`dragstart`, (n) => {
-          n.dataTransfer.setData(`text/plain`, `inv:${t_}`);
-          n.dataTransfer.effectAllowed = `move`;
-          e.classList.add(`drag-src`);
+        carte.addEventListener(`dblclick`, () =>
+          doubleClic(() => equiperIndex(indexInv, undefined, true)),
+        );
+        carte.addEventListener(`dragstart`, (evenement) => {
+          evenement.dataTransfer.setData(`text/plain`, `inv:${indexInv}`);
+          evenement.dataTransfer.effectAllowed = `move`;
+          carte.classList.add(`drag-src`);
         });
-        e.addEventListener(`dragend`, () => e.classList.remove(`drag-src`));
+        carte.addEventListener(`dragend`, () => carte.classList.remove(`drag-src`));
       });
-      racine.querySelectorAll(`.equip-slot`).forEach((e) => {
-        let slot = e.dataset.slot;
-        if (e.classList.contains(`rempli`)) {
+      racine.querySelectorAll(`.equip-slot`).forEach((caseSlot) => {
+        let slot = caseSlot.dataset.slot;
+        if (caseSlot.classList.contains(`rempli`)) {
           const ouvrir = () => {
-            origineFiche = cleFocus(e);
+            origineFiche = cleFocus(caseSlot);
             selection = { slot };
-            i();
+            afficher();
           };
-          e.addEventListener(`click`, (ev) => {
+          caseSlot.addEventListener(`click`, (ev) => {
             if (ev.detail > 1) {
               return;
             }
             clicDiffere(ouvrir);
           });
-          e.addEventListener(`keydown`, (ev) => {
+          caseSlot.addEventListener(`keydown`, (ev) => {
             if (ev.key === `Enter` || ev.key === ` `) {
               ev.preventDefault();
               ouvrir();
             }
           });
-          e.addEventListener(`dblclick`, () => doubleClic(() => h(slot, true)));
-          e.addEventListener(`dragstart`, (n) => {
-            n.dataTransfer.setData(`text/plain`, `slot:${slot}`);
-            n.dataTransfer.effectAllowed = `move`;
-            e.classList.add(`drag-src`);
+          caseSlot.addEventListener(`dblclick`, () => doubleClic(() => desequiperSlot(slot, true)));
+          caseSlot.addEventListener(`dragstart`, (evenement) => {
+            evenement.dataTransfer.setData(`text/plain`, `slot:${slot}`);
+            evenement.dataTransfer.effectAllowed = `move`;
+            caseSlot.classList.add(`drag-src`);
           });
-          e.addEventListener(`dragend`, () => e.classList.remove(`drag-src`));
+          caseSlot.addEventListener(`dragend`, () => caseSlot.classList.remove(`drag-src`));
         }
-        e.addEventListener(`dragover`, (t) => {
-          if (t.dataTransfer?.types.includes(`text/plain`)) {
-            t.preventDefault();
-            e.classList.add(`drop-cible`);
+        caseSlot.addEventListener(`dragover`, (evenement) => {
+          if (evenement.dataTransfer?.types.includes(`text/plain`)) {
+            evenement.preventDefault();
+            caseSlot.classList.add(`drop-cible`);
           }
         });
-        e.addEventListener(`dragleave`, () => e.classList.remove(`drop-cible`));
-        e.addEventListener(`drop`, (t) => {
-          t.preventDefault();
-          e.classList.remove(`drop-cible`);
-          let n = t.dataTransfer.getData(`text/plain`);
-          if (n.startsWith(`inv:`)) {
+        caseSlot.addEventListener(`dragleave`, () => caseSlot.classList.remove(`drop-cible`));
+        caseSlot.addEventListener(`drop`, (evenement) => {
+          evenement.preventDefault();
+          caseSlot.classList.remove(`drop-cible`);
+          let donnees = evenement.dataTransfer.getData(`text/plain`);
+          if (donnees.startsWith(`inv:`)) {
             // déposé sur un emplacement précis (utile pour choisir l'anneau à remplacer)
-            const idx = Number(n.slice(4));
-            m(idx, emplacementPossible(s, t[idx], slot) ? slot : undefined);
+            const idx = Number(donnees.slice(4));
+            equiperIndex(idx, emplacementPossible(heros, evenement[idx], slot) ? slot : undefined);
           }
         });
       });
-      let g = racine.querySelector(`.equip-inv`);
-      if (g) {
-        g.addEventListener(`dragover`, (e) => {
-          if (e.dataTransfer?.types.includes(`text/plain`)) {
-            e.preventDefault();
-            g.classList.add(`drop-cible`);
+      let listeInv = racine.querySelector(`.equip-inv`);
+      if (listeInv) {
+        listeInv.addEventListener(`dragover`, (evenement) => {
+          if (evenement.dataTransfer?.types.includes(`text/plain`)) {
+            evenement.preventDefault();
+            listeInv.classList.add(`drop-cible`);
           }
         });
-        g.addEventListener(`dragleave`, () => g.classList.remove(`drop-cible`));
-        g.addEventListener(`drop`, (e) => {
-          e.preventDefault();
-          g.classList.remove(`drop-cible`);
-          let t = e.dataTransfer.getData(`text/plain`);
-          if (t.startsWith(`slot:`)) {
-            h(t.slice(5));
+        listeInv.addEventListener(`dragleave`, () => listeInv.classList.remove(`drop-cible`));
+        listeInv.addEventListener(`drop`, (evenement) => {
+          evenement.preventDefault();
+          listeInv.classList.remove(`drop-cible`);
+          let donnees = evenement.dataTransfer.getData(`text/plain`);
+          if (donnees.startsWith(`slot:`)) {
+            desequiperSlot(donnees.slice(5));
           }
         });
       }
       // fiche ouverte
-      document.querySelectorAll(`[data-fermer-fiche]`).forEach((b) =>
-        b.addEventListener(`click`, () => {
+      document.querySelectorAll(`[data-fermer-fiche]`).forEach((bouton) =>
+        bouton.addEventListener(`click`, () => {
           selection = null;
-          i();
+          afficher();
         }),
       );
-      document.querySelectorAll(`[data-equiper-sur]`).forEach((b) =>
-        b.addEventListener(`click`, () => {
-          const idx = Number(b.dataset.equiperSur);
-          const index = t.indexOf(selection.inst);
+      document.querySelectorAll(`[data-equiper-sur]`).forEach((bouton) =>
+        bouton.addEventListener(`click`, () => {
+          const idx = Number(bouton.dataset.equiperSur);
+          const index = inventaire.indexOf(selection.inst);
           if (index >= 0) {
-            equiperObjet(t, e[idx], index, b.dataset.emplacement || undefined);
+            equiperObjet(inventaire, persos[idx], index, bouton.dataset.emplacement || undefined);
           }
-          r = idx;
+          indexPerso = idx;
           selection = null;
-          i();
+          afficher();
         }),
       );
       document
         .querySelector(`[data-retirer]`)
-        ?.addEventListener(`click`, (ev) => h(ev.currentTarget.dataset.retirer));
+        ?.addEventListener(`click`, (ev) => desequiperSlot(ev.currentTarget.dataset.retirer));
       if (fiche) {
         document.querySelector(`.fiche-fermer`)?.focus({ preventScroll: true });
       } else if (photoAnnul && messageAuto) {
@@ -688,12 +732,12 @@ export function ecranEquipement(e, t) {
         document.getElementById(`fiche-equip`)?.remove();
         resolve();
       });
-      let _ = racine.querySelector(`.equip-inv`);
-      if (_) {
-        _.scrollTop = a;
+      let liste = racine.querySelector(`.equip-inv`);
+      if (liste) {
+        liste.scrollTop = scrollInv;
       }
       if (document.scrollingElement) {
-        document.scrollingElement.scrollTop = o;
+        document.scrollingElement.scrollTop = scrollPage;
       }
     };
     // Échap ferme d'abord la fiche ouverte (sans quitter l'écran) : écouté en phase de capture
@@ -702,10 +746,10 @@ export function ecranEquipement(e, t) {
         ev.preventDefault();
         ev.stopPropagation();
         selection = null;
-        i();
+        afficher();
       }
     };
     document.addEventListener(`keydown`, echap, true);
-    i();
+    afficher();
   });
 }

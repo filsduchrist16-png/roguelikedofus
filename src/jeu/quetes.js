@@ -4,241 +4,263 @@ export const nouvelEtatQuetes = () => ({
   faites: [],
   compteurs: {},
 });
-function* quetesRestantes(e, t) {
-  let n = new Set(e.faites);
-  for (let e of Object.values(t)) {
-    for (let t of e.quetes) {
-      if (!n.has(t.id)) {
-        yield t;
+function* quetesRestantes(etat, succes) {
+  let faites = new Set(etat.faites);
+  for (let succesDef of Object.values(succes)) {
+    for (let quete of succesDef.quetes) {
+      if (!faites.has(quete.id)) {
+        yield quete;
       }
     }
   }
 }
-function validerQuetes(e, t, quetes) {
+function validerQuetes(etat, succes, quetes) {
   if (!quetes.length) {
     return {
       quetes: [],
       succes: [],
     };
   }
-  e.faites.push(...quetes.map((e) => e.id));
-  let r = new Set(quetes.map((e) => e.id));
+  etat.faites.push(...quetes.map((quete) => quete.id));
+  let ids = new Set(quetes.map((quete) => quete.id));
   return {
     quetes,
-    succes: Object.entries(t)
-      .filter(([, t]) => t.quetes.some((e) => r.has(e.id)) && progressionSucces(e, t).complet)
+    succes: Object.entries(succes)
+      .filter(
+        ([, definition]) =>
+          definition.quetes.some((quete) => ids.has(quete.id)) &&
+          progressionSucces(etat, definition).complet,
+      )
       .map(([id, def]) => ({
         id,
         def,
       })),
   };
 }
-function incrementerCompteur(e, t, seuil, r) {
-  if (r <= 0) {
+function incrementerCompteur(etat, quete, seuil, gain) {
+  if (gain <= 0) {
     return false;
   }
   return (
-    (e.compteurs[t.id] = Math.min(seuil, (e.compteurs[t.id] ?? 0) + r)),
-    e.compteurs[t.id] >= seuil
+    (etat.compteurs[quete.id] = Math.min(seuil, (etat.compteurs[quete.id] ?? 0) + gain)),
+    etat.compteurs[quete.id] >= seuil
   );
 }
-function critereVaincreRempli(e, t) {
+function critereVaincreRempli(critere, contexte) {
   return !(
-    !t.gagne ||
-    (e.combat !== undefined && t.combatId !== e.combat) ||
-    (e.boss !== undefined && !t.vaincus.includes(e.boss)) ||
-    (e.noeud !== undefined && t.noeud !== e.noeud) ||
-    (e.zone !== undefined && t.zoneId !== e.zone) ||
-    (e.sansKO && t.herosKO) ||
-    (e.toursMax !== undefined && t.rondes > e.toursMax) ||
-    t.ascension < (e.ascensionMin ?? 0) ||
-    (e.classe !== undefined && !t.classes.includes(e.classe)) ||
-    (e.equipeMax !== undefined && (t.nbHeros ?? Infinity) > e.equipeMax) ||
-    (e.bossPremier && t.ordreVaincus?.[0] !== e.boss) ||
-    (e.bossDernier && t.ordreVaincus?.at(-1) !== e.boss)
+    !contexte.gagne ||
+    (critere.combat !== undefined && contexte.combatId !== critere.combat) ||
+    (critere.boss !== undefined && !contexte.vaincus.includes(critere.boss)) ||
+    (critere.noeud !== undefined && contexte.noeud !== critere.noeud) ||
+    (critere.zone !== undefined && contexte.zoneId !== critere.zone) ||
+    (critere.sansKO && contexte.herosKO) ||
+    (critere.toursMax !== undefined && contexte.rondes > critere.toursMax) ||
+    contexte.ascension < (critere.ascensionMin ?? 0) ||
+    (critere.classe !== undefined && !contexte.classes.includes(critere.classe)) ||
+    (critere.equipeMax !== undefined && (contexte.nbHeros ?? Infinity) > critere.equipeMax) ||
+    (critere.bossPremier && contexte.ordreVaincus?.[0] !== critere.boss) ||
+    (critere.bossDernier && contexte.ordreVaincus?.at(-1) !== critere.boss)
   );
 }
-function valeurCompteur(e, t) {
-  switch (e.evenement) {
+function valeurCompteur(critere, contexte) {
+  switch (critere.evenement) {
     case `monstre_vaincu`:
-      if (e.zone !== undefined && t.zoneId !== e.zone) {
+      if (critere.zone !== undefined && contexte.zoneId !== critere.zone) {
         return 0;
       }
-      return t.vaincus.filter((t) => e.espece === undefined || t === e.espece).length;
+      return contexte.vaincus.filter(
+        (espece) => critere.espece === undefined || espece === critere.espece,
+      ).length;
     case `degats_element`:
-      return Math.round(t.degatsParElement[e.element] ?? 0);
+      return Math.round(contexte.degatsParElement[critere.element] ?? 0);
     case `soins`:
-      return Math.round(t.soins);
+      return Math.round(contexte.soins);
   }
 }
-export function verifierQuetesCombat(e, t, n = SUCCES) {
-  let r = [];
-  for (let i of quetesRestantes(e, n)) {
-    let n = i.critere;
-    if (n.type === `vaincre` && critereVaincreRempli(n, t)) {
-      r.push(i);
+export function verifierQuetesCombat(etat, contexte, succes = SUCCES) {
+  let rempli = [];
+  for (let quete of quetesRestantes(etat, succes)) {
+    let critere = quete.critere;
+    if (critere.type === `vaincre` && critereVaincreRempli(critere, contexte)) {
+      rempli.push(quete);
     }
-    if (n.type === `compteur` && incrementerCompteur(e, i, n.seuil, valeurCompteur(n, t))) {
-      r.push(i);
-    }
-  }
-  return validerQuetes(e, n, r);
-}
-export function verifierQuetesZone(e, t, n = SUCCES) {
-  let r = [];
-  for (let i of quetesRestantes(e, n)) {
-    let e = i.critere;
-    if (e.type === `zone_terminee` && e.zone === t.zoneId && t.ascension >= (e.ascensionMin ?? 0)) {
-      r.push(i);
+    if (
+      critere.type === `compteur` &&
+      incrementerCompteur(etat, quete, critere.seuil, valeurCompteur(critere, contexte))
+    ) {
+      rempli.push(quete);
     }
   }
-  return validerQuetes(e, n, r);
+  return validerQuetes(etat, succes, rempli);
 }
-export function verifierQuetesRun(e, t, n = SUCCES) {
-  let r = [];
-  if (t.victoire) {
-    for (let i of quetesRestantes(e, n)) {
-      let e = i.critere;
-      e.type === `run_gagnee` &&
-        ((e.tranche !== undefined && t.trancheId !== e.tranche) ||
-          (e.sansTaverne && t.tavernes > 0) ||
-          (e.equipeMax !== undefined && t.tailleEquipe > e.equipeMax) ||
-          (e.sansRecrutement && t.recrutements > 0) ||
-          (e.classe !== undefined && !t.classes.includes(e.classe)) ||
-          t.ascension < (e.ascensionMin ?? 0) ||
-          (e.quatreHerosEquipes && !t.quatreHerosEquipes) ||
-          r.push(i));
+export function verifierQuetesZone(etat, contexte, succes = SUCCES) {
+  let rempli = [];
+  for (let quete of quetesRestantes(etat, succes)) {
+    let critere = quete.critere;
+    if (
+      critere.type === `zone_terminee` &&
+      critere.zone === contexte.zoneId &&
+      contexte.ascension >= (critere.ascensionMin ?? 0)
+    ) {
+      rempli.push(quete);
     }
   }
-  return validerQuetes(e, n, r);
+  return validerQuetes(etat, succes, rempli);
 }
-function archisDeZone(e) {
-  let t = ZONES.find((t) => t.id === e);
-  if (t) {
-    return monstresDeZone(t).filter((e) => MONSTRES[e]?.archiNom);
+export function verifierQuetesRun(etat, contexte, succes = SUCCES) {
+  let rempli = [];
+  if (contexte.victoire) {
+    for (let quete of quetesRestantes(etat, succes)) {
+      let critere = quete.critere;
+      critere.type === `run_gagnee` &&
+        ((critere.tranche !== undefined && contexte.trancheId !== critere.tranche) ||
+          (critere.sansTaverne && contexte.tavernes > 0) ||
+          (critere.equipeMax !== undefined && contexte.tailleEquipe > critere.equipeMax) ||
+          (critere.sansRecrutement && contexte.recrutements > 0) ||
+          (critere.classe !== undefined && !contexte.classes.includes(critere.classe)) ||
+          contexte.ascension < (critere.ascensionMin ?? 0) ||
+          (critere.quatreHerosEquipes && !contexte.quatreHerosEquipes) ||
+          rempli.push(quete));
+    }
+  }
+  return validerQuetes(etat, succes, rempli);
+}
+function archisDeZone(zoneId) {
+  let zone = ZONES.find((candidate) => candidate.id === zoneId);
+  if (zone) {
+    return monstresDeZone(zone).filter((especeId) => MONSTRES[especeId]?.archiNom);
   }
   return [];
 }
-const zoneArchisComplete = (e, t) => {
-  let n = archisDeZone(e);
-  return n.length > 0 && n.every((e) => t.has(e));
+const zoneArchisComplete = (zoneId, captures) => {
+  let archis = archisDeZone(zoneId);
+  return archis.length > 0 && archis.every((especeId) => captures.has(especeId));
 };
-function archisDuMonde(e) {
-  let t = MONDES.find((t) => t.id === e)?.zones ?? [];
-  return [...new Set([...t.flatMap(archisDeZone), ...(MONSTRES_RARES[e]?.especes ?? [])])];
+function archisDuMonde(mondeId) {
+  let zones = MONDES.find((candidat) => candidat.id === mondeId)?.zones ?? [];
+  return [
+    ...new Set([...zones.flatMap(archisDeZone), ...(MONSTRES_RARES[mondeId]?.especes ?? [])]),
+  ];
 }
-export function progressionArchisMonde(e, t) {
-  let n = archisDuMonde(t);
-  let r = new Set(e);
-  return [n.filter((e) => r.has(e)).length, n.length];
+export function progressionArchisMonde(captures, mondeId) {
+  let archis = archisDuMonde(mondeId);
+  let captureSet = new Set(captures);
+  return [archis.filter((especeId) => captureSet.has(especeId)).length, archis.length];
 }
-const mondeArchisComplet = (tranche, t) => {
-  let n = archisDuMonde(tranche);
-  return n.length > 0 && n.every((e) => t.has(e));
+const mondeArchisComplet = (tranche, captures) => {
+  let archis = archisDuMonde(tranche);
+  return archis.length > 0 && archis.every((especeId) => captures.has(especeId));
 };
-export function verifierQuetesMeta(e, t, n = SUCCES) {
-  let r = new Set(t.archis);
-  let i = (e) => {
-    if (e === undefined) {
+export function verifierQuetesMeta(etat, meta, succes = SUCCES) {
+  let archisCaptures = new Set(meta.archis);
+  let rangRarete = (rarete) => {
+    if (rarete === undefined) {
       return -1;
     }
-    return RARETES.indexOf(e);
+    return RARETES.indexOf(rarete);
   };
-  let a = [];
-  for (let o of quetesRestantes(e, n)) {
-    let e = o.critere;
-    let n = false;
-    e.type === `archi_capture`
-      ? e.espece === undefined
-        ? e.zone === undefined
-          ? e.tranche === undefined
-            ? e.uneZoneComplete && (n = ZONES.some((e) => zoneArchisComplete(e.id, r)))
-            : (n = mondeArchisComplet(e.tranche, r))
-          : (n = zoneArchisComplete(e.zone, r))
-        : (n = r.has(e.espece))
-      : e.type === `record_ascension`
-        ? (n = (t.ascension[e.tranche] ?? -1) >= e.min)
-        : e.type === `archis_total`
-          ? (n = t.archis.length >= e.seuil)
-          : e.type === `objet_obtenu`
-            ? (n = i(t.collection[e.objet]) >= i(e.rareteMin))
-            : e.type === `dofus_possedes`
-              ? (n = new Set(t.dofus).size >= e.seuil)
-              : e.type === `runs_jouees`
-                ? (n = t.runs >= e.seuil)
-                : e.type === `relique_obtenue`
-                  ? (n = t.reliques.includes(e.boss))
-                  : e.type === `dofus_possede` && (n = t.dofus.includes(e.dofus));
-    if (n) {
-      a.push(o);
+  let rempli = [];
+  for (let quete of quetesRestantes(etat, succes)) {
+    let critere = quete.critere;
+    let valide = false;
+    critere.type === `archi_capture`
+      ? critere.espece === undefined
+        ? critere.zone === undefined
+          ? critere.tranche === undefined
+            ? critere.uneZoneComplete &&
+              (valide = ZONES.some((zone) => zoneArchisComplete(zone.id, archisCaptures)))
+            : (valide = mondeArchisComplet(critere.tranche, archisCaptures))
+          : (valide = zoneArchisComplete(critere.zone, archisCaptures))
+        : (valide = archisCaptures.has(critere.espece))
+      : critere.type === `record_ascension`
+        ? (valide = (meta.ascension[critere.tranche] ?? -1) >= critere.min)
+        : critere.type === `archis_total`
+          ? (valide = meta.archis.length >= critere.seuil)
+          : critere.type === `objet_obtenu`
+            ? (valide = rangRarete(meta.collection[critere.objet]) >= rangRarete(critere.rareteMin))
+            : critere.type === `dofus_possedes`
+              ? (valide = new Set(meta.dofus).size >= critere.seuil)
+              : critere.type === `runs_jouees`
+                ? (valide = meta.runs >= critere.seuil)
+                : critere.type === `relique_obtenue`
+                  ? (valide = meta.reliques.includes(critere.boss))
+                  : critere.type === `dofus_possede` &&
+                    (valide = meta.dofus.includes(critere.dofus));
+    if (valide) {
+      rempli.push(quete);
     }
   }
-  return validerQuetes(e, n, a);
+  return validerQuetes(etat, succes, rempli);
 }
-export function dofusDeSucces(e) {
-  if (`dofus` in e.categorie) {
-    return e.categorie.dofus;
-  }
-}
-function progressionCritere(e, t) {
-  if (e.type === `archi_capture` && (e.tranche !== undefined || e.zone !== undefined)) {
-    let n = new Set(e.tranche === undefined ? archisDeZone(e.zone) : archisDuMonde(e.tranche));
-    let r = new Set(t.archis);
-    return [[...n].filter((e) => r.has(e)).length, n.size];
-  }
-  if (e.type === `archis_total`) {
-    return [t.archis.length, e.seuil];
-  }
-  if (e.type === `runs_jouees`) {
-    return [t.runs, e.seuil];
-  }
-  if (e.type === `dofus_possedes`) {
-    return [new Set(t.dofus).size, e.seuil];
+export function dofusDeSucces(succes) {
+  if (`dofus` in succes.categorie) {
+    return succes.categorie.dofus;
   }
 }
-export function etatQuete(e, t, n) {
-  let faite = e.faites.includes(t.id);
-  let t_critere = t.critere;
-  let a =
-    t_critere.type === `compteur`
-      ? [e.compteurs[t.id] ?? 0, t_critere.seuil]
-      : n
-        ? progressionCritere(t_critere, n)
+function progressionCritere(critere, meta) {
+  if (
+    critere.type === `archi_capture` &&
+    (critere.tranche !== undefined || critere.zone !== undefined)
+  ) {
+    let archis = new Set(
+      critere.tranche === undefined ? archisDeZone(critere.zone) : archisDuMonde(critere.tranche),
+    );
+    let captures = new Set(meta.archis);
+    return [[...archis].filter((especeId) => captures.has(especeId)).length, archis.size];
+  }
+  if (critere.type === `archis_total`) {
+    return [meta.archis.length, critere.seuil];
+  }
+  if (critere.type === `runs_jouees`) {
+    return [meta.runs, critere.seuil];
+  }
+  if (critere.type === `dofus_possedes`) {
+    return [new Set(meta.dofus).size, critere.seuil];
+  }
+}
+export function etatQuete(etat, quete, contexte) {
+  let faite = etat.faites.includes(quete.id);
+  let critere = quete.critere;
+  let progression =
+    critere.type === `compteur`
+      ? [etat.compteurs[quete.id] ?? 0, critere.seuil]
+      : contexte
+        ? progressionCritere(critere, contexte)
         : undefined;
-  if (!a) {
+  if (!progression) {
     return {
       faite,
     };
   }
-  let [o, s] = a;
+  let [fait, total] = progression;
   return {
     faite,
-    compteur: [faite ? s : Math.min(s, o), s],
+    compteur: [faite ? total : Math.min(total, fait), total],
   };
 }
-export function contexteMeta(e) {
+export function contexteMeta(meta) {
   return {
-    archis: e.archis,
-    collection: e.collection ?? {},
-    dofus: e.dofus.map((e) => e.id),
-    runs: e.runs,
-    ascension: e.ascension ?? {},
-    reliques: e.reliques ?? [],
+    archis: meta.archis,
+    collection: meta.collection ?? {},
+    dofus: meta.dofus.map((dofus) => dofus.id),
+    runs: meta.runs,
+    ascension: meta.ascension ?? {},
+    reliques: meta.reliques ?? [],
   };
 }
-export function progressionSucces(e, t) {
-  let length = t.quetes.filter((t) => e.faites.includes(t.id)).length;
+export function progressionSucces(etat, succes) {
+  let nbFaites = succes.quetes.filter((quete) => etat.faites.includes(quete.id)).length;
   return {
-    faites: length,
-    total: t.quetes.length,
-    complet: length === t.quetes.length,
+    faites: nbFaites,
+    total: succes.quetes.length,
+    complet: nbFaites === succes.quetes.length,
   };
 }
-export function trouverQuete(e, t = SUCCES) {
-  for (let n of Object.values(t)) {
-    for (let t of n.quetes) {
-      if (t.id === e) {
-        return t;
+export function trouverQuete(queteId, succes = SUCCES) {
+  for (let succesDef of Object.values(succes)) {
+    for (let quete of succesDef.quetes) {
+      if (quete.id === queteId) {
+        return quete;
       }
     }
   }
