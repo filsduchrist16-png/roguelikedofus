@@ -49,7 +49,6 @@ body.avec-fond {
 body.avec-fond .ecran {
   -webkit-backdrop-filter: blur(14px) saturate(1.15);
   backdrop-filter: blur(14px) saturate(1.15);
-  background: #ede2c6ad;
 }
 #app {
   --app-pad-t: clamp(10px, 2.2vh, 22px);
@@ -103,13 +102,8 @@ button:focus-visible,
   box-shadow: 0 0 0 6px #fff6d8cc;
 }
 .primaire {
-  background: linear-gradient(180deg, var(--or-clair), var(--or));
-  color: #3a2402;
   border-color: #c8881e;
   font-weight: 900;
-}
-.secondaire {
-  background: linear-gradient(#e6d8b4, #d4c198);
 }
 .ecran {
   text-align: center;
@@ -136,7 +130,6 @@ button:focus-visible,
 .ecran-accueil > .boutons-ecran {
   background: var(--panel-solide);
   border-top: 1px solid var(--bord-clair);
-  border-radius: 0 0 16px 16px;
   margin-top: auto;
 }
 .sous-titre {
@@ -1234,10 +1227,6 @@ kbd {
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 12px;
   margin: 16px auto;
-  display: grid;
-}
-.choix-grille .classe-carte {
-  width: auto;
 }
 @media (width<=900px) {
   .choix-grille {
@@ -1417,13 +1406,6 @@ kbd {
   color: #7d6644;
   font-size: 0.8rem;
 }
-.equip-total {
-  font-size: 0.812rem;
-}
-.equip-pano {
-  margin: 2px 0 0;
-  font-size: 0.812rem;
-}
 .equip-pano.complete {
   color: var(--or-texte);
   font-weight: 800;
@@ -1505,9 +1487,7 @@ kbd {
 }
 .equip-inv {
   flex-direction: column;
-  gap: 6px;
   max-height: 360px;
-  display: flex;
   overflow-y: auto;
 }
 .item-carte {
@@ -2161,8 +2141,6 @@ kbd {
   cursor: pointer;
   border-radius: 7px;
   margin-left: 4px;
-  padding: 2px 8px;
-  font-size: 0.75rem;
 }
 .tri-btn.actif {
   color: var(--or-texte);
@@ -2283,7 +2261,6 @@ kbd {
   border-color: var(--danger);
 }
 .tl-pastille.actif {
-  opacity: 1;
   box-shadow:
     0 0 0 2px var(--cyan),
     0 0 14px var(--cyan);
@@ -2375,7 +2352,6 @@ kbd {
   text-transform: none;
   color: var(--txt);
   border: 1px solid var(--bord);
-  cursor: help;
   background: #e4d6b2;
   border-radius: 6px;
   margin-left: 6px;
@@ -2397,7 +2373,6 @@ kbd {
   font-size: 0.9rem;
 }
 .carte {
-  width: 172px;
   color: var(--txt);
   background: linear-gradient(180deg, #f3e9cf, #ece0c400 160%), var(--panel-solide);
   border: 1px solid var(--bord);
@@ -2795,7 +2770,6 @@ kbd {
   z-index: 2;
   width: 18px;
   height: 18px;
-  color: var(--muet);
   border: 1px solid var(--bord-clair);
   pointer-events: none;
   background: #4a3a26;
@@ -2867,7 +2841,6 @@ kbd {
   white-space: nowrap;
   border-radius: 9px;
   padding: 7px 10px;
-  font-size: 0.812rem;
   font-weight: 800;
 }
 .fin-tour kbd {
@@ -3157,9 +3130,7 @@ kbd {
   font-size: 1.2rem;
 }
 .zone-titre {
-  color: var(--or-clair);
   text-align: center;
-  text-shadow: 0 2px #00000060;
   margin: 0 0 10px;
   font-size: 1.5rem;
 }
@@ -3289,7 +3260,6 @@ body.avec-fond .map-zone {
   inset: 0;
 }
 .arete {
-  stroke: #1c150c;
   stroke-width: 3px;
   stroke-linecap: round;
   stroke-dasharray: 1 8;
@@ -3340,11 +3310,8 @@ body.avec-fond .map-zone {
 }
 .mn-lbl {
   white-space: nowrap;
-  color: #f0e2c4;
   pointer-events: none;
   z-index: 5;
-  background: #3a2c1ad9;
-  border: 1px solid #fff2;
   border-radius: 999px;
   padding: 1px 8px;
   font-size: 0.812rem;
@@ -3363,9 +3330,6 @@ body.avec-fond .map-zone {
   display: block;
   position: static;
   transform: none;
-}
-.map-node.visite {
-  opacity: 0.5;
 }
 .map-node.visite .case-art:after {
   content: "✔";
@@ -3548,7 +3512,6 @@ body.avec-fond .map-zone {
   display: flex;
 }
 .ligne-cards {
-  flex-wrap: nowrap;
   min-width: 0;
 }
 .ligne-col {
@@ -3946,10 +3909,6 @@ body.avec-fond .map-zone {
   transform: translate(-50%);
 }
 .bandeau-quete {
-  color: #f0e2c4;
-  background: #3a2c1ae6;
-  border-radius: 999px;
-  padding: 6px 14px;
   font-weight: 700;
   animation: 0.25s ease-out bandeau-entree;
   box-shadow: 0 2px 8px #0006;
