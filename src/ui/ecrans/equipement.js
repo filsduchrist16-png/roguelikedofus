@@ -44,7 +44,9 @@ import {
   htmlNomObjet,
   imgObjet,
   imgSymboleClasse,
+  photoEquipement,
   racine,
+  restaurerEquipement,
   htmlMetaObjet,
   NOMS_ELEMENTS,
   NOMS_STATS,
@@ -92,11 +94,11 @@ const TEXTE_PAS_SUR = `Meilleur en stats de survie, mais il n'ajoute ni PA ni d�
 function htmlVerdict(c) {
   const v = VERDICTS[c.verdict];
   if (c.verdict === `mieux` && !c.sure) {
-    return `<span class="verdict verdict-mitige tendance-moins" title="${TEXTE_PAS_SUR}">${v.icone} Mieux en stats, mais ${TEXTE_COURT_PAS_SUR}</span>`;
+    return `<span class="verdict verdict-mitige tendance-moins" data-tip="${TEXTE_PAS_SUR}">${v.icone} Mieux en stats, mais ${TEXTE_COURT_PAS_SUR}</span>`;
   }
   if (c.verdict === `mitige` && c.score) {
     const texte = c.tendance === `plus` ? `Plutôt mieux` : `Plutôt moins`;
-    return `<span class="verdict verdict-mitige tendance-${c.tendance}" title="Gains et pertes : bilan chiffré ${signe(c.score)}">${v.icone} ${texte} (${signe(c.score)})</span>`;
+    return `<span class="verdict verdict-mitige tendance-${c.tendance}" data-tip="Gains et pertes : bilan chiffré ${signe(c.score)}">${v.icone} ${texte} (${signe(c.score)})</span>`;
   }
   return `<span class="verdict verdict-${c.verdict}">${v.icone} ${v.texte}</span>`;
 }
@@ -146,7 +148,7 @@ function htmlDeltasCompacts(deltas, max = 4) {
     return d.cle === `pa` || d.cle === `attaque` ? `<b class="delta-cle">${html}</b>` : html;
   };
   const autres = reste.length
-    ? ` <span class="delta-autres" title="${echapperHtml(reste.map((d) => htmlDeltasObjet([d]).replace(/<[^>]+>/g, ``)).join(`, `))}">+${reste.length} autre${reste.length > 1 ? `s` : ``}</span>`
+    ? ` <span class="delta-autres" data-tip="${echapperHtml(reste.map((d) => htmlDeltasObjet([d]).replace(/<[^>]+>/g, ``)).join(`, `))}">+${reste.length} autre${reste.length > 1 ? `s` : ``}</span>`
     : ``;
   return visibles.map(un).join(` `) + autres;
 }
@@ -154,7 +156,7 @@ function htmlDeltasCompacts(deltas, max = 4) {
 function htmlVerdictCourt(c) {
   const v = VERDICTS[c.verdict];
   if (c.verdict === `mieux` && !c.sure) {
-    return `<span class="verdict verdict-mitige tendance-moins" title="${TEXTE_PAS_SUR}">${v.icone} ${TEXTE_COURT_PAS_SUR}</span>`;
+    return `<span class="verdict verdict-mitige tendance-moins" data-tip="${TEXTE_PAS_SUR}">${v.icone} ${TEXTE_COURT_PAS_SUR}</span>`;
   }
   const texte =
     c.verdict === `mieux`
@@ -184,7 +186,7 @@ function htmlPanoCarte(inst, perso) {
   const apres = nb + 1;
   const palier = paliersPanoplie(nom).includes(apres);
   const bonus = palier ? bonusPanoplie(nom, apres) : null;
-  return `<span class="ic-pano${palier ? ` palier` : ``}" title="${echapperHtml(nom)}">⬡ ${echapperHtml(court)} ${nb}→${apres}/${taillePanoplie(nom)}${bonus ? ` : ${texteBonusPanoplie(bonus).replace(/\+(\d+) PA/, `<b class="pano-pa">+$1 PA</b>`)}` : ``}</span>`;
+  return `<span class="ic-pano${palier ? ` palier` : ``}" data-tip="${echapperHtml(nom)}">⬡ ${echapperHtml(court)} ${nb}→${apres}/${taillePanoplie(nom)}${bonus ? ` : ${texteBonusPanoplie(bonus).replace(/\+(\d+) PA/, `<b class="pano-pa">+$1 PA</b>`)}` : ``}</span>`;
 }
 function htmlComparaison(c) {
   if (c.verdict === `impossible`) {
@@ -279,7 +281,36 @@ export function ecranEquipement(e, t) {
     // objet ouvert dans la fiche : { inst } (inventaire) ou { slot } (porté)
     let selection = null;
     let messageAuto = ``;
+    // photo de l'équipement avant « Équiper le meilleur » : sert au bouton Annuler (un seul rendu)
+    let annulerAuto = null;
+    // élément qui a ouvert la fiche : le focus lui revient à la fermeture (clavier, lecteur d'écran)
+    let origineFiche = null;
+    // sélecteur retrouvant un élément après un redessin (identifiant ou attribut data-*)
+    const cleFocus = (el) => {
+      if (!el) {
+        return null;
+      }
+      if (el.id) {
+        return `#${el.id}`;
+      }
+      for (const attr of [`index`, `slot`, `filtre`, `tri`, `perso`]) {
+        if (el.dataset?.[attr] !== undefined) {
+          return `[data-${attr}="${el.dataset[attr]}"]`;
+        }
+      }
+      return null;
+    };
     let i = () => {
+      // l'élément qui a le focus : dans la fiche, c'est celui qui l'a ouverte
+      const actif = document.activeElement;
+      const dansFiche = !!actif?.closest?.(`#fiche-equip`);
+      const cleActif = dansFiche
+        ? origineFiche
+        : racine.contains(actif)
+          ? cleFocus(actif.closest?.(`button, [role="button"]`))
+          : null;
+      const photoAnnul = annulerAuto;
+      annulerAuto = null;
       let a = racine.querySelector(`.equip-inv`)?.scrollTop ?? 0;
       let o = document.scrollingElement?.scrollTop ?? 0;
       let s = e[r];
@@ -316,13 +347,13 @@ export function ecranEquipement(e, t) {
         const mieux = plan.some((m) => m.perso === s && m.emplacement === slot);
         return n && inst
           ? `<div class="equip-slot rempli${classeRarete(inst)}" data-slot="${slot}" data-desequip="${slot}" draggable="true" role="button" tabindex="0" aria-label="${NOMS_EMPLACEMENTS[slot]} : ${echapperHtml(n.nom)}, voir la fiche" title="${echapperHtml(n.nom)}">
-              <span class="ic-visuel"><img src="${imgObjet(n.id)}" alt="" onerror="this.remove()" />${mieux ? `<b class="slot-mieux" title="Un objet de l'inventaire ferait mieux">▲</b>` : ``}</span>
+              <span class="ic-visuel"><img src="${imgObjet(n.id)}" alt="" onerror="this.remove()" />${mieux ? `<b class="slot-mieux" data-tip="Un objet de l'inventaire ferait mieux">▲</b>` : ``}</span>
               <span class="slot-nom">${NOMS_EMPLACEMENTS[slot]}</span>
               <span class="slot-objet ic-nom">${htmlNomObjet(inst)}</span>
               <b class="ic-tier">T${numeroZoneObjet(inst.id)}</b>
             </div>`
           : `<div class="equip-slot vide" data-slot="${slot}" role="button" tabindex="0" aria-label="${NOMS_EMPLACEMENTS[slot]} vide${dispo ? ` : objets disponibles` : ``}">
-              <span class="ic-visuel">${dispo ? `<b class="slot-mieux" title="Objet disponible dans l'inventaire">▲</b>` : ``}</span>
+              <span class="ic-visuel">${dispo ? `<b class="slot-mieux" data-tip="Objet disponible dans l'inventaire">▲</b>` : ``}</span>
               <span class="slot-nom">${NOMS_EMPLACEMENTS[slot]}</span>
               <span class="slot-vide-txt">${dispo ? `à équiper` : `vide`}</span>
             </div>`;
@@ -355,7 +386,7 @@ export function ecranEquipement(e, t) {
               <span class="ic-corps">
                 <span class="ic-ligne1"><span class="ic-nom">${htmlNomObjet(inst)}</span>${possible ? htmlVerdictCourt(comparaison) : ``}</span>
                 <span class="ic-meta">${htmlMetaObjet(inst)}</span>
-                ${possible ? `<span class="ic-cmp">${comparaison.actuel ? `<span class="delta-ref" title="Remplace ${echapperHtml(EQUIPEMENTS[comparaison.actuel.id]?.nom ?? comparaison.actuel.id)}">↔ ${echapperHtml(EQUIPEMENTS[comparaison.actuel.id]?.nom ?? comparaison.actuel.id)}</span>` : `<span class="delta-ref">Emplacement vide</span>`}<span class="ic-deltas">${htmlDeltasCompacts(comparaison.deltas) || `<span class="muet">aucun changement</span>`}</span></span>` : `<span class="ic-stats">${htmlChipsObjet(inst, s.classeId)}</span><span class="delta-ref">Équipable seulement en ligne avant.</span>`}
+                ${possible ? `<span class="ic-cmp">${comparaison.actuel ? `<span class="delta-ref" data-tip="Remplace ${echapperHtml(EQUIPEMENTS[comparaison.actuel.id]?.nom ?? comparaison.actuel.id)}">↔ ${echapperHtml(EQUIPEMENTS[comparaison.actuel.id]?.nom ?? comparaison.actuel.id)}</span>` : `<span class="delta-ref">Emplacement vide</span>`}<span class="ic-deltas">${htmlDeltasCompacts(comparaison.deltas) || `<span class="muet">aucun changement</span>`}</span></span>` : `<span class="ic-stats">${htmlChipsObjet(inst, s.classeId)}</span><span class="delta-ref">Équipable seulement en ligne avant.</span>`}
                 ${htmlPanoCarte(inst, s)}${htmlBadgesHeros(inst, e, s)}
               </span>
             </button>`;
@@ -363,7 +394,7 @@ export function ecranEquipement(e, t) {
             .join(``)
         : t.length
           ? `<p class="muet equip-vide">Aucun objet de ce type. <button class="secondaire petit" data-filtre="tout">Voir tout (${t.length})</button></p>`
-          : `<p class="muet">Inventaire vide : gagne des combats pour trouver de l'équipement.</p>`;
+          : ``; // inventaire vide : le message « sac vide » est affiché plus bas, une seule fois
       let f = bonusEquipement(s);
       let fiche = ``;
       if (selection?.inst && t.includes(selection.inst)) {
@@ -389,8 +420,8 @@ export function ecranEquipement(e, t) {
             <h3 class="equip-titre-heros"><span>${echapperHtml(nomClasse(s))}</span>
               ${boutonAuto}
             </h3>
-            <p class="equip-resume"><span class="resume-pa" title="PA de base ${CLASSES[s.classeId].pa} + équipement ${f.paBonus} (max +${PA_MAX_EQUIPEMENT})"><b>${CLASSES[s.classeId].pa + f.paBonus}</b> PA <small>(équip. +${f.paBonus}/${PA_MAX_EQUIPEMENT})</small></span><span class="resume-pv"><b>${pvMaxPerso(s)}</b> PV max</span></p>
-            ${messageAuto ? `<p class="equip-auto-msg" role="status">${messageAuto}</p>` : ``}
+            <p class="equip-resume"><span class="resume-pa" data-tip="PA de base ${CLASSES[s.classeId].pa} + équipement ${f.paBonus} (max +${PA_MAX_EQUIPEMENT})"><b>${CLASSES[s.classeId].pa + f.paBonus}</b> PA <small>(équip. +${f.paBonus}/${PA_MAX_EQUIPEMENT})</small></span><span class="resume-pv"><b>${pvMaxPerso(s)}</b> PV max</span></p>
+            ${messageAuto ? `<p class="equip-auto-msg" role="status">${messageAuto}${photoAnnul ? ` · <button id="equip-annuler" class="secondaire petit">Annuler</button>` : ``}</p>` : ``}
             <div class="equip-slots grille">${l}</div>
             ${Object.entries(compterPanoplies(s))
               .map(([nom, nb]) => {
@@ -405,7 +436,7 @@ export function ecranEquipement(e, t) {
                 const suite = prochain
                   ? `<span class="pano-suite">Encore ${prochain - nb} pièce${prochain - nb > 1 ? `s` : ``} : ${avecPa(texteBonusPanoplie(PANOPLIES[nom].paliers[prochain]))}</span>`
                   : `<span class="pano-suite">Panoplie au maximum</span>`;
-                return `<div class="equip-pano${b ? ` complete` : ``}" title="${echapperHtml(descriptionPanoplie(nom))}">
+                return `<div class="equip-pano${b ? ` complete` : ``}" data-tip="${echapperHtml(descriptionPanoplie(nom))}">
                   <span class="pano-tete"><span class="pano-nom">⬡ ${echapperHtml(nom)}</span><span class="pano-pastilles" aria-label="${nb} pièces sur ${taille}">${pastilles}</span><b class="pano-nb">${nb}/${taille}</b></span>
                   ${b ? `<span class="pano-actif">Actif (${b.palier} p.) : ${avecPa(texteBonusPanoplie(b))}</span>` : ``}
                   ${suite}
@@ -414,7 +445,7 @@ export function ecranEquipement(e, t) {
               .join(``)}
             <div class="equip-total"><span class="equip-total-titre">Bonus total</span><div class="ichips">${htmlBonusTotal(f)}</div></div>
           </div>
-          <div class="equip-col">
+          <div class="equip-col equip-col-inv">
             <h3>Inventaire (${t.length})</h3>
             ${
               t.length
@@ -476,10 +507,20 @@ export function ecranEquipement(e, t) {
         }
       };
       document.getElementById(`equip-auto`)?.addEventListener(`click`, () => {
+        const photo = photoEquipement({ inventaire: t, persos: e });
         const n = equiperMeilleur({ inventaire: t, persos: e });
         messageAuto = n
           ? `✓ ${n} objet${n > 1 ? `s` : ``} équipé${n > 1 ? `s` : ``} (PA et dégâts d'abord ; les échanges douteux restent à ton choix).`
           : `Rien à améliorer.`;
+        annulerAuto = n ? photo : null;
+        selection = null;
+        i();
+        messageAuto = ``;
+      });
+      // Annuler : remet les anciens objets (échanges de planEquiper : `remplace`) comme avant
+      document.getElementById(`equip-annuler`)?.addEventListener(`click`, () => {
+        restaurerEquipement({ inventaire: t, persos: e }, photoAnnul);
+        messageAuto = `↩ Équipement remis comme avant.`;
         selection = null;
         i();
         messageAuto = ``;
@@ -503,19 +544,27 @@ export function ecranEquipement(e, t) {
         }),
       );
       // emplacement vide : on filtre l'inventaire sur cet emplacement et on y descend
-      racine.querySelectorAll(`.equip-slot.vide`).forEach((b) =>
+      racine.querySelectorAll(`.equip-slot.vide`).forEach((b) => {
         b.addEventListener(`click`, () => {
           filtreSlot = typeDeEmplacement(b.dataset.slot);
           i();
           racine
             .querySelector(`.equip-outils`)
             ?.scrollIntoView({ block: `start`, behavior: `smooth` });
-        }),
-      );
+        });
+        // clavier : Entrée et Espace font comme le clic
+        b.addEventListener(`keydown`, (ev) => {
+          if (ev.key === `Enter` || ev.key === ` `) {
+            ev.preventDefault();
+            b.click();
+          }
+        });
+      });
       racine.querySelectorAll(`.item-carte`).forEach((e) => {
         let t_ = Number(e.dataset.index);
         e.addEventListener(`click`, (ev) => {
           // clavier (Entrée) : pas de double-clic possible, ouverture immédiate
+          origineFiche = cleFocus(e);
           if (ev.detail === 0) {
             selection = { inst: t[t_] };
             i();
@@ -541,6 +590,7 @@ export function ecranEquipement(e, t) {
         let slot = e.dataset.slot;
         if (e.classList.contains(`rempli`)) {
           const ouvrir = () => {
+            origineFiche = cleFocus(e);
             selection = { slot };
             i();
           };
@@ -622,7 +672,15 @@ export function ecranEquipement(e, t) {
       document
         .querySelector(`[data-retirer]`)
         ?.addEventListener(`click`, (ev) => h(ev.currentTarget.dataset.retirer));
-      document.querySelector(`.fiche-fermer`)?.focus({ preventScroll: true });
+      if (fiche) {
+        document.querySelector(`.fiche-fermer`)?.focus({ preventScroll: true });
+      } else if (photoAnnul && messageAuto) {
+        document.getElementById(`equip-annuler`)?.focus({ preventScroll: true });
+      } else if (cleActif) {
+        // le redessin a détruit l'élément : on rend le focus à son remplaçant (ou à l'onglet du héros)
+        const cible = racine.querySelector(cleActif) ?? racine.querySelector(`.equip-onglet.sel`);
+        cible?.focus({ preventScroll: true });
+      }
       document.getElementById(`equip-retour`)?.addEventListener(`click`, () => {
         clearTimeout(minuterieClic);
         document.removeEventListener(`keydown`, echap, true);

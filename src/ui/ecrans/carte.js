@@ -47,20 +47,20 @@ const NOMS_NOEUDS = {
   combat: `Combat`,
   combat_dur: `Combat dur`,
   taverne: `Taverne`,
-  otomai: `Otomai`,
+  otomai: `Otomaï`,
   zaap: `Zaap`,
   donjon: `Donjon`,
   hdv: `Hôtel de vente`,
-  forgemagie: `Forgemage`,
+  forgemagie: `Forgemagie`,
   rencontre: `Rencontre`,
 };
 // Contenu des cases sans combat, affiché au survol (PC) ou dans le panneau de sélection (tactile).
 const DESC_NOEUDS = {
   taverne: `Taverne : soigne ou recrute`,
-  otomai: `Otomai : philtre d'archimonstre`,
+  otomai: `Otomaï : philtre d'archimonstre`,
   zaap: `Zaap : case surprise`,
   hdv: `Hôtel de vente : vends ou achète des objets`,
-  forgemagie: `Forgemage : monter la rareté`,
+  forgemagie: `Forgemagie : monter la rareté`,
   rencontre: `Rencontre : évènement au hasard`,
 };
 const IMAGES_NOEUDS = {
@@ -274,7 +274,7 @@ export function ecranCarte(
           let o = affixeNoeud(t);
           let s = ` data-tip="${echapperHtml(texteCase(t))}"`;
           let num = r && !tactile && numeros.get(t.id);
-          return `<button class="${i}" data-id="${t.id}" ${r ? `` : `disabled`}${t.id === e.courant ? ` aria-current="location"` : ``} style="left:${n.x}px;top:${n.y}px"${s}>
+          return `<button class="${i}" data-id="${t.id}" ${r ? `` : `aria-disabled="true"`}${t.id === e.courant ? ` aria-current="location"` : ``} style="left:${n.x}px;top:${n.y}px"${s}>
             <span class="case-art">
               <img class="case-img" src="${imageNoeud(t)}" alt="" onerror="this.onerror=null;this.nextElementSibling.style.display='';this.remove()" />
               <span class="mn-icon" style="display:none">${ICONES_NOEUDS[t.type]}</span>
@@ -324,6 +324,7 @@ export function ecranCarte(
       masquerElements();
       racine.innerHTML = `
         <div class="carte-ecran map-layout">
+          <h1 class="sr-only">Carte : ${echapperHtml(r)}</h1>
           <header class="map-topbar">
             <h2 class="zone-titre">${infosZone.zoneNum ? `<span class="zone-num">Zone ${Number(infosZone.zoneNum)}${infosZone.nbZones ? `/${Number(infosZone.nbZones)}` : ``}</span> · ` : ``}${echapperHtml(r)}${infosZone.tierObjets != null ? `<span class="asc-badge zone-tier" data-tip="Tier : numéro de la zone où tombent les objets, compté depuis le Monde 1">objets T${Number(infosZone.tierObjets)}</span>` : ``}${o >= 1 ? `<span class="asc-badge" data-tip="${echapperHtml(DIFFICULTES[o].desc)}">${etoilesDifficulte(o)}</span>` : ``}${s >= 1 ? `<span class="asc-badge" data-tip="Philtres d'Otomai bus : les archimonstres apparaissent plus souvent (${CONFIG_ARCHI.philtresMax} au maximum)">🧪 ${Math.min(s, CONFIG_ARCHI.philtresMax)}/${CONFIG_ARCHI.philtresMax}</span>` : ``}</h2>
             ${effets.length ? `<div class="zone-effets">${effets.map((x) => `<span class="zone-effet" data-tip="${echapperHtml(x.desc)}">${x.icone} ${echapperHtml(x.nom)}</span>`).join(``)}</div>` : ``}
@@ -336,7 +337,7 @@ export function ecranCarte(
               <button id="carte-dofus" class="aside-icone" title="Dofus"><img src="${IMG_DOFUS}" alt="Dofus" onerror="this.remove()" /><span class="aside-lbl">Dofus</span></button>
               <span class="topbar-sep"></span>
               <button id="carte-accueil" class="aside-icone" title="Retour à l'accueil (la run reste sauvegardée)"><img src="${IMG_MENU}" alt="Accueil" onerror="this.remove()" /><span class="aside-lbl">Accueil</span></button>
-              <button id="carte-restart" class="aside-icone" title="Recommencer avec les mêmes héros (abandonne la run en cours)"><img src="${IMG_RECOMMENCER}" alt="Recommencer" onerror="this.remove()" /><span class="aside-lbl">Rejouer</span></button>
+              <button id="carte-restart" class="aside-icone" title="Recommencer avec les mêmes héros (abandonne la run en cours)"><img src="${IMG_RECOMMENCER}" alt="Recommencer" onerror="this.remove()" /><span class="aside-lbl">Recommencer</span></button>
               <button id="carte-restart-choix" class="aside-icone" title="Recommencer en choisissant d'autres héros (abandonne la run en cours)"><img src="${IMG_RECOMMENCER_AVEC_PERSO}" alt="Recommencer (autres héros)" onerror="this.remove()" /><span class="aside-lbl">Autre équipe</span></button>
             </div>
           </header>
@@ -360,7 +361,7 @@ export function ecranCarte(
               </div>
             </div>
             <div class="equipe-bar">${x}</div>
-            <div class="aside-kamas" title="Kamas de la run (perdus à la mort)">${htmlKamas(a)}</div>
+            <div class="aside-kamas" data-tip="Kamas de la run (perdus à la mort)">${htmlKamas(a)}</div>
           </footer>
         </div>`;
       centrerCarte();
@@ -397,15 +398,24 @@ export function ecranCarte(
         bouton.classList.add(`sel`);
         if (panneau) {
           panneau.querySelector(`.cp-texte`).textContent = bouton.dataset.tip ?? ``;
+          // case lointaine : on lit son contenu, mais on ne peut pas y aller
+          const aller = panneau.querySelector(`.cp-aller`);
+          if (aller) {
+            aller.style.display = bouton.classList.contains(`atteignable`) ? `` : `none`;
+          }
           panneau.hidden = false;
         }
       };
-      racine.querySelectorAll(`.map-node.atteignable`).forEach((b) => {
+      racine.querySelectorAll(`.map-node`).forEach((b) => {
+        const atteignable = b.classList.contains(`atteignable`);
         b.addEventListener(`click`, () => {
           if (ecranTactile() && selId !== b.dataset.id) {
             selectionner(b);
-          } else {
+          } else if (atteignable) {
             aller(b.dataset.id);
+          } else {
+            // case lointaine appuyée une seconde fois : on referme le panneau
+            deselectionner();
           }
         });
       });

@@ -12,6 +12,8 @@ import {
   htmlMetaObjet,
   htmlNomObjet,
   imgObjet,
+  photoEquipement,
+  restaurerEquipement,
 } from "../commun.js";
 import { afficherBandeau } from "./succes.js";
 // run (facultatif) : pour montrer à qui sert chaque objet et proposer de l'équiper tout de suite.
@@ -39,8 +41,14 @@ export function ecranButin(e, run, bilan) {
       }
     `);
     document.getElementById(`drop-equiper`)?.addEventListener(`click`, (ev) => {
+      const bouton = ev.currentTarget;
+      // de quoi annuler : l'équipement d'avant et les pastilles « pour qui » de chaque objet
+      const photo = photoEquipement(run);
+      const badgesAvant = e.map(
+        (_, k) => document.querySelector(`[data-drop="${k}"] .badges-heros`)?.outerHTML ?? ``,
+      );
       const nb = equiperMeilleur(run);
-      ev.currentTarget.disabled = true;
+      bouton.disabled = true;
       // qui porte maintenant chaque objet du butin
       e.forEach((inst, k) => {
         const porteur = run.persos.find((p) => Object.values(p.equipement).includes(inst));
@@ -54,9 +62,32 @@ export function ecranButin(e, run, bilan) {
           `<span class="badges-heros"><span class="badge-heros badge-porte">✓ sur ${echapperHtml(CLASSES[porteur.classeId]?.nom ?? porteur.classeId)}</span></span>`,
         );
       });
-      afficherBandeau(
-        nb ? `⚡ ${nb} objet${nb > 1 ? `s` : ``} équipé${nb > 1 ? `s` : ``}` : `Rien à équiper`,
-      );
+      if (!nb) {
+        afficherBandeau(`Rien à équiper`);
+        return;
+      }
+      // « ✓ n objets équipés · Annuler » : remet les anciens objets (échanges de planEquiper)
+      const ligneAnnul = document.createElement(`p`);
+      ligneAnnul.className = `sous-titre butin-annul`;
+      ligneAnnul.setAttribute(`role`, `status`);
+      ligneAnnul.innerHTML = `✓ ${nb} objet${nb > 1 ? `s` : ``} équipé${nb > 1 ? `s` : ``} · <button class="secondaire petit">Annuler</button>`;
+      document.querySelector(`.drop-liste`)?.after(ligneAnnul);
+      const annuler = ligneAnnul.querySelector(`button`);
+      annuler.focus({ preventScroll: true });
+      annuler.addEventListener(`click`, () => {
+        restaurerEquipement(run, photo);
+        e.forEach((_, k) => {
+          const ligne = document.querySelector(`[data-drop="${k}"] .drop-nom`);
+          ligne?.querySelector(`.badges-heros`)?.remove();
+          if (badgesAvant[k]) {
+            ligne?.insertAdjacentHTML(`beforeend`, badgesAvant[k]);
+          }
+        });
+        ligneAnnul.remove();
+        bouton.disabled = false;
+        bouton.focus({ preventScroll: true });
+        afficherBandeau(`↩ Équipement remis comme avant`);
+      });
     });
     document.getElementById(`drop-ok`)?.addEventListener(`click`, () => resolve());
   });

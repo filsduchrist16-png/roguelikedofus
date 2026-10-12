@@ -83,3 +83,16 @@ export function recompensesSecret(toile) {
 export function tirerRareteSecret(rng) {
   return rng() < recompensesSecret(1).raretes.legendaire ? `legendaire` : `epique`;
 }
+
+// Nombre d'objets garantis par victoire dans le donjon secret (les panoplies de 7 pièces restaient
+// hors de portée avec un seul objet).
+export const NB_OBJETS_SECRET = 2;
+/** Identifiants des objets d'une victoire : `NB_OBJETS_SECRET` pièces différentes du butin secret. */
+export function tirerIdsButinSecret(secret, rng) {
+  const reste = [...secret.butin];
+  const ids = [];
+  while (ids.length < NB_OBJETS_SECRET && reste.length) {
+    ids.push(reste.splice(Math.floor(rng() * reste.length), 1)[0]);
+  }
+  return ids;
+}

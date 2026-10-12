@@ -230,12 +230,26 @@ function htmlLigneJournal(e) {
   }
   return `<div class="log-line log-${t}">${n}</div>`;
 }
-function rafraichirJournal() {
+// Journal : on n'ajoute que la nouvelle ligne (appendChild) au lieu de tout réécrire, pour que les
+// lecteurs d'écran (role="log") n'annoncent que le nouveau message. Reconstruit seulement si besoin.
+function elementLigneJournal(entree) {
+  const modele = document.createElement(`template`);
+  modele.innerHTML = htmlLigneJournal(entree);
+  return modele.content.firstElementChild;
+}
+function rafraichirJournal(nouvelle = null) {
   let e = document.getElementById(`journal`);
   if (e) {
     // ne recolle en bas que si le joueur y était déjà : on peut remonter lire pendant un tour
     const enBas = e.scrollHeight - e.scrollTop - e.clientHeight < 12;
-    e.innerHTML = journalCombat.map(htmlLigneJournal).join(``);
+    if (nouvelle && e.children.length === journalCombat.length - 1) {
+      e.appendChild(elementLigneJournal(nouvelle));
+      while (e.children.length > journalCombat.length) {
+        e.firstElementChild.remove();
+      }
+    } else if (e.children.length !== journalCombat.length) {
+      e.replaceChildren(...journalCombat.map(elementLigneJournal));
+    }
     if (enBas) {
       e.scrollTop = e.scrollHeight;
     }
@@ -254,14 +268,17 @@ export function journaliser(msg, meta) {
     dejaJoues.add(meta.tour);
     refTourEnCours = meta.tour;
   }
-  journalCombat.push({
-    msg,
-    meta,
-  });
-  if (journalCombat.length > 200) {
+  const entree = { msg, meta };
+  const plein = journalCombat.length >= 200;
+  journalCombat.push(entree);
+  if (plein) {
     journalCombat.shift();
+    // une ligne sort en tête : le journal affiché la perd aussi avant l'ajout
+    document.getElementById(`journal`)?.firstElementChild?.remove();
+    rafraichirJournal(entree);
+  } else {
+    rafraichirJournal(entree);
   }
-  rafraichirJournal();
 }
 // Défi du combat en cours (challenges façon DOFUS), avec son état en direct.
 let defiCombat = null;

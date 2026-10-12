@@ -109,9 +109,12 @@ button:disabled {
   opacity: 0.42;
   cursor: not-allowed;
 }
-button:focus-visible {
-  outline: 2px solid var(--cyan);
+button:focus-visible,
+[role="button"]:focus-visible {
+  /* contour brun foncé (environ 6:1 sur le parchemin) et halo clair qui le détache de tout fond */
+  outline: 3px solid #7d550d;
   outline-offset: 2px;
+  box-shadow: 0 0 0 6px #fff6d8cc;
 }
 .primaire {
   background: linear-gradient(180deg, var(--or-clair), var(--or));
@@ -482,8 +485,9 @@ button.item-carte:disabled {
   transform: translateY(-1px);
 }
 .btn-discord:focus-visible {
-  outline: 2px solid var(--cyan);
+  outline: 3px solid #7d550d;
   outline-offset: 2px;
+  box-shadow: 0 0 0 6px #fff6d8cc;
 }
 .regles {
   text-align: left;

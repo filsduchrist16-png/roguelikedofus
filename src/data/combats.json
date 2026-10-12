@@ -50,6 +50,44 @@
     ],
     "nom": "Sous la canopée"
   },
+  "abr_4": {
+    "ennemis": [
+      {
+        "monstre": "abraknyde_venerable",
+        "position": 0
+      },
+      {
+        "monstre": "abraknyde_sombre",
+        "position": 1
+      },
+      {
+        "monstre": "nefileuse",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "abr_5": {
+    "ennemis": [
+      {
+        "monstre": "abraknyde_sombre",
+        "position": 0
+      },
+      {
+        "monstre": "arapex",
+        "position": 1
+      },
+      {
+        "monstre": "abrakne_sombre",
+        "position": 2
+      },
+      {
+        "monstre": "nefileuse",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "abr_boss": {
     "ennemis": [
       {
@@ -143,6 +181,44 @@
     ],
     "nom": "Renfort de la cale"
   },
+  "arc_4": {
+    "ennemis": [
+      {
+        "monstre": "le_flib",
+        "position": 0
+      },
+      {
+        "monstre": "nakunbra",
+        "position": 1
+      },
+      {
+        "monstre": "sparo",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "arc_5": {
+    "ennemis": [
+      {
+        "monstre": "nakunbra",
+        "position": 0
+      },
+      {
+        "monstre": "boomba",
+        "position": 1
+      },
+      {
+        "monstre": "le_flib",
+        "position": 2
+      },
+      {
+        "monstre": "canondorf",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "arc_boss": {
     "ennemis": [
       {
@@ -231,6 +307,48 @@
       }
     ],
     "nom": "La marmaille en avant"
+  },
+  "blp_4": {
+    "ennemis": [
+      {
+        "monstre": "blop_griotte",
+        "position": 0
+      },
+      {
+        "monstre": "blop_indigo",
+        "position": 1
+      },
+      {
+        "monstre": "blop_reinette",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "blp_5": {
+    "ennemis": [
+      {
+        "monstre": "blop_indigo",
+        "position": 0
+      },
+      {
+        "monstre": "biblop_coco",
+        "position": 1
+      },
+      {
+        "monstre": "biblop_griotte",
+        "position": 2
+      },
+      {
+        "monstre": "blop_coco",
+        "position": 4
+      },
+      {
+        "monstre": "blop_reinette",
+        "position": 5
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "blp_boss_griotte_coco": {
     "ennemis": [
@@ -443,6 +561,44 @@
     ],
     "nom": "Passerelle du Bateau"
   },
+  "cho_4": {
+    "ennemis": [
+      {
+        "monstre": "kanniboul_ark",
+        "position": 0
+      },
+      {
+        "monstre": "kanniboul_eth",
+        "position": 1
+      },
+      {
+        "monstre": "kanniboul_sarbak",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "cho_5": {
+    "ennemis": [
+      {
+        "monstre": "kanniboul_eth",
+        "position": 0
+      },
+      {
+        "monstre": "kanniboul_jav",
+        "position": 1
+      },
+      {
+        "monstre": "kanniboul_tam",
+        "position": 2
+      },
+      {
+        "monstre": "kanniboul_sarbak",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "cho_boss": {
     "ennemis": [
       {
@@ -532,6 +688,40 @@
     ],
     "nom": "Épouvante"
   },
+  "combat_4": {
+    "ennemis": [
+      {
+        "monstre": "tournesol_sauvage",
+        "position": 0
+      },
+      {
+        "monstre": "rose_demoniaque",
+        "position": 1
+      },
+      {
+        "monstre": "pissenlit_diabolique",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "combat_5": {
+    "ennemis": [
+      {
+        "monstre": "pissenlit_diabolique",
+        "position": 0
+      },
+      {
+        "monstre": "epouvanteur",
+        "position": 1
+      },
+      {
+        "monstre": "tournesol_sauvage",
+        "position": 2
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "combat_elite": {
     "ennemis": [
       {
@@ -599,6 +789,40 @@
       }
     ],
     "nom": "Sarabande spectrale"
+  },
+  "fan_4": {
+    "ennemis": [
+      {
+        "monstre": "gargrouille",
+        "position": 0
+      },
+      {
+        "monstre": "vampire",
+        "position": 1
+      },
+      {
+        "monstre": "kwoan",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "fan_5": {
+    "ennemis": [
+      {
+        "monstre": "kwoan",
+        "position": 0
+      },
+      {
+        "monstre": "tofu_malefique",
+        "position": 1
+      },
+      {
+        "monstre": "gargrouille",
+        "position": 2
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "fan_boss": {
     "ennemis": [
@@ -684,6 +908,40 @@
       }
     ],
     "nom": "Embuscade de roublards"
+  },
+  "frg_4": {
+    "ennemis": [
+      {
+        "monstre": "forgeron_sombre",
+        "position": 0
+      },
+      {
+        "monstre": "boulanger_sombre",
+        "position": 1
+      },
+      {
+        "monstre": "bandit_roublard",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "frg_5": {
+    "ennemis": [
+      {
+        "monstre": "mineur_sombre",
+        "position": 0
+      },
+      {
+        "monstre": "bandit_roublard",
+        "position": 1
+      },
+      {
+        "monstre": "forgeron_sombre",
+        "position": 2
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "frg_boss": {
     "ennemis": [
@@ -773,6 +1031,40 @@
       }
     ],
     "nom": "Dégustation forcée"
+  },
+  "gel_4": {
+    "ennemis": [
+      {
+        "monstre": "gelee_bleuet",
+        "position": 0
+      },
+      {
+        "monstre": "gelee_menthe",
+        "position": 1
+      },
+      {
+        "monstre": "gelee_fraise",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "gel_5": {
+    "ennemis": [
+      {
+        "monstre": "gelee_citron",
+        "position": 0
+      },
+      {
+        "monstre": "gelee_fraise",
+        "position": 1
+      },
+      {
+        "monstre": "gelee_bleuet",
+        "position": 2
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "gel_boss_bleuet_citron": {
     "ennemis": [
@@ -968,6 +1260,40 @@
     ],
     "nom": "Sprint des trotteurs"
   },
+  "gob_4": {
+    "ennemis": [
+      {
+        "monstre": "gobet",
+        "position": 0
+      },
+      {
+        "monstre": "gob_trotteur",
+        "position": 1
+      },
+      {
+        "monstre": "gobaliste",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "gob_5": {
+    "ennemis": [
+      {
+        "monstre": "gobet",
+        "position": 0
+      },
+      {
+        "monstre": "gobet",
+        "position": 1
+      },
+      {
+        "monstre": "gob_trotteur",
+        "position": 2
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "gob_boss": {
     "ennemis": [
       {
@@ -1052,6 +1378,40 @@
       }
     ],
     "nom": "Banc de coraux"
+  },
+  "hsk_4": {
+    "ennemis": [
+      {
+        "monstre": "corailleur",
+        "position": 0
+      },
+      {
+        "monstre": "crustorail_kouracao",
+        "position": 1
+      },
+      {
+        "monstre": "palmifleur_kouracao",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "hsk_5": {
+    "ennemis": [
+      {
+        "monstre": "crustorail_kouracao",
+        "position": 0
+      },
+      {
+        "monstre": "crustorail_morito",
+        "position": 1
+      },
+      {
+        "monstre": "crustorail_passaoh",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "hsk_boss": {
     "ennemis": [
@@ -1138,6 +1498,40 @@
     ],
     "nom": "Embuscade morte-vivante"
   },
+  "inc_4": {
+    "ennemis": [
+      {
+        "monstre": "chafer_debutant",
+        "position": 0
+      },
+      {
+        "monstre": "chafer_piquier",
+        "position": 1
+      },
+      {
+        "monstre": "chafer_eclaireur",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "inc_5": {
+    "ennemis": [
+      {
+        "monstre": "chafer_furtif",
+        "position": 0
+      },
+      {
+        "monstre": "chafer_debutant",
+        "position": 1
+      },
+      {
+        "monstre": "chafer_piquier",
+        "position": 2
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "inc_boss": {
     "ennemis": [
       {
@@ -1218,6 +1612,40 @@
       }
     ],
     "nom": "Vermine en embuscade"
+  },
+  "kan_4": {
+    "ennemis": [
+      {
+        "monstre": "mirgrillon",
+        "position": 0
+      },
+      {
+        "monstre": "pyrasite",
+        "position": 1
+      },
+      {
+        "monstre": "cafarcher",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "kan_5": {
+    "ennemis": [
+      {
+        "monstre": "ceglumen",
+        "position": 0
+      },
+      {
+        "monstre": "pyrasite",
+        "position": 1
+      },
+      {
+        "monstre": "cafarcher",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "kan_boss": {
     "ennemis": [
@@ -1308,6 +1736,44 @@
     ],
     "nom": "Le nid de charbon"
   },
+  "khz_4": {
+    "ennemis": [
+      {
+        "monstre": "dragoeuf_calcaire",
+        "position": 0
+      },
+      {
+        "monstre": "dragoss_ardoise",
+        "position": 1
+      },
+      {
+        "monstre": "dragoss_proteiforme",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "khz_5": {
+    "ennemis": [
+      {
+        "monstre": "dragoss_ardoise",
+        "position": 0
+      },
+      {
+        "monstre": "dragoeuf_ardoise",
+        "position": 1
+      },
+      {
+        "monstre": "dragoss_charbon",
+        "position": 2
+      },
+      {
+        "monstre": "dragoss_proteiforme",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "khz_boss": {
     "ennemis": [
       {
@@ -1396,6 +1862,40 @@
       }
     ],
     "nom": "Tempête au nid"
+  },
+  "kwa_4": {
+    "ennemis": [
+      {
+        "monstre": "kwakere_de_vent",
+        "position": 0
+      },
+      {
+        "monstre": "kwak_de_feu",
+        "position": 1
+      },
+      {
+        "monstre": "kwakere_de_flamme",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "kwa_5": {
+    "ennemis": [
+      {
+        "monstre": "kwak_de_feu",
+        "position": 0
+      },
+      {
+        "monstre": "kwak_d_eau",
+        "position": 1
+      },
+      {
+        "monstre": "kwak_de_vent",
+        "position": 2
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "kwa_boss": {
     "ennemis": [
@@ -1486,6 +1986,44 @@
     ],
     "nom": "Fuite de cultures"
   },
+  "lab_4": {
+    "ennemis": [
+      {
+        "monstre": "scorbute",
+        "position": 0
+      },
+      {
+        "monstre": "croc_gland",
+        "position": 1
+      },
+      {
+        "monstre": "crowneille",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "lab_5": {
+    "ennemis": [
+      {
+        "monstre": "croc_gland",
+        "position": 0
+      },
+      {
+        "monstre": "macien",
+        "position": 1
+      },
+      {
+        "monstre": "kolerat",
+        "position": 2
+      },
+      {
+        "monstre": "scorbute",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "lab_boss": {
     "ennemis": [
       {
@@ -1566,6 +2104,40 @@
       }
     ],
     "nom": "Marée rampante"
+  },
+  "lrv_4": {
+    "ennemis": [
+      {
+        "monstre": "larve_bleue",
+        "position": 0
+      },
+      {
+        "monstre": "larve_orange",
+        "position": 1
+      },
+      {
+        "monstre": "larve_verte",
+        "position": 2
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "lrv_5": {
+    "ennemis": [
+      {
+        "monstre": "larve_orange",
+        "position": 0
+      },
+      {
+        "monstre": "larve_verte",
+        "position": 1
+      },
+      {
+        "monstre": "larve_saphir",
+        "position": 2
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "lrv_boss": {
     "ennemis": [
@@ -1655,6 +2227,44 @@
       }
     ],
     "nom": "La battue"
+  },
+  "mlo_4": {
+    "ennemis": [
+      {
+        "monstre": "mulou",
+        "position": 0
+      },
+      {
+        "monstre": "muloubard",
+        "position": 1
+      },
+      {
+        "monstre": "mulounoke",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "mlo_5": {
+    "ennemis": [
+      {
+        "monstre": "muloubard",
+        "position": 0
+      },
+      {
+        "monstre": "mergranlou",
+        "position": 1
+      },
+      {
+        "monstre": "mulou",
+        "position": 2
+      },
+      {
+        "monstre": "mulounoke",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "mlo_boss": {
     "ennemis": [
@@ -1749,6 +2359,44 @@
     ],
     "nom": "La haute branche"
   },
+  "moo_4": {
+    "ennemis": [
+      {
+        "monstre": "trukikol",
+        "position": 0
+      },
+      {
+        "monstre": "gloutovore",
+        "position": 1
+      },
+      {
+        "monstre": "dostrogo",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "moo_5": {
+    "ennemis": [
+      {
+        "monstre": "trukikol",
+        "position": 0
+      },
+      {
+        "monstre": "domoizelle",
+        "position": 1
+      },
+      {
+        "monstre": "fourbasse",
+        "position": 2
+      },
+      {
+        "monstre": "dostrogo",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "moo_boss": {
     "ennemis": [
       {
@@ -1842,6 +2490,44 @@
     ],
     "nom": "Les deux Don"
   },
+  "por_4": {
+    "ennemis": [
+      {
+        "monstre": "porsalu",
+        "position": 0
+      },
+      {
+        "monstre": "berger_porkass",
+        "position": 1
+      },
+      {
+        "monstre": "gorgouille",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "por_5": {
+    "ennemis": [
+      {
+        "monstre": "berger_porkass",
+        "position": 0
+      },
+      {
+        "monstre": "cavalier_porkass",
+        "position": 1
+      },
+      {
+        "monstre": "cochon_de_farle",
+        "position": 2
+      },
+      {
+        "monstre": "gorgouille",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "por_boss": {
     "ennemis": [
       {
@@ -1931,6 +2617,40 @@
     ],
     "nom": "Le surplomb"
   },
+  "roc_4": {
+    "ennemis": [
+      {
+        "monstre": "craqueleur",
+        "position": 0
+      },
+      {
+        "monstre": "craqueleur_des_plaines",
+        "position": 1
+      },
+      {
+        "monstre": "craqueboule",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "roc_5": {
+    "ennemis": [
+      {
+        "monstre": "craqueboule",
+        "position": 0
+      },
+      {
+        "monstre": "craquelourd",
+        "position": 1
+      },
+      {
+        "monstre": "craqueleur",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "roc_boss": {
     "ennemis": [
       {
@@ -2015,6 +2735,40 @@
       }
     ],
     "nom": "Arc-en-ciel hostile"
+  },
+  "scr_4": {
+    "ennemis": [
+      {
+        "monstre": "scarafeuille_rouge",
+        "position": 0
+      },
+      {
+        "monstre": "scarafeuille_bleu",
+        "position": 1
+      },
+      {
+        "monstre": "scarafeuille_immature",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "scr_5": {
+    "ennemis": [
+      {
+        "monstre": "scarafeuille_vert",
+        "position": 0
+      },
+      {
+        "monstre": "scarafeuille_blanc",
+        "position": 1
+      },
+      {
+        "monstre": "scarafeuille_rouge",
+        "position": 2
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "scr_boss": {
     "ennemis": [
@@ -2105,6 +2859,40 @@
     ],
     "nom": "Charge sauvage"
   },
+  "tai_4": {
+    "ennemis": [
+      {
+        "monstre": "bouftou",
+        "position": 0
+      },
+      {
+        "monstre": "boufton_blanc",
+        "position": 1
+      },
+      {
+        "monstre": "bouftou",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "tai_5": {
+    "ennemis": [
+      {
+        "monstre": "bouftou_noir",
+        "position": 0
+      },
+      {
+        "monstre": "boufton_noir",
+        "position": 1
+      },
+      {
+        "monstre": "bouftou",
+        "position": 2
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "tai_boss": {
     "ennemis": [
       {
@@ -2189,6 +2977,40 @@
       }
     ],
     "nom": "Tourbillon de plumes"
+  },
+  "tof_4": {
+    "ennemis": [
+      {
+        "monstre": "tofu",
+        "position": 0
+      },
+      {
+        "monstre": "tofu_noir",
+        "position": 1
+      },
+      {
+        "monstre": "tofoune",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "tof_5": {
+    "ennemis": [
+      {
+        "monstre": "tofu_noir",
+        "position": 0
+      },
+      {
+        "monstre": "tofu_noir",
+        "position": 1
+      },
+      {
+        "monstre": "tofukaz",
+        "position": 2
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "tof_boss": {
     "ennemis": [
@@ -2287,6 +3109,44 @@
     ],
     "nom": "La garde du Grand Pa"
   },
+  "wab_4": {
+    "ennemis": [
+      {
+        "monstre": "tiwabbit",
+        "position": 0
+      },
+      {
+        "monstre": "black_wabbit",
+        "position": 1
+      },
+      {
+        "monstre": "wabbit",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "wab_5": {
+    "ennemis": [
+      {
+        "monstre": "tiwabbit",
+        "position": 0
+      },
+      {
+        "monstre": "black_wabbit",
+        "position": 1
+      },
+      {
+        "monstre": "grand_pa_wabbit",
+        "position": 2
+      },
+      {
+        "monstre": "tiwobot",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "wab_boss": {
     "ennemis": [
       {
@@ -2375,6 +3235,44 @@
         "position": 4
       }
     ]
+  },
+  "egouts_bonta_brakmar_4": {
+    "ennemis": [
+      {
+        "monstre": "chak_rat",
+        "position": 0
+      },
+      {
+        "monstre": "scelee_rate",
+        "position": 1
+      },
+      {
+        "monstre": "rat_sio",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "egouts_bonta_brakmar_5": {
+    "ennemis": [
+      {
+        "monstre": "chak_rat",
+        "position": 0
+      },
+      {
+        "monstre": "rat_li",
+        "position": 1
+      },
+      {
+        "monstre": "rat_li",
+        "position": 2
+      },
+      {
+        "monstre": "chak_rat",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "egouts_bonta_brakmar_elite": {
     "nom": "La guerre des Rats",
@@ -2482,6 +3380,44 @@
       }
     ]
   },
+  "bibliotheque_corbac_4": {
+    "ennemis": [
+      {
+        "monstre": "horace_le_corbac_apprivoise",
+        "position": 0
+      },
+      {
+        "monstre": "capsaaloocke",
+        "position": 1
+      },
+      {
+        "monstre": "kapotie_le_buveur",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "bibliotheque_corbac_5": {
+    "ennemis": [
+      {
+        "monstre": "corbac_chef",
+        "position": 0
+      },
+      {
+        "monstre": "horace_le_corbac_apprivoise",
+        "position": 1
+      },
+      {
+        "monstre": "capsaaloocke",
+        "position": 2
+      },
+      {
+        "monstre": "kapotie_le_buveur",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "bibliotheque_corbac_elite": {
     "nom": "Le cercle des lecteurs maudits",
     "ennemis": [
@@ -2570,6 +3506,44 @@
         "position": 4
       }
     ]
+  },
+  "goulet_rasboul_4": {
+    "ennemis": [
+      {
+        "monstre": "kilibriss",
+        "position": 0
+      },
+      {
+        "monstre": "craqueleur_poli",
+        "position": 1
+      },
+      {
+        "monstre": "craqueboule_poli",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "goulet_rasboul_5": {
+    "ennemis": [
+      {
+        "monstre": "kilibriss",
+        "position": 0
+      },
+      {
+        "monstre": "craqueleur_poli",
+        "position": 1
+      },
+      {
+        "monstre": "kilibriss",
+        "position": 2
+      },
+      {
+        "monstre": "crapeur",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "goulet_rasboul_elite": {
     "nom": "Les gardes du Rasboul",
@@ -2660,6 +3634,44 @@
       }
     ]
   },
+  "antre_blop_multicolore_4": {
+    "ennemis": [
+      {
+        "monstre": "blopignon_2",
+        "position": 0
+      },
+      {
+        "monstre": "blop_coco_royal_2",
+        "position": 1
+      },
+      {
+        "monstre": "tronkoblop_2",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "antre_blop_multicolore_5": {
+    "ennemis": [
+      {
+        "monstre": "blop_coco_royal_2",
+        "position": 0
+      },
+      {
+        "monstre": "blop_griotte_royal_2",
+        "position": 1
+      },
+      {
+        "monstre": "blop_reinette_royal_2",
+        "position": 2
+      },
+      {
+        "monstre": "tronkoblop_2",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "antre_blop_multicolore_elite": {
     "nom": "Le conseil des Blops Royaux",
     "ennemis": [
@@ -2748,6 +3760,44 @@
         "position": 4
       }
     ]
+  },
+  "antre_crocabulia_4": {
+    "ennemis": [
+      {
+        "monstre": "dragnarok",
+        "position": 0
+      },
+      {
+        "monstre": "draguaindrop",
+        "position": 1
+      },
+      {
+        "monstre": "dragmatique",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "antre_crocabulia_5": {
+    "ennemis": [
+      {
+        "monstre": "dragace",
+        "position": 0
+      },
+      {
+        "monstre": "dragnarok",
+        "position": 1
+      },
+      {
+        "monstre": "draguaindrop",
+        "position": 2
+      },
+      {
+        "monstre": "dragmatique",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "antre_crocabulia_elite": {
     "nom": "La descendance de Crocabulia",
@@ -2838,6 +3888,44 @@
       }
     ]
   },
+  "labyrinthe_minotoror_4": {
+    "ennemis": [
+      {
+        "monstre": "deminoboule",
+        "position": 0
+      },
+      {
+        "monstre": "gamino",
+        "position": 1
+      },
+      {
+        "monstre": "scaratos",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "labyrinthe_minotoror_5": {
+    "ennemis": [
+      {
+        "monstre": "deminoboule",
+        "position": 0
+      },
+      {
+        "monstre": "gamino",
+        "position": 1
+      },
+      {
+        "monstre": "deminoboule",
+        "position": 2
+      },
+      {
+        "monstre": "scaratos",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "labyrinthe_minotoror_elite": {
     "nom": "Le cœur du dédale",
     "ennemis": [
@@ -2926,6 +4014,44 @@
         "position": 4
       }
     ]
+  },
+  "vallee_dame_des_eaux_4": {
+    "ennemis": [
+      {
+        "monstre": "sarkapwane",
+        "position": 0
+      },
+      {
+        "monstre": "akakwa",
+        "position": 1
+      },
+      {
+        "monstre": "kokom",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "vallee_dame_des_eaux_5": {
+    "ennemis": [
+      {
+        "monstre": "akakwa",
+        "position": 0
+      },
+      {
+        "monstre": "kwamourai",
+        "position": 1
+      },
+      {
+        "monstre": "kwamourai",
+        "position": 2
+      },
+      {
+        "monstre": "kokom",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "vallee_dame_des_eaux_elite": {
     "nom": "La cour de Nagate",
@@ -3020,6 +4146,44 @@
       }
     ]
   },
+  "voliere_haute_truche_4": {
+    "ennemis": [
+      {
+        "monstre": "gruche",
+        "position": 0
+      },
+      {
+        "monstre": "truchideur",
+        "position": 1
+      },
+      {
+        "monstre": "truchtine",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "voliere_haute_truche_5": {
+    "ennemis": [
+      {
+        "monstre": "truchmuche",
+        "position": 0
+      },
+      {
+        "monstre": "gruche",
+        "position": 1
+      },
+      {
+        "monstre": "truchon",
+        "position": 2
+      },
+      {
+        "monstre": "truchtine",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "voliere_haute_truche_elite": {
     "nom": "Les gardiennes de la Volière",
     "ennemis": [
@@ -3112,6 +4276,44 @@
         "position": 4
       }
     ]
+  },
+  "dojo_du_vent_4": {
+    "ennemis": [
+      {
+        "monstre": "ino_naru",
+        "position": 0
+      },
+      {
+        "monstre": "fangshu",
+        "position": 1
+      },
+      {
+        "monstre": "uchiwang",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "dojo_du_vent_5": {
+    "ennemis": [
+      {
+        "monstre": "kurookin",
+        "position": 0
+      },
+      {
+        "monstre": "ino_naru",
+        "position": 1
+      },
+      {
+        "monstre": "lichangoro",
+        "position": 2
+      },
+      {
+        "monstre": "uchiwang",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "dojo_du_vent_elite": {
     "nom": "L'épreuve des quatre vents",
@@ -3209,6 +4411,44 @@
         "position": 4
       }
     ]
+  },
+  "laboratoire_tynril_4": {
+    "ennemis": [
+      {
+        "monstre": "bitouf_sombre",
+        "position": 0
+      },
+      {
+        "monstre": "fecorce",
+        "position": 1
+      },
+      {
+        "monstre": "brouture",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "laboratoire_tynril_5": {
+    "ennemis": [
+      {
+        "monstre": "nerbe",
+        "position": 0
+      },
+      {
+        "monstre": "bitouf_sombre",
+        "position": 1
+      },
+      {
+        "monstre": "chiendent",
+        "position": 2
+      },
+      {
+        "monstre": "brouture",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "laboratoire_tynril_elite": {
     "nom": "Les cobayes du laboratoire",
@@ -3370,6 +4610,44 @@
       }
     ]
   },
+  "excavation_mansot_4": {
+    "ennemis": [
+      {
+        "monstre": "fu_mansot",
+        "position": 0
+      },
+      {
+        "monstre": "mansobese",
+        "position": 1
+      },
+      {
+        "monstre": "shamansot",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "excavation_mansot_5": {
+    "ennemis": [
+      {
+        "monstre": "fu_mansot",
+        "position": 0
+      },
+      {
+        "monstre": "mansobese",
+        "position": 1
+      },
+      {
+        "monstre": "fu_mansot",
+        "position": 2
+      },
+      {
+        "monstre": "shamansot",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "excavation_mansot_elite": {
     "nom": "La cour du Mansot Royal",
     "ennemis": [
@@ -3462,6 +4740,44 @@
         "position": 4
       }
     ]
+  },
+  "epave_grolandais_4": {
+    "ennemis": [
+      {
+        "monstre": "fantomat",
+        "position": 0
+      },
+      {
+        "monstre": "vigie_pirate",
+        "position": 1
+      },
+      {
+        "monstre": "fantomalamere",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "epave_grolandais_5": {
+    "ennemis": [
+      {
+        "monstre": "fantomat",
+        "position": 0
+      },
+      {
+        "monstre": "vigie_pirate",
+        "position": 1
+      },
+      {
+        "monstre": "fantomat",
+        "position": 2
+      },
+      {
+        "monstre": "fantimonier",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "epave_grolandais_elite": {
     "nom": "Les officiers du Grolandais",
@@ -3556,6 +4872,44 @@
       }
     ]
   },
+  "canopee_kimbo_4": {
+    "ennemis": [
+      {
+        "monstre": "bitouf_aerien",
+        "position": 0
+      },
+      {
+        "monstre": "meupette",
+        "position": 1
+      },
+      {
+        "monstre": "kaskargo",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "canopee_kimbo_5": {
+    "ennemis": [
+      {
+        "monstre": "abrakleur_clair",
+        "position": 0
+      },
+      {
+        "monstre": "bitouf_aerien",
+        "position": 1
+      },
+      {
+        "monstre": "meupette",
+        "position": 2
+      },
+      {
+        "monstre": "kaskargo",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "canopee_kimbo_elite": {
     "nom": "Les disciples du Kimbo",
     "ennemis": [
@@ -3644,6 +4998,44 @@
         "position": 4
       }
     ]
+  },
+  "hypogee_obsidiantre_4": {
+    "ennemis": [
+      {
+        "monstre": "solfatare",
+        "position": 0
+      },
+      {
+        "monstre": "solfatare",
+        "position": 1
+      },
+      {
+        "monstre": "atomystique",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "hypogee_obsidiantre_5": {
+    "ennemis": [
+      {
+        "monstre": "solfatare",
+        "position": 0
+      },
+      {
+        "monstre": "solfatare",
+        "position": 1
+      },
+      {
+        "monstre": "solfatare",
+        "position": 2
+      },
+      {
+        "monstre": "fumrirolle",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "hypogee_obsidiantre_elite": {
     "nom": "Les gardiens de lave",
@@ -3734,6 +5126,44 @@
       }
     ]
   },
+  "salle_minotot_4": {
+    "ennemis": [
+      {
+        "monstre": "deminoboule_2",
+        "position": 0
+      },
+      {
+        "monstre": "gamino_2",
+        "position": 1
+      },
+      {
+        "monstre": "scaratos_2",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "salle_minotot_5": {
+    "ennemis": [
+      {
+        "monstre": "deminoboule_2",
+        "position": 0
+      },
+      {
+        "monstre": "gamino_2",
+        "position": 1
+      },
+      {
+        "monstre": "deminoboule_2",
+        "position": 2
+      },
+      {
+        "monstre": "scaratos_2",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "salle_minotot_elite": {
     "nom": "Le Minotoror déchu",
     "ennemis": [
@@ -3822,6 +5252,44 @@
         "position": 4
       }
     ]
+  },
+  "tombe_tofugawa_4": {
+    "ennemis": [
+      {
+        "monstre": "tsukinochi",
+        "position": 0
+      },
+      {
+        "monstre": "madura",
+        "position": 1
+      },
+      {
+        "monstre": "tambourai",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "tombe_tofugawa_5": {
+    "ennemis": [
+      {
+        "monstre": "madura",
+        "position": 0
+      },
+      {
+        "monstre": "onabu_geisha",
+        "position": 1
+      },
+      {
+        "monstre": "tsukinochi",
+        "position": 2
+      },
+      {
+        "monstre": "tambourai",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "tombe_tofugawa_elite": {
     "nom": "La garde du Shogun",
@@ -3929,6 +5397,44 @@
       }
     ]
   },
+  "cavernes_givrefoux_4": {
+    "ennemis": [
+      {
+        "monstre": "yokai_givrefoux",
+        "position": 0
+      },
+      {
+        "monstre": "soryo_givrefoux",
+        "position": 1
+      },
+      {
+        "monstre": "yomi_givrefoux",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "cavernes_givrefoux_5": {
+    "ennemis": [
+      {
+        "monstre": "maho_givrefoux",
+        "position": 0
+      },
+      {
+        "monstre": "yokai_givrefoux",
+        "position": 1
+      },
+      {
+        "monstre": "kami_givrefoux",
+        "position": 2
+      },
+      {
+        "monstre": "yomi_givrefoux",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "cavernes_givrefoux_elite": {
     "nom": "Le clan Givrefoux",
     "ennemis": [
@@ -4035,6 +5541,44 @@
       }
     ]
   },
+  "poste_supervizoeuf_4": {
+    "ennemis": [
+      {
+        "monstre": "kamikabz",
+        "position": 0
+      },
+      {
+        "monstre": "balebz",
+        "position": 1
+      },
+      {
+        "monstre": "quadrabz",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "poste_supervizoeuf_5": {
+    "ennemis": [
+      {
+        "monstre": "kamikabz",
+        "position": 0
+      },
+      {
+        "monstre": "balebz",
+        "position": 1
+      },
+      {
+        "monstre": "kamikabz",
+        "position": 2
+      },
+      {
+        "monstre": "quadrabz",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "poste_supervizoeuf_elite": {
     "nom": "La garde des reines Kabombz",
     "ennemis": [
@@ -4123,6 +5667,44 @@
         "position": 4
       }
     ]
+  },
+  "antre_korriandre_4": {
+    "ennemis": [
+      {
+        "monstre": "fistulor",
+        "position": 0
+      },
+      {
+        "monstre": "fongeur",
+        "position": 1
+      },
+      {
+        "monstre": "abrazif",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "antre_korriandre_5": {
+    "ennemis": [
+      {
+        "monstre": "merulette",
+        "position": 0
+      },
+      {
+        "monstre": "fistulor",
+        "position": 1
+      },
+      {
+        "monstre": "fongeur",
+        "position": 2
+      },
+      {
+        "monstre": "abrazif",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "antre_korriandre_elite": {
     "nom": "La forêt pétrifiée",
@@ -4217,6 +5799,44 @@
       }
     ]
   },
+  "antre_kralamoure_4": {
+    "ennemis": [
+      {
+        "monstre": "bourbassingue",
+        "position": 0
+      },
+      {
+        "monstre": "roissingue",
+        "position": 1
+      },
+      {
+        "monstre": "le_ouassingue_entourbe",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "antre_kralamoure_5": {
+    "ennemis": [
+      {
+        "monstre": "bourbassingue",
+        "position": 0
+      },
+      {
+        "monstre": "roissingue",
+        "position": 1
+      },
+      {
+        "monstre": "bourbassingue",
+        "position": 2
+      },
+      {
+        "monstre": "le_ouassingue_entourbe",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "antre_kralamoure_elite": {
     "nom": "Les gardiens de la tourbière",
     "ennemis": [
@@ -4309,6 +5929,44 @@
         "position": 4
       }
     ]
+  },
+  "grotte_bworker_4": {
+    "ennemis": [
+      {
+        "monstre": "cybwork",
+        "position": 0
+      },
+      {
+        "monstre": "bwork_elemental_de_terre",
+        "position": 1
+      },
+      {
+        "monstre": "bwork_elemental_de_feu",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "grotte_bworker_5": {
+    "ennemis": [
+      {
+        "monstre": "cybwork",
+        "position": 0
+      },
+      {
+        "monstre": "cybwork",
+        "position": 1
+      },
+      {
+        "monstre": "cybwork",
+        "position": 2
+      },
+      {
+        "monstre": "bwork_elemental_de_feu",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "grotte_bworker_elite": {
     "nom": "L'atelier du Bworker",
@@ -4403,6 +6061,44 @@
       }
     ]
   },
+  "temple_ougah_4": {
+    "ennemis": [
+      {
+        "monstre": "tromperelle",
+        "position": 0
+      },
+      {
+        "monstre": "champaknyde",
+        "position": 1
+      },
+      {
+        "monstre": "champbis",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "temple_ougah_5": {
+    "ennemis": [
+      {
+        "monstre": "champodonte",
+        "position": 0
+      },
+      {
+        "monstre": "tromperelle",
+        "position": 1
+      },
+      {
+        "monstre": "champaknyde",
+        "position": 2
+      },
+      {
+        "monstre": "champbis",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "temple_ougah_elite": {
     "nom": "Les fidèles d'Ougah",
     "ennemis": [
@@ -4495,6 +6191,44 @@
         "position": 4
       }
     ]
+  },
+  "antichambre_glourseleste_4": {
+    "ennemis": [
+      {
+        "monstre": "boulglours",
+        "position": 0
+      },
+      {
+        "monstre": "glourmand",
+        "position": 1
+      },
+      {
+        "monstre": "glouragan",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "antichambre_glourseleste_5": {
+    "ennemis": [
+      {
+        "monstre": "gloursaya",
+        "position": 0
+      },
+      {
+        "monstre": "boulglours",
+        "position": 1
+      },
+      {
+        "monstre": "meliglours",
+        "position": 2
+      },
+      {
+        "monstre": "glouragan",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "antichambre_glourseleste_elite": {
     "nom": "La famille Glours",
@@ -4589,6 +6323,44 @@
       }
     ]
   },
+  "pyramide_ombre_4": {
+    "ennemis": [
+      {
+        "monstre": "noctulule",
+        "position": 0
+      },
+      {
+        "monstre": "brutopak",
+        "position": 1
+      },
+      {
+        "monstre": "panterreur",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "pyramide_ombre_5": {
+    "ennemis": [
+      {
+        "monstre": "brutopak",
+        "position": 0
+      },
+      {
+        "monstre": "somblero",
+        "position": 1
+      },
+      {
+        "monstre": "somblero",
+        "position": 2
+      },
+      {
+        "monstre": "panterreur",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "pyramide_ombre_elite": {
     "nom": "Les serviteurs d'Ombre",
     "ennemis": [
@@ -4681,6 +6453,44 @@
         "position": 4
       }
     ]
+  },
+  "forgefroide_transporteur_4": {
+    "ennemis": [
+      {
+        "monstre": "ventrublion",
+        "position": 0
+      },
+      {
+        "monstre": "brikoglours",
+        "position": 1
+      },
+      {
+        "monstre": "karkanik",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "forgefroide_transporteur_5": {
+    "ennemis": [
+      {
+        "monstre": "brikoglours",
+        "position": 0
+      },
+      {
+        "monstre": "stalak",
+        "position": 1
+      },
+      {
+        "monstre": "ventrublion",
+        "position": 2
+      },
+      {
+        "monstre": "karkanik",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "forgefroide_transporteur_elite": {
     "nom": "Les ouvriers de Frigost",
@@ -4788,6 +6598,44 @@
       }
     ]
   },
+  "salons_klime_labo_nileza_4": {
+    "ennemis": [
+      {
+        "monstre": "grodruche",
+        "position": 0
+      },
+      {
+        "monstre": "dodox",
+        "position": 1
+      },
+      {
+        "monstre": "harrogant",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "salons_klime_labo_nileza_5": {
+    "ennemis": [
+      {
+        "monstre": "dodox",
+        "position": 0
+      },
+      {
+        "monstre": "krakal",
+        "position": 1
+      },
+      {
+        "monstre": "grodruche",
+        "position": 2
+      },
+      {
+        "monstre": "termystique",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "salons_klime_labo_nileza_elite": {
     "nom": "Le cercle des savants",
     "ennemis": [
@@ -4894,6 +6742,44 @@
       }
     ]
   },
+  "donjon_harebourg_4": {
+    "ennemis": [
+      {
+        "monstre": "granduk",
+        "position": 0
+      },
+      {
+        "monstre": "cycloide",
+        "position": 1
+      },
+      {
+        "monstre": "sinistrofu",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "donjon_harebourg_5": {
+    "ennemis": [
+      {
+        "monstre": "nocturlabe",
+        "position": 0
+      },
+      {
+        "monstre": "granduk",
+        "position": 1
+      },
+      {
+        "monstre": "cycloide",
+        "position": 2
+      },
+      {
+        "monstre": "sinistrofu",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "donjon_harebourg_elite": {
     "nom": "La cour du Comte",
     "ennemis": [
@@ -4982,6 +6868,44 @@
         "position": 4
       }
     ]
+  },
+  "aquadome_vaisseau_4": {
+    "ennemis": [
+      {
+        "monstre": "pikoleur",
+        "position": 0
+      },
+      {
+        "monstre": "gambaf",
+        "position": 1
+      },
+      {
+        "monstre": "eskoglyphe",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "aquadome_vaisseau_5": {
+    "ennemis": [
+      {
+        "monstre": "krabouilleur",
+        "position": 0
+      },
+      {
+        "monstre": "pikoleur",
+        "position": 1
+      },
+      {
+        "monstre": "mantaze",
+        "position": 2
+      },
+      {
+        "monstre": "harpo",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "aquadome_vaisseau_elite": {
     "nom": "Les gardes des profondeurs",
@@ -5089,6 +7013,44 @@
       }
     ]
   },
+  "temple_koutoulou_palais_dantinea_4": {
+    "ennemis": [
+      {
+        "monstre": "grofond",
+        "position": 0
+      },
+      {
+        "monstre": "rilur",
+        "position": 1
+      },
+      {
+        "monstre": "n_yalg",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "temple_koutoulou_palais_dantinea_5": {
+    "ennemis": [
+      {
+        "monstre": "tourthon",
+        "position": 0
+      },
+      {
+        "monstre": "li_fo",
+        "position": 1
+      },
+      {
+        "monstre": "grofond",
+        "position": 2
+      },
+      {
+        "monstre": "shokkoth",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "temple_koutoulou_palais_dantinea_elite": {
     "nom": "Le culte des abysses",
     "ennemis": [
@@ -5195,6 +7157,44 @@
       }
     ]
   },
+  "enutrosor_srambad_4": {
+    "ennemis": [
+      {
+        "monstre": "kamasterisk",
+        "position": 0
+      },
+      {
+        "monstre": "bouroliste",
+        "position": 1
+      },
+      {
+        "monstre": "barbetoal",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "enutrosor_srambad_5": {
+    "ennemis": [
+      {
+        "monstre": "bouroliste",
+        "position": 0
+      },
+      {
+        "monstre": "machassin",
+        "position": 1
+      },
+      {
+        "monstre": "kamasterisk",
+        "position": 2
+      },
+      {
+        "monstre": "barbetoal",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "enutrosor_srambad_elite": {
     "nom": "Les gardiens des Dimensions",
     "ennemis": [
@@ -5300,6 +7300,44 @@
         "position": 4
       }
     ]
+  },
+  "xelorium_ecaflipus_4": {
+    "ennemis": [
+      {
+        "monstre": "ikargn",
+        "position": 0
+      },
+      {
+        "monstre": "valet_veinard",
+        "position": 1
+      },
+      {
+        "monstre": "buboxor",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "xelorium_ecaflipus_5": {
+    "ennemis": [
+      {
+        "monstre": "valet_veinard",
+        "position": 0
+      },
+      {
+        "monstre": "cavalier_chanceux",
+        "position": 1
+      },
+      {
+        "monstre": "ikargn",
+        "position": 2
+      },
+      {
+        "monstre": "dame_du_hasard",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "xelorium_ecaflipus_elite": {
     "nom": "Les champions des Dimensions",
@@ -5411,6 +7449,44 @@
       }
     ]
   },
+  "tours_fratrie_4": {
+    "ennemis": [
+      {
+        "monstre": "klemort",
+        "position": 0
+      },
+      {
+        "monstre": "tournoye",
+        "position": 1
+      },
+      {
+        "monstre": "hacharne",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "tours_fratrie_5": {
+    "ennemis": [
+      {
+        "monstre": "tournoye",
+        "position": 0
+      },
+      {
+        "monstre": "trepavois",
+        "position": 1
+      },
+      {
+        "monstre": "klemort",
+        "position": 2
+      },
+      {
+        "monstre": "hacharne",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "tours_fratrie_elite": {
     "nom": "La Fratrie des Oubliés",
     "ennemis": [
@@ -5520,6 +7596,44 @@
         "position": 4
       }
     ]
+  },
+  "wukin_wukang_4": {
+    "ennemis": [
+      {
+        "monstre": "imushin",
+        "position": 0
+      },
+      {
+        "monstre": "imorok",
+        "position": 1
+      },
+      {
+        "monstre": "imiyama",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "wukin_wukang_5": {
+    "ennemis": [
+      {
+        "monstre": "imorok",
+        "position": 0
+      },
+      {
+        "monstre": "imetsu",
+        "position": 1
+      },
+      {
+        "monstre": "imushin",
+        "position": 2
+      },
+      {
+        "monstre": "imiyama",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "wukin_wukang_elite": {
     "nom": "La garde impériale",
@@ -5631,6 +7745,44 @@
       }
     ]
   },
+  "osavora_ilyzaelle_4": {
+    "ennemis": [
+      {
+        "monstre": "lapilope",
+        "position": 0
+      },
+      {
+        "monstre": "esprigne",
+        "position": 1
+      },
+      {
+        "monstre": "brutapir",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "osavora_ilyzaelle_5": {
+    "ennemis": [
+      {
+        "monstre": "feutome",
+        "position": 0
+      },
+      {
+        "monstre": "lapilope",
+        "position": 1
+      },
+      {
+        "monstre": "feutome",
+        "position": 2
+      },
+      {
+        "monstre": "feutome",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
+  },
   "osavora_ilyzaelle_elite": {
     "nom": "Les gardiens du sommeil",
     "ennemis": [
@@ -5740,6 +7892,44 @@
         "position": 4
       }
     ]
+  },
+  "dimensions_cavaliers_4": {
+    "ennemis": [
+      {
+        "monstre": "pistilangue",
+        "position": 0
+      },
+      {
+        "monstre": "ferrailleur",
+        "position": 1
+      },
+      {
+        "monstre": "dolid",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "dimensions_cavaliers_5": {
+    "ennemis": [
+      {
+        "monstre": "krevladal",
+        "position": 0
+      },
+      {
+        "monstre": "pistilangue",
+        "position": 1
+      },
+      {
+        "monstre": "ferrailleur",
+        "position": 2
+      },
+      {
+        "monstre": "ravalame",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "dimensions_cavaliers_elite": {
     "nom": "Les hérauts de l'Eliocalypse",
@@ -5884,6 +8074,44 @@
         "position": 4
       }
     ]
+  },
+  "tempete_eliocalypse_4": {
+    "ennemis": [
+      {
+        "monstre": "armecreante_2",
+        "position": 0
+      },
+      {
+        "monstre": "olgoth",
+        "position": 1
+      },
+      {
+        "monstre": "ferrailleur_2",
+        "position": 4
+      }
+    ],
+    "nom": "Patrouille égarée"
+  },
+  "tempete_eliocalypse_5": {
+    "ennemis": [
+      {
+        "monstre": "pistilangue_2",
+        "position": 0
+      },
+      {
+        "monstre": "pistilangue_2",
+        "position": 1
+      },
+      {
+        "monstre": "armecreante_2",
+        "position": 2
+      },
+      {
+        "monstre": "pistilangue_2",
+        "position": 4
+      }
+    ],
+    "nom": "Embuscade au détour"
   },
   "tempete_eliocalypse_elite": {
     "nom": "Les lieutenants des Cavaliers",

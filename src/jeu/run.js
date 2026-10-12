@@ -18,7 +18,9 @@ import {
   butinDeZone,
   facteurType,
   getMonde,
+  monstresDeZone,
   trouverZoneDansMonde,
+  zonesDuMonde,
 } from "./config.js";
 import {
   STAT_PAR_ELEMENT,
@@ -37,6 +39,9 @@ export const nouvellesStatsRun = () => ({
   combats: 0,
   archis: 0,
   objets: 0,
+  // objets obtenus ({ id, rarete }) et ennemis vaincus : absents des anciennes sauvegardes
+  butin: [],
+  ennemis: 0,
   zones: 0,
   kamasGagnes: 0,
   tavernes: 0,
@@ -125,6 +130,16 @@ export function nouvelleRun(e = EQUIPE_DEFAUT, ascension = 0, trancheId = `t1`) 
 }
 // Héros encore debout (les tombés de la mort définitive ne comptent pas pour l'équipe « pleine »).
 export const herosVivants = (e) => e.persos.filter((p) => p.pvActuels > 0).length;
+// Aucune espèce du monde n'a d'archimonstre (Monde 5) : Otomai et le Philtre n'ont aucun effet.
+export function mondeSansArchimonstre(trancheId) {
+  const monde = getMonde(trancheId);
+  if (MONSTRES_RARES[monde.id]?.especes?.some((id) => MONSTRES[id]?.archiNom)) {
+    return false;
+  }
+  return !zonesDuMonde(monde).some(
+    (z) => z && monstresDeZone(z).some((id) => MONSTRES[id]?.archiNom),
+  );
+}
 export function noeudsExclus(e, t) {
   let n = [...(t.sansNoeuds ?? [])];
   if (
@@ -135,7 +150,11 @@ export function noeudsExclus(e, t) {
     n.push(`taverne`);
   }
   // philtres d'Otomai plafonnés : plus d'Otomai une fois le maximum atteint
-  if ((e.philtres ?? 0) >= CONFIG_ARCHI.philtresMax && !n.includes(`otomai`)) {
+  // pas d'Otomai non plus dans un monde sans archimonstre
+  if (
+    ((e.philtres ?? 0) >= CONFIG_ARCHI.philtresMax || mondeSansArchimonstre(e.trancheId)) &&
+    !n.includes(`otomai`)
+  ) {
     n.push(`otomai`);
   }
   return n;
@@ -199,10 +218,16 @@ function additionner(cible, bonus) {
     }
   }
 }
+// Plusieurs objets portant le même effet : le plus fort l'emporte (valeurs numériques) ; pour un
+// effet composé (objet), le premier trouvé est gardé.
 function proprieteEquipement(equipement, t) {
-  return Object.values(equipement)
+  const valeurs = Object.values(equipement)
     .map((e) => e && EQUIPEMENTS[e.id]?.[t])
-    .find(Boolean);
+    .filter(Boolean);
+  if (valeurs.length && valeurs.every((v) => typeof v === `number`)) {
+    return Math.max(...valeurs);
+  }
+  return valeurs[0];
 }
 const ELEMENTS_RES = [`terre`, `feu`, `eau`, `air`];
 export function ajouterResistanceTous(e, t) {

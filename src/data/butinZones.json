@@ -12,7 +12,11 @@
       "animulette",
       "bounihimee"
     ],
-    "elites": [],
+    "elites": [
+      "casque_de_kardorim",
+      "cape_de_kardorim",
+      "bracelet_de_kardorim"
+    ],
     "boss": [
       "casque_de_kardorim",
       "cape_de_kardorim",
@@ -62,7 +66,15 @@
       "ceinture_du_prespic",
       "alliance_de_silimelle",
       "arc_en_corne_de_bouftou",
-      "ergot_mina"
+      "ergot_mina",
+      "boufcoiffe_royale",
+      "epee_royale_du_bouftou",
+      "anneau_royal_du_bouftou",
+      "boufbottes_royales",
+      "amulette_royale_du_bouftou",
+      "ceinture_royale_du_bouftou",
+      "cape_bouffante_royale",
+      "boufcape_royale"
     ],
     "boss": [
       "boufcoiffe_royale",
@@ -90,7 +102,9 @@
     "elites": [
       "bottes_de_rapiat",
       "ceinture_de_rapiat",
-      "amulette_de_rapiat"
+      "amulette_de_rapiat",
+      "chance_d_ecaflip",
+      "cape_edepee"
     ],
     "boss": [
       "chance_d_ecaflip",
@@ -107,7 +121,13 @@
     ],
     "elites": [
       "dora",
-      "baton_tont_ata"
+      "baton_tont_ata",
+      "chapeau_du_directeur_grunob",
+      "bottes_du_directeur_grunob",
+      "ceinture_du_directeur_grunob",
+      "faux_du_directeur_grunob",
+      "abracape",
+      "sabre_shodanwa"
     ],
     "boss": [
       "chapeau_du_directeur_grunob",
@@ -130,7 +150,13 @@
     ],
     "elites": [
       "couteau_a_stek",
-      "grosse_bagouze_du_parrain"
+      "grosse_bagouze_du_parrain",
+      "anneau_bille",
+      "cape_lumette",
+      "casque_noix",
+      "amulette_perle",
+      "baguette_rikiki",
+      "goyave"
     ],
     "boss": [
       "anneau_bille",
@@ -152,7 +178,13 @@
     ],
     "elites": [
       "anneau_forrain",
-      "masque_traumatisant"
+      "masque_traumatisant",
+      "amulette_du_boostache",
+      "anneau_du_boostache",
+      "cape_du_boostache",
+      "ceinture_du_boostache",
+      "dagues_eurfolles",
+      "cape_du_vampyre"
     ],
     "boss": [
       "amulette_du_boostache",
@@ -176,7 +208,16 @@
     ],
     "elites": [
       "anneau_poupayahn",
-      "la_guenille"
+      "la_guenille",
+      "scaracoiffe_doree",
+      "scaracape_doree",
+      "baguette_du_scarabosse_dore",
+      "scarature_doree",
+      "amulette_du_scarabosse_dore",
+      "anneau_du_scarabosse_dore",
+      "scarabottes_dorees",
+      "baguette_ni_ninnin",
+      "palmano"
     ],
     "boss": [
       "scaracoiffe_doree",
@@ -201,7 +242,12 @@
     ],
     "elites": [
       "dagues_aj_deh_la",
-      "masse_aj_taye"
+      "masse_aj_taye",
+      "caskoffre",
+      "ceinture_de_coffrete",
+      "pendentiffre",
+      "boffes_cottre",
+      "ann_or"
     ],
     "boss": [
       "caskoffre",
@@ -227,7 +273,9 @@
       "vegacoiffe",
       "vegacape",
       "vegamu",
-      "cape_sanguine"
+      "cape_sanguine",
+      "bonnet_spairance",
+      "scalpel_de_bworknroll"
     ],
     "boss": [
       "bonnet_spairance",
@@ -247,7 +295,9 @@
     ],
     "elites": [
       "arc_des_rivages",
-      "scaphandre_ojine"
+      "scaphandre_ojine",
+      "masse_du_corailleur",
+      "alliance_de_corail"
     ],
     "boss": [
       "masse_du_corailleur",
@@ -267,7 +317,11 @@
     "elites": [
       "annokami",
       "bottokami",
-      "bandeau_rokwa"
+      "bandeau_rokwa",
+      "kwakwalame",
+      "kwakwanneau",
+      "kwakwalliance",
+      "kwakwaffe"
     ],
     "boss": [
       "kwakwalame",
@@ -287,7 +341,14 @@
     ],
     "elites": [
       "anneau_merta",
-      "makroute_sombre"
+      "makroute_sombre",
+      "blopanneau_griotte_royal",
+      "amublop_griotte_royale",
+      "bloptes_griotte_royales",
+      "blopture_griotte_royale",
+      "crystal_o_boul",
+      "kryst_o_boul",
+      "cape_du_desir_o_boul"
     ],
     "boss": [
       "blopanneau_griotte_royal",
@@ -313,7 +374,9 @@
     ],
     "elites": [
       "dagues_ruyeres",
-      "cape_flotteuse"
+      "cape_flotteuse",
+      "ares",
+      "anneau_bsene"
     ],
     "boss": [
       "ares",
@@ -331,7 +394,9 @@
     ],
     "elites": [
       "anneau_nime",
-      "la_pelle_du_large"
+      "la_pelle_du_large",
+      "couronne_du_roi_gelax",
+      "arc_du_pecheur"
     ],
     "boss": [
       "couronne_du_roi_gelax",
@@ -348,7 +413,13 @@
       "amulette_du_scorbute"
     ],
     "elites": [
-      "pic_a_glace"
+      "pic_a_glace",
+      "amulette_de_nelween",
+      "cape_de_nelween",
+      "bottes_de_nelween",
+      "ceinture_de_nelween",
+      "perruque_de_iop",
+      "cape_hucine"
     ],
     "boss": [
       "amulette_de_nelween",
@@ -372,7 +443,10 @@
       "casque_du_blanc_pa_wabbit",
       "ceinture_du_blanc_pa_wabbit",
       "bracelet_du_blanc_pa_wabbit",
-      "oreilles_du_wabbit"
+      "oreilles_du_wabbit",
+      "sabre_sandawa",
+      "couronne_du_wa_wobot",
+      "cape_du_wa_wobot"
     ],
     "boss": [
       "sabre_sandawa",
@@ -393,7 +467,16 @@
       "porte_bonheur_de_rok_gnorok",
       "le_rok_gnorok",
       "anneau_du_mineur_gogorifiant",
-      "anneau_de_loopine"
+      "anneau_de_loopine",
+      "bottes_du_craqueleur_legendaire",
+      "casque_du_craqueleur_legendaire",
+      "marteau_du_craqueleur_legendaire",
+      "craquanneau_legendaire",
+      "amulette_du_craqueleur_legendaire",
+      "ceinture_du_craqueleur_legendaire",
+      "craquelocape_legendaire",
+      "coiffe_du_craqueleur_legendaire",
+      "cape_du_craqueleur_legendaire"
     ],
     "boss": [
       "bottes_du_craqueleur_legendaire",
@@ -419,7 +502,13 @@
     ],
     "elites": [
       "blessdagues",
-      "la_bertheuze"
+      "la_bertheuze",
+      "alliance_du_kanniboul_ebil",
+      "bottes_du_kanniboul_ebil",
+      "masque_du_kanniboul_ebil",
+      "sceptre_du_kanniboul_ebil",
+      "dagues_lutination",
+      "cape_d_elya_wood"
     ],
     "boss": [
       "alliance_du_kanniboul_ebil",
@@ -442,7 +531,15 @@
     ],
     "elites": [
       "casque_de_maitre_nabur",
-      "anneau_k_tuelle"
+      "anneau_k_tuelle",
+      "kaiser",
+      "ceinture_dracochoune",
+      "anneau_du_dragon_cochon",
+      "collier_du_dragon_cochon",
+      "mules_du_dragon_cochon",
+      "cape_du_dragon_cochon",
+      "coiffe_du_dragon_cochon",
+      "billreole"
     ],
     "boss": [
       "kaiser",
@@ -474,7 +571,10 @@
       "amulette_feudala",
       "sabre_feudala",
       "dragocoiffe_charbon",
-      "dragocoiffe_blanche"
+      "dragocoiffe_blanche",
+      "le_kikoularc",
+      "bracelet_tmotiv",
+      "la_brouteuse"
     ],
     "boss": [
       "le_kikoularc",
@@ -499,7 +599,10 @@
       "bandeau_de_carlita",
       "sangle_de_carlita",
       "tromblon_de_carlita",
-      "alliance_de_farle"
+      "alliance_de_farle",
+      "coiffe_du_meulou",
+      "cape_du_meulou",
+      "griffe_rose"
     ],
     "boss": [
       "coiffe_du_meulou",
@@ -518,7 +621,13 @@
     ],
     "elites": [
       "alliance_des_forestiers",
-      "baton_de_marie_aigue"
+      "baton_de_marie_aigue",
+      "amulette_des_huit_yeux",
+      "caparak",
+      "gaine_nyee",
+      "coiffe_de_l_abraknyde_ancestral",
+      "cape_de_l_abraknyde_ancestral",
+      "baguette_des_limbes"
     ],
     "boss": [
       "amulette_des_huit_yeux",
@@ -540,7 +649,10 @@
     ],
     "elites": [
       "marteau_m_pouce",
-      "coiffe_du_gaddie"
+      "coiffe_du_gaddie",
+      "marteau_de_moon",
+      "cape_de_moon",
+      "amulette_de_moon"
     ],
     "boss": [
       "marteau_de_moon",
@@ -557,7 +669,22 @@
       "ceinture_ceremoniale_du_seigneur_des_rats",
       "bottes_ceremoniales_du_seigneur_des_rats"
     ],
-    "elites": [],
+    "elites": [
+      "rapiere_du_rat_blanc",
+      "couvre_chef_du_rat_blanc",
+      "cape_du_rat_blanc",
+      "collier_du_rat_blanc",
+      "gant_du_rat_blanc",
+      "ceinture_du_rat_blanc",
+      "bottes_du_rat_blanc",
+      "masque_du_rat_noir",
+      "cape_du_rat_noir",
+      "dagues_du_rat_noir",
+      "collier_du_rat_noir",
+      "bottes_du_rat_noir",
+      "ceinture_du_rat_noir",
+      "gant_du_rat_noir"
+    ],
     "boss": [
       "rapiere_du_rat_blanc",
       "couvre_chef_du_rat_blanc",
@@ -591,7 +718,9 @@
       "amulette_du_wabbit_cephale",
       "bottes_du_wabbit_cephale",
       "cape_du_gorgouille_2",
-      "le_baton_cloutay"
+      "le_baton_cloutay",
+      "casque_de_maitre_nabur_2",
+      "chapokipik"
     ],
     "boss": [
       "casque_de_maitre_nabur_2",
@@ -610,7 +739,9 @@
     ],
     "elites": [
       "marteau_rehadaure",
-      "baguette_nah"
+      "baguette_nah",
+      "crocobur",
+      "baton_de_marie_aigue_2"
     ],
     "boss": [
       "crocobur",
@@ -625,7 +756,12 @@
       "katana_de_la_flamme"
     ],
     "elites": [
-      "blopanneau_indigo_royal"
+      "blopanneau_indigo_royal",
+      "blopanneau_multicolore_royal",
+      "amublop_multicolore_royale",
+      "bloptes_multicolores_royales",
+      "blopture_multicolore_royale",
+      "bague_des_ecaflipuces"
     ],
     "boss": [
       "blopanneau_multicolore_royal",
@@ -668,7 +804,14 @@
     "elites": [
       "croquasque",
       "bottes_croquantes",
-      "sac_a_croquer"
+      "sac_a_croquer",
+      "minotokorno",
+      "collier_du_minotoror",
+      "anneau_du_minotoror",
+      "hache_du_minotoror",
+      "bottes_du_minotoror",
+      "cape_du_minotoror",
+      "ceinture_du_minotoror"
     ],
     "boss": [
       "minotokorno",
@@ -692,7 +835,9 @@
     ],
     "elites": [
       "kelinobranche",
-      "arc_huledela"
+      "arc_huledela",
+      "masse_du_corailleur_magistral",
+      "baguette_gyver"
     ],
     "boss": [
       "masse_du_corailleur_magistral",
@@ -714,7 +859,9 @@
       "geta_de_fojumo",
       "epee_de_fojumo",
       "cape_xelomorphe",
-      "baguette_ourderie"
+      "baguette_ourderie",
+      "marteau_ksain",
+      "tige_du_brouture"
     ],
     "boss": [
       "marteau_ksain",
@@ -734,7 +881,9 @@
       "barbe_de_zatoishwan",
       "ceinture_de_zatoishwan",
       "baton_de_zatoishwan",
-      "cape_du_meulou_2"
+      "cape_du_meulou_2",
+      "baton_de_hanshi",
+      "eventails_de_shihan"
     ],
     "boss": [
       "baton_de_hanshi",
@@ -761,7 +910,9 @@
       "cape_hoile",
       "chapeau_devin",
       "ceinture_leumant",
-      "doro_le_blak"
+      "doro_le_blak",
+      "racine_de_fecorce",
+      "racine_de_floribonde"
     ],
     "boss": [
       "racine_de_fecorce",
@@ -781,7 +932,10 @@
       "kalypsoton"
     ],
     "elites": [
-      "baton_du_shamansot"
+      "baton_du_shamansot",
+      "couronne_du_mansot_royal",
+      "anneau_du_mansot_royal",
+      "cape_du_mansot_royal"
     ],
     "boss": [
       "couronne_du_mansot_royal",
@@ -798,7 +952,12 @@
       "fantomasque",
       "hache_du_fancrome"
     ],
-    "elites": [],
+    "elites": [
+      "chapeau_de_ben_le_ripate",
+      "crochet_de_ben_le_ripate",
+      "ceinture_de_ben_le_ripate",
+      "sabre_de_ben_le_ripate"
+    ],
     "boss": [
       "chapeau_de_ben_le_ripate",
       "crochet_de_ben_le_ripate",
@@ -820,7 +979,8 @@
     ],
     "elites": [
       "ceinture_bitoufale_de_prosper_youpla",
-      "casque_du_bitouf_aerien"
+      "casque_du_bitouf_aerien",
+      "le_kim"
     ],
     "boss": [
       "le_kim"
@@ -835,7 +995,13 @@
       "slip_noze"
     ],
     "elites": [
-      "cape_d_hell_mina"
+      "cape_d_hell_mina",
+      "casque_de_l_obsidiantre",
+      "amulette_de_l_obsidiantre",
+      "bague_de_l_obsidiantre",
+      "cape_de_l_obsidiantre",
+      "bottes_de_l_obsidiantre",
+      "masque_du_frelon_noir"
     ],
     "boss": [
       "casque_de_l_obsidiantre",
@@ -858,7 +1024,16 @@
     ],
     "elites": [
       "masque_vaudou_sarbak",
-      "bague_hera"
+      "bague_hera",
+      "bracelet_du_minotot",
+      "collier_du_minotot",
+      "sceptre_du_minotot",
+      "sandales_du_minotot",
+      "cape_du_minotot",
+      "ceinture_du_minotot",
+      "coiffe_du_minotot",
+      "anneau_frage",
+      "marteau_bleuronne"
     ],
     "boss": [
       "bracelet_du_minotot",
@@ -887,7 +1062,8 @@
       "geta_des_tombeaux",
       "ceinture_d_onigori",
       "koinkoiffe_rose",
-      "epee_de_ush"
+      "epee_de_ush",
+      "masque_de_kaonashi"
     ],
     "boss": [
       "masque_de_kaonashi"
@@ -904,7 +1080,12 @@
       "ceinture_du_tengu_givrefoux",
       "bottes_du_tengu_givrefoux"
     ],
-    "elites": [],
+    "elites": [
+      "cape_de_la_fuji_givrefoux",
+      "coiffe_de_la_fuji_givrefoux",
+      "bottes_de_la_fuji_givrefoux",
+      "anneau_de_la_fuji_givrefoux"
+    ],
     "boss": [
       "cape_de_la_fuji_givrefoux",
       "coiffe_de_la_fuji_givrefoux",
@@ -922,7 +1103,11 @@
     ],
     "elites": [
       "cape_du_kaniblou",
-      "canne_hassukre"
+      "canne_hassukre",
+      "casque_du_supervizoeuf",
+      "carapace_ailee_du_supervizoeuf",
+      "poing_du_supervizoeuf",
+      "sulik"
     ],
     "boss": [
       "casque_du_supervizoeuf",
@@ -942,7 +1127,11 @@
       "amulette_heroclite",
       "baguette_nolog",
       "le_thanos",
-      "veranneau"
+      "veranneau",
+      "hache_du_korriandre",
+      "cape_du_korriandre",
+      "amulette_du_korriandre",
+      "anneau_du_korriandre"
     ],
     "boss": [
       "hache_du_korriandre",
@@ -961,7 +1150,11 @@
       "epee_d_otomai",
       "ceinture_en_grithril"
     ],
-    "elites": [],
+    "elites": [
+      "kralano",
+      "annolamour",
+      "kralamansion"
+    ],
     "boss": [
       "kralano",
       "annolamour",
@@ -980,7 +1173,12 @@
     ],
     "elites": [
       "brassard_de_vengeuse_masquee",
-      "dagues_adou"
+      "dagues_adou",
+      "anneau_blitere",
+      "casque_harnage",
+      "bottes_repane",
+      "ceinture_tore",
+      "dagues_imauve"
     ],
     "boss": [
       "anneau_blitere",
@@ -1020,7 +1218,13 @@
       "cape_hiculteur"
     ],
     "elites": [
-      "marteau_du_glouragan"
+      "marteau_du_glouragan",
+      "masque_du_glourseleste",
+      "cape_du_glourseleste",
+      "amulette_du_glourseleste",
+      "ceinture_du_glourseleste",
+      "bottes_du_glourseleste",
+      "coiffe_du_glourseleste"
     ],
     "boss": [
       "masque_du_glourseleste",
@@ -1044,7 +1248,12 @@
       "obscture",
       "chaussures_hau",
       "pelle_dorado",
-      "dagues_acantes"
+      "dagues_acantes",
+      "anneau_kturne",
+      "bottes_refois",
+      "casqnoar",
+      "grelots_de_barberyl",
+      "mitaine_du_yech_ti"
     ],
     "boss": [
       "anneau_kturne",
@@ -1063,7 +1272,11 @@
       "col_du_ventrublion"
     ],
     "elites": [
-      "capuche_de_sylargh"
+      "capuche_de_sylargh",
+      "casque_de_missiz_frizz",
+      "alliance_de_missiz_frizz",
+      "bottes_de_missiz_frizz",
+      "ceinture_glaciale"
     ],
     "boss": [
       "casque_de_missiz_frizz",
@@ -1082,7 +1295,10 @@
     "elites": [
       "bonnet_vicieux",
       "anneau_vicieux",
-      "bottes_vicieuses"
+      "bottes_vicieuses",
+      "cape_de_nileza",
+      "amulette_de_nileza",
+      "bottes_de_nileza"
     ],
     "boss": [
       "cape_de_nileza",
@@ -1102,7 +1318,10 @@
       "epee_du_granduk"
     ],
     "elites": [
-      "anneau_du_cycloide"
+      "anneau_du_cycloide",
+      "coiffe_seculaire",
+      "amulette_seculaire",
+      "ceinture_seculaire"
     ],
     "boss": [
       "coiffe_seculaire",
@@ -1138,7 +1357,11 @@
     "elites": [
       "bague_trithon",
       "bottes_trithon",
-      "masque_trithon"
+      "masque_trithon",
+      "ceintouse",
+      "tentassons",
+      "chapoulpe",
+      "masque_de_koutoulou"
     ],
     "boss": [
       "ceintouse",
@@ -1184,7 +1407,10 @@
       "bottes_du_roi_joueur",
       "couronne_du_roi_joueur",
       "chevaliere_du_roi_joueur",
-      "hache_du_chaloeil"
+      "hache_du_chaloeil",
+      "cagoule_de_vortex",
+      "casque_du_chaloeil",
+      "ceinture_de_vortex"
     ],
     "boss": [
       "cagoule_de_vortex",
@@ -1205,7 +1431,9 @@
     "elites": [
       "chaussures_ardentes",
       "masque_ardent",
-      "cape_ardente"
+      "cape_ardente",
+      "sac_volcanique",
+      "amulette_volcanique"
     ],
     "boss": [
       "sac_volcanique",
@@ -1240,7 +1468,12 @@
       "zarbaudrier"
     ],
     "elites": [
-      "dagues_d_ilyzaelle"
+      "dagues_d_ilyzaelle",
+      "manteau_du_venerable_endormi",
+      "cornes_du_venerable_endormi",
+      "malediction_du_venerable_endormi",
+      "arc_du_venerable_endormi",
+      "amulette_d_ilyzaelle"
     ],
     "boss": [
       "manteau_du_venerable_endormi",
@@ -1270,7 +1503,9 @@
       "col_du_dark_vlad",
       "alliance_du_dark_vlad",
       "beche_de_corruption",
-      "hachebarde_de_guerre"
+      "hachebarde_de_guerre",
+      "bague_de_corruption",
+      "alliance_de_corruption"
     ],
     "boss": [
       "bague_de_corruption",
@@ -1289,7 +1524,15 @@
     ],
     "elites": [
       "cape_martegel",
-      "anneau_dore_du_docteur_eggob"
+      "anneau_dore_du_docteur_eggob",
+      "solerets_de_guerre",
+      "heaume_de_guerre",
+      "ceste_de_guerre",
+      "echarpe_de_servitude",
+      "manteau_de_servitude",
+      "dora_de_servitude",
+      "cape_indescriptible",
+      "perruque_de_predagob"
     ],
     "boss": [
       "solerets_de_guerre",

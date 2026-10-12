@@ -92,7 +92,7 @@ export function ecranTaverne(e, t, n, r = false, i = false) {
         ${htmlBarreEquipe(e)}
         <p class="sous-titre">Soigne ton équipe (+${Math.round(n * 100)} % des PV max), ou recrute un nouveau membre.</p>
         ${r && length > 0 ? `<p class="asc-avertissement">☠ ${length === 1 ? `Un héros tombé ne se relèvera pas` : `${length} héros tombés ne se relèveront pas`}. Il faut le${length > 1 ? `s` : ``} remplacer.</p>` : ``}
-        ${c && t.length ? `<p class="asc-avertissement">⚠ Recruter maintenant complète l'équipe : les tavernes (et tout soin hors combat) disparaissent du reste de la run.</p>` : ``}
+        ${c && t.length ? `<p class="asc-avertissement">⚠ Recruter maintenant complète l'équipe : les tavernes disparaissent du reste de la run (potions, sanctuaires et autres soins restent possibles).</p>` : ``}
         ${i}
         <div class="boutons-ecran tav-boutons">
           <button id="tav-soin" class="${soin.total && !selection ? `primaire` : `secondaire`}">${echapperHtml(libelleSoin)}</button>

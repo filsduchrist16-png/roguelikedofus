@@ -23,10 +23,10 @@ const SECTIONS_REGLES = [
       <li><b>Combat</b> : un groupe de monstres.</li>
       <li><b>Combat dur</b> : des ennemis renforcés (le bonus est affiché au survol, ou au toucher de la case), mais un meilleur butin.</li>
       <li><b>Taverne</b> : soin et recrutement.</li>
-      <li><b>Otomai</b> : augmente les chances de croiser des archimonstres pour le reste de la run.</li>
+      <li><b>Otomaï</b> : augmente les chances de croiser des archimonstres pour le reste de la run.</li>
       <li><b>Zaap</b> : la rencontre n'est révélée qu'en arrivant.</li>
       <li><b>Hôtel de vente</b> : acheter et revendre des objets.</li>
-      <li><b>Forgemage</b> : faire monter un objet d'une rareté.</li>
+      <li><b>Forgemagie</b> : faire monter un objet d'une rareté.</li>
       <li><b>Rencontre</b> : un événement à choix (sanctuaire, coffre, marchand, idoles, avis de
         recherche, clé de donjon).</li>
       <li><b>Donjon</b> : le boss de la zone.</li>
@@ -69,8 +69,8 @@ const SECTIONS_REGLES = [
       panoplie complète ; beaucoup donnent +1 PA à partir de 3 pièces, mais les PA de panoplie ne se
       cumulent pas (+1 au plus, et +2 PA au plus venant de tout l'équipement). Deux anneaux identiques
       d'une même panoplie ne se portent pas ensemble.</p>
-      <p>Les kamas se gagnent en combat et en revendant des objets. Ils servent à l'hôtel de vente et chez
-      le forgemage.</p>`,
+      <p>Les kamas se gagnent en combat et en revendant des objets. Ils servent à l'hôtel de vente et à la
+      Forgemagie.</p>`,
   },
   {
     titre: `Ce qui reste après la mort`,
@@ -83,7 +83,7 @@ const SECTIONS_REGLES = [
   {
     titre: `Archimonstres`,
     corps: `<p>N'importe quel monstre peut apparaître en version archimonstre, plus forte. Le vaincre
-      l'ajoute au bestiaire. Le bestiaire complet donne le Dofus Ocre.</p>`,
+      l'ajoute au bestiaire. Le Dofus Ocre demande de capturer tous les archimonstres des Mondes 1 à 4 et de gagner le Monde 5.</p>`,
   },
   {
     titre: `Obtenir équipement, Dofus et reliques`,

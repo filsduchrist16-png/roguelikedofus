@@ -63,7 +63,8 @@ export function genererStockHdv(e, t) {
   let n = trouverZoneDansMonde(e);
   let r = n ? n.tranche.zones : MONDES[0].zones;
   let i = n ? n.index : 0;
-  let a = (e) => listerButin(e ? butinDeZone(e) : null);
+  // sans doublon : une pièce de boss recopiée dans les élites ne doit pas peser double
+  let a = (e) => [...new Set(listerButin(e ? butinDeZone(e) : null))];
   let o = a(r[i]);
   let s = a(r[i + 1]);
   let c = [];

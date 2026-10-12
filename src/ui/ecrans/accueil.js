@@ -31,7 +31,7 @@ import { ecranParametres } from "./parametres.js";
 import { ecranEncyclopedie } from "./encyclopedie.js";
 import { ecranBestiaire } from "./bestiaire.js";
 import { ecranArmurerie } from "./armurerie.js";
-import { ecranSucces } from "./succes.js";
+import { afficherBandeau, ecranSucces } from "./succes.js";
 import { ecranRegles } from "./regles.js";
 import { ecranMentionsLegales } from "./mentions.js";
 import { ecranDofus } from "./dofus.js";
@@ -115,6 +115,7 @@ export function ecranAccueil(e, onReset, n = null) {
       afficherEcran(
         `
         <div class="coin-gauche">
+          <h1 class="sr-only">Roguefus Lite</h1>
           <button id="btn-regles" class="btn-regles">Règles</button>
           <a class="btn-discord" href="${LIEN_DISCORD}" target="_blank" rel="noopener noreferrer" title="Rejoindre le Discord du jeu">
             <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M20.32 4.37A19.8 19.8 0 0 0 15.39 2.8a13.7 13.7 0 0 0-.63 1.3 18.4 18.4 0 0 0-5.5 0 13.7 13.7 0 0 0-.64-1.3 19.7 19.7 0 0 0-4.93 1.53C.53 9.05-.32 13.6.1 18.1a19.9 19.9 0 0 0 6.04 3.05 14.6 14.6 0 0 0 1.29-2.1 12.9 12.9 0 0 1-2.04-.97l.5-.39a14.2 14.2 0 0 0 12.2 0l.5.39c-.65.39-1.33.71-2.04.98.37.74.8 1.44 1.29 2.1a19.8 19.8 0 0 0 6.04-3.06c.5-5.2-.84-9.7-3.56-13.73ZM8.02 15.33c-1.18 0-2.16-1.08-2.16-2.42 0-1.33.95-2.42 2.16-2.42 1.21 0 2.18 1.1 2.16 2.42 0 1.34-.95 2.42-2.16 2.42Zm7.97 0c-1.18 0-2.16-1.08-2.16-2.42 0-1.33.95-2.42 2.16-2.42 1.21 0 2.18 1.1 2.16 2.42 0 1.34-.94 2.42-2.16 2.42Z"/></svg>
@@ -127,7 +128,7 @@ export function ecranAccueil(e, onReset, n = null) {
           <button id="btn-encyclopedie" class="coin-param" data-lbl="Classes" title="Encyclopédie des classes"><img src="${IMG_ENCYCLOPEDIE}" alt="Encyclopédie" onerror="this.parentElement.textContent='📖'" /></button>
           <button id="btn-armurerie" class="coin-param" data-lbl="Armurerie" title="Armurerie"><img src="${IMG_ARMURERIE}" alt="Armurerie" onerror="this.parentElement.textContent='🛡️'" /></button>
           <button id="btn-succes" class="coin-param" data-lbl="Succès" title="Succès"><img src="${IMG_SUCCES}" alt="Succès" onerror="this.remove()" /></button>
-          <button id="btn-settings" class="coin-param" data-lbl="Réglages" title="Paramètres"><img src="${IMG_PARAMETRES}" alt="Paramètres" onerror="this.remove()" /></button>
+          <button id="btn-settings" class="coin-param" data-lbl="Paramètres" title="Paramètres"><img src="${IMG_PARAMETRES}" alt="Paramètres" onerror="this.remove()" /></button>
         </div>
         <img class="logo-accueil" src="${IMG_LOGO}" alt="Roguefus Lite" onerror="this.remove()" />
         <div class="mondes-rack">
@@ -438,7 +439,8 @@ function brancherBandeauNuage(div, info) {
       div.firstElementChild.textContent = `Récupération impossible : ${raisonEchecNuage() || `erreur inconnue`}. Réessaie dans un moment.`;
     }
   });
-  div.querySelector(`[data-nuage="garder"]`).addEventListener(`click`, async () => {
+  div.querySelector(`[data-nuage="garder"]`).addEventListener(`click`, async (ev) => {
+    const b = ev.currentTarget;
     if (
       !(await demanderConfirmation(
         `Garder la partie d'ici ? Elle sera envoyée en ligne et remplacera celle de l'autre appareil (${enLigne}).`,
@@ -447,7 +449,16 @@ function brancherBandeauNuage(div, info) {
     ) {
       return;
     }
-    div.remove();
-    await envoyerNuage().catch(() => {});
+    b.disabled = true;
+    try {
+      await envoyerNuage();
+      div.remove();
+    } catch {
+      // le bandeau reste : le joueur peut réessayer
+      b.disabled = false;
+      afficherBandeau(
+        `✗ Envoi impossible pour l'instant : ta partie n'est pas partie en ligne. Réessaie dans un moment.`,
+      );
+    }
   });
 }

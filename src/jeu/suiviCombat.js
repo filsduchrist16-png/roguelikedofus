@@ -40,7 +40,15 @@ export function resumeCombat(e, t) {
     // monstres achevés, dans l'ordre (défis « Premier » et « Dernier »)
     ordreVaincus: [...e.morts]
       .map((ref) => t.combattants.find((c) => c.ref === ref))
-      .filter((c) => c && c.camp === `ennemi` && c.monstreId && !c.estLance)
+      .filter(
+        (c) =>
+          c &&
+          c.camp === `ennemi` &&
+          c.monstreId &&
+          !c.estLance &&
+          !c.estInvocation &&
+          !c.invoquePar,
+      )
       .map((c) => c.monstreId),
     classes: t.classes,
     ascension: t.ascension,

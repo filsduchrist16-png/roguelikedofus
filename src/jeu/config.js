@@ -51,6 +51,8 @@ export function indexDebutMonde(e, t = MONDES) {
 export const XP_PAR_COMBAT = {
   combat: 110,
   combat_dur: 195,
+  // le donjon donne autant d'XP qu'un combat dur
+  donjon: 195,
 };
 const XP_BONUS_PAR_TOILE = 0.3;
 export function calculerXpCombat(e, t, n) {
@@ -194,7 +196,8 @@ export const CONFIG_ARCHI = {
 export const MONSTRES_RARES = {
   t1: {
     especes: [`piou_rouge`, `piou_vert`, `piou_bleu`, `piou_jaune`, `piou_rose`, `piou_violet`],
-    chance: 0.005,
+    // 2 % : avec 0,5 %, les 6 Pious demandaient environ 54 runs (≈ 14 en moyenne à 2 %)
+    chance: 0.02,
   },
 };
 export const DIFFICULTES = [

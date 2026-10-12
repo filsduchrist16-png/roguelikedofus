@@ -13,7 +13,7 @@ describe(`mondes 3 à 5`, () => {
       for (const zid of monde.zones) {
         const zone = ZONES.find((z) => z.id === zid);
         expect(zone?.pools, zid).toBeTruthy();
-        expect(zone.pools.normales.length, zid).toBe(3);
+        expect(zone.pools.normales.length, zid).toBe(5);
         expect(zone.pools.elite.length, zid).toBe(1);
         expect(zone.pools.boss.length, zid).toBeGreaterThan(0);
         for (const cid of [...zone.pools.normales, ...zone.pools.elite, ...zone.pools.boss]) {

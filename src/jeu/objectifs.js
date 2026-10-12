@@ -207,7 +207,14 @@ export function etatObjectif(o, suivi, combattants) {
   if (s.type === `vaincre`) {
     if (
       s.sansKO &&
-      combattants.some((c) => c.camp === `joueur` && !c.creature && c.pvActuels <= 0)
+      combattants.some(
+        (c) =>
+          c.camp === `joueur` &&
+          !c.creature &&
+          c.pvActuels <= 0 &&
+          // les héros déjà K.O. avant le combat ne comptent pas
+          (!suivi.herosDepart || suivi.herosDepart.includes(c.ref)),
+      )
     ) {
       return { etat: `rate`, detail: `un héros est tombé` };
     }

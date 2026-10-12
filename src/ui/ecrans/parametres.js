@@ -1,5 +1,11 @@
 import { CLASSES } from "../../data/index.js";
-import { nomTouche, rangOrdre, sauverParametres } from "../../sauvegarde/parametres.js";
+import {
+  TAILLES_POLICE,
+  appliquerAccessibilite,
+  nomTouche,
+  rangOrdre,
+  sauverParametres,
+} from "../../sauvegarde/parametres.js";
 import { classesJouables } from "../../jeu/run.js";
 import {
   exporterSauvegarde,
@@ -44,6 +50,7 @@ import {
   barreRetour,
   demanderConfirmation,
   echapperHtml,
+  ecranTactile,
   htmlElementsClasse,
   imgSymboleClasse,
   parametres,
@@ -64,22 +71,43 @@ export function ecranParametres(e) {
     let n = false;
     // écouteur de la touche en cours de saisie (retiré si on quitte l'écran)
     let captureTouche = null;
+    // sauvegarde en ligne : le réseau n'est interrogé qu'une fois, à l'ouverture de l'écran ;
+    // les redessins (interrupteurs, préréglages) relisent ce cache
+    const nuage = { dispo: false, info: null, plusRecent: null };
+    let messageNuage = ``;
+    // redessine l'état en ligne dans l'écran courant (défini à chaque rendu)
+    let rafraichirNuage = () => {};
+    let nuageOccupe = false;
     let r = false;
     let i = () => {
       afficherEcran(`
         <h1>Paramètres</h1>
         <div class="settings">
-          <div class="setting-ligne">
+          ${
+            ecranTactile()
+              ? ``
+              : `<div class="setting-ligne">
             <span class="setting-lbl">Touche « Terminer le tour »</span>
             <button id="set-touche" class="secondaire">${n ? `Appuie sur une touche…` : `<kbd>${echapperHtml(nomTouche(parametres.toucheFinTour))}</kbd>`}</button>
-          </div>
+          </div>`
+          }
           <div class="setting-ligne">
             <span class="setting-lbl">Passer le tour automatiquement<br><small class="muet">quand aucune action n'est possible</small></span>
-            <button id="set-auto" class="secondaire ${parametres.autoFinTour ? `on` : ``}">${parametres.autoFinTour ? `Activé` : `Désactivé`}</button>
+            <button id="set-auto" class="secondaire ${parametres.autoFinTour ? `on` : ``}" aria-pressed="${!!parametres.autoFinTour}">${parametres.autoFinTour ? `Activé` : `Désactivé`}</button>
           </div>
           <div class="setting-ligne">
             <span class="setting-lbl">Tours des monstres rapides<br><small class="muet">les ennemis jouent sans temps mort</small></span>
-            <button id="set-rapide" class="secondaire ${parametres.combatRapide ? `on` : ``}">${parametres.combatRapide ? `Activé` : `Désactivé`}</button>
+            <button id="set-rapide" class="secondaire ${parametres.combatRapide ? `on` : ``}" aria-pressed="${!!parametres.combatRapide}">${parametres.combatRapide ? `Activé` : `Désactivé`}</button>
+          </div>
+          <div class="setting-ligne">
+            <span class="setting-lbl" id="set-taille-lbl">Taille du texte<br><small class="muet">agrandit tous les textes du jeu</small></span>
+            <span class="setting-actions" role="group" aria-labelledby="set-taille-lbl">
+              ${TAILLES_POLICE.map((t) => `<button class="secondaire set-taille ${parametres.taillePolice === t ? `on` : ``}" data-taille="${t}" aria-pressed="${parametres.taillePolice === t}">${t} %</button>`).join(``)}
+            </span>
+          </div>
+          <div class="setting-ligne">
+            <span class="setting-lbl">Couleurs adaptées<br><small class="muet">la rareté est écrite sur les emplacements, les barres de PV ennemies ont un motif</small></span>
+            <button id="set-couleurs" class="secondaire ${parametres.couleursAdaptees ? `on` : ``}" aria-pressed="${!!parametres.couleursAdaptees}">${parametres.couleursAdaptees ? `Activé` : `Désactivé`}</button>
           </div>
           <div class="setting-ligne">
             <span class="setting-lbl">Sauvegarde<br><small class="muet">Dofus, succès, réglages et run en cours, pour changer de PC</small></span>
@@ -90,7 +118,7 @@ export function ecranParametres(e) {
               <input id="set-import-file" type="file" accept=".json,application/json" style="display:none" />
             </span>
           </div>
-          <p id="set-import-msg" class="muet settings-sous" style="display:none"></p>
+          <p id="set-import-msg" class="muet settings-sous" role="status" style="display:none"></p>
           ${(() => {
             const secours = infoSecours();
             return secours
@@ -135,9 +163,10 @@ export function ecranParametres(e) {
             <span class="setting-actions">
               <button id="set-nuage-envoyer" class="secondaire">Envoyer cette partie</button>
               <button id="set-nuage-recuperer" class="secondaire">Récupérer</button>
-              <button id="set-nuage-auto" class="secondaire ${syncAuto() ? `on` : ``}" title="Envoie la partie quelques secondes après chaque sauvegarde">Auto : ${syncAuto() ? `activé` : `désactivé`}</button>
+              <button id="set-nuage-auto" class="secondaire ${syncAuto() ? `on` : ``}" aria-pressed="${syncAuto()}" title="Envoie la partie quelques secondes après chaque sauvegarde">Auto : ${syncAuto() ? `activé` : `désactivé`}</button>
             </span>
           </div>
+          <p id="set-nuage-msg" class="muet settings-sous" role="status"></p>
           <div id="set-texte-zone" class="sauvegarde-texte" style="display:none">
             <p class="muet">Copie ce texte et garde-le (notes, mail…) ; pour récupérer ta partie, colle-le ici puis « Importer le texte ».</p>
             <textarea id="set-texte-champ" rows="6" spellcheck="false" aria-label="Sauvegarde en texte"></textarea>
@@ -175,8 +204,8 @@ export function ecranParametres(e) {
               <span class="preset-nom">${echapperHtml(CLASSES[e].nom)}</span>
               ${htmlElementsClasse(e)}
               <span class="preset-pos">
-                <button class="form-el-btn ${n === `avant` ? `sel` : ``}" draggable="false" data-classe="${e}" data-rangee="avant" title="Ligne avant (les héros s'y empilent)">Avant</button>
-                <button class="form-el-btn ${n === `arriere` ? `sel` : ``}" draggable="false" data-classe="${e}" data-rangee="arriere" title="Ligne arrière (les héros s'y empilent)">Arrière</button>
+                <button class="form-el-btn ${n === `avant` ? `sel` : ``}" draggable="false" data-classe="${e}" data-rangee="avant" aria-pressed="${n === `avant`}" title="Ligne avant (les héros s'y empilent)">Avant</button>
+                <button class="form-el-btn ${n === `arriere` ? `sel` : ``}" draggable="false" data-classe="${e}" data-rangee="arriere" aria-pressed="${n === `arriere`}" title="Ligne arrière (les héros s'y empilent)">Arrière</button>
               </span>
             </div>`;
             })
@@ -234,6 +263,14 @@ export function ecranParametres(e) {
         });
       });
       document.getElementById(`set-touche`)?.addEventListener(`click`, () => {
+        // un second appui annule la saisie en cours (jamais deux écouteurs en même temps)
+        if (captureTouche) {
+          document.removeEventListener(`keydown`, captureTouche, true);
+          captureTouche = null;
+          n = false;
+          i();
+          return;
+        }
         n = true;
         i();
         let e = (t) => {
@@ -254,6 +291,20 @@ export function ecranParametres(e) {
         };
         captureTouche = e;
         document.addEventListener(`keydown`, e, true);
+      });
+      racine.querySelectorAll(`.set-taille`).forEach((b) =>
+        b.addEventListener(`click`, () => {
+          parametres.taillePolice = Number(b.dataset.taille);
+          sauverParametres(parametres);
+          appliquerAccessibilite(parametres);
+          i();
+        }),
+      );
+      document.getElementById(`set-couleurs`)?.addEventListener(`click`, () => {
+        parametres.couleursAdaptees = !parametres.couleursAdaptees;
+        sauverParametres(parametres);
+        appliquerAccessibilite(parametres);
+        i();
       });
       document.getElementById(`set-rapide`)?.addEventListener(`click`, () => {
         parametres.combatRapide = !parametres.combatRapide;
@@ -297,19 +348,101 @@ export function ecranParametres(e) {
         }
       });
       document.getElementById(`set-texte`)?.addEventListener(`click`, zoneTexte);
-      // sauvegarde en ligne : visible seulement dans l'artefact claude.ai
-      const etatNuage = async () => {
-        const ligne = document.getElementById(`set-nuage`);
-        if (!ligne || !(await nuageDisponible())) {
-          return;
+      // sauvegarde en ligne : visible seulement quand elle est disponible (état lu une fois, en cache)
+      const resumeIci = () => {
+        try {
+          return texteResume(resumePartieLocale());
+        } catch {
+          return `—`;
         }
-        ligne.style.display = ``;
-        const info = await infoNuage().catch(() => null);
-        const el = document.getElementById(`set-nuage-etat`);
+      };
+      const resumeEnLigne = (info) =>
+        info?.resume ? texteResume(info.resume) : `contenu inconnu (ancien envoi)`;
+      const msgNuage = (texte) => {
+        messageNuage = texte;
+        const el = document.getElementById(`set-nuage-msg`);
         if (el) {
-          el.textContent = info
-            ? `En ligne : partie envoyée depuis ${info.appareil} le ${dateLisible(info.date)}.`
-            : `Aucune partie en ligne pour l'instant.`;
+          el.textContent = texte;
+        }
+      };
+      const brancherPause = (info) => {
+        const ici = resumeIci();
+        const enLigne = resumeEnLigne(info);
+        document.getElementById(`set-pause-recuperer`)?.addEventListener(`click`, async (ev) => {
+          const b = ev.currentTarget;
+          if (
+            !(await demanderConfirmation(
+              `Récupérer la partie en ligne (${enLigne}) ? Elle remplacera celle d'ici (${ici}), qui reste récupérable avec « Annuler le dernier import ».`,
+              `Récupérer`,
+            ))
+          ) {
+            return;
+          }
+          b.disabled = true;
+          b.textContent = `Récupération…`;
+          if (await recupererNuage().catch(() => false)) {
+            msgNuage(
+              `✓ Partie récupérée, rechargement…${avertissementNuage() ? ` ${avertissementNuage()}` : ``}`,
+            );
+            setTimeout(() => location.reload(), 600);
+          } else {
+            b.disabled = false;
+            b.textContent = `Récupérer`;
+            msgNuage(
+              `✗ Récupération impossible : ${raisonEchecNuage() || `erreur inconnue`}. Réessaie dans un moment.`,
+            );
+          }
+        });
+        document.getElementById(`set-pause-garder`)?.addEventListener(`click`, async (ev) => {
+          const b = ev.currentTarget;
+          if (
+            !(await demanderConfirmation(
+              `Garder la partie d'ici (${ici}) ? Elle sera envoyée en ligne et remplacera celle de l'autre appareil (${enLigne}).`,
+              `Garder celle d'ici`,
+            ))
+          ) {
+            return;
+          }
+          b.disabled = true;
+          b.textContent = `Envoi…`;
+          try {
+            await envoyerNuage();
+            nuage.plusRecent = null;
+            nuage.info = await infoNuage().catch(() => nuage.info);
+            msgNuage(`✓ Partie d'ici envoyée en ligne : la synchro auto reprend.`);
+            majNuage();
+          } catch {
+            b.disabled = false;
+            b.textContent = `Garder celle d'ici`;
+            msgNuage(`✗ Envoi impossible pour l'instant, réessaie dans un moment.`);
+          }
+        });
+      };
+      // dessine l'état du cache dans le DOM courant (aucun appel réseau)
+      const majNuage = () => {
+        const ligne = document.getElementById(`set-nuage`);
+        if (ligne && nuage.dispo) {
+          ligne.style.display = ``;
+          const el = document.getElementById(`set-nuage-etat`);
+          if (el) {
+            el.textContent = nuage.info
+              ? `En ligne : partie envoyée depuis ${nuage.info.appareil} le ${dateLisible(nuage.info.date)}.`
+              : `Aucune partie en ligne pour l'instant.`;
+          }
+        }
+        const pause = document.getElementById(`set-nuage-pause`);
+        if (pause) {
+          const info = nuage.plusRecent;
+          pause.style.display = info ? `` : `none`;
+          if (info) {
+            document.getElementById(`set-nuage-pause-detail`).textContent =
+              `Ici : ${resumeIci()} · En ligne (${info.appareil ?? `autre appareil`}, ${dateLisible(info.date)}) : ${resumeEnLigne(info)}`;
+            brancherPause(info);
+          }
+        }
+        const m = document.getElementById(`set-nuage-msg`);
+        if (m) {
+          m.textContent = messageNuage;
         }
       };
       // compte (hors claude.ai) : connexion, création, déconnexion ; on recharge pour tout rebrancher
@@ -361,47 +494,74 @@ export function ecranParametres(e) {
         seDeconnecter();
         location.reload();
       });
-      etatNuage();
+      rafraichirNuage = majNuage;
+      majNuage();
       document.getElementById(`set-nuage-envoyer`)?.addEventListener(`click`, async (ev) => {
-        const b = ev.currentTarget;
-        if (b.dataset.confirme !== `1`) {
-          b.dataset.confirme = `1`;
-          b.textContent = `Confirmer (remplace celle en ligne)`;
+        if (nuageOccupe) {
           return;
         }
+        const b = ev.currentTarget;
+        const enLigne = nuage.info
+          ? `${resumeEnLigne(nuage.info)}, envoyée depuis ${nuage.info.appareil ?? `un autre appareil`} le ${dateLisible(nuage.info.date)}`
+          : `aucune partie pour l'instant`;
+        if (
+          !(await demanderConfirmation(
+            `Envoyer la partie d'ici (${resumeIci()}) ? Elle remplacera celle qui est en ligne (${enLigne}).`,
+            `Envoyer`,
+          ))
+        ) {
+          msgNuage(`Envoi annulé.`);
+          return;
+        }
+        nuageOccupe = true;
         b.disabled = true;
+        b.textContent = `Envoi…`;
         try {
           await envoyerNuage();
-          message(
+          nuage.plusRecent = null;
+          nuage.info = await infoNuage().catch(() => nuage.info);
+          msgNuage(
             `✓ Partie envoyée en ligne : ouvre l'artefact sur ton autre appareil et touche « Récupérer ».`,
           );
         } catch {
-          message(`✗ Envoi impossible pour l'instant, réessaie dans un moment.`);
+          msgNuage(`✗ Envoi impossible pour l'instant, réessaie dans un moment.`);
         }
+        nuageOccupe = false;
         b.disabled = false;
-        b.dataset.confirme = ``;
         b.textContent = `Envoyer cette partie`;
-        etatNuage();
+        majNuage();
       });
       document.getElementById(`set-nuage-recuperer`)?.addEventListener(`click`, async (ev) => {
-        const b = ev.currentTarget;
-        if (b.dataset.confirme !== `1`) {
-          b.dataset.confirme = `1`;
-          b.textContent = `Confirmer (remplace celle d'ici)`;
+        if (nuageOccupe) {
           return;
         }
+        const b = ev.currentTarget;
+        const enLigne = nuage.info
+          ? `${resumeEnLigne(nuage.info)}, envoyée depuis ${nuage.info.appareil ?? `un autre appareil`} le ${dateLisible(nuage.info.date)}`
+          : `aucune partie pour l'instant`;
+        if (
+          !(await demanderConfirmation(
+            `Récupérer la partie en ligne (${enLigne}) ? Elle remplacera celle d'ici (${resumeIci()}), qui reste récupérable avec « Annuler le dernier import ».`,
+            `Récupérer`,
+          ))
+        ) {
+          msgNuage(`Récupération annulée.`);
+          return;
+        }
+        nuageOccupe = true;
         b.disabled = true;
+        b.textContent = `Récupération…`;
         if (await recupererNuage().catch(() => false)) {
-          message(
+          msgNuage(
             `✓ Partie récupérée, rechargement…${avertissementNuage() ? ` ${avertissementNuage()}` : ``}`,
           );
           setTimeout(() => location.reload(), 600);
         } else {
-          message(
+          msgNuage(
             `✗ Récupération impossible : ${raisonEchecNuage() || `erreur inconnue`}. Réessaie dans un moment.`,
           );
+          nuageOccupe = false;
           b.disabled = false;
-          b.dataset.confirme = ``;
           b.textContent = `Récupérer`;
         }
       });
@@ -490,64 +650,6 @@ export function ecranParametres(e) {
           message(`✗ Impossible de remettre la partie d'avant.`);
         }
       });
-      // synchro auto en pause : une partie plus récente venue de l'autre appareil attend un choix
-      nuagePlusRecent()
-        .then((info) => {
-          const ligne = document.getElementById(`set-nuage-pause`);
-          if (!info || !ligne) {
-            return;
-          }
-          let ici = `—`;
-          try {
-            ici = texteResume(resumePartieLocale());
-          } catch {}
-          const enLigne = info.resume ? texteResume(info.resume) : `contenu inconnu (ancien envoi)`;
-          ligne.style.display = ``;
-          document.getElementById(`set-nuage-pause-detail`).textContent =
-            `Ici : ${ici} · En ligne (${info.appareil ?? `autre appareil`}, ${dateLisible(info.date)}) : ${enLigne}`;
-          document.getElementById(`set-pause-recuperer`)?.addEventListener(`click`, async (ev) => {
-            const b = ev.currentTarget;
-            if (
-              !(await demanderConfirmation(
-                `Récupérer la partie en ligne (${enLigne}) ? Elle remplacera celle d'ici (${ici}), qui reste récupérable avec « Annuler le dernier import ».`,
-                `Récupérer`,
-              ))
-            ) {
-              return;
-            }
-            b.disabled = true;
-            if (await recupererNuage().catch(() => false)) {
-              message(
-                `✓ Partie récupérée, rechargement…${avertissementNuage() ? ` ${avertissementNuage()}` : ``}`,
-              );
-              setTimeout(() => location.reload(), 600);
-            } else {
-              b.disabled = false;
-              message(
-                `✗ Récupération impossible : ${raisonEchecNuage() || `erreur inconnue`}. Réessaie dans un moment.`,
-              );
-            }
-          });
-          document.getElementById(`set-pause-garder`)?.addEventListener(`click`, async () => {
-            if (
-              !(await demanderConfirmation(
-                `Garder la partie d'ici (${ici}) ? Elle sera envoyée en ligne et remplacera celle de l'autre appareil (${enLigne}).`,
-                `Garder celle d'ici`,
-              ))
-            ) {
-              return;
-            }
-            ligne.style.display = `none`;
-            try {
-              await envoyerNuage();
-              message(`✓ Partie d'ici envoyée en ligne : la synchro auto reprend.`);
-            } catch {
-              message(`✗ Envoi impossible pour l'instant, réessaie dans un moment.`);
-            }
-            etatNuage();
-          });
-        })
-        .catch(() => {});
       document.getElementById(`set-reset-dofus`)?.addEventListener(`click`, async () => {
         const nb = e.nb();
         if (
@@ -572,5 +674,14 @@ export function ecranParametres(e) {
       });
     };
     i();
+    // appels réseau : une seule fois à l'ouverture, puis on redessine depuis le cache
+    (async () => {
+      nuage.dispo = await nuageDisponible().catch(() => false);
+      if (nuage.dispo) {
+        nuage.info = await infoNuage().catch(() => null);
+        nuage.plusRecent = await nuagePlusRecent().catch(() => null);
+      }
+      rafraichirNuage();
+    })();
   });
 }

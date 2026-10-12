@@ -9,7 +9,9 @@
     "normales": [
       "gob_1",
       "gob_2",
-      "gob_3"
+      "gob_3",
+      "gob_4",
+      "gob_5"
     ]
   },
   "antre_dragon_cochon": {
@@ -22,7 +24,9 @@
     "normales": [
       "por_1",
       "por_2",
-      "por_3"
+      "por_3",
+      "por_4",
+      "por_5"
     ]
   },
   "arbre_de_moon": {
@@ -35,7 +39,9 @@
     "normales": [
       "moo_1",
       "moo_2",
-      "moo_3"
+      "moo_3",
+      "moo_4",
+      "moo_5"
     ]
   },
   "astrub": {
@@ -48,7 +54,9 @@
     "normales": [
       "combat_1",
       "combat_2",
-      "combat_3"
+      "combat_3",
+      "combat_4",
+      "combat_5"
     ]
   },
   "bateau_du_chouque": {
@@ -61,7 +69,9 @@
     "normales": [
       "cho_1",
       "cho_2",
-      "cho_3"
+      "cho_3",
+      "cho_4",
+      "cho_5"
     ]
   },
   "cale_de_l_arche": {
@@ -74,7 +84,9 @@
     "normales": [
       "arc_1",
       "arc_2",
-      "arc_3"
+      "arc_3",
+      "arc_4",
+      "arc_5"
     ]
   },
   "clos_des_blops": {
@@ -92,7 +104,9 @@
     "normales": [
       "blp_1",
       "blp_2",
-      "blp_3"
+      "blp_3",
+      "blp_4",
+      "blp_5"
     ]
   },
   "domaine_ancestral": {
@@ -105,7 +119,9 @@
     "normales": [
       "abr_1",
       "abr_2",
-      "abr_3"
+      "abr_3",
+      "abr_4",
+      "abr_5"
     ]
   },
   "forgerons": {
@@ -118,7 +134,9 @@
     "normales": [
       "frg_1",
       "frg_2",
-      "frg_3"
+      "frg_3",
+      "frg_4",
+      "frg_5"
     ]
   },
   "gelaxieme_dimension": {
@@ -136,7 +154,9 @@
     "normales": [
       "gel_1",
       "gel_2",
-      "gel_3"
+      "gel_3",
+      "gel_4",
+      "gel_5"
     ]
   },
   "grotte_hesque": {
@@ -149,7 +169,9 @@
     "normales": [
       "hsk_1",
       "hsk_2",
-      "hsk_3"
+      "hsk_3",
+      "hsk_4",
+      "hsk_5"
     ]
   },
   "incarnam": {
@@ -162,7 +184,9 @@
     "normales": [
       "inc_1",
       "inc_2",
-      "inc_3"
+      "inc_3",
+      "inc_4",
+      "inc_5"
     ]
   },
   "kankreblath": {
@@ -175,7 +199,9 @@
     "normales": [
       "kan_1",
       "kan_2",
-      "kan_3"
+      "kan_3",
+      "kan_4",
+      "kan_5"
     ]
   },
   "kwakwa": {
@@ -188,7 +214,9 @@
     "normales": [
       "kwa_1",
       "kwa_2",
-      "kwa_3"
+      "kwa_3",
+      "kwa_4",
+      "kwa_5"
     ]
   },
   "laboratoire_brumen": {
@@ -201,7 +229,9 @@
     "normales": [
       "lab_1",
       "lab_2",
-      "lab_3"
+      "lab_3",
+      "lab_4",
+      "lab_5"
     ]
   },
   "larves": {
@@ -214,7 +244,9 @@
     "normales": [
       "lrv_1",
       "lrv_2",
-      "lrv_3"
+      "lrv_3",
+      "lrv_4",
+      "lrv_5"
     ]
   },
   "maison_fantome": {
@@ -227,7 +259,9 @@
     "normales": [
       "fan_1",
       "fan_2",
-      "fan_3"
+      "fan_3",
+      "fan_4",
+      "fan_5"
     ]
   },
   "pitons_rocheux": {
@@ -240,7 +274,9 @@
     "normales": [
       "roc_1",
       "roc_2",
-      "roc_3"
+      "roc_3",
+      "roc_4",
+      "roc_5"
     ]
   },
   "repaire_kharnozor": {
@@ -253,7 +289,9 @@
     "normales": [
       "khz_1",
       "khz_2",
-      "khz_3"
+      "khz_3",
+      "khz_4",
+      "khz_5"
     ]
   },
   "scarafeuilles": {
@@ -266,7 +304,9 @@
     "normales": [
       "scr_1",
       "scr_2",
-      "scr_3"
+      "scr_3",
+      "scr_4",
+      "scr_5"
     ]
   },
   "tainela": {
@@ -279,7 +319,9 @@
     "normales": [
       "tai_1",
       "tai_2",
-      "tai_3"
+      "tai_3",
+      "tai_4",
+      "tai_5"
     ]
   },
   "taniere_meulou": {
@@ -292,7 +334,9 @@
     "normales": [
       "mlo_1",
       "mlo_2",
-      "mlo_3"
+      "mlo_3",
+      "mlo_4",
+      "mlo_5"
     ]
   },
   "terrier_wa_wabbit": {
@@ -305,7 +349,9 @@
     "normales": [
       "wab_1",
       "wab_2",
-      "wab_3"
+      "wab_3",
+      "wab_4",
+      "wab_5"
     ]
   },
   "tofus": {
@@ -318,14 +364,18 @@
     "normales": [
       "tof_1",
       "tof_2",
-      "tof_3"
+      "tof_3",
+      "tof_4",
+      "tof_5"
     ]
   },
   "egouts_bonta_brakmar": {
     "normales": [
       "egouts_bonta_brakmar_1",
       "egouts_bonta_brakmar_2",
-      "egouts_bonta_brakmar_3"
+      "egouts_bonta_brakmar_3",
+      "egouts_bonta_brakmar_4",
+      "egouts_bonta_brakmar_5"
     ],
     "elite": [
       "egouts_bonta_brakmar_elite"
@@ -339,7 +389,9 @@
     "normales": [
       "bibliotheque_corbac_1",
       "bibliotheque_corbac_2",
-      "bibliotheque_corbac_3"
+      "bibliotheque_corbac_3",
+      "bibliotheque_corbac_4",
+      "bibliotheque_corbac_5"
     ],
     "elite": [
       "bibliotheque_corbac_elite"
@@ -352,7 +404,9 @@
     "normales": [
       "goulet_rasboul_1",
       "goulet_rasboul_2",
-      "goulet_rasboul_3"
+      "goulet_rasboul_3",
+      "goulet_rasboul_4",
+      "goulet_rasboul_5"
     ],
     "elite": [
       "goulet_rasboul_elite"
@@ -365,7 +419,9 @@
     "normales": [
       "antre_blop_multicolore_1",
       "antre_blop_multicolore_2",
-      "antre_blop_multicolore_3"
+      "antre_blop_multicolore_3",
+      "antre_blop_multicolore_4",
+      "antre_blop_multicolore_5"
     ],
     "elite": [
       "antre_blop_multicolore_elite"
@@ -378,7 +434,9 @@
     "normales": [
       "antre_crocabulia_1",
       "antre_crocabulia_2",
-      "antre_crocabulia_3"
+      "antre_crocabulia_3",
+      "antre_crocabulia_4",
+      "antre_crocabulia_5"
     ],
     "elite": [
       "antre_crocabulia_elite"
@@ -391,7 +449,9 @@
     "normales": [
       "labyrinthe_minotoror_1",
       "labyrinthe_minotoror_2",
-      "labyrinthe_minotoror_3"
+      "labyrinthe_minotoror_3",
+      "labyrinthe_minotoror_4",
+      "labyrinthe_minotoror_5"
     ],
     "elite": [
       "labyrinthe_minotoror_elite"
@@ -404,7 +464,9 @@
     "normales": [
       "vallee_dame_des_eaux_1",
       "vallee_dame_des_eaux_2",
-      "vallee_dame_des_eaux_3"
+      "vallee_dame_des_eaux_3",
+      "vallee_dame_des_eaux_4",
+      "vallee_dame_des_eaux_5"
     ],
     "elite": [
       "vallee_dame_des_eaux_elite"
@@ -417,7 +479,9 @@
     "normales": [
       "voliere_haute_truche_1",
       "voliere_haute_truche_2",
-      "voliere_haute_truche_3"
+      "voliere_haute_truche_3",
+      "voliere_haute_truche_4",
+      "voliere_haute_truche_5"
     ],
     "elite": [
       "voliere_haute_truche_elite"
@@ -430,7 +494,9 @@
     "normales": [
       "dojo_du_vent_1",
       "dojo_du_vent_2",
-      "dojo_du_vent_3"
+      "dojo_du_vent_3",
+      "dojo_du_vent_4",
+      "dojo_du_vent_5"
     ],
     "elite": [
       "dojo_du_vent_elite"
@@ -443,7 +509,9 @@
     "normales": [
       "laboratoire_tynril_1",
       "laboratoire_tynril_2",
-      "laboratoire_tynril_3"
+      "laboratoire_tynril_3",
+      "laboratoire_tynril_4",
+      "laboratoire_tynril_5"
     ],
     "elite": [
       "laboratoire_tynril_elite"
@@ -459,7 +527,9 @@
     "normales": [
       "excavation_mansot_1",
       "excavation_mansot_2",
-      "excavation_mansot_3"
+      "excavation_mansot_3",
+      "excavation_mansot_4",
+      "excavation_mansot_5"
     ],
     "elite": [
       "excavation_mansot_elite"
@@ -472,7 +542,9 @@
     "normales": [
       "epave_grolandais_1",
       "epave_grolandais_2",
-      "epave_grolandais_3"
+      "epave_grolandais_3",
+      "epave_grolandais_4",
+      "epave_grolandais_5"
     ],
     "elite": [
       "epave_grolandais_elite"
@@ -485,7 +557,9 @@
     "normales": [
       "canopee_kimbo_1",
       "canopee_kimbo_2",
-      "canopee_kimbo_3"
+      "canopee_kimbo_3",
+      "canopee_kimbo_4",
+      "canopee_kimbo_5"
     ],
     "elite": [
       "canopee_kimbo_elite"
@@ -498,7 +572,9 @@
     "normales": [
       "hypogee_obsidiantre_1",
       "hypogee_obsidiantre_2",
-      "hypogee_obsidiantre_3"
+      "hypogee_obsidiantre_3",
+      "hypogee_obsidiantre_4",
+      "hypogee_obsidiantre_5"
     ],
     "elite": [
       "hypogee_obsidiantre_elite"
@@ -511,7 +587,9 @@
     "normales": [
       "salle_minotot_1",
       "salle_minotot_2",
-      "salle_minotot_3"
+      "salle_minotot_3",
+      "salle_minotot_4",
+      "salle_minotot_5"
     ],
     "elite": [
       "salle_minotot_elite"
@@ -524,7 +602,9 @@
     "normales": [
       "tombe_tofugawa_1",
       "tombe_tofugawa_2",
-      "tombe_tofugawa_3"
+      "tombe_tofugawa_3",
+      "tombe_tofugawa_4",
+      "tombe_tofugawa_5"
     ],
     "elite": [
       "tombe_tofugawa_elite"
@@ -538,7 +618,9 @@
     "normales": [
       "cavernes_givrefoux_1",
       "cavernes_givrefoux_2",
-      "cavernes_givrefoux_3"
+      "cavernes_givrefoux_3",
+      "cavernes_givrefoux_4",
+      "cavernes_givrefoux_5"
     ],
     "elite": [
       "cavernes_givrefoux_elite"
@@ -552,7 +634,9 @@
     "normales": [
       "poste_supervizoeuf_1",
       "poste_supervizoeuf_2",
-      "poste_supervizoeuf_3"
+      "poste_supervizoeuf_3",
+      "poste_supervizoeuf_4",
+      "poste_supervizoeuf_5"
     ],
     "elite": [
       "poste_supervizoeuf_elite"
@@ -565,7 +649,9 @@
     "normales": [
       "antre_korriandre_1",
       "antre_korriandre_2",
-      "antre_korriandre_3"
+      "antre_korriandre_3",
+      "antre_korriandre_4",
+      "antre_korriandre_5"
     ],
     "elite": [
       "antre_korriandre_elite"
@@ -578,7 +664,9 @@
     "normales": [
       "antre_kralamoure_1",
       "antre_kralamoure_2",
-      "antre_kralamoure_3"
+      "antre_kralamoure_3",
+      "antre_kralamoure_4",
+      "antre_kralamoure_5"
     ],
     "elite": [
       "antre_kralamoure_elite"
@@ -591,7 +679,9 @@
     "normales": [
       "grotte_bworker_1",
       "grotte_bworker_2",
-      "grotte_bworker_3"
+      "grotte_bworker_3",
+      "grotte_bworker_4",
+      "grotte_bworker_5"
     ],
     "elite": [
       "grotte_bworker_elite"
@@ -604,7 +694,9 @@
     "normales": [
       "temple_ougah_1",
       "temple_ougah_2",
-      "temple_ougah_3"
+      "temple_ougah_3",
+      "temple_ougah_4",
+      "temple_ougah_5"
     ],
     "elite": [
       "temple_ougah_elite"
@@ -617,7 +709,9 @@
     "normales": [
       "antichambre_glourseleste_1",
       "antichambre_glourseleste_2",
-      "antichambre_glourseleste_3"
+      "antichambre_glourseleste_3",
+      "antichambre_glourseleste_4",
+      "antichambre_glourseleste_5"
     ],
     "elite": [
       "antichambre_glourseleste_elite"
@@ -630,7 +724,9 @@
     "normales": [
       "pyramide_ombre_1",
       "pyramide_ombre_2",
-      "pyramide_ombre_3"
+      "pyramide_ombre_3",
+      "pyramide_ombre_4",
+      "pyramide_ombre_5"
     ],
     "elite": [
       "pyramide_ombre_elite"
@@ -643,7 +739,9 @@
     "normales": [
       "forgefroide_transporteur_1",
       "forgefroide_transporteur_2",
-      "forgefroide_transporteur_3"
+      "forgefroide_transporteur_3",
+      "forgefroide_transporteur_4",
+      "forgefroide_transporteur_5"
     ],
     "elite": [
       "forgefroide_transporteur_elite"
@@ -657,7 +755,9 @@
     "normales": [
       "salons_klime_labo_nileza_1",
       "salons_klime_labo_nileza_2",
-      "salons_klime_labo_nileza_3"
+      "salons_klime_labo_nileza_3",
+      "salons_klime_labo_nileza_4",
+      "salons_klime_labo_nileza_5"
     ],
     "elite": [
       "salons_klime_labo_nileza_elite"
@@ -671,7 +771,9 @@
     "normales": [
       "donjon_harebourg_1",
       "donjon_harebourg_2",
-      "donjon_harebourg_3"
+      "donjon_harebourg_3",
+      "donjon_harebourg_4",
+      "donjon_harebourg_5"
     ],
     "elite": [
       "donjon_harebourg_elite"
@@ -684,7 +786,9 @@
     "normales": [
       "aquadome_vaisseau_1",
       "aquadome_vaisseau_2",
-      "aquadome_vaisseau_3"
+      "aquadome_vaisseau_3",
+      "aquadome_vaisseau_4",
+      "aquadome_vaisseau_5"
     ],
     "elite": [
       "aquadome_vaisseau_elite"
@@ -698,7 +802,9 @@
     "normales": [
       "temple_koutoulou_palais_dantinea_1",
       "temple_koutoulou_palais_dantinea_2",
-      "temple_koutoulou_palais_dantinea_3"
+      "temple_koutoulou_palais_dantinea_3",
+      "temple_koutoulou_palais_dantinea_4",
+      "temple_koutoulou_palais_dantinea_5"
     ],
     "elite": [
       "temple_koutoulou_palais_dantinea_elite"
@@ -712,7 +818,9 @@
     "normales": [
       "enutrosor_srambad_1",
       "enutrosor_srambad_2",
-      "enutrosor_srambad_3"
+      "enutrosor_srambad_3",
+      "enutrosor_srambad_4",
+      "enutrosor_srambad_5"
     ],
     "elite": [
       "enutrosor_srambad_elite"
@@ -726,7 +834,9 @@
     "normales": [
       "xelorium_ecaflipus_1",
       "xelorium_ecaflipus_2",
-      "xelorium_ecaflipus_3"
+      "xelorium_ecaflipus_3",
+      "xelorium_ecaflipus_4",
+      "xelorium_ecaflipus_5"
     ],
     "elite": [
       "xelorium_ecaflipus_elite"
@@ -740,7 +850,9 @@
     "normales": [
       "tours_fratrie_1",
       "tours_fratrie_2",
-      "tours_fratrie_3"
+      "tours_fratrie_3",
+      "tours_fratrie_4",
+      "tours_fratrie_5"
     ],
     "elite": [
       "tours_fratrie_elite"
@@ -754,7 +866,9 @@
     "normales": [
       "wukin_wukang_1",
       "wukin_wukang_2",
-      "wukin_wukang_3"
+      "wukin_wukang_3",
+      "wukin_wukang_4",
+      "wukin_wukang_5"
     ],
     "elite": [
       "wukin_wukang_elite"
@@ -768,7 +882,9 @@
     "normales": [
       "osavora_ilyzaelle_1",
       "osavora_ilyzaelle_2",
-      "osavora_ilyzaelle_3"
+      "osavora_ilyzaelle_3",
+      "osavora_ilyzaelle_4",
+      "osavora_ilyzaelle_5"
     ],
     "elite": [
       "osavora_ilyzaelle_elite"
@@ -782,7 +898,9 @@
     "normales": [
       "dimensions_cavaliers_1",
       "dimensions_cavaliers_2",
-      "dimensions_cavaliers_3"
+      "dimensions_cavaliers_3",
+      "dimensions_cavaliers_4",
+      "dimensions_cavaliers_5"
     ],
     "elite": [
       "dimensions_cavaliers_elite"
@@ -798,7 +916,9 @@
     "normales": [
       "tempete_eliocalypse_1",
       "tempete_eliocalypse_2",
-      "tempete_eliocalypse_3"
+      "tempete_eliocalypse_3",
+      "tempete_eliocalypse_4",
+      "tempete_eliocalypse_5"
     ],
     "elite": [
       "tempete_eliocalypse_elite"

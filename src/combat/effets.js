@@ -503,7 +503,7 @@ export function appliquerSoutien(e, t, n, r, i = false) {
   if (e.hotPct && !aFriction(t)) {
     appliquerEffet(t, {
       stat: `hot`,
-      valeur: Math.max(1, Math.round(t.stats.vitalite * e.hotPct * multiplicateurSoinDe(n))),
+      valeur: Math.max(1, Math.round(t.pvMax * e.hotPct * multiplicateurSoinDe(n))),
       duree: e.hotDuree ?? 2,
     });
   }
@@ -524,7 +524,13 @@ export function appliquerSoutien(e, t, n, r, i = false) {
     r.log(`${t.nom} prépare un sort renforcé (+${Math.round(e.bonusProchainSortPct * 100)} %).`);
   }
   if (e.effet) {
-    appliquerEffet(t, e.effet);
+    // un sort non cumulable rafraîchit la durée de l'effet déjà en place au lieu de l'empiler
+    let present = e.nonCumulable ? t.effets.find((x) => x.stat === e.effet.stat) : undefined;
+    if (present) {
+      present.toursRestants = Math.max(present.toursRestants, e.effet.duree);
+    } else {
+      appliquerEffet(t, e.effet);
+    }
   }
   if (e.dissipePositifs) {
     desenvouter(t, r);

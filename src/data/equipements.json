@@ -5487,7 +5487,7 @@
       }
     },
     "panoplie": "Panoplie de la Tisseuse",
-    "esquiveParPiece": 0.025
+    "esquiveBonus": 0.025
   },
   "anneau_toriete": {
     "id": "anneau_toriete",

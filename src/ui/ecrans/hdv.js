@@ -10,7 +10,7 @@ import {
 } from "../../jeu/economie.js";
 import { grouperInventaire, herosAmeliores, objetsInutiles } from "../../jeu/inventaire.js";
 import { emplacementCible, equiperObjet } from "../../jeu/run.js";
-import { enregistrerCollection } from "../../sauvegarde/meta.js";
+import { enregistrerCollection, sauverMeta } from "../../sauvegarde/meta.js";
 import {
   afficherEnGardantScroll,
   attrTipObjet,
@@ -62,7 +62,7 @@ export function ecranHdv(e, t, n) {
                 inutile,
               }) => `<button class="item-carte hdv-vente${classeRarete(e_)}${inutile ? ` hdv-inutile` : ``}" data-vente="${indices[0]}"${attrTipObjet(e_.id)}>
               <img src="${imgObjet(e_.id)}" alt="" loading="lazy" onerror="this.remove()" />
-              <span class="item-nom">${htmlNomObjet(e_)}${indices.length > 1 ? ` <span class="item-qte">×${indices.length}</span>` : ``}${inutile ? ` <span class="pastille-inutile" title="N'améliore aucun héros : « Vendre l'inutile » le vendra">Inutile</span>` : ``}<small><span class="ic-meta">${htmlMetaObjet(e_)}</span> ${htmlChipsObjet(e_)}</small>${htmlBadgesHeros(e_, e.persos)}</span>
+              <span class="item-nom">${htmlNomObjet(e_)}${indices.length > 1 ? ` <span class="item-qte">×${indices.length}</span>` : ``}${inutile ? ` <span class="pastille-inutile" data-tip="N'améliore aucun héros : « Vendre l'inutile » le vendra">Inutile</span>` : ``}<small><span class="ic-meta">${htmlMetaObjet(e_)}</span> ${htmlChipsObjet(e_)}</small>${htmlBadgesHeros(e_, e.persos)}</span>
               <span class="hdv-prix vente"><small class="hdv-verbe">Vendre</small>${htmlKamas(prixRevente(e_))}</span>
             </button>`,
             )
@@ -110,7 +110,9 @@ export function ecranHdv(e, t, n) {
           let a = Number(r.dataset.achat);
           let o = t[a];
           if (o && acheterObjet(e, t, a)) {
-            annulable = { type: `achat`, inst: o.inst, prix: o.prix, index: a };
+            // rareté déjà en collection avant l'achat (pour la rétablir si l'achat est annulé)
+            const collectionAvant = n?.collection?.[o.inst.id];
+            annulable = { type: `achat`, inst: o.inst, prix: o.prix, index: a, collectionAvant };
             confirmerVenteTotale = false;
             if (n) {
               enregistrerCollection(n, [o.inst]);
@@ -202,7 +204,17 @@ export function ecranHdv(e, t, n) {
           e.inventaire.push(annulable.inst);
         }
       }
-      return annulerAchat(e, t, annulable.inst, annulable.prix, annulable.index);
+      const annule = annulerAchat(e, t, annulable.inst, annulable.prix, annulable.index);
+      // un achat annulé ne reste pas dans la collection s'il n'y était pas avant
+      if (annule && n?.collection) {
+        if (annulable.collectionAvant === undefined) {
+          delete n.collection[annulable.inst.id];
+        } else {
+          n.collection[annulable.inst.id] = annulable.collectionAvant;
+        }
+        sauverMeta(n);
+      }
+      return annule;
     };
     // Barre d'annulation fixée en bas de l'écran, au-dessus du bouton Retour.
     const htmlBarreAnnulation = () => {
@@ -239,8 +251,8 @@ export function ecranHdv(e, t, n) {
           ? `Annuler (${annulable.ventes.length} objets)`
           : `Annuler`;
       return `<div class="hdv-snack" role="status">
-        <span class="hdv-snack-texte">${texte} · solde ${htmlKamas(e.kamas)}</span>
-        <span class="hdv-snack-boutons">${extra}<button id="hdv-annuler" class="secondaire petit" ${possible ? `` : `disabled title="Plus assez de kamas pour annuler"`}>${libelle}</button></span>
+        <span class="hdv-snack-texte">${texte} · solde ${htmlKamas(e.kamas)}${possible ? `` : ` · <b>plus assez de kamas pour annuler</b>`}</span>
+        <span class="hdv-snack-boutons">${extra}<button id="hdv-annuler" class="secondaire petit" ${possible ? `` : `disabled`}>${libelle}</button></span>
       </div>`;
     };
     i();

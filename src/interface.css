@@ -903,10 +903,11 @@ button,
 .filtre-btn.actif {
   border-color: var(--cyan);
   background: var(--cyan);
-  color: #fff;
+  /* texte foncé sur l'orange : contraste d'environ 6:1 (le blanc n'en faisait que 2,8:1) */
+  color: #3a2402;
 }
 .filtre-btn.actif small {
-  color: #fff;
+  color: #3a2402;
 }
 .filtre-btn:disabled {
   opacity: 0.45;

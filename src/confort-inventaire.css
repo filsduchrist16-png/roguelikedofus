@@ -512,3 +512,122 @@
     font-size: 0.88rem;
   }
 }
+
+/* ---------- Cibles tactiles de 44 px (C2) ---------- */
+@media (hover: none), (width<=700px) {
+  .equip-filtres .filtre-btn,
+  .equip-tri .tri-btn,
+  .fiche-heros-boutons .petit,
+  .fiche-heros-boutons button,
+  #equip-auto,
+  .equip-onglet,
+  .equip-auto-msg .petit,
+  .equip-vide .petit,
+  .butin-annul .petit,
+  .hdv-snack button,
+  .hdv-tout {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  .fiche-heros-boutons .petit {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+  .equip-auto-msg .petit,
+  .butin-annul .petit {
+    vertical-align: middle;
+  }
+}
+.butin-annul {
+  margin: 8px 0 0;
+  font-weight: 800;
+  color: #2f6b12;
+}
+
+/* ---------- Textes d'au moins 11 px (C3) ---------- */
+.equip-slots.grille .slot-nom,
+.equip-slots.grille .ic-tier,
+.equip-slots.grille .slot-vide-txt {
+  font-size: max(11px, 0.62rem);
+}
+.equip-slots.grille .slot-objet {
+  font-size: max(11px, 0.72rem);
+}
+@media (width<=420px) {
+  .equip-slots.grille .slot-objet {
+    font-size: max(11px, 0.66rem);
+  }
+}
+.ic-tier {
+  font-size: max(11px, 0.7rem);
+}
+.pastille-inutile,
+.equip-pa {
+  font-size: max(11px, 0.72rem);
+}
+
+/* ---------- Inventaire sur mobile : filtres collants, grille de 2 colonnes (C18) ---------- */
+@media (width<=700px) {
+  .equip-outils {
+    position: sticky;
+    top: 0;
+    z-index: 6;
+    margin-inline: -4px;
+    padding: 6px 4px 4px;
+    gap: 4px;
+    background: var(--panel-solide);
+    border-bottom: 1px solid var(--bord-clair);
+    box-shadow: 0 3px 8px #0002;
+  }
+  .equip-tri {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .equip-tri .tri-btn {
+    flex: none;
+  }
+  .equip-col-inv > .equip-inv {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+  /* carte verticale : icône et nom en tête, puis comparaison */
+  .equip-col-inv > .equip-inv > .item-carte.ic {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: 4px;
+    padding: 7px 8px;
+  }
+  .equip-col-inv > .equip-inv > .item-carte.ic .ic-visuel {
+    width: 44px;
+    height: 44px;
+  }
+  .equip-col-inv > .equip-inv > .item-carte.ic .ic-visuel img {
+    width: 38px;
+    height: 38px;
+  }
+  .equip-col-inv > .equip-inv .ic-nom {
+    font-size: 0.88rem;
+    overflow-wrap: anywhere;
+  }
+  .equip-col-inv > .equip-inv .ic-ligne1 {
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+  .ic-deltas {
+    font-size: 0.8rem;
+    line-height: 1.35;
+  }
+  .ic-deltas .delta-plus,
+  .ic-deltas .delta-moins {
+    margin-right: 5px;
+  }
+  .equip-col-inv > .equip-inv .ic-meta,
+  .equip-col-inv > .equip-inv .badge-heros,
+  .ic-pano {
+    font-size: max(11px, 0.74rem);
+  }
+  .ic-cmp .delta-ref {
+    white-space: normal;
+  }
+}

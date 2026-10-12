@@ -109,7 +109,10 @@ export function etatDefi(defi, suivi, combattants) {
   if (!defi) {
     return null;
   }
-  const ennemis = combattants.filter((c) => c.camp === `ennemi` && c.monstreId && !c.estLance);
+  // les invocations ne comptent pas (comme dans les quêtes)
+  const ennemis = combattants.filter(
+    (c) => c.camp === `ennemi` && c.monstreId && !c.estLance && !c.estInvocation && !c.invoquePar,
+  );
   const morts = [...suivi.morts].filter((ref) => ennemis.some((e) => e.ref === ref));
   switch (defi.id) {
     case `premier`: {
@@ -130,7 +133,14 @@ export function etatDefi(defi, suivi, combattants) {
         ? { etat: `rate` }
         : { etat: `en_cours`, detail: `ronde ${Math.max(1, suivi.rondes)}/${defi.rondesMax}` };
     case `survivant`:
-      return combattants.some((c) => c.camp === `joueur` && !c.creature && c.pvActuels <= 0)
+      return combattants.some(
+        (c) =>
+          c.camp === `joueur` &&
+          !c.creature &&
+          c.pvActuels <= 0 &&
+          // les héros déjà K.O. avant le combat ne comptent pas
+          (!suivi.herosDepart || suivi.herosDepart.includes(c.ref)),
+      )
         ? { etat: `rate` }
         : { etat: `en_cours` };
     case `abnegation`:

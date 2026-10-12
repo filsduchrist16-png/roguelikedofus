@@ -33,6 +33,7 @@ import {
   herosVivants,
   monstresDuCombat,
   multiplicateurKamas,
+  mondeSansArchimonstre,
   noeudsExclus,
   nouvelleRun,
   pvMaxPerso,
@@ -55,6 +56,7 @@ import {
   nomCle,
   recompensesSecret,
   secretDuMonde,
+  tirerIdsButinSecret,
   tirerRareteSecret,
 } from "./jeu/secret.js";
 import { ajouterKamas, gainKamas, genererStockHdv, numeroZone } from "./jeu/economie.js";
@@ -135,9 +137,15 @@ import { ecranChoixEquipe } from "./ui/ecrans/choixEquipe.js";
 import { ecranTaverne } from "./ui/ecrans/taverne.js";
 import { ecranMessage } from "./ui/ecrans/message.js";
 import { ecranCarte } from "./ui/ecrans/carte.js";
-import { deblocagesVictoire, ecranRecap, etatDeblocage } from "./ui/ecrans/recap.js";
+import {
+  deblocagesVictoire,
+  ecranRecap,
+  etatDeblocage,
+  noterObjetsObtenus,
+  noterEnnemisVaincus,
+} from "./ui/ecrans/recap.js";
 import { afficherFinCombat, texteBilan } from "./ui/finCombat.js";
-import { sauverParametres } from "./sauvegarde/parametres.js";
+import { appliquerAccessibilite, sauverParametres } from "./sauvegarde/parametres.js";
 import { ecranHdv } from "./ui/ecrans/hdv.js";
 import { ecranForgemagie } from "./ui/ecrans/forgemagie.js";
 import "./style.css";
@@ -152,6 +160,8 @@ import "./confort-ecrans.css";
 function initialiserInterface(elementApp) {
   definirRacine(elementApp);
   fondDuMonde(null);
+  // taille du texte et couleurs adaptées (réglages d'accessibilité)
+  appliquerAccessibilite(parametres);
   installerInfobulleDofus();
   installerInfobulleSorts();
   installerInfobulleAide();
@@ -338,6 +348,8 @@ async function jouerCombat(e, combatId, n) {
   definirDefiCombat(defi);
   let l = nouveauSuiviCombat();
   let herosVivantsAuDepart = i.filter((e) => e.pvActuels > 0).map((e) => e.ref);
+  // le suivi ne compte comme « tombés » que les héros debout au départ (défi Survivant, objectifs)
+  l.herosDepart = herosVivantsAuDepart;
   let gagne = await executerCombat(c, {
     onEvenement: (ev) => {
       suivreEvenement(l, ev, c);
@@ -385,13 +397,16 @@ async function jouerCombat(e, combatId, n) {
     gagne,
     gagne
       ? defiOk
-        ? `🎯 Défi ${defi.nom} réussi : +${Math.round(BONUS_DEFI * 100)} % d'XP et de kamas`
+        ? `🎯 Défi ${defi.nom} réussi : +${Math.round(BONUS_DEFI * 100)} % ${e.persos.some((p) => peutGagnerXp(p, e.trancheId)) ? `d'XP et de kamas` : `de kamas`}`
         : `Défi ${defi.nom} raté`
       : ``,
   );
   if (
     gagne &&
-    ((e.stats.combats += 1), (e.stats.archis += await capturerArchis(c)), n.type === `donjon`)
+    ((e.stats.combats += 1),
+    noterEnnemisVaincus(e.stats, a.length),
+    (e.stats.archis += await capturerArchis(c)),
+    n.type === `donjon`)
   ) {
     let t = tirerReliques(
       meta,
@@ -460,6 +475,7 @@ async function distribuerButin(e, t, n, r, bilan) {
   let a = tirerButin(e, t, n, Math.random, r, prospection);
   enregistrerCollection(meta, a);
   e.stats.objets += a.length;
+  noterObjetsObtenus(e.stats, a);
   if (a.length) {
     await ecranButin(a, e, bilan);
   } else if (bilan) {
@@ -604,16 +620,32 @@ async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
       if (!gagne) {
         return `wipe`;
       }
-      let kamas = distribuerKamas(e, `donjon`, o ? numeroZone(o) : 1);
+      // l'idole de la zone s'applique aussi au donjon, comme aux combats normaux
+      let idoleDonjon = idoleActive(e, o);
+      let bonusDefi = defiOk ? 1 + BONUS_DEFI : 1;
+      let kamas = distribuerKamas(e, `donjon`, o ? numeroZone(o) : 1, idoleDonjon?.kamasMult ?? 1);
       if (defiOk) {
-        kamas += distribuerKamas(e, `combat_dur`, o ? numeroZone(o) : 1);
+        kamas += distribuerKamas(
+          e,
+          `combat_dur`,
+          o ? numeroZone(o) : 1,
+          idoleDonjon?.kamasMult ?? 1,
+        );
       }
+      let { xp, niveaux } = gagnerXpEquipe(
+        e,
+        Math.round(
+          calculerXpCombat(XP_PAR_COMBAT.donjon, o ? numeroZone(o) : 1, e.trancheId) *
+            bonusDefi *
+            (idoleDonjon?.xpMult ?? 1),
+        ),
+      );
       await distribuerButin(
         e,
         o,
         type,
         undefined,
-        texteBilan({ kamas, defiOk, libelleDefi: `défi réussi` }),
+        texteBilan({ xp, kamas, defiOk, niveaux, libelleDefi: `défi réussi` }),
       );
       await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta()));
       return `victoire`;
@@ -751,19 +783,27 @@ async function jouerRencontre(e, zone) {
         kamas: e.kamas,
         choix: [
           offre(`potion`, `Potion de Soin`, `L'équipe récupère 40 % de ses PV max.`),
-          offre(`parchemin`, `Parchemin d'expérience`, `${xp} XP pour chaque héros.`),
-          {
-            ...offre(
-              `philtre`,
-              `Philtre d'Otomaï`,
-              `Les archimonstres apparaissent plus souvent pour le reste de la run.`,
-            ),
-            ...((e.philtres ?? 0) >= CONFIG_ARCHI.philtresMax
-              ? {
-                  desactive: `Effet déjà au maximum (${CONFIG_ARCHI.philtresMax}/${CONFIG_ARCHI.philtresMax})`,
-                }
-              : {}),
-          },
+          // plus d'XP à gagner (niveau max du monde) : le Parchemin est inutile
+          ...(e.persos.some((p) => peutGagnerXp(p, e.trancheId))
+            ? [offre(`parchemin`, `Parchemin d'expérience`, `${xp} XP pour chaque héros.`)]
+            : []),
+          // aucun archimonstre dans ce monde : le Philtre est inutile
+          ...(mondeSansArchimonstre(e.trancheId)
+            ? []
+            : [
+                {
+                  ...offre(
+                    `philtre`,
+                    `Philtre d'Otomaï`,
+                    `Les archimonstres apparaissent plus souvent pour le reste de la run.`,
+                  ),
+                  ...((e.philtres ?? 0) >= CONFIG_ARCHI.philtresMax
+                    ? {
+                        desactive: `Effet déjà au maximum (${CONFIG_ARCHI.philtresMax}/${CONFIG_ARCHI.philtresMax})`,
+                      }
+                    : {}),
+                },
+              ]),
           { id: `partir`, libelle: `Repartir` },
         ],
       });
@@ -795,13 +835,14 @@ async function jouerRencontre(e, zone) {
           id: `acheter`,
           libelle: `Acheter la clé`,
           prix,
-          detail: `Après le boss d'une zone, tu pourras entrer dans le donjon secret (objet épique ou légendaire garanti).`,
+          detail: `Après le boss d'une zone, tu pourras entrer dans le donjon secret (2 objets épiques ou légendaires garantis).`,
           desactive: e.kamas < prix ? `Pas assez de kamas.` : ``,
         },
         {
           id: `des`,
           libelle: `La jouer aux dés`,
-          detail: `Une chance sur deux : la clé gratuite. Sinon, tu perds ${Math.round(prix / 2)} kamas (ou ce qu'il te reste).`,
+          detail: `Une chance sur deux : la clé gratuite. Sinon, tu perds ${Math.round(prix / 2)} kamas.`,
+          desactive: e.kamas < Math.round(prix / 2) ? `Pas assez de kamas pour la mise.` : ``,
         },
         { id: `partir`, libelle: `Passer son chemin` },
       ],
@@ -810,7 +851,7 @@ async function jouerRencontre(e, zone) {
       e.kamas -= prix;
       e.cle = true;
       afficherBandeau(`🗝️ La ${nomCle(e.trancheId)} est à toi`);
-    } else if (choix === `des`) {
+    } else if (choix === `des` && e.kamas >= Math.round(prix / 2)) {
       if (Math.random() < 0.5) {
         e.cle = true;
         await ecranMessage(
@@ -829,7 +870,10 @@ async function jouerRencontre(e, zone) {
     return;
   }
   if (type === `idoles`) {
-    let ids = idolesProposees(Math.random);
+    // plus d'XP à gagner : l'idole Nahuatl (bonus d'XP seul) n'a aucun intérêt
+    let ids = idolesProposees(Math.random).filter(
+      (id) => id !== `nahuatl` || e.persos.some((p) => peutGagnerXp(p, e.trancheId)),
+    );
     let choix = await ecranRencontre({
       equipe: e.persos,
       titre: `🗿 Autel des Idoles`,
@@ -927,17 +971,29 @@ async function jouerDonjonSecret(e, zone) {
     );
     return;
   }
-  let kamas = Math.round(r.kamas * multiplicateurKamas(e) * bonusEquipeRun(meta, e).multKamas);
+  // l'idole de la zone s'applique aussi au donjon secret
+  let idoleSecret = idoleActive(e, zone.id);
+  let kamas = Math.round(
+    r.kamas *
+      multiplicateurKamas(e) *
+      bonusEquipeRun(meta, e).multKamas *
+      (idoleSecret?.kamasMult ?? 1),
+  );
   ajouterKamas(e, kamas);
-  let { xp, niveaux } = gagnerXpEquipe(e, calculerXpCombat(r.xp, toile, e.trancheId));
+  let { xp, niveaux } = gagnerXpEquipe(
+    e,
+    Math.round(calculerXpCombat(r.xp, toile, e.trancheId) * (idoleSecret?.xpMult ?? 1)),
+  );
   let bilan = texteBilan({ xp, kamas, niveaux });
-  let id = secret.butin[Math.floor(Math.random() * secret.butin.length)];
-  let obj = tirerObjet(id, Math.random, [tirerRareteSecret(Math.random)]);
-  if (obj) {
-    e.inventaire.push(obj);
-    enregistrerCollection(meta, [obj]);
-    e.stats.objets += 1;
-    await ecranButin([obj], e, bilan);
+  let objets = tirerIdsButinSecret(secret, Math.random)
+    .map((id) => tirerObjet(id, Math.random, [tirerRareteSecret(Math.random)]))
+    .filter(Boolean);
+  if (objets.length) {
+    e.inventaire.push(...objets);
+    enregistrerCollection(meta, objets);
+    e.stats.objets += objets.length;
+    noterObjetsObtenus(e.stats, objets);
+    await ecranButin(objets, e, bilan);
   } else {
     afficherBandeau(`Victoire : ${bilan}`);
   }

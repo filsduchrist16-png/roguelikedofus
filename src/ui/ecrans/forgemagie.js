@@ -103,6 +103,11 @@ export function ecranForgemagie(e, t) {
       }
       const o = sections.flatMap((s) => s.entrees);
       let index = 0;
+      // kamas manquants, écrits dans le bouton (comme à l'HDV) : un title ne s'affiche pas au toucher
+      const manque = (prix) =>
+        e.kamas < prix
+          ? `<span class="hdv-manque">il manque ${htmlKamas(prix - e.kamas)}</span>`
+          : ``;
       const htmlEntree = ({ inst, insts, nb, porte }) => {
         const r = index++;
         const suivante = rareteSuivante(inst);
@@ -119,8 +124,8 @@ export function ecranForgemagie(e, t) {
                 ${porte ? `` : htmlBadgesApresForge(apercu, e.persos)}
               </span>
               <span class="forge-boutons">
-                <button class="secondaire" data-forge="${r}" ${e.kamas < prix ? `disabled` : ``} title="Forge garantie${e.kamas < prix ? ` : il manque ${kamasTexte(prix - e.kamas)}` : ``}"><small class="forge-lib">Forger · garanti</small>${htmlKamas(prix)}</button>
-                <button class="secondaire forge-temeraire" data-temeraire="${r}" ${e.kamas < prixTemeraire ? `disabled` : ``} title="Forgemage téméraire : ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % d'échec (kamas perdus, objet intact)${e.kamas < prixTemeraire ? ` · il manque ${kamasTexte(prixTemeraire - e.kamas)}` : ``}"><small class="forge-lib">🎲 Téméraire · ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % d'échec</small>${htmlKamas(prixTemeraire)}</button>
+                <button class="secondaire" data-forge="${r}" ${e.kamas < prix ? `disabled` : ``} title="Forge garantie"><small class="forge-lib">Forger · garanti</small>${htmlKamas(prix)}${manque(prix)}</button>
+                <button class="secondaire forge-temeraire" data-temeraire="${r}" ${e.kamas < prixTemeraire ? `disabled` : ``} title="Forgemage téméraire : ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % d'échec (kamas perdus, objet intact)"><small class="forge-lib">🎲 Téméraire · ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % d'échec</small>${htmlKamas(prixTemeraire)}${manque(prixTemeraire)}</button>
               </span>
             </div>`;
       };

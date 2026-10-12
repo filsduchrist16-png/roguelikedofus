@@ -75,11 +75,13 @@ export function chanceEsquive(e, t) {
   let i = e.effets
     .filter((e) => e.stat === `esquive` && !(t?.sansViaBrume && e.viaBrume))
     .reduce((acc, item) => acc + item.valeur, 0);
-  let a = n.agilite * 0.002 + i + r;
+  // rendement décroissant : l'Agilité seule plafonne à 35 % (les bonus d'effets s'ajoutent avant)
+  let ag = Math.max(0, n.agilite ?? 0);
+  let a = ag / (ag + 400) + i + r;
   if (t?.sansPlafond) {
     return a;
   }
-  return Math.min(0.5, a);
+  return Math.min(0.35, a);
 }
 export function coutPA(e, t) {
   let n = t.remisesCout?.[e.id] ?? 0;
@@ -239,7 +241,11 @@ export function multiplicateurRelance(e, t) {
         ? 1 + e.bonusParRelanceCeTour * Math.max(0, t.lancersCeTour?.[e.id] ?? 0)
         : 1) *
       (e.bonusParLancerCombat
-        ? 1 + e.bonusParLancerCombat * Math.max(0, t.lancersCombat?.[e.id] ?? 0)
+        ? 1 +
+          Math.min(
+            e.plafondBonusLancerCombat ?? Infinity,
+            e.bonusParLancerCombat * Math.max(0, t.lancersCombat?.[e.id] ?? 0),
+          )
         : 1)
     );
   }

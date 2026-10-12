@@ -233,7 +233,8 @@
     "cible": "ennemi_ligne",
     "cooldownTours": 2,
     "coutPA": 5,
-    "desc": "Très gros dégâts ; +50 % par lancer précédent de ce sort depuis le début du combat.",
+    "plafondBonusLancerCombat": 1.5,
+    "desc": "Très gros dégâts ; +50 % par lancer précédent de ce sort depuis le début du combat (maximum +150 %).",
     "id": "colere_de_iop",
     "nom": "Colère de Iop",
     "type": "degats"
@@ -796,7 +797,7 @@
     "cible": "allie",
     "cooldownTours": 2,
     "coutPA": 3,
-    "desc": "Couvre un allié d'un bouclier valant 15 % de ses PV max, puis lui rend 5 % de sa vitalité au début de chacun de ses 3 prochains tours.",
+    "desc": "Couvre un allié d'un bouclier valant 15 % de ses PV max, puis lui rend 5 % de ses PV max au début de chacun de ses 3 prochains tours.",
     "hotDuree": 3,
     "hotPct": 0.05,
     "id": "mot_galvanisant",
@@ -1512,7 +1513,7 @@
     "baseMin": 0,
     "cible": "soi",
     "coutPA": 2,
-    "desc": "Le Cra ajuste son tir : +15 % de coup critique pendant 3 tours.",
+    "desc": "Le Cra ajuste son tir : +15 % de coup critique pendant 3 tours. Un nouveau lancer rafraîchit la durée sans cumuler l'effet.",
     "effet": {
       "duree": 3,
       "stat": "crit",
@@ -1520,6 +1521,7 @@
     },
     "id": "tir_puissant",
     "maxParTour": 1,
+    "nonCumulable": true,
     "nom": "Tir Puissant",
     "type": "buff"
   },

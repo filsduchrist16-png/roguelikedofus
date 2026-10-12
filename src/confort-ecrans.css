@@ -64,8 +64,17 @@
 }
 
 /* Fin de run : le retour à l'accueil reste discret, Rejouer est l'action principale */
-.recap-boutons .btn-retour img {
-  height: 40px;
+/* « Retour » : petit et éteint, pour ne pas voler la vedette à « Rejouer » */
+.ecran .recap-boutons .btn-retour {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
+  opacity: 0.8;
+}
+.ecran .recap-boutons .btn-retour img {
+  height: 30px;
+  filter: saturate(0.55);
 }
 .recap-debloque {
   text-align: center;
@@ -77,4 +86,61 @@
   margin: 12px 0 4px;
   font-size: 0.9rem;
   opacity: 0.85;
+}
+
+/* Cibles tactiles de 44 px (C2) : forge, HDV, fin de run */
+@media (hover: none), (width<=700px) {
+  .forge-filtres button,
+  .hdv-saut button,
+  .hdv-tout,
+  .recap-boutons .secondaire {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+/* Textes d'au moins 11 px (C3) */
+.hdv-verbe,
+.forge-lib {
+  font-size: max(11px, 0.68rem);
+}
+@media (max-width: 480px) {
+  .forge-boutons button .forge-lib {
+    font-size: max(11px, 0.6rem);
+  }
+}
+/* Kamas manquants écrits dans le bouton de forge (C9) */
+.forge-boutons .hdv-manque {
+  align-items: center;
+  text-align: center;
+  white-space: normal;
+  font-size: max(11px, 0.75rem);
+}
+.forge-boutons button:disabled .hdv-manque {
+  opacity: 1;
+}
+/* Fin de run : liste des objets obtenus (C18) */
+.recap-objets {
+  max-width: 560px;
+  margin: 8px auto 0;
+  text-align: left;
+}
+.recap-objets summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 800;
+}
+.recap-objets ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 0;
+  padding: 0 4px 6px;
+  list-style: none;
+  font-weight: 700;
+}
+.btn-continuer .kbd-entree {
+  font-size: max(11px, 0.62rem);
 }

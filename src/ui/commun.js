@@ -245,6 +245,26 @@ export function afficherEnGardantScroll(html) {
   });
   window.scrollTo(0, y);
 }
+// Photo de l'équipement (inventaire, objets portés, PV) avant une opération en lot comme
+// « Équiper le meilleur » : elle permet de tout remettre comme avant (bouton Annuler).
+export function photoEquipement(run) {
+  return {
+    inventaire: run.inventaire.slice(),
+    persos: run.persos.map((p) => ({ perso: p, equipement: { ...p.equipement }, pv: p.pvActuels })),
+  };
+}
+// Remet l'équipement tel qu'il était sur la photo (l'inventaire est modifié en place).
+export function restaurerEquipement(run, photo) {
+  run.inventaire.length = 0;
+  run.inventaire.push(...photo.inventaire);
+  for (const { perso, equipement, pv } of photo.persos) {
+    for (const k of Object.keys(perso.equipement)) {
+      delete perso.equipement[k];
+    }
+    Object.assign(perso.equipement, equipement);
+    perso.pvActuels = pv;
+  }
+}
 export function barreRetour(e, t = `Retour`) {
   return `<div class="boutons-ecran">${boutonRetour(e, t)}</div>`;
 }

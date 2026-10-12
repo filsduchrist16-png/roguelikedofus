@@ -21,12 +21,34 @@ const ORDRE_DEFAUT = {
   steamer: 18,
   huppermage: 19,
 };
+// Tailles de texte proposées (en % de la taille de base).
+export const TAILLES_POLICE = [100, 115, 130];
+// Lecture tolérante : toute valeur inconnue (texte, nombre hors liste, null…) donne 100.
+export const normaliserTaillePolice = (v) => {
+  const n = typeof v == `string` && v.trim() !== `` ? Number(v) : v;
+  return TAILLES_POLICE.includes(n) ? n : 100;
+};
+export const normaliserCouleursAdaptees = (v) => v === true;
+// Pose la taille du texte (tout est en rem) et la classe des couleurs adaptées.
+export function appliquerAccessibilite(p) {
+  try {
+    const pct = normaliserTaillePolice(p?.taillePolice);
+    document.documentElement.style.fontSize = pct === 100 ? `` : `${pct}%`;
+    document.body?.classList.toggle(
+      `couleurs-adaptees`,
+      normaliserCouleursAdaptees(p?.couleursAdaptees),
+    );
+  } catch {}
+}
 export const rangOrdre = (e, t) => e[t] ?? 99;
 const PARAMETRES_DEFAUT = {
   toucheFinTour: ` `,
   autoFinTour: true,
   // tours des monstres accélérés (délai entre deux actions ennemies)
   combatRapide: false,
+  // accessibilité : taille du texte (100, 115 ou 130 %) et couleurs doublées par des signes
+  taillePolice: 100,
+  couleursAdaptees: false,
   formation: {
     iop: `avant`,
     feca: `avant`,
@@ -76,6 +98,8 @@ export function chargerParametres() {
         ...PARAMETRES_DEFAUT.formation,
         ...(formationValide(t.formation) ? normaliserFormation(t.formation) : {}),
       };
+      t.taillePolice = normaliserTaillePolice(t.taillePolice);
+      t.couleursAdaptees = normaliserCouleursAdaptees(t.couleursAdaptees);
       let n = t.ordre && typeof t.ordre == `object` && !Array.isArray(t.ordre) ? t.ordre : {};
       t.ordre = {
         ...ORDRE_DEFAUT,

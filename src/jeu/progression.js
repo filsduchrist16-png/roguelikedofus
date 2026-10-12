@@ -90,8 +90,9 @@ export function pvMaxDeNiveau(e, t) {
 export function bonusDegatsIntelligence(e) {
   return 1 + Math.min(0.2, e.intelligence * 0.001);
 }
+// Deux sources séparées : l'élément (plafonné à +50 %) et la stat Soin (sans plafond commun).
 export function multiplicateurSoin(e, t) {
-  return 1 + Math.min(0.5, ((e.soin ?? 0) + t) * 0.005);
+  return 1 + Math.min(0.5, t * 0.002) + (e.soin ?? 0) * 0.005;
 }
 const effetsTourVides = () => ({
   soins: [],

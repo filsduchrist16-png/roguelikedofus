@@ -28,6 +28,14 @@ const CLES_BASE = new Set([
 ]);
 export const effetsSpeciaux = (id) =>
   Object.keys(EQUIPEMENTS[id] ?? {}).filter((k) => !CLES_BASE.has(k));
+// Effets spéciaux qui comptent comme un avantage. Les autres sont chiffrés ailleurs : paGamble est
+// une espérance de PA (négative), comptée dans `pa` de la clé d'équipement.
+const effetsAvantageux = (id) => effetsSpeciaux(id).filter((k) => k !== `paGamble`);
+// Espérance de PA par tour d'un objet à PA aléatoires (1/3 de +1, 2/3 de −1 : environ −0,33).
+const esperancePAGamble = (id) => {
+  const g = EQUIPEMENTS[id]?.paGamble;
+  return g ? g.pPlus * g.plus - (1 - g.pPlus) * g.moins : 0;
+};
 
 // Libellés courts des effets spéciaux, pour les comparaisons (« − riposte »).
 export const NOMS_EFFETS = {
@@ -94,7 +102,11 @@ export function cleEquipement(perso) {
     .sort((x, y) => y - x);
   const res = Object.values(b.resistances).reduce((a, v) => a + v, 0);
   const effets = Object.values(perso.equipement).reduce(
-    (a, inst) => a + (inst ? effetsSpeciaux(inst.id).length : 0),
+    (a, inst) => a + (inst ? effetsAvantageux(inst.id).length : 0),
+    0,
+  );
+  const paAleatoire = Object.values(perso.equipement).reduce(
+    (a, inst) => a + (inst ? esperancePAGamble(inst.id) : 0),
     0,
   );
   const off =
@@ -105,7 +117,7 @@ export function cleEquipement(perso) {
     (s.crit ?? 0) * 2.5 +
     degatsMoyensArme(perso.equipement.arme) * 2;
   const sec = pvMaxPerso(perso) * 0.05 + res * 20 + (s.soin ?? 0) * 0.1 + effets * VALEUR_EFFET;
-  return { pa: b.paBonus, off, sec };
+  return { pa: b.paBonus + paAleatoire, off, sec };
 }
 
 /** Valeur chiffrée d'un équipement (pour les scores affichés) : PA, puis dégâts, puis survie. */
@@ -132,7 +144,9 @@ function comparerDeltas(a, b) {
 }
 const ZERO = [0, 0, 0];
 const effetsDe = (perso) =>
-  new Set(Object.values(perso.equipement).flatMap((inst) => (inst ? effetsSpeciaux(inst.id) : [])));
+  new Set(
+    Object.values(perso.equipement).flatMap((inst) => (inst ? effetsAvantageux(inst.id) : [])),
+  );
 
 /**
  * Le changement d'équipement `avant` → `apres` est-il un vrai progrès ? Plus de PA, ou à PA égaux
