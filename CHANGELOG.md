@@ -2,6 +2,7 @@
 
 ## Version 1.3.0
 
+- **E7** : sons synthétisés avec WebAudio (`src/son.js`, aucun fichier audio), coupés par défaut : option « Sons » dans Paramètres (`sons` dans les réglages, seul `true` l'active). Bruitages de clic, coup, soin, victoire et défaite, volume discret ; le contexte audio n'est créé qu'après un geste du joueur et tout est protégé par `try/catch` (iOS Safari).
 - **E2** : emplacement « relique » (un seul, `reliqueEquipee` dans la méta, absent = aucune) : une relique de boss obtenue s'équipe depuis le Bestiaire (Équiper / Retirer) et donne un petit bonus selon le monde de son boss (Monde 1 +2 % PV, 2 +5 prospection, 3 +2 % critique, 4 +3 aux quatre caractéristiques, 5 +2 % dégâts finaux), via les clés d'effet de `bonusDofus`. Choix simple : un bonus par monde plutôt que par relique.
 - **E5** : deux nouvelles rencontres sur la case « Rencontre » : le Forgemage itinérant (monte gratuitement et sans risque, une fois, l'un des 4 objets les plus chers à forger, portés ou en sac ; exclu s'il n'y en a aucun) et le Temple de résurrection (relève un héros K.O. à 50 % de ses PV max contre des kamas ; exclu sans K.O. et en mort définitive). Aucune nouvelle image ni champ de sauvegarde.
 
