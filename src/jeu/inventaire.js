@@ -512,7 +512,8 @@ const idDe = (x) => {
   if (!idsInstances.has(x)) {
     idsInstances.set(x, prochainId++);
   }
-  return idsInstances.get(x);
+  // la forgemagie modifie l'objet sur place : la rareté fait partie de son identité pour le cache
+  return `${idsInstances.get(x)}${x.rarete ?? ``}`;
 };
 let memo = { cle: ``, plan: [] };
 export function planEquiper(run, persos = run.persos) {

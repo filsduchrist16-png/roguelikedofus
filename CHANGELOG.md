@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## Lot D (partiel)
+
+- **D1** : le plan « Équiper le meilleur » tient compte de la rareté d'un objet : il n'est plus périmé après une forgemagie.
+
 ## Lot A terminé (A4 à A9)
 
 - **A4** : le +1 PA du Dofus Ocre s'active dès qu'il est possédé ; Toufou le Benêt (jamais en combat) n'est plus un archimonstre.

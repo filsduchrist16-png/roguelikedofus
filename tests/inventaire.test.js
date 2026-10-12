@@ -197,6 +197,34 @@ describe(`comparaisons chiffrées`, async () => {
     expect(run.inventaire.length).toBe(avant);
     expect(equiperMeilleur(run)).toBe(plan.length);
   });
+  it(`planEquiper ne reste pas périmé après la forgemagie d'un objet de l'inventaire`, async () => {
+    const { planEquiper } = await import(`../src/jeu/inventaire.js`);
+    const { forgerObjet } = await import(`../src/jeu/economie.js`);
+    // une amulette dont le cran de forge « rare » donne de la stat adaptative
+    const id = Object.keys(EQUIPEMENTS).find((k) => {
+      const t = EQUIPEMENTS[k].tiers;
+      return (
+        EQUIPEMENTS[k].slot === `amulette` &&
+        !EQUIPEMENTS[k].panoplie &&
+        t.commun &&
+        t.rare &&
+        t.rare.adaptatif > 0
+      );
+    });
+    expect(id).toBeTruthy();
+    const vide = (inst) => ({ ...inst, stats: {}, adaptatif: 0, resistances: {}, pa: 0 });
+    const run = nouvelleRun([`iop`]);
+    run.persos[0].equipement.amulette = vide(objet(id, `commun`));
+    const inst = vide(objet(id, `commun`));
+    run.inventaire.push(inst);
+    expect(planEquiper(run)).toHaveLength(0); // identique à l'amulette portée
+    run.kamas = 1e9;
+    expect(forgerObjet(run, inst, false, () => 1)).toBe(`forge`);
+    const obtenu = planEquiper(run).length; // avant la copie : elle remplacerait le cache
+    const attendu = planEquiper(JSON.parse(JSON.stringify(run))).length;
+    expect(attendu).toBe(1);
+    expect(obtenu).toBe(attendu);
+  });
   it(`un objet qui fait perdre des dégâts (bonus de panoplie perdu) n'est pas équipé d'office`, async () => {
     const { PANOPLIES } = await import(`../src/data/index.js`);
     const { equiperMeilleur } = await import(`../src/jeu/inventaire.js`);
