@@ -6,7 +6,6 @@ import {
   meta,
   quetesMeta,
 } from "./deroule/etat.js";
-import { decrireQuete } from "./jeu/obtention.js";
 import { CLASSES, COMBATS, DOFUS, EQUIPEMENTS, MONSTRES, SORTS } from "./data/index.js";
 import {
   CONFIG_ARCHI,
@@ -21,7 +20,6 @@ import { executerCombat } from "./combat/moteur.js";
 import { choisirActionIA } from "./combat/ia.js";
 import { genererCarte, tirerTypeZaap } from "./carte/generation.js";
 import {
-  trouverQuete,
   verifierQuetesCombat,
   verifierQuetesMeta,
   verifierQuetesRun,
@@ -55,7 +53,6 @@ import {
   tirerObjet,
   tirerRecrues,
 } from "./jeu/run.js";
-import { EMPLACEMENTS } from "./jeu/emplacements.js";
 import { chargerRun, effacerRun, sauverRun } from "./sauvegarde/run.js";
 import {
   CHANCES_CLE,
@@ -74,12 +71,9 @@ import {
   rareteSuivante,
 } from "./jeu/economie.js";
 import {
-  ajouterDofus,
   appliquerBonusDofus,
   capturerArchi,
   chanceRelique,
-  dofusAGagner,
-  dofusDebloquables,
   dofusPossedes,
   enregistrerAscension,
   enregistrerRecord,
@@ -149,12 +143,7 @@ import {
 } from "./jeu/rencontres.js";
 import { ecranRencontre } from "./ui/ecrans/rencontre.js";
 import { ecranCaptureArchi, ecranReliques } from "./ui/ecrans/recompenses.js";
-import {
-  afficherBandeau,
-  afficherBandeauQuete,
-  ecranDofusDebloque,
-  ecranSuccesObtenu,
-} from "./ui/ecrans/succes.js";
+import { afficherBandeau } from "./ui/ecrans/succes.js";
 import { ecranAccueil } from "./ui/ecrans/accueil.js";
 import { ecranChoixEquipe } from "./ui/ecrans/choixEquipe.js";
 import { ecranTaverne } from "./ui/ecrans/taverne.js";
@@ -174,6 +163,7 @@ import { installerSons } from "./son.js";
 import { CLES_TUTO, appliquerAccessibilite, sauverParametres } from "./sauvegarde/parametres.js";
 import { ecranHdv } from "./ui/ecrans/hdv.js";
 import { ecranForgemagie } from "./ui/ecrans/forgemagie.js";
+import { traiterQuetes, contexteRun, quetesDeLaRun } from "./deroule/quetes.js";
 import "./style.css";
 import "./interface.css";
 import "./visuel.css";
@@ -206,63 +196,6 @@ if (parametres.vuTuto === null) {
   parametres.vuTuto = Object.fromEntries(CLES_TUTO.map((k) => [k, meta.runs > 0]));
   sauverParametres(parametres);
 }
-async function traiterQuetes(e, t) {
-  sauverMeta(meta);
-  if (!t.quetes.length) {
-    await donnerDofusEnAttente(e);
-    return;
-  }
-  for (let n of t.quetes) {
-    afficherBandeauQuete(decrireQuete(n).titre);
-    if (e) {
-      (e.stats.quetes ??= []).push(n.id);
-    }
-  }
-  let n = false;
-  for (let e of t.succes) {
-    let t = dofusAGagner(meta, e.def);
-    let r = t !== undefined;
-    if (r) {
-      ajouterDofus(meta, t);
-      n = true;
-    }
-    await ecranSuccesObtenu(e.def, r, meta);
-  }
-  sauverMeta(meta);
-  if (n) {
-    await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta()));
-  } else {
-    await donnerDofusEnAttente(e);
-  }
-}
-// Dofus dont le succès est terminé mais pas encore remis (anciennes sauvegardes), en cascade.
-async function donnerDofusEnAttente(e) {
-  let ids = dofusDebloquables(meta);
-  if (!ids.length) {
-    return;
-  }
-  for (let id of ids) {
-    ajouterDofus(meta, id);
-    await ecranDofusDebloque(id);
-  }
-  sauverMeta(meta);
-  await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta()));
-}
-function contexteRun(e, trancheId, victoire) {
-  return {
-    trancheId,
-    victoire,
-    ascension: e.ascension,
-    tavernes: e.stats.tavernes ?? 0,
-    recrutements: e.stats.recrutements ?? 0,
-    tailleEquipe: e.persos.length,
-    classes: e.persos.map((e) => e.classeId),
-    quatreHerosEquipes:
-      e.persos.length === 4 && e.persos.every((e) => EMPLACEMENTS.every((t) => e.equipement[t])),
-  };
-}
-const quetesDeLaRun = (e) =>
-  (e.stats.quetes ?? []).map((e) => trouverQuete(e)).filter((e) => e !== undefined);
 const controleurEnnemi = async (e, t) => {
   // l'action est choisie d'abord : pas d'attente inutile quand le monstre n'a plus rien à faire
   const action = choisirActionIA(e, t);
