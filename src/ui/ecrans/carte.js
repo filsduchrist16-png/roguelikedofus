@@ -75,12 +75,12 @@ const IMAGES_NOEUDS = {
   forgemagie: `forgemagie`,
   rencontre: `rencontre`,
 };
-function imageBossDonjon(e) {
-  let t = e.combatId ? COMBATS[e.combatId]?.ennemis : undefined;
-  let n = t?.find((e) => MONSTRES[e.monstre]?.boss) ?? t?.[0];
-  let r = n ? MONSTRES[n.monstre]?.img : undefined;
-  if (r) {
-    return cheminAsset(r);
+function imageBossDonjon(noeud) {
+  let ennemis = noeud.combatId ? COMBATS[noeud.combatId]?.ennemis : undefined;
+  let boss = ennemis?.find((ennemi) => MONSTRES[ennemi.monstre]?.boss) ?? ennemis?.[0];
+  let img = boss ? MONSTRES[boss.monstre]?.img : undefined;
+  if (img) {
+    return cheminAsset(img);
   }
   return null;
 }
@@ -89,8 +89,10 @@ function affixeNoeud(noeud) {
   if (noeud.type !== `combat_dur`) {
     return undefined;
   }
-  const id = (noeud.eliteModifs ?? []).find((m) => AFFIXES_GROUPE.some((a) => a.id === m));
-  return id ? AFFIXES_GROUPE.find((a) => a.id === id) : undefined;
+  const id = (noeud.eliteModifs ?? []).find((modifId) =>
+    AFFIXES_GROUPE.some((affixe) => affixe.id === modifId),
+  );
+  return id ? AFFIXES_GROUPE.find((affixe) => affixe.id === id) : undefined;
 }
 // « 2× Bouftou, Tofu » : les monstres d'un groupe, regroupés par espèce.
 function listeMonstres(ennemis) {
@@ -99,7 +101,7 @@ function listeMonstres(ennemis) {
     const nom = MONSTRES[en.monstre]?.nom ?? en.monstre;
     comptes.set(nom, (comptes.get(nom) ?? 0) + 1);
   }
-  return [...comptes].map(([nom, n]) => (n > 1 ? `${n}× ${nom}` : nom)).join(`, `);
+  return [...comptes].map(([nom, nb]) => (nb > 1 ? `${nb}× ${nom}` : nom)).join(`, `);
 }
 // Texte (brut, plusieurs lignes) qui décrit ce qui attend le joueur sur une case.
 export function texteCase(noeud) {
@@ -132,12 +134,14 @@ export function texteCase(noeud) {
 }
 // Raccourcis 1, 2, 3… : cases atteignables triées de haut en bas (puis de gauche à droite).
 export function ordreRaccourcis(cases) {
-  return [...cases].sort((a, b) => a.y - b.y || a.x - b.x).map((c) => c.id);
+  return [...cases]
+    .sort((premiere, seconde) => premiere.y - seconde.y || premiere.x - seconde.x)
+    .map((noeud) => noeud.id);
 }
 // Niveau maximum du monde qui contient la zone (retrouvée par son nom), ou null.
 export function niveauMaxDeZone(nomZone, zones = ZONES, mondes = MONDES) {
-  const zone = zones.find((z) => z.nom === nomZone);
-  const monde = zone && mondes.find((m) => m.zones.includes(zone.id));
+  const zone = zones.find((candidate) => candidate.nom === nomZone);
+  const monde = zone && mondes.find((candidat) => candidat.zones.includes(zone.id));
   return monde?.niveaux?.[1] ?? null;
 }
 const LETTRES_OUTILS = {
@@ -146,9 +150,9 @@ const LETTRES_OUTILS = {
   f: `carte-formation`,
   b: `carte-bestiaire`,
 };
-const imageNoeud = (e) =>
-  (e.type === `donjon` ? imageBossDonjon(e) : null) ??
-  cheminAsset(`/assets/cases/${IMAGES_NOEUDS[e.type]}.png`);
+const imageNoeud = (noeud) =>
+  (noeud.type === `donjon` ? imageBossDonjon(noeud) : null) ??
+  cheminAsset(`/assets/cases/${IMAGES_NOEUDS[noeud.type]}.png`);
 const CARTE_HAUTEUR = 500;
 const CARTE_PAS_X = 116;
 const CARTE_MARGE = 56;
@@ -162,11 +166,13 @@ function centrerCarte() {
     return;
   }
   const box = sc.getBoundingClientRect();
-  const rects = cases.map((c) => c.getBoundingClientRect());
+  const rects = cases.map((element) => element.getBoundingClientRect());
   const milieuX =
-    (Math.min(...rects.map((r) => r.left)) + Math.max(...rects.map((r) => r.right))) / 2;
+    (Math.min(...rects.map((rect) => rect.left)) + Math.max(...rects.map((rect) => rect.right))) /
+    2;
   const milieuY =
-    (Math.min(...rects.map((r) => r.top)) + Math.max(...rects.map((r) => r.bottom))) / 2;
+    (Math.min(...rects.map((rect) => rect.top)) + Math.max(...rects.map((rect) => rect.bottom))) /
+    2;
   // les cases atteignables un peu à droite du centre : on voit d'où l'on vient et où l'on va
   sc.scrollLeft = Math.max(0, sc.scrollLeft + milieuX - box.left - sc.clientWidth * 0.45);
   sc.scrollTop = Math.max(0, sc.scrollTop + milieuY - box.top - sc.clientHeight / 2);
@@ -177,14 +183,14 @@ function centrerCarte() {
   }
 }
 export function ecranCarte(
-  e,
-  t,
-  n,
-  r,
-  i = [],
-  a = 0,
-  o = 0,
-  s = 0,
+  carte,
+  persos,
+  meta,
+  nomZone,
+  inventaire = [],
+  kamas = 0,
+  ascension = 0,
+  philtres = 0,
   onModif = () => {},
   effets = [],
   infosZone = {},
@@ -194,8 +200,8 @@ export function ecranCarte(
       `carte`,
       `Touche un nœud accessible pour avancer. Pense à équiper tes héros avant les combats.`,
     );
-    const mortDefinitive = !!effetsDifficulte(o).mortDefinitive;
-    const niveauMax = infosZone.niveauMax ?? niveauMaxDeZone(r);
+    const mortDefinitive = !!effetsDifficulte(ascension).mortDefinitive;
+    const niveauMax = infosZone.niveauMax ?? niveauMaxDeZone(nomZone);
     // Clavier : retiré à chaque re-rendu, à l'ouverture d'un sous-écran et à la sortie.
     let toucheCarte = null;
     const nettoyer = () => {
@@ -204,101 +210,116 @@ export function ecranCarte(
         toucheCarte = null;
       }
     };
-    const resolve = (v) => {
+    const resolve = (valeur) => {
       nettoyer();
-      resolveBrut(v);
+      resolveBrut(valeur);
     };
     // Sous-écran ouvert depuis la carte : plus de raccourcis tant qu'il est affiché.
     const sousEcran = (id, action) =>
       document.getElementById(id)?.addEventListener(`click`, async () => {
         nettoyer();
         await action();
-        l();
+        afficher();
       });
-    let l = () => {
+    let afficher = () => {
       nettoyer();
       const tactile = ecranTactile();
-      let d = Math.max(...e.noeuds.map((e) => e.ligne));
-      let f = CARTE_MARGE * 2 + (d + 1) * CARTE_PAS_X;
-      let p = {
+      let ligneMax = Math.max(...carte.noeuds.map((noeud) => noeud.ligne));
+      let largeur = CARTE_MARGE * 2 + (ligneMax + 1) * CARTE_PAS_X;
+      let origine = {
         x: CARTE_MARGE,
         y: CARTE_HAUTEUR / 2,
       };
-      let m = new Map();
-      let h = new Map();
-      for (let t of e.noeuds) {
-        h.set(t.ligne, (h.get(t.ligne) ?? 0) + 1);
+      let positions = new Map();
+      let parLigne = new Map();
+      for (let noeud of carte.noeuds) {
+        parLigne.set(noeud.ligne, (parLigne.get(noeud.ligne) ?? 0) + 1);
       }
-      let g = CARTE_HAUTEUR / (Math.max(1, ...h.values()) + 1);
-      for (let t of e.noeuds) {
-        m.set(t.id, {
-          x: CARTE_MARGE + (t.ligne + 1) * CARTE_PAS_X,
-          y: CARTE_HAUTEUR / 2 + t.colonne * g,
+      let pasY = CARTE_HAUTEUR / (Math.max(1, ...parLigne.values()) + 1);
+      for (let noeud of carte.noeuds) {
+        positions.set(noeud.id, {
+          x: CARTE_MARGE + (noeud.ligne + 1) * CARTE_PAS_X,
+          y: CARTE_HAUTEUR / 2 + noeud.colonne * pasY,
         });
       }
-      let _ = new Set(noeudsAtteignables(e).map((e) => e.id));
+      let atteignables = new Set(noeudsAtteignables(carte).map((noeud) => noeud.id));
       const numeros = new Map(
-        ordreRaccourcis([..._].map((id) => ({ id, ...m.get(id) }))).map((id, k) => [id, k + 1]),
+        ordreRaccourcis([...atteignables].map((id) => ({ id, ...positions.get(id) }))).map(
+          (id, indice) => [id, indice + 1],
+        ),
       );
-      const appelSoin = !mortDefinitive && t.some((p) => p.pvActuels <= 0);
-      let v = (t) => e.courant === t || (e.courant === null && trouverNoeud(e, t)?.ligne === 0);
-      let ee = (e, t, n, r = false) => {
-        let i = t.x - e.x;
-        let a = t.y - e.y;
-        let o = Math.hypot(i, a);
-        if (o <= 84) {
+      const appelSoin = !mortDefinitive && persos.some((perso) => perso.pvActuels <= 0);
+      let estCourant = (id) =>
+        carte.courant === id || (carte.courant === null && trouverNoeud(carte, id)?.ligne === 0);
+      let htmlArete = (depart, arrivee, actif, emprunte = false) => {
+        let dx = arrivee.x - depart.x;
+        let dy = arrivee.y - depart.y;
+        let distance = Math.hypot(dx, dy);
+        if (distance <= 84) {
           return ``;
         }
-        let s = 42 / o;
-        return `<line x1="${e.x + i * s}" y1="${e.y + a * s}" x2="${t.x - i * s}" y2="${t.y - a * s}" class="arete ${n ? `arete-actif` : ``} ${r ? `arete-emprunte` : ``}"/>`;
+        let coef = 42 / distance;
+        return `<line x1="${depart.x + dx * coef}" y1="${depart.y + dy * coef}" x2="${arrivee.x - dx * coef}" y2="${arrivee.y - dy * coef}" class="arete ${actif ? `arete-actif` : ``} ${emprunte ? `arete-emprunte` : ``}"/>`;
       };
-      let y = e.noeuds
-        .flatMap((t) =>
-          t.suivants.map((n) =>
-            ee(m.get(t.id), m.get(n), _.has(n) && v(t.id), cheminVisite(e, t.id, n)),
+      let htmlAretes = carte.noeuds
+        .flatMap((noeud) =>
+          noeud.suivants.map((suivantId) =>
+            htmlArete(
+              positions.get(noeud.id),
+              positions.get(suivantId),
+              atteignables.has(suivantId) && estCourant(noeud.id),
+              cheminVisite(carte, noeud.id, suivantId),
+            ),
           ),
         )
         .join(``);
-      let b = e.depart
-        .map((t) => ee(p, m.get(t), e.courant === null, cheminVisite(e, null, t)))
+      let htmlAretesDepart = carte.depart
+        .map((departId) =>
+          htmlArete(
+            origine,
+            positions.get(departId),
+            carte.courant === null,
+            cheminVisite(carte, null, departId),
+          ),
+        )
         .join(``);
-      let te = e.noeuds
-        .map((t) => {
-          let n = m.get(t.id);
-          let r = _.has(t.id);
-          let i = [
+      let htmlNoeuds = carte.noeuds
+        .map((noeud) => {
+          let pos = positions.get(noeud.id);
+          let atteignable = atteignables.has(noeud.id);
+          let classes = [
             `map-node`,
-            `t-${t.type}`,
-            t.visite ? `visite` : ``,
-            t.id === e.courant ? `courant` : ``,
-            r ? `atteignable` : ``,
-            r && appelSoin && t.type === `taverne` ? `appel-soin` : ``,
+            `t-${noeud.type}`,
+            noeud.visite ? `visite` : ``,
+            noeud.id === carte.courant ? `courant` : ``,
+            atteignable ? `atteignable` : ``,
+            atteignable && appelSoin && noeud.type === `taverne` ? `appel-soin` : ``,
           ]
             .filter(Boolean)
             .join(` `);
-          let o = affixeNoeud(t);
-          let s = ` data-tip="${echapperHtml(texteCase(t))}"`;
-          let num = r && !tactile && numeros.get(t.id);
-          return `<button class="${i}" data-id="${t.id}" ${r ? `` : `aria-disabled="true"`}${t.id === e.courant ? ` aria-current="location"` : ``} style="left:${n.x}px;top:${n.y}px"${s}>
+          let affixe = affixeNoeud(noeud);
+          let tip = ` data-tip="${echapperHtml(texteCase(noeud))}"`;
+          let num = atteignable && !tactile && numeros.get(noeud.id);
+          return `<button class="${classes}" data-id="${noeud.id}" ${atteignable ? `` : `aria-disabled="true"`}${noeud.id === carte.courant ? ` aria-current="location"` : ``} style="left:${pos.x}px;top:${pos.y}px"${tip}>
             <span class="case-art">
-              <img class="case-img" src="${imageNoeud(t)}" alt="" onerror="this.onerror=null;this.nextElementSibling.style.display='';this.remove()" />
-              <span class="mn-icon" style="display:none">${ICONES_NOEUDS[t.type]}</span>
+              <img class="case-img" src="${imageNoeud(noeud)}" alt="" onerror="this.onerror=null;this.nextElementSibling.style.display='';this.remove()" />
+              <span class="mn-icon" style="display:none">${ICONES_NOEUDS[noeud.type]}</span>
             </span>
-            <span class="mn-lbl">${NOMS_NOEUDS[t.type]}${o ? `<small class="mn-modif"> · ${echapperHtml(o.nom)}</small>` : ``}</span>
+            <span class="mn-lbl">${NOMS_NOEUDS[noeud.type]}${affixe ? `<small class="mn-modif"> · ${echapperHtml(affixe.nom)}</small>` : ``}</span>
             ${num && num <= 9 ? `<kbd class="mn-kbd" aria-hidden="true">${num}</kbd>` : ``}
           </button>`;
         })
         .join(``);
-      let x = t
-        .map((e) => {
-          let t = CLASSES[e.classeId];
-          let n = pvMaxPerso(e);
-          let r = Math.max(0, Math.round((e.pvActuels / n) * 100));
-          let i = Math.max(0, Math.round(e.pvActuels));
-          let ko = e.pvActuels <= 0;
-          let niv = e.progression.niveau;
+      let htmlPersos = persos
+        .map((perso) => {
+          let classe = CLASSES[perso.classeId];
+          let pvMax = pvMaxPerso(perso);
+          let pctPv = Math.max(0, Math.round((perso.pvActuels / pvMax) * 100));
+          let pv = Math.max(0, Math.round(perso.pvActuels));
+          let ko = perso.pvActuels <= 0;
+          let niv = perso.progression.niveau;
           let besoin = xpPourNiveau(niv);
-          let xp = Math.max(0, Math.round(e.progression.xp ?? 0));
+          let xp = Math.max(0, Math.round(perso.progression.xp ?? 0));
           // Au plafond du monde, l'XP ne s'accumule plus (gagnerXp la remet à 0).
           let auPlafond = niveauMax != null && niv >= niveauMax;
           let pctXp = auPlafond ? 100 : Math.max(0, Math.min(100, Math.round((xp / besoin) * 100)));
@@ -306,37 +327,37 @@ export function ecranCarte(
             ? `Niveau max du monde atteint`
             : `XP : ${xp} / ${besoin} vers le niveau ${niv + 1}`;
           return `
-            <div class="aside-perso ${e.flashNiveau ? `flash-niv` : ``} ${ko ? `ko` : ``}">
-              ${e.flashNiveau ? `<span class="niv-flash">⬆ Niveau ${e.progression.niveau} !</span>` : ``}
+            <div class="aside-perso ${perso.flashNiveau ? `flash-niv` : ``} ${ko ? `ko` : ``}">
+              ${perso.flashNiveau ? `<span class="niv-flash">⬆ Niveau ${perso.progression.niveau} !</span>` : ``}
               ${ko ? `<span class="ko-badge">K.O.</span>` : ``}
-              <img class="aside-sym" src="${imgSymboleClasse(e.classeId)}" alt="" onerror="this.remove()" />
-              <span class="pv-gem pv-gem-aside ${i <= 0 ? `ko` : ``}" title="${i} / ${n} PV" style="--pv-pct:${r}%">
+              <img class="aside-sym" src="${imgSymboleClasse(perso.classeId)}" alt="" onerror="this.remove()" />
+              <span class="pv-gem pv-gem-aside ${pv <= 0 ? `ko` : ``}" title="${pv} / ${pvMax} PV" style="--pv-pct:${pctPv}%">
                 <img class="pv-vide" src="${IMG_COEUR}" alt="" onerror="this.remove()" />
                 <img class="pv-plein" src="${IMG_COEUR}" alt="" onerror="this.remove()" />
-                <b class="pv-num">${i}<span>/${n}</span></b>
+                <b class="pv-num">${pv}<span>/${pvMax}</span></b>
               </span>
               <div class="aside-info">
-                <div class="aside-nom">${echapperHtml(t.nom)}${pastillesElementsPerso(e)}</div>
+                <div class="aside-nom">${echapperHtml(classe.nom)}${pastillesElementsPerso(perso)}</div>
                 <div class="aside-niv${auPlafond ? ` au-plafond` : ``}" data-tip="${echapperHtml(tipXp)}">Niv.${niv}<span class="aside-xp" role="progressbar" aria-label="Expérience" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pctXp}"><span style="width:${pctXp}%"></span></span></div>
                 ${ko ? `<div class="ko-sous">${mortDefinitive ? `tombé pour de bon` : `se relève en taverne`}</div>` : ``}
               </div>
             </div>`;
         })
         .join(``);
-      t.forEach((e) => {
-        e.flashNiveau = false;
+      persos.forEach((perso) => {
+        perso.flashNiveau = false;
       });
       masquerElements();
       racine.innerHTML = `
         <div class="carte-ecran map-layout">
-          <h1 class="sr-only">Carte : ${echapperHtml(r)}</h1>
+          <h1 class="sr-only">Carte : ${echapperHtml(nomZone)}</h1>
           <header class="map-topbar">
-            <h2 class="zone-titre">${infosZone.zoneNum ? `<span class="zone-num">Zone ${Number(infosZone.zoneNum)}${infosZone.nbZones ? `/${Number(infosZone.nbZones)}` : ``}</span> · ` : ``}${echapperHtml(r)}${infosZone.tierObjets != null ? `<span class="asc-badge zone-tier" data-tip="Tier : numéro de la zone où tombent les objets, compté depuis le Monde 1">objets T${Number(infosZone.tierObjets)}</span>` : ``}${o >= 1 ? `<span class="asc-badge" data-tip="${echapperHtml(DIFFICULTES[o].desc)}">${etoilesDifficulte(o)}</span>` : ``}${s >= 1 ? `<span class="asc-badge" data-tip="Philtres d'Otomai bus : les archimonstres apparaissent plus souvent (${CONFIG_ARCHI.philtresMax} au maximum)">🧪 ${Math.min(s, CONFIG_ARCHI.philtresMax)}/${CONFIG_ARCHI.philtresMax}</span>` : ``}</h2>
-            ${effets.length ? `<div class="zone-effets">${effets.map((x) => `<span class="zone-effet" data-tip="${echapperHtml(x.desc)}">${x.icone} ${echapperHtml(x.nom)}</span>`).join(``)}</div>` : ``}
+            <h2 class="zone-titre">${infosZone.zoneNum ? `<span class="zone-num">Zone ${Number(infosZone.zoneNum)}${infosZone.nbZones ? `/${Number(infosZone.nbZones)}` : ``}</span> · ` : ``}${echapperHtml(nomZone)}${infosZone.tierObjets != null ? `<span class="asc-badge zone-tier" data-tip="Tier : numéro de la zone où tombent les objets, compté depuis le Monde 1">objets T${Number(infosZone.tierObjets)}</span>` : ``}${ascension >= 1 ? `<span class="asc-badge" data-tip="${echapperHtml(DIFFICULTES[ascension].desc)}">${etoilesDifficulte(ascension)}</span>` : ``}${philtres >= 1 ? `<span class="asc-badge" data-tip="Philtres d'Otomai bus : les archimonstres apparaissent plus souvent (${CONFIG_ARCHI.philtresMax} au maximum)">🧪 ${Math.min(philtres, CONFIG_ARCHI.philtresMax)}/${CONFIG_ARCHI.philtresMax}</span>` : ``}</h2>
+            ${effets.length ? `<div class="zone-effets">${effets.map((effet) => `<span class="zone-effet" data-tip="${echapperHtml(effet.desc)}">${effet.icone} ${echapperHtml(effet.nom)}</span>`).join(``)}</div>` : ``}
             <div class="topbar-actions">
               <button id="carte-persos" class="aside-icone" title="Caractéristiques (S)"><img src="${IMG_CARACTERISTIQUES}" alt="Caractéristiques" onerror="this.remove()" /><span class="aside-lbl">Stats</span></button>
               <button id="carte-formation" class="aside-icone" title="Formation (F)"><img src="${IMG_FORMATION}" alt="Formation" onerror="this.remove()" /><span class="aside-lbl">Formation</span></button>
-              <button id="carte-equip" class="aside-icone" title="Équipement (E)${i.length ? ` · ${i.length} objet(s)` : ``}"><img src="${IMG_INVENTAIRE}" alt="Équipement" onerror="this.remove()" />${i.length ? `<span class="aside-compte">${i.length}</span>` : ``}<span class="aside-lbl">Équipement</span></button>
+              <button id="carte-equip" class="aside-icone" title="Équipement (E)${inventaire.length ? ` · ${inventaire.length} objet(s)` : ``}"><img src="${IMG_INVENTAIRE}" alt="Équipement" onerror="this.remove()" />${inventaire.length ? `<span class="aside-compte">${inventaire.length}</span>` : ``}<span class="aside-lbl">Équipement</span></button>
               <button id="carte-bestiaire" class="aside-icone" title="Bestiaire (B)"><img src="${IMG_BESTIAIRE}" alt="Bestiaire" onerror="this.remove()" /><span class="aside-lbl">Bestiaire</span></button>
               <button id="carte-armurerie" class="aside-icone" title="Armurerie"><img src="${IMG_ARMURERIE}" alt="Armurerie" onerror="this.parentElement.textContent='🛡️'" /><span class="aside-lbl">Armurerie</span></button>
               <button id="carte-dofus" class="aside-icone" title="Dofus"><img src="${IMG_DOFUS}" alt="Dofus" onerror="this.remove()" /><span class="aside-lbl">Dofus</span></button>
@@ -346,10 +367,10 @@ export function ecranCarte(
               <button id="carte-restart-choix" class="aside-icone" title="Recommencer en choisissant d'autres héros (abandonne la run en cours)"><img src="${IMG_RECOMMENCER_AVEC_PERSO}" alt="Recommencer (autres héros)" onerror="this.remove()" /><span class="aside-lbl">Autre équipe</span></button>
             </div>
           </header>
-          <div class="map-scroll"><div class="map-zone" style="width:${f}px;height:${CARTE_HAUTEUR}px">
-            <svg class="map-svg" width="${f}" height="${CARTE_HAUTEUR}">${b}${y}</svg>
-            ${te}
-            <div class="map-depart" style="left:${p.x}px;top:${p.y}px">
+          <div class="map-scroll"><div class="map-zone" style="width:${largeur}px;height:${CARTE_HAUTEUR}px">
+            <svg class="map-svg" width="${largeur}" height="${CARTE_HAUTEUR}">${htmlAretesDepart}${htmlAretes}</svg>
+            ${htmlNoeuds}
+            <div class="map-depart" style="left:${origine.x}px;top:${origine.y}px">
               <span class="case-art">
                 <img class="case-img" src="${IMG_DEPART}" alt="" onerror="this.onerror=null;this.nextElementSibling.style.display='';this.remove()" />
                 <span class="depart-art" style="display:none">🚩</span>
@@ -365,8 +386,8 @@ export function ecranCarte(
                 <button type="button" class="primaire cp-aller">Y aller</button>
               </div>
             </div>
-            <div class="equipe-bar">${x}</div>
-            <div class="aside-kamas" data-tip="Kamas de la run (perdus à la mort)">${htmlKamas(a)}</div>
+            <div class="equipe-bar">${htmlPersos}</div>
+            <div class="aside-kamas" data-tip="Kamas de la run (perdus à la mort)">${htmlKamas(kamas)}</div>
           </footer>
         </div>`;
       centrerCarte();
@@ -382,9 +403,9 @@ export function ecranCarte(
         maj();
       }
       const aller = (id) => {
-        let n = trouverNoeud(e, id);
-        if (n) {
-          resolve(n);
+        let noeud = trouverNoeud(carte, id);
+        if (noeud) {
+          resolve(noeud);
         }
       };
       // Tactile : un premier appui sélectionne la case et décrit son contenu, le second valide.
@@ -392,7 +413,9 @@ export function ecranCarte(
       let selId = null;
       const deselectionner = () => {
         selId = null;
-        racine.querySelectorAll(`.map-node.sel`).forEach((b) => b.classList.remove(`sel`));
+        racine
+          .querySelectorAll(`.map-node.sel`)
+          .forEach((bouton) => bouton.classList.remove(`sel`));
         if (panneau) {
           panneau.hidden = true;
         }
@@ -404,20 +427,20 @@ export function ecranCarte(
         if (panneau) {
           panneau.querySelector(`.cp-texte`).textContent = bouton.dataset.tip ?? ``;
           // case lointaine : on lit son contenu, mais on ne peut pas y aller
-          const aller = panneau.querySelector(`.cp-aller`);
-          if (aller) {
-            aller.style.display = bouton.classList.contains(`atteignable`) ? `` : `none`;
+          const boutonAller = panneau.querySelector(`.cp-aller`);
+          if (boutonAller) {
+            boutonAller.style.display = bouton.classList.contains(`atteignable`) ? `` : `none`;
           }
           panneau.hidden = false;
         }
       };
-      racine.querySelectorAll(`.map-node`).forEach((b) => {
-        const atteignable = b.classList.contains(`atteignable`);
-        b.addEventListener(`click`, () => {
-          if (ecranTactile() && selId !== b.dataset.id) {
-            selectionner(b);
+      racine.querySelectorAll(`.map-node`).forEach((bouton) => {
+        const atteignable = bouton.classList.contains(`atteignable`);
+        bouton.addEventListener(`click`, () => {
+          if (ecranTactile() && selId !== bouton.dataset.id) {
+            selectionner(bouton);
           } else if (atteignable) {
-            aller(b.dataset.id);
+            aller(bouton.dataset.id);
           } else {
             // case lointaine appuyée une seconde fois : on referme le panneau
             deselectionner();
@@ -500,7 +523,7 @@ export function ecranCarte(
         const chiffre = /^(?:Digit|Numpad)([1-9])$/.exec(ev.code ?? ``)?.[1];
         const touche = (ev.key ?? ``).toLowerCase();
         if (chiffre) {
-          const id = [...numeros].find(([, k]) => k === Number(chiffre))?.[0];
+          const id = [...numeros].find(([, numero]) => numero === Number(chiffre))?.[0];
           if (id) {
             ev.preventDefault();
             aller(id);
@@ -511,18 +534,20 @@ export function ecranCarte(
         }
       };
       document.addEventListener(`keydown`, toucheCarte);
-      sousEcran(`carte-persos`, () => ecranCaracteristiques(t, undefined, undefined, true, n));
+      sousEcran(`carte-persos`, () =>
+        ecranCaracteristiques(persos, undefined, undefined, true, meta),
+      );
       sousEcran(`carte-formation`, async () => {
-        await ecranFormation(t);
+        await ecranFormation(persos);
         onModif();
       });
       sousEcran(`carte-equip`, async () => {
-        await ecranEquipement(t, i);
+        await ecranEquipement(persos, inventaire);
         onModif();
       });
-      sousEcran(`carte-bestiaire`, () => ecranBestiaire(n));
-      sousEcran(`carte-armurerie`, () => ecranArmurerie(n));
-      sousEcran(`carte-dofus`, () => ecranDofus(n));
+      sousEcran(`carte-bestiaire`, () => ecranBestiaire(meta));
+      sousEcran(`carte-armurerie`, () => ecranArmurerie(meta));
+      sousEcran(`carte-dofus`, () => ecranDofus(meta));
       document.getElementById(`carte-accueil`)?.addEventListener(`click`, () => resolve(`accueil`));
       document.getElementById(`carte-restart`)?.addEventListener(`click`, async () => {
         if (
@@ -545,6 +570,6 @@ export function ecranCarte(
         }
       });
     };
-    l();
+    afficher();
   });
 }
