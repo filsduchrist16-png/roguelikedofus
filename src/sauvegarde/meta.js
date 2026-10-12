@@ -35,63 +35,69 @@ export function chargerMeta() {
   try {
     brut = localStorage.getItem(CLE_META);
     if (brut) {
-      let t = JSON.parse(brut);
-      if (!t || typeof t !== `object` || Array.isArray(t)) {
+      let donnees = JSON.parse(brut);
+      if (!donnees || typeof donnees !== `object` || Array.isArray(donnees)) {
         throw new Error(`méta illisible`);
       }
-      let n =
-        t.ascension ??
-        ((t.victoires ?? 0) > 0
+      let ascensionBrute =
+        donnees.ascension ??
+        ((donnees.victoires ?? 0) > 0
           ? {
               t1: 0,
             }
           : undefined);
-      let r = (t.version ?? 0) < 2;
-      let ascension = n && (r ? Object.fromEntries(Object.keys(n).map((e) => [e, 0])) : n);
+      let ancienneVersion = (donnees.version ?? 0) < 2;
+      let ascension =
+        ascensionBrute &&
+        (ancienneVersion
+          ? Object.fromEntries(Object.keys(ascensionBrute).map((monde) => [monde, 0]))
+          : ascensionBrute);
       // champ par champ : une valeur abîmée ne fait pas perdre les autres
-      let dofus = (Array.isArray(t.dofus) ? t.dofus : [])
-        .map((e) => (typeof e === `string` ? { id: e } : e))
-        .filter((e) => e && typeof e === `object` && DOFUS[e.id]);
+      let dofus = (Array.isArray(donnees.dofus) ? donnees.dofus : [])
+        .map((dofus) => (typeof dofus === `string` ? { id: dofus } : dofus))
+        .filter((dofus) => dofus && typeof dofus === `object` && DOFUS[dofus.id]);
       let quetes = {
-        faites: Array.isArray(t.quetes?.faites)
-          ? t.quetes.faites.filter((x) => typeof x === `string`)
+        faites: Array.isArray(donnees.quetes?.faites)
+          ? donnees.quetes.faites.filter((cle) => typeof cle === `string`)
           : [],
         compteurs: {
-          ...(t.quetes?.compteurs && typeof t.quetes.compteurs === `object`
-            ? t.quetes.compteurs
+          ...(donnees.quetes?.compteurs && typeof donnees.quetes.compteurs === `object`
+            ? donnees.quetes.compteurs
             : {}),
         },
       };
-      if ((t.version ?? 0) < 4) {
-        for (let e of t.succes ?? []) {
-          let t = MIGRATION_SUCCES[e];
-          if (t && !quetes.faites.includes(t)) {
-            quetes.faites.push(t);
+      if ((donnees.version ?? 0) < 4) {
+        for (let succesId of donnees.succes ?? []) {
+          let queteId = MIGRATION_SUCCES[succesId];
+          if (queteId && !quetes.faites.includes(queteId)) {
+            quetes.faites.push(queteId);
           }
         }
       }
       return {
         version: 4,
         dofus,
-        archis: Array.isArray(t.archis) ? t.archis.filter((x) => typeof x === `string`) : [],
-        runs: Number.isFinite(t.runs) ? t.runs : 0,
-        victoires: Number.isFinite(t.victoires) ? t.victoires : 0,
+        archis: Array.isArray(donnees.archis)
+          ? donnees.archis.filter((archi) => typeof archi === `string`)
+          : [],
+        runs: Number.isFinite(donnees.runs) ? donnees.runs : 0,
+        victoires: Number.isFinite(donnees.victoires) ? donnees.victoires : 0,
         quetes,
         // raretés connues seulement (elles finissent dans des classes CSS)
         collection: Object.fromEntries(
-          Object.entries(t.collection ?? {}).filter(([, r]) => RARETES.includes(r)),
+          Object.entries(donnees.collection ?? {}).filter(([, rarete]) => RARETES.includes(rarete)),
         ),
         ascension,
-        statsMonde: normaliserStatsMonde(t.statsMonde),
-        reliques: normaliserReliques(t.reliques),
-        dofusSuspendus: Array.isArray(t.dofusSuspendus) ? t.dofusSuspendus : [],
-        secrets: Array.isArray(t.secrets) ? t.secrets : [],
-        jaugeArchi: Number.isFinite(t.jaugeArchi) ? Math.max(0, t.jaugeArchi) : 0,
-        records: normaliserRecords(t.records),
+        statsMonde: normaliserStatsMonde(donnees.statsMonde),
+        reliques: normaliserReliques(donnees.reliques),
+        dofusSuspendus: Array.isArray(donnees.dofusSuspendus) ? donnees.dofusSuspendus : [],
+        secrets: Array.isArray(donnees.secrets) ? donnees.secrets : [],
+        jaugeArchi: Number.isFinite(donnees.jaugeArchi) ? Math.max(0, donnees.jaugeArchi) : 0,
+        records: normaliserRecords(donnees.records),
         // relique équipée (E2) : absente = aucune
         reliqueEquipee:
-          typeof t.reliqueEquipee === `string` && RELIQUES[t.reliqueEquipee]
-            ? t.reliqueEquipee
+          typeof donnees.reliqueEquipee === `string` && RELIQUES[donnees.reliqueEquipee]
+            ? donnees.reliqueEquipee
             : undefined,
       };
     }
@@ -106,10 +112,10 @@ export function chargerMeta() {
   return metaVierge();
 }
 /** Enregistre la méta-progression. Renvoie false (et prévient une fois) si l'écriture échoue. */
-export function sauverMeta(e) {
+export function sauverMeta(meta) {
   let ecrit = true;
   try {
-    localStorage.setItem(CLE_META, JSON.stringify(e));
+    localStorage.setItem(CLE_META, JSON.stringify(meta));
   } catch {
     ecrit = false;
     signalerEchecSauvegarde();
@@ -120,108 +126,113 @@ export function sauverMeta(e) {
 // ---------- Dofus : chacun dans la tranche de niveau de son monde ----------
 // Chaque Dofus s'obtient dès que son succès est terminé, sans attendre ceux de niveau inférieur :
 // le niveau réel de Dofus 3 décide seulement du monde où se trouvent ses quêtes.
-const succesDuDofusId = (id) => Object.values(SUCCES).find((s) => dofusDeSucces(s) === id);
+const succesDuDofusId = (id) =>
+  Object.values(SUCCES).find((succes) => dofusDeSucces(succes) === id);
 // Dofus dont le succès est terminé mais pas encore remis (ancienne sauvegarde, ou cascade).
 export function dofusEnAttente(meta) {
-  const possedes = new Set(meta.dofus.map((d) => d.id));
+  const possedes = new Set(meta.dofus.map((dofus) => dofus.id));
   return Object.values(DOFUS)
-    .filter((d) => !possedes.has(d.id))
-    .filter((d) => {
-      const s = succesDuDofusId(d.id);
-      return s && meta.quetes && progressionSucces(meta.quetes, s).complet;
+    .filter((dofus) => !possedes.has(dofus.id))
+    .filter((dofus) => {
+      const succes = succesDuDofusId(dofus.id);
+      return succes && meta.quetes && progressionSucces(meta.quetes, succes).complet;
     })
-    .map((d) => d.id);
+    .map((dofus) => dofus.id);
 }
 export function dofusDebloquables(meta) {
-  return dofusEnAttente(meta).sort((a, b) => DOFUS[a].niveau - DOFUS[b].niveau);
+  return dofusEnAttente(meta).sort(
+    (premier, second) => DOFUS[premier].niveau - DOFUS[second].niveau,
+  );
 }
 // Anciennes versions : des Dofus avaient été mis de côté pour respecter un ordre strict. Ils
 // reviennent tous, avec leur jet.
 export function rendreDofusSuspendus(meta) {
   const suspendus = (meta.dofusSuspendus ?? []).filter(
-    (d) => DOFUS[d.id] && !meta.dofus.some((x) => x.id === d.id),
+    (dofus) => DOFUS[dofus.id] && !meta.dofus.some((existant) => existant.id === dofus.id),
   );
   if (meta.dofusSuspendus?.length) {
     meta.dofus.push(...suspendus);
     meta.dofusSuspendus = [];
     sauverMeta(meta);
   }
-  return suspendus.map((d) => d.id);
+  return suspendus.map((dofus) => dofus.id);
 }
-export function ajouterDofus(e, t, n = Math.random) {
+export function ajouterDofus(meta, dofusId, rng = Math.random) {
   // un Dofus mis de côté retrouve son jet
-  let ancien = (e.dofusSuspendus ?? []).find((d) => d.id === t);
+  let ancien = (meta.dofusSuspendus ?? []).find((candidat) => candidat.id === dofusId);
   if (ancien) {
-    e.dofusSuspendus = e.dofusSuspendus.filter((d) => d !== ancien);
-    e.dofus.push(ancien);
-    sauverMeta(e);
+    meta.dofusSuspendus = meta.dofusSuspendus.filter((candidat) => candidat !== ancien);
+    meta.dofus.push(ancien);
+    sauverMeta(meta);
     return;
   }
-  let r = DOFUS[t]?.prospectionJet;
-  let jet = r ? r[0] + Math.floor(n() * (r[1] - r[0] + 1)) : undefined;
-  e.dofus.push(
+  let jetPlage = DOFUS[dofusId]?.prospectionJet;
+  let jet = jetPlage
+    ? jetPlage[0] + Math.floor(rng() * (jetPlage[1] - jetPlage[0] + 1))
+    : undefined;
+  meta.dofus.push(
     jet === undefined
       ? {
-          id: t,
+          id: dofusId,
         }
       : {
-          id: t,
+          id: dofusId,
           jet,
         },
   );
-  sauverMeta(e);
+  sauverMeta(meta);
 }
-export function dofusAGagner(e, t) {
-  let n = dofusDeSucces(t);
-  if (n && !e.dofus.some((e) => e.id === n)) {
-    return n;
+export function dofusAGagner(meta, succes) {
+  let dofusId = dofusDeSucces(succes);
+  if (dofusId && !meta.dofus.some((dofus) => dofus.id === dofusId)) {
+    return dofusId;
   }
 }
 /**
  * Efface les Dofus ET les quêtes des succès de Dofus : sinon ils reviendraient aussitôt (leur succès
  * resterait terminé) et le Kaliptus pourrait être retiré à volonté.
  */
-export function reinitialiserDofus(e) {
-  e.dofus = [];
-  e.dofusSuspendus = [];
+export function reinitialiserDofus(meta) {
+  meta.dofus = [];
+  meta.dofusSuspendus = [];
   const ids = new Set(
     Object.values(SUCCES)
-      .filter((s) => s.categorie?.dofus)
-      .flatMap((s) => s.quetes.map((q) => q.id)),
+      .filter((succes) => succes.categorie?.dofus)
+      .flatMap((succes) => succes.quetes.map((quete) => quete.id)),
   );
-  e.quetes.faites = e.quetes.faites.filter((id) => !ids.has(id));
+  meta.quetes.faites = meta.quetes.faites.filter((id) => !ids.has(id));
   for (const id of ids) {
-    delete e.quetes.compteurs[id];
+    delete meta.quetes.compteurs[id];
   }
-  sauverMeta(e);
+  sauverMeta(meta);
 }
-export function enregistrerRun(e, t, n) {
-  e.runs += 1;
-  if (t) {
-    e.victoires += 1;
-    if (n) {
-      statsMondeModifiable(e, n).victoires += 1;
+export function enregistrerRun(meta, victoire, mondeId) {
+  meta.runs += 1;
+  if (victoire) {
+    meta.victoires += 1;
+    if (mondeId) {
+      statsMondeModifiable(meta, mondeId).victoires += 1;
     }
   }
-  sauverMeta(e);
+  sauverMeta(meta);
 }
-export function statsMonde(e, t) {
-  let n = e.statsMonde?.[t];
+export function statsMonde(meta, mondeId) {
+  let stats = meta.statsMonde?.[mondeId];
   return {
-    toileMax: n?.toileMax ?? 0,
-    victoires: n?.victoires ?? 0,
+    toileMax: stats?.toileMax ?? 0,
+    victoires: stats?.victoires ?? 0,
   };
 }
-function statsMondeModifiable(e, t) {
-  e.statsMonde ??= {};
-  return (e.statsMonde[t] ??= {
+function statsMondeModifiable(meta, mondeId) {
+  meta.statsMonde ??= {};
+  return (meta.statsMonde[mondeId] ??= {
     toileMax: 0,
     victoires: 0,
   });
 }
-export function enregistrerToileMax(e, t, n) {
-  let r = statsMondeModifiable(e, t);
-  r.toileMax = Math.max(r.toileMax, n);
+export function enregistrerToileMax(meta, mondeId, toile) {
+  let stats = statsMondeModifiable(meta, mondeId);
+  stats.toileMax = Math.max(stats.toileMax, toile);
 }
 // Score record par monde (runs avec ou sans idoles de départ) : { score, idoles, ascension }.
 function normaliserRecords(records) {
@@ -229,107 +240,112 @@ function normaliserRecords(records) {
   if (!records || typeof records !== `object` || Array.isArray(records)) {
     return out;
   }
-  for (const [monde, r] of Object.entries(records)) {
-    if (r && typeof r === `object` && Number.isFinite(r.score) && r.score > 0) {
+  for (const [monde, record] of Object.entries(records)) {
+    if (record && typeof record === `object` && Number.isFinite(record.score) && record.score > 0) {
       out[monde] = {
-        score: Math.floor(r.score),
-        idoles: idolesDepartValides(r.idoles),
-        ascension: Number.isFinite(r.ascension) ? Math.max(0, Math.floor(r.ascension)) : 0,
+        score: Math.floor(record.score),
+        idoles: idolesDepartValides(record.idoles),
+        ascension: Number.isFinite(record.ascension)
+          ? Math.max(0, Math.floor(record.ascension))
+          : 0,
       };
     }
   }
   return out;
 }
-export function recordMonde(e, t) {
-  return e.records?.[t];
+export function recordMonde(meta, cle) {
+  return meta.records?.[cle];
 }
 /** Garde le score s'il bat le record du monde. Renvoie true si c'est un nouveau record. */
-export function enregistrerRecord(e, t, score, idoles = [], ascension = 0) {
-  if (!(score > (e.records?.[t]?.score ?? 0))) {
+export function enregistrerRecord(meta, cle, score, idoles = [], ascension = 0) {
+  if (!(score > (meta.records?.[cle]?.score ?? 0))) {
     return false;
   }
-  e.records = {
-    ...(e.records ?? {}),
-    [t]: { score, idoles: idolesDepartValides(idoles), ascension },
+  meta.records = {
+    ...(meta.records ?? {}),
+    [cle]: { score, idoles: idolesDepartValides(idoles), ascension },
   };
-  sauverMeta(e);
+  sauverMeta(meta);
   return true;
 }
-export function chanceRelique(e, t) {
+export function chanceRelique(cran, prospection) {
   return (
-    (CONFIG_RELIQUES.base + CONFIG_RELIQUES.parCran * e) *
-    (1 + Math.max(0, t - 100) / CONFIG_RELIQUES.diviseurProspection)
+    (CONFIG_RELIQUES.base + CONFIG_RELIQUES.parCran * cran) *
+    (1 + Math.max(0, prospection - 100) / CONFIG_RELIQUES.diviseurProspection)
   );
 }
-export function prospectionMoyenne(e, t = 0) {
-  if (e.persos.length) {
-    return (prospectionEquipe(e) + t) / e.persos.length;
+export function prospectionMoyenne(run, bonus = 0) {
+  if (run.persos.length) {
+    return (prospectionEquipe(run) + bonus) / run.persos.length;
   }
   return 0;
 }
-export function tirerReliques(e, t, n, r, i) {
-  let a = chanceRelique(n, r);
-  let o = [];
-  for (let n of t) {
-    !RELIQUES[n] || e.reliques?.includes(n) || o.includes(n) || (i() < a && o.push(n));
+export function tirerReliques(meta, bossIds, ascension, prospection, rng) {
+  let chance = chanceRelique(ascension, prospection);
+  let obtenues = [];
+  for (let bossId of bossIds) {
+    !RELIQUES[bossId] ||
+      meta.reliques?.includes(bossId) ||
+      obtenues.includes(bossId) ||
+      (rng() < chance && obtenues.push(bossId));
   }
-  if (o.length) {
-    e.reliques = [...(e.reliques ?? []), ...o];
+  if (obtenues.length) {
+    meta.reliques = [...(meta.reliques ?? []), ...obtenues];
   }
-  return o;
+  return obtenues;
 }
 function normaliserReliques(reliques) {
   if (Array.isArray(reliques)) {
-    return [...new Set(reliques.filter((e) => typeof e === `string` && !!RELIQUES[e]))];
+    return [...new Set(reliques.filter((id) => typeof id === `string` && !!RELIQUES[id]))];
   }
   return [];
 }
-function normaliserStatsMonde(statsMonde) {
-  let t = {};
-  if (!statsMonde || typeof statsMonde !== `object`) {
-    return t;
+function normaliserStatsMonde(stats) {
+  let resultat = {};
+  if (!stats || typeof stats !== `object`) {
+    return resultat;
   }
-  let n = (e) => {
-    if (typeof e === `number` && Number.isFinite(e) && e > 0) {
-      return Math.floor(e);
+  let entierPositif = (valeur) => {
+    if (typeof valeur === `number` && Number.isFinite(valeur) && valeur > 0) {
+      return Math.floor(valeur);
     }
     return 0;
   };
-  for (let [r, i] of Object.entries(statsMonde)) {
-    let e = i && typeof i === `object` ? i : {};
-    t[r] = {
-      toileMax: n(e.toileMax),
-      victoires: n(e.victoires),
+  for (let [mondeId, brut] of Object.entries(stats)) {
+    let entree = brut && typeof brut === `object` ? brut : {};
+    resultat[mondeId] = {
+      toileMax: entierPositif(entree.toileMax),
+      victoires: entierPositif(entree.victoires),
     };
   }
-  return t;
+  return resultat;
 }
-export function pctSoinTaverne(e) {
-  return effetsDifficulte(e).tavernePct ?? 0.5;
+export function pctSoinTaverne(cran) {
+  return effetsDifficulte(cran).tavernePct ?? 0.5;
 }
-export function ascensionMonde(e, t) {
-  return e.ascension?.[t];
+export function ascensionMonde(meta, mondeId) {
+  return meta.ascension?.[mondeId];
 }
-export function enregistrerAscension(e, t, n) {
-  e.ascension = {
-    ...(e.ascension ?? {}),
-    [t]: Math.max(e.ascension?.[t] ?? 0, n),
+export function enregistrerAscension(meta, mondeId, ascension) {
+  meta.ascension = {
+    ...(meta.ascension ?? {}),
+    [mondeId]: Math.max(meta.ascension?.[mondeId] ?? 0, ascension),
   };
-  sauverMeta(e);
+  sauverMeta(meta);
 }
-if (DIFFICULTES.findIndex((e) => e.id === `cauchemar`) < 0) {
+if (DIFFICULTES.findIndex((palier) => palier.id === `cauchemar`) < 0) {
   throw Error(`PALIER_CAUCHEMAR : aucun palier "cauchemar" dans ASCENSION — table incohérente.`);
 }
-export function mondePrecedentTermine(e, t) {
-  let n = MONDES.findIndex((e) => e.id === t);
-  if (n <= 0) {
-    return n === 0;
+export function mondePrecedentTermine(meta, mondeId) {
+  let indice = MONDES.findIndex((monde) => monde.id === mondeId);
+  if (indice <= 0) {
+    return indice === 0;
   }
-  return ascensionMonde(e, MONDES[n - 1].id) !== undefined;
+  return ascensionMonde(meta, MONDES[indice - 1].id) !== undefined;
 }
-export function mondeJouable(e, t) {
-  let n = getMonde(t);
-  return mondePrecedentTermine(e, t) && n.zones.length > 0 && !n.enChantier;
+export function mondeJouable(meta, mondeId) {
+  let monde = getMonde(mondeId);
+  return mondePrecedentTermine(meta, mondeId) && monde.zones.length > 0 && !monde.enChantier;
 }
 /** Équipe une relique obtenue (ou la retire avec null). Renvoie false si on ne la possède pas. */
 export function equiperRelique(meta, id) {
@@ -340,45 +356,47 @@ export function equiperRelique(meta, id) {
   sauverMeta(meta);
   return true;
 }
-export function dofusPossedes(e) {
-  return new Set(e.dofus.map((e) => e.id));
+export function dofusPossedes(meta) {
+  return new Set(meta.dofus.map((dofus) => dofus.id));
 }
-function meilleurJetDofus(e, t) {
-  let n = e.dofus.filter((e) => e.id === t && e.jet !== undefined).map((e) => e.jet);
-  if (n.length) {
-    return Math.max(...n);
+function meilleurJetDofus(meta, dofusId) {
+  let jets = meta.dofus
+    .filter((dofus) => dofus.id === dofusId && dofus.jet !== undefined)
+    .map((dofus) => dofus.jet);
+  if (jets.length) {
+    return Math.max(...jets);
   }
 }
 const RARETES_ORDRE = [...RARETES];
-export function enregistrerCollection(e, t) {
-  if (!t.length) {
+export function enregistrerCollection(meta, objets) {
+  if (!objets.length) {
     return;
   }
-  let n = (e.collection ??= {});
-  let r = false;
-  for (let e of t) {
-    let t = e.rarete;
-    if (!t) {
+  let collection = (meta.collection ??= {});
+  let modifie = false;
+  for (let objet of objets) {
+    let rarete = objet.rarete;
+    if (!rarete) {
       continue;
     }
-    let i = n[e.id];
-    if (!i || RARETES_ORDRE.indexOf(t) > RARETES_ORDRE.indexOf(i)) {
-      n[e.id] = t;
-      r = true;
+    let connue = collection[objet.id];
+    if (!connue || RARETES_ORDRE.indexOf(rarete) > RARETES_ORDRE.indexOf(connue)) {
+      collection[objet.id] = rarete;
+      modifie = true;
     }
   }
-  if (r) {
-    sauverMeta(e);
+  if (modifie) {
+    sauverMeta(meta);
   }
 }
-export function capturerArchi(e, t) {
-  if (e.archis.includes(t)) {
+export function capturerArchi(meta, monstreId) {
+  if (meta.archis.includes(monstreId)) {
     return false;
   }
-  return (e.archis.push(t), sauverMeta(e), true);
+  return (meta.archis.push(monstreId), sauverMeta(meta), true);
 }
-export function bonusDofus(e) {
-  let t = {
+export function bonusDofus(meta) {
+  let bonus = {
     damageMult: 1,
     paBonus: 0,
     pvBonus: 0,
@@ -395,101 +413,104 @@ export function bonusDofus(e) {
     esquiveBonus: 0,
     soinPlat: 0,
   };
-  for (let n of dofusPossedes(e)) {
-    let r = DOFUS[n];
-    r &&
-      (r.degatsPct && (t.damageMult *= 1 + r.degatsPct),
-      r.paBonus && (t.paBonus += r.paBonus),
-      r.pvBonus && (t.pvBonus += r.pvBonus),
-      r.resAll && (t.resAllBonus += r.resAll),
-      r.statsElementaires && (t.statsElementaires += r.statsElementaires),
-      r.critPlat && (t.critPlat += r.critPlat),
-      r.perceResistances && (t.perceResistances += r.perceResistances),
-      r.prospectionJet && (t.prospection += meilleurJetDofus(e, n) ?? 0),
-      n === `dofus_du_cauchemar` && (t.ouvreToujours = true));
-    if (r) {
-      t.pvPct += r.pvPct ?? 0;
-      t.multKamas *= r.multKamas ?? 1;
-      t.prospection += r.prospectionPlat ?? 0;
-      t.bouclierDebutPct += r.bouclierDebutPct ?? 0;
-      t.initiativeBonus += r.initiativeBonus ?? 0;
-      t.esquiveBonus += r.esquiveBonus ?? 0;
-      t.soinPlat += r.soinPlat ?? 0;
+  for (let dofusId of dofusPossedes(meta)) {
+    let def = DOFUS[dofusId];
+    def &&
+      (def.degatsPct && (bonus.damageMult *= 1 + def.degatsPct),
+      def.paBonus && (bonus.paBonus += def.paBonus),
+      def.pvBonus && (bonus.pvBonus += def.pvBonus),
+      def.resAll && (bonus.resAllBonus += def.resAll),
+      def.statsElementaires && (bonus.statsElementaires += def.statsElementaires),
+      def.critPlat && (bonus.critPlat += def.critPlat),
+      def.perceResistances && (bonus.perceResistances += def.perceResistances),
+      def.prospectionJet && (bonus.prospection += meilleurJetDofus(meta, dofusId) ?? 0),
+      dofusId === `dofus_du_cauchemar` && (bonus.ouvreToujours = true));
+    if (def) {
+      bonus.pvPct += def.pvPct ?? 0;
+      bonus.multKamas *= def.multKamas ?? 1;
+      bonus.prospection += def.prospectionPlat ?? 0;
+      bonus.bouclierDebutPct += def.bouclierDebutPct ?? 0;
+      bonus.initiativeBonus += def.initiativeBonus ?? 0;
+      bonus.esquiveBonus += def.esquiveBonus ?? 0;
+      bonus.soinPlat += def.soinPlat ?? 0;
     }
   }
   // relique équipée : seulement si on la possède
   const relique =
-    e.reliqueEquipee && e.reliques?.includes(e.reliqueEquipee)
-      ? bonusRelique(e.reliqueEquipee)
+    meta.reliqueEquipee && meta.reliques?.includes(meta.reliqueEquipee)
+      ? bonusRelique(meta.reliqueEquipee)
       : undefined;
   if (relique) {
-    relique.degatsPct && (t.damageMult *= 1 + relique.degatsPct);
-    t.resAllBonus += relique.resAll ?? 0;
-    t.statsElementaires += relique.statsElementaires ?? 0;
-    t.critPlat += relique.critPlat ?? 0;
-    t.prospection += relique.prospectionPlat ?? 0;
-    t.pvPct += relique.pvPct ?? 0;
+    relique.degatsPct && (bonus.damageMult *= 1 + relique.degatsPct);
+    bonus.resAllBonus += relique.resAll ?? 0;
+    bonus.statsElementaires += relique.statsElementaires ?? 0;
+    bonus.critPlat += relique.critPlat ?? 0;
+    bonus.prospection += relique.prospectionPlat ?? 0;
+    bonus.pvPct += relique.pvPct ?? 0;
   }
-  return t;
+  return bonus;
 }
-export function appliquerBonusDofus(e, t) {
-  for (let n of e) {
-    if (t.paBonus) {
-      n.paMax += t.paBonus;
-      n.paActuels = n.paMax;
+export function appliquerBonusDofus(combattants, bonus) {
+  for (let combattant of combattants) {
+    if (bonus.paBonus) {
+      combattant.paMax += bonus.paBonus;
+      combattant.paActuels = combattant.paMax;
     }
-    if (t.pvBonus) {
-      n.pvBase += t.pvBonus;
-      n.pvMax += t.pvBonus;
-      if (n.pvActuels > 0) {
-        n.pvActuels += t.pvBonus;
+    if (bonus.pvBonus) {
+      combattant.pvBase += bonus.pvBonus;
+      combattant.pvMax += bonus.pvBonus;
+      if (combattant.pvActuels > 0) {
+        combattant.pvActuels += bonus.pvBonus;
       }
     }
-    if (t.resAllBonus) {
-      ajouterResistanceTous(n, t.resAllBonus);
+    if (bonus.resAllBonus) {
+      ajouterResistanceTous(combattant, bonus.resAllBonus);
     }
-    if (t.statsElementaires) {
-      n.stats = {
-        ...n.stats,
-        force: n.stats.force + t.statsElementaires,
-        intelligence: n.stats.intelligence + t.statsElementaires,
-        agilite: n.stats.agilite + t.statsElementaires,
-        chance: (n.stats.chance ?? 0) + t.statsElementaires,
+    if (bonus.statsElementaires) {
+      combattant.stats = {
+        ...combattant.stats,
+        force: combattant.stats.force + bonus.statsElementaires,
+        intelligence: combattant.stats.intelligence + bonus.statsElementaires,
+        agilite: combattant.stats.agilite + bonus.statsElementaires,
+        chance: (combattant.stats.chance ?? 0) + bonus.statsElementaires,
       };
     }
-    if (t.critPlat) {
-      n.stats = {
-        ...n.stats,
-        crit: (n.stats.crit ?? 0) + t.critPlat,
+    if (bonus.critPlat) {
+      combattant.stats = {
+        ...combattant.stats,
+        crit: (combattant.stats.crit ?? 0) + bonus.critPlat,
       };
     }
-    if (t.perceResistances) {
-      n.perceResistances = (n.perceResistances ?? 0) + t.perceResistances;
+    if (bonus.perceResistances) {
+      combattant.perceResistances = (combattant.perceResistances ?? 0) + bonus.perceResistances;
     }
-    if (t.pvPct) {
-      const gain = Math.round(n.pvMax * t.pvPct);
-      n.pvBase += gain;
-      n.pvMax += gain;
-      if (n.pvActuels > 0) {
-        n.pvActuels += gain;
+    if (bonus.pvPct) {
+      const gain = Math.round(combattant.pvMax * bonus.pvPct);
+      combattant.pvBase += gain;
+      combattant.pvMax += gain;
+      if (combattant.pvActuels > 0) {
+        combattant.pvActuels += gain;
       }
     }
-    if (t.bouclierDebutPct && n.pvActuels > 0) {
-      const b = Math.round(n.pvMax * t.bouclierDebutPct);
-      n.bouclier += b;
-      (n.boucliersTemporaires ??= []).push({ montant: b, tours: 2 });
+    if (bonus.bouclierDebutPct && combattant.pvActuels > 0) {
+      const montant = Math.round(combattant.pvMax * bonus.bouclierDebutPct);
+      combattant.bouclier += montant;
+      (combattant.boucliersTemporaires ??= []).push({ montant, tours: 2 });
     }
-    if (t.initiativeBonus) {
-      n.initiative += t.initiativeBonus;
+    if (bonus.initiativeBonus) {
+      combattant.initiative += bonus.initiativeBonus;
     }
-    if (t.esquiveBonus) {
-      n.esquiveBonus = (n.esquiveBonus ?? 0) + t.esquiveBonus;
+    if (bonus.esquiveBonus) {
+      combattant.esquiveBonus = (combattant.esquiveBonus ?? 0) + bonus.esquiveBonus;
     }
-    if (t.soinPlat) {
-      n.stats = { ...n.stats, soin: (n.stats.soin ?? 0) + t.soinPlat };
+    if (bonus.soinPlat) {
+      combattant.stats = {
+        ...combattant.stats,
+        soin: (combattant.stats.soin ?? 0) + bonus.soinPlat,
+      };
     }
-    if (t.ouvreToujours) {
-      n.ouvreToujours = true;
+    if (bonus.ouvreToujours) {
+      combattant.ouvreToujours = true;
     }
   }
 }
