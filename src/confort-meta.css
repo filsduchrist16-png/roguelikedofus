@@ -377,9 +377,12 @@ body.couleurs-adaptees .combat .carte:not(.carte-joueur) .pv-barre:not(.ko) {
     linear-gradient(90deg, var(--pv-col) var(--pv-pct), #3a2a1f55 var(--pv-pct));
 }
 
-/* Bandeaux : le survol met le décompte en pause (voir afficherBandeau) */
-.bandeau-quete {
-  pointer-events: auto;
+/* Bandeaux : le survol met le décompte en pause (voir afficherBandeau), à la souris seulement :
+   au toucher ils ne doivent jamais intercepter un appui (ils couvrent la barre de sorts). */
+@media (hover: hover) and (pointer: fine) {
+  .bandeau-quete {
+    pointer-events: auto;
+  }
 }
 
 /* ---------- Cibles et textes : planchers de lisibilité ---------- */
