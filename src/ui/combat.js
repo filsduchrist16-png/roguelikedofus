@@ -1053,6 +1053,7 @@ function rendreCombat() {
     return;
   }
   masquerElements();
+  // calculées une seule fois par rendu, puis passées à la frise et à la barre des sorts
   let e =
     combattantActif && sortChoisi ? ciblesValides(combattantActif, sortChoisi, combattants) : [];
   let t = (t) => e.some((e) => e.ref === t.ref);
@@ -1107,10 +1108,10 @@ function rendreCombat() {
     }
   };
   r(`cb-defi`, htmlDefi());
-  r(`cb-timeline`, htmlTimeline());
+  r(`cb-timeline`, htmlTimeline(e));
   r(`cb-joueur`, n(`joueur`));
   r(`cb-ennemi`, n(`ennemi`));
-  r(`cb-barre`, htmlBarreSorts());
+  r(`cb-barre`, htmlBarreSorts(e));
   racine.querySelector(`.combat`)?.classList.toggle(`ciblage`, !!(combattantActif && sortChoisi));
   document.getElementById(`journal`)?.classList.toggle(`deplie`, journalDeplie);
   rafraichirJournal();
@@ -1208,7 +1209,7 @@ function initiativeEffective(e) {
     e.effets.filter((e) => e.stat === `initiative`).reduce((acc, item) => acc + item.valeur, 0)
   );
 }
-function htmlTimeline() {
+function htmlTimeline(ciblesRendu) {
   let e = new Map(combattants.map((e) => [e.ref, e]));
   let t = ordreDeJeu(combattants)
     .map((t) => e.get(t))
@@ -1216,8 +1217,7 @@ function htmlTimeline() {
   if (t.length < 2) {
     return ``;
   }
-  let n =
-    combattantActif && sortChoisi ? ciblesValides(combattantActif, sortChoisi, combattants) : [];
+  let n = ciblesRendu;
   const actif = refActive();
   return `<div class="timeline"><span class="tl-ronde" title="Ronde en cours : chacun joue une fois par ronde">Ronde ${numeroRonde}</span><div class="tl-liste">${t
     .map((e) => {
@@ -1333,7 +1333,7 @@ function installerEcouteursBarre() {
     }
   });
 }
-function htmlBarreSorts() {
+function htmlBarreSorts(ciblesRendu) {
   if (!combattantActif) {
     // tour d'un monstre ou d'une créature : on montre qui joue, à la place des sorts
     const joueur = combattants.find((x) => x.ref === refTourEnCours && x.pvActuels > 0);
@@ -1373,9 +1373,7 @@ function htmlBarreSorts() {
       .join(``);
   let r;
   if (sortChoisi) {
-    const cibles = sansCibleAChoisir(sortChoisi)
-      ? []
-      : ciblesValides(e, sortChoisi, combattants).filter((c) => c.pvActuels > 0);
+    const cibles = sansCibleAChoisir(sortChoisi) ? [] : ciblesRendu.filter((c) => c.pvActuels > 0);
     const clavier = ecranTactile()
       ? ``
       : `<span class="aide-clavier"><kbd>←</kbd>/<kbd>→</kbd> cible · <kbd>Entrée</kbd> lancer</span>`;

@@ -8,6 +8,7 @@
 - **D4** : code mort retiré (`IMG_TERMINER`, `resumeBonus`, `htmlComparaisonObjet`, `ecranZaap`, 10 classes CSS inutilisées, images `carte_au_tresor.png` et `Terminer.png`).
 - **D6** : tests ajoutés (sauvegarde de la run, migrations de la méta, réglages de formation et d'ordre, donjon atteignable sur 200 graines par zone) ; `confort-meta` ne dépend plus d'un `localStorage` laissé par un autre test, `nuage` remet les vrais minuteurs dans un `afterEach`.
 - **D8** : ESLint ajouté (`eslint.config.js`, règles `no-shadow`, `no-unused-vars`, `no-sequences`, `eqeqeq` en avertissements : les ~640 `no-shadow` viennent du code minifié et relèvent de D5), scripts `lint` et `check`, `format` étendu à `tests/` et `outils/`, README mis à jour ; imports inutilisés et `==` sûrs corrigés.
+- **D10** (partiel) : `ciblesValides` n'est calculé qu'une fois par rendu du combat (au lieu de trois) ; les données JSON sont isolées dans un fichier séparé à la construction (`vite.config.js`), mis en cache à part. Images (29 Mo de PNG), `loading="lazy"`, chargement des données par monde et `planEquiper` différé : non faits (voir le rapport).
 
 ## Lot A terminé (A4 à A9)
 
