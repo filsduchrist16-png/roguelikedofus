@@ -2,6 +2,8 @@ import { MONDES } from "../../data/index.js";
 import { DIFFICULTES, DIFFICULTE_MAX, reliquesDuMonde } from "../../jeu/config.js";
 import { progressionArchisMonde } from "../../jeu/quetes.js";
 import { IDOLES_DEPART } from "../../jeu/idolesDepart.js";
+import { BENEDICTIONS } from "../../jeu/rencontres.js";
+import { benedictionDuJour, cleRecordJour, dateDuJour } from "../../jeu/runDuJour.js";
 import {
   ascensionMonde,
   mondeJouable,
@@ -91,6 +93,16 @@ export function ecranAccueil(e, onReset, n = null) {
         ? `<button id="btn-reprendre" class="btn-jouer btn-reprendre" aria-label="${echapperHtml(recap)}"><img src="${IMG_JOUER}" alt="Reprendre" onerror="this.remove()" /></button>
            <button id="btn-abandon" class="btn-jouer btn-abandon" title="Abandonner la run"><img src="${IMG_ABANDONNER}" alt="Abandonner la run" onerror="this.replaceWith(this.alt)" /></button>`
         : `<button id="btn-start" class="btn-jouer" aria-label="${echapperHtml(`Jouer : ${recap}`)}"><img src="${IMG_JOUER}" alt="Jouer" onerror="this.remove()" /></button>`;
+      // run du jour : mêmes cartes pour tous aujourd'hui, une bénédiction imposée, record du jour
+      const jourDate = dateDuJour();
+      const benediction = BENEDICTIONS[benedictionDuJour(jourDate)];
+      const recordJour = recordMonde(e, cleRecordJour(jourDate, trancheId));
+      const htmlJour = n
+        ? ``
+        : `<div class="run-du-jour">
+          <button id="btn-jour" class="secondaire btn-run-jour" aria-label="${echapperHtml(`Run du jour, Monde ${numeroMonde(trancheId)}`)}">📅 Run du jour</button>
+          <p class="run-du-jour-info">Mêmes cartes pour tous aujourd'hui · ${echapperHtml(benediction.nom)} imposée (${echapperHtml(benediction.desc)})${recordJour ? ` · Record du jour : ${recordJour.score} points` : ``}</p>
+        </div>`;
       c += `<p class="jouer-recap${diff.effets.mortDefinitive && !n ? ` mort-definitive` : ``}">${echapperHtml(recap)}</p>`;
       let l = (t) => {
         let r = palierDebloque(e, t);
@@ -222,6 +234,7 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
         <div class="boutons-ecran">
           ${c}
         </div>
+        ${htmlJour}
         <div class="accueil-mentions">
           <p class="mention-ankama">Fangame non officiel. Les illustrations DOFUS appartiennent à Ankama. <button id="btn-disclaimer" class="btn-lien">Mentions légales</button> · Fait avec passion par Cora, Daaye et T. · <span class="version-jeu">Version ${VERSION}</span></p>
           <p class="bandeau-credits">🎨 Crédits : illustrations, icônes de sorts et symboles de classe © <b>Ankama Games</b> — DOFUS (<a href="https://www.dofus.com" target="_blank" rel="noopener noreferrer">dofus.com</a>), icônes récupérées via <a href="https://dofusdb.fr" target="_blank" rel="noopener noreferrer">DofusDB</a>.</p>
@@ -421,6 +434,18 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
           trancheId,
           idoles: [...idoles],
         });
+      });
+      document.getElementById(`btn-jour`)?.addEventListener(`click`, async () => {
+        if (
+          DIFFICULTES[ascension]?.effets.mortDefinitive &&
+          !(await demanderConfirmation(
+            `Mort définitive : un héros tombé est perdu pour la run. Lancer ?`,
+            `Lancer`,
+          ))
+        ) {
+          return;
+        }
+        resolve({ action: `nouvelle`, ascension, trancheId, idoles: [], jour: true });
       });
       document.getElementById(`btn-reprendre`)?.addEventListener(`click`, () =>
         resolve({

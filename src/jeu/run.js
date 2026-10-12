@@ -108,7 +108,13 @@ function insererSelonOrdre(persos, t, ordre) {
     persos.splice(i, 0, t);
   }
 }
-export function nouvelleRun(e = EQUIPE_DEFAUT, ascension = 0, trancheId = `t1`, idolesDepart = []) {
+export function nouvelleRun(
+  e = EQUIPE_DEFAUT,
+  ascension = 0,
+  trancheId = `t1`,
+  idolesDepart = [],
+  jour = null,
+) {
   let r = positionsInitiales(e);
   let i = getMonde(trancheId).niveaux[0];
   return {
@@ -129,6 +135,8 @@ export function nouvelleRun(e = EQUIPE_DEFAUT, ascension = 0, trancheId = `t1`, 
     philtres: 0,
     trancheId,
     idolesDepart: idolesDepartValides(idolesDepart),
+    // run du jour : date de la graine et bénédiction imposée (absents = run normale)
+    ...(jour ? { jour: jour.date, benedictions: [jour.benediction] } : {}),
   };
 }
 // Héros encore debout (les tombés de la mort définitive ne comptent pas pour l'équipe « pleine »).

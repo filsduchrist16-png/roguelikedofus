@@ -119,6 +119,7 @@ import {
 import { objectifsDuCombat } from "./jeu/objectifs.js";
 import { BONUS_DEFI, defiReussi, etatDefi, tirerDefi } from "./jeu/defis.js";
 import { scoreRun } from "./jeu/idolesDepart.js";
+import { benedictionDuJour, cleRecordJour, dateDuJour, rngCarteDuJour } from "./jeu/runDuJour.js";
 import {
   BENEDICTIONS,
   IDOLES,
@@ -1131,7 +1132,13 @@ async function jouerZone(e, t, n) {
   enregistrerToileMax(meta, e.trancheId, n + 1);
   sauverMeta(meta);
   if (!e.carte) {
-    e.carte = genererCarte(Math.random, t.pools, noeudsExclus(e, t), { premiereZone: n === 0 });
+    // run du jour : la carte de la zone vient de la graine du jour
+    e.carte = genererCarte(
+      e.jour ? rngCarteDuJour(e.jour, e.trancheId, n) : Math.random,
+      t.pools,
+      noeudsExclus(e, t),
+      { premiereZone: n === 0 },
+    );
     sauverRun(n, e);
   }
   while (true) {
@@ -1185,11 +1192,17 @@ function noterRecord(run, trancheId, zones, victoire) {
     ascension: run.ascension,
     idoles: run.idolesDepart,
   });
-  if (enregistrerRecord(meta, trancheId, score, run.idolesDepart, run.ascension)) {
-    afficherBandeau(`🏆 Nouveau record du monde : ${score} points`);
+  // run du jour : son propre record (par jour et par monde), à part du record du monde
+  const cle = run.jour ? cleRecordJour(run.jour, trancheId) : trancheId;
+  if (enregistrerRecord(meta, cle, score, run.idolesDepart, run.ascension)) {
+    afficherBandeau(
+      run.jour
+        ? `🏆 Nouveau record de la run du jour : ${score} points`
+        : `🏆 Nouveau record du monde : ${score} points`,
+    );
   }
 }
-async function jouerRun(e, t, n = 0, r = `t1`, idoles = []) {
+async function jouerRun(e, t, n = 0, r = `t1`, idoles = [], jour = false) {
   let i = getMonde(e ? e.run.trancheId : r);
   let a = zonesDuMonde(i);
   if (!a.length) {
@@ -1209,7 +1222,15 @@ async function jouerRun(e, t, n = 0, r = `t1`, idoles = []) {
     if (!e) {
       return null;
     }
-    o = nouvelleRun(e, n, i.id, idoles);
+    // run du jour : graine et bénédiction du jour, sans idole de départ (scores comparables)
+    let date = jour ? dateDuJour() : null;
+    o = nouvelleRun(
+      e,
+      n,
+      i.id,
+      jour ? [] : idoles,
+      date ? { date, benediction: benedictionDuJour(date) } : null,
+    );
     // dernier départ retenu : l'accueil et le choix d'équipe le proposent par défaut
     parametres.dernierDepart = { trancheId: i.id, ascension: n, classes: [...e] };
     sauverParametres(parametres);
@@ -1309,7 +1330,7 @@ async function boucleJeu() {
     try {
       let e = chargerRun();
       let t = zonesDuMonde(getMonde(e?.run.trancheId ?? `t1`));
-      let { action, ascension, trancheId, idoles } = await ecranAccueil(
+      let { action, ascension, trancheId, idoles, jour } = await ecranAccueil(
         meta,
         () => reinitialiserDofus(meta),
         e
@@ -1333,6 +1354,7 @@ async function boucleJeu() {
         ascension,
         trancheId,
         idoles,
+        !!jour,
       );
       while (a?.relancer) {
         a = await jouerRun(
