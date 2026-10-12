@@ -1,9 +1,9 @@
 import { MONDES } from "../../data/index.js";
 import { DIFFICULTES, DIFFICULTE_MAX, reliquesDuMonde } from "../../jeu/config.js";
 import { progressionArchisMonde } from "../../jeu/quetes.js";
-import { IDOLES_DEPART } from "../../jeu/idolesDepart.js";
 import { BENEDICTIONS } from "../../jeu/rencontres.js";
 import { benedictionDuJour, cleRecordJour, dateDuJour } from "../../jeu/runDuJour.js";
+import { IDOLES_DEPART, idolesDepartValides } from "../../jeu/idolesDepart.js";
 import {
   ascensionMonde,
   mondeJouable,
@@ -11,6 +11,7 @@ import {
   recordMonde,
   statsMonde,
 } from "../../sauvegarde/meta.js";
+import { sauverParametres } from "../../sauvegarde/parametres.js";
 import {
   comportementDefilement,
   IMG_ABANDONNER,
@@ -79,7 +80,7 @@ export function ecranAccueil(e, onReset, n = null) {
       ? 0
       : Math.max(0, Math.min(Math.trunc(depart?.ascension) || 0, palierDebloque(e, trancheId)));
     // idoles de départ cochées (cumulables) et section dépliée ou non
-    const idoles = new Set();
+    const idoles = new Set(idolesDepartValides(parametres.idolesChoisies));
     let idolesOuvert = false;
     // élément à refocaliser après un nouveau rendu (navigation au clavier)
     let focusApres = null;
@@ -136,17 +137,14 @@ export function ecranAccueil(e, onReset, n = null) {
               ? `<p class="asc-record">Record du monde : ${record.score} points${record.idoles.length ? ` (${record.idoles.map((id) => echapperHtml(IDOLES_DEPART[id].nom)).join(`, `)})` : ``}</p>`
               : ``
           }
-          <details class="idoles-depart" style="margin: 6px 12px"${idolesOuvert ? ` open` : ``}>
+          <details class="idoles-depart"${idolesOuvert ? ` open` : ``}>
             <summary>🗿 Idoles de départ${idoles.size ? ` (${idoles.size})` : ``}</summary>
             <p>Des malus pour toute la run contre des bonus : cumulables, le score du monde augmente.</p>
             ${Object.entries(IDOLES_DEPART)
               .map(
-                ([
-                  id,
-                  idole,
-                ]) => `<label class="idole-depart" style="display: block; margin: 6px 0; text-align: left">
+                ([id, idole]) => `<label class="idole-depart">
               <input type="checkbox" data-idole="${id}"${idoles.has(id) ? ` checked` : ``} />
-              <b>${echapperHtml(idole.nom)}</b> : ${echapperHtml(idole.malus)} · ${echapperHtml(idole.bonus)}
+              <span><b>${echapperHtml(idole.nom)}</b> : ${echapperHtml(idole.malus)} · ${echapperHtml(idole.bonus)}</span>
             </label>`,
               )
               .join(``)}
@@ -393,6 +391,9 @@ Difficulté : ${DIFFICULTES[n.ascension]?.nom ?? `Normal`}`
           } else {
             idoles.delete(c.dataset.idole);
           }
+          // le choix est mémorisé pour la prochaine run
+          parametres.idolesChoisies = [...idoles];
+          sauverParametres(parametres);
           focusApres = `input[data-idole="${c.dataset.idole}"]`;
           o();
         });

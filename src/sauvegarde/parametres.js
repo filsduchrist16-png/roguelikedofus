@@ -1,4 +1,5 @@
 import { signalerEchecSauvegarde } from "./echec.js";
+import { idolesDepartValides } from "../jeu/idolesDepart.js";
 const CLE_PARAMETRES = `rld_settings_v0`;
 const ORDRE_DEFAUT = {
   iop: 1,
@@ -33,6 +34,9 @@ export const normaliserCouleursAdaptees = (v) => v === true;
 export const normaliserReduireAnimations = (v) => v === true;
 // Sons synthétisés : seul `true` les active (par défaut et pour toute valeur étrangère : coupés).
 export const normaliserSons = (v) => v === true;
+// Idoles de départ cochées à l'accueil, mémorisées d'une run à l'autre : liste d'identifiants connus
+// sans doublon (valeur absente, abîmée ou idole inconnue : ignorée, donc aucune par défaut).
+export const normaliserIdolesChoisies = (v) => idolesDepartValides(v);
 // Astuces de première partie : une par moment clé. `vuTuto` vaut null tant que le jeu n'a pas
 // décidé (anciens réglages), puis un objet { cle: true } des astuces déjà affichées.
 export const CLES_TUTO = [`carte`, `combat`, `butin`, `taverne`];
@@ -78,8 +82,9 @@ const PARAMETRES_DEFAUT = {
   couleursAdaptees: false,
   // animations réduites (effets de combat, défilements instantanés)
   reduireAnimations: false,
-  // sons synthétisés (coupés par défaut)
+  // sons synthétisés (coupés par défaut) et idoles de départ mémorisées
   sons: false,
+  idolesChoisies: [],
   // astuces de première partie déjà vues (null : pas encore décidé, voir main.js)
   vuTuto: null,
   formation: {
@@ -135,6 +140,7 @@ export function chargerParametres() {
       t.couleursAdaptees = normaliserCouleursAdaptees(t.couleursAdaptees);
       t.reduireAnimations = normaliserReduireAnimations(t.reduireAnimations);
       t.sons = normaliserSons(t.sons);
+      t.idolesChoisies = normaliserIdolesChoisies(t.idolesChoisies);
       t.vuTuto = normaliserVuTuto(t.vuTuto);
       let n = t.ordre && typeof t.ordre === `object` && !Array.isArray(t.ordre) ? t.ordre : {};
       t.ordre = {
@@ -150,6 +156,7 @@ export function chargerParametres() {
   } catch {}
   return {
     ...PARAMETRES_DEFAUT,
+    idolesChoisies: [],
     formation: {
       ...PARAMETRES_DEFAUT.formation,
     },

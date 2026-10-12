@@ -39,6 +39,37 @@ describe(`réglages : sons`, () => {
   });
 });
 
+describe(`réglage : idoles de départ mémorisées`, () => {
+  beforeEach(() => {
+    vi.resetModules();
+    globalThis.localStorage = stockage();
+  });
+  const charger = async (reglages) => {
+    if (reglages !== undefined) {
+      localStorage.setItem(`rld_settings_v0`, reglages);
+    }
+    return (await import(`../src/sauvegarde/parametres.js`)).chargerParametres();
+  };
+
+  it(`par défaut ou ancien réglage : aucune idole`, async () => {
+    expect((await charger()).idolesChoisies).toEqual([]);
+    expect((await charger(JSON.stringify({ autoFinTour: false }))).idolesChoisies).toEqual([]);
+  });
+
+  it(`garde les identifiants connus, sans doublon, et ignore les inconnus`, async () => {
+    const p = await charger(
+      JSON.stringify({ idolesChoisies: [`rage`, `inconnue`, `rage`, 3, `bastion`] }),
+    );
+    expect(p.idolesChoisies).toEqual([`rage`, `bastion`]);
+  });
+
+  it(`valeur abîmée : aucune idole`, async () => {
+    for (const v of [`rage`, 5, null, { rage: true }]) {
+      expect((await charger(JSON.stringify({ idolesChoisies: v }))).idolesChoisies).toEqual([]);
+    }
+  });
+});
+
 describe(`sons synthétisés`, () => {
   it(`chaque son a des notes valides, un nom inconnu n'en a aucune`, async () => {
     const { SONS, notesDuSon, VOLUME_SONS } = await import(`../src/son.js`);
