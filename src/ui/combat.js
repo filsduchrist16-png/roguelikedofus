@@ -1098,6 +1098,7 @@ function rendreCombat() {
         </div>
       </div>`),
     installerEcouteursPlateau(),
+    installerEcouteursBarre(),
     true);
   let r = (e, t) => {
     let n = document.getElementById(e);
@@ -1274,6 +1275,64 @@ const finTourConfirme = () =>
   !!finTourArme &&
   combattantActif?.ref === finTourArme.ref &&
   combattantActif.paActuels === finTourArme.pa;
+// Un seul écouteur délégué sur la barre des sorts : ses boutons sont redessinés à chaque rendu,
+// donc rien à rebrancher (et jamais d'écouteur en double si deux rendus se suivent).
+function installerEcouteursBarre() {
+  document.getElementById(`cb-barre`)?.addEventListener(`click`, (ev) => {
+    const bouton = ev.target.closest?.(`button`);
+    if (!bouton) {
+      return;
+    }
+    if (bouton.matches(`button.sort[data-sort]`)) {
+      choisirSort(SORTS[bouton.dataset.sort]);
+    } else if (bouton.matches(`button.sort[data-arme]`)) {
+      if (combattantActif?.armeSort) {
+        choisirSort(combattantActif.armeSort);
+      }
+    } else if (bouton.id === `fin-tour`) {
+      // tactile : s'il reste des PA et un sort jouable, un 1er appui demande confirmation (3 s)
+      if (
+        ecranTactile() &&
+        !finTourConfirme() &&
+        combattantActif &&
+        peutEncoreJouer(combattantActif, combattants) &&
+        combattantActif.paActuels > 0
+      ) {
+        finTourArme = { ref: combattantActif.ref, pa: combattantActif.paActuels };
+        clearTimeout(minuteurFinTour);
+        minuteurFinTour = setTimeout(() => {
+          finTourArme = null;
+          if (racine && combatEnCours) {
+            rendreCombat();
+          }
+        }, 3000);
+        rendreCombat();
+        return;
+      }
+      clearTimeout(minuteurFinTour);
+      finTourArme = null;
+      terminerAction(null);
+    } else if (bouton.id === `vitesse-combat`) {
+      parametres.combatRapide = !parametres.combatRapide;
+      sauverParametres(parametres);
+      bouton.classList.toggle(`on`, parametres.combatRapide);
+      bouton.setAttribute(`aria-pressed`, String(parametres.combatRapide));
+    } else if (bouton.id === `sort-lancer`) {
+      if (sortChoisi) {
+        lancerSurSoi(sortChoisi);
+      }
+    } else if (bouton.id === `sort-info`) {
+      aideDepliee = !aideDepliee;
+      rendreCombat();
+    } else if (bouton.id === `sort-annuler`) {
+      sortChoisi = null;
+      infoSort = null;
+      rendreCombat();
+    } else if (bouton.id === `sort-lancer-cible`) {
+      lancerSurVisee();
+    }
+  });
+}
 function htmlBarreSorts() {
   if (!combattantActif) {
     // tour d'un monstre ou d'une créature : on montre qui joue, à la place des sorts
@@ -1312,63 +1371,6 @@ function htmlBarreSorts() {
         ),
       )
       .join(``);
-  queueMicrotask(() => {
-    racine.querySelectorAll(`button.sort[data-sort]`).forEach((e) => {
-      e.addEventListener(`click`, () => choisirSort(SORTS[e.dataset.sort]));
-    });
-    racine.querySelector(`button.sort[data-arme]`)?.addEventListener(`click`, () => {
-      if (combattantActif?.armeSort) {
-        choisirSort(combattantActif.armeSort);
-      }
-    });
-    document.getElementById(`fin-tour`)?.addEventListener(`click`, () => {
-      // tactile : s'il reste des PA et un sort jouable, un 1er appui demande confirmation (3 s)
-      if (
-        ecranTactile() &&
-        !finTourConfirme() &&
-        combattantActif &&
-        peutEncoreJouer(combattantActif, combattants) &&
-        combattantActif.paActuels > 0
-      ) {
-        finTourArme = { ref: combattantActif.ref, pa: combattantActif.paActuels };
-        clearTimeout(minuteurFinTour);
-        minuteurFinTour = setTimeout(() => {
-          finTourArme = null;
-          if (racine && combatEnCours) {
-            rendreCombat();
-          }
-        }, 3000);
-        rendreCombat();
-        return;
-      }
-      clearTimeout(minuteurFinTour);
-      finTourArme = null;
-      terminerAction(null);
-    });
-    document.getElementById(`vitesse-combat`)?.addEventListener(`click`, (ev) => {
-      parametres.combatRapide = !parametres.combatRapide;
-      sauverParametres(parametres);
-      ev.currentTarget.classList.toggle(`on`, parametres.combatRapide);
-      ev.currentTarget.setAttribute(`aria-pressed`, String(parametres.combatRapide));
-    });
-    document.getElementById(`sort-lancer`)?.addEventListener(`click`, () => {
-      if (sortChoisi) {
-        lancerSurSoi(sortChoisi);
-      }
-    });
-    document.getElementById(`sort-info`)?.addEventListener(`click`, () => {
-      aideDepliee = !aideDepliee;
-      rendreCombat();
-    });
-    document.getElementById(`sort-annuler`)?.addEventListener(`click`, () => {
-      sortChoisi = null;
-      infoSort = null;
-      rendreCombat();
-    });
-    document.getElementById(`sort-lancer-cible`)?.addEventListener(`click`, () => {
-      lancerSurVisee();
-    });
-  });
   let r;
   if (sortChoisi) {
     const cibles = sansCibleAChoisir(sortChoisi)

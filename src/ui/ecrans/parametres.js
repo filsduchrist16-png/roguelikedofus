@@ -368,7 +368,15 @@ export function ecranParametres(e) {
       const brancherPause = (info) => {
         const ici = resumeIci();
         const enLigne = resumeEnLigne(info);
-        document.getElementById(`set-pause-recuperer`)?.addEventListener(`click`, async (ev) => {
+        // un même bouton n'est branché qu'une fois, même si l'état en ligne est redessiné
+        const brancher = (id, action) => {
+          const bouton = document.getElementById(id);
+          if (bouton && !bouton.dataset.branche) {
+            bouton.dataset.branche = `1`;
+            bouton.addEventListener(`click`, action);
+          }
+        };
+        brancher(`set-pause-recuperer`, async (ev) => {
           const b = ev.currentTarget;
           if (
             !(await demanderConfirmation(
@@ -393,7 +401,7 @@ export function ecranParametres(e) {
             );
           }
         });
-        document.getElementById(`set-pause-garder`)?.addEventListener(`click`, async (ev) => {
+        brancher(`set-pause-garder`, async (ev) => {
           const b = ev.currentTarget;
           if (
             !(await demanderConfirmation(
