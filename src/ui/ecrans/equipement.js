@@ -673,7 +673,7 @@ export function ecranEquipement(persos, inventaire) {
           if (donnees.startsWith(`inv:`)) {
             // déposé sur un emplacement précis (utile pour choisir l'anneau à remplacer)
             const idx = Number(donnees.slice(4));
-            equiperIndex(idx, emplacementPossible(heros, evenement[idx], slot) ? slot : undefined);
+            equiperIndex(idx, emplacementPossible(heros, inventaire[idx], slot) ? slot : undefined);
           }
         });
       });
