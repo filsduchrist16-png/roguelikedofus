@@ -9,180 +9,194 @@ import {
   pastillesElementsPerso,
   racine,
 } from "../commun.js";
-export function ecranFormation(e) {
+export function ecranFormation(persos) {
   return new Promise((resolve) => {
-    let n = -1;
-    let r = -1;
+    let celluleChoisie = -1;
+    let jetonChoisi = -1;
     // vrai dès qu'un déplacement a eu lieu : sinon, rien à sauver en quittant
     let modifie = false;
-    let i = (t) => e.find((e) => e.position === t);
+    let persoEn = (position) => persos.find((perso) => perso.position === position);
     // On fusionne : les préréglages des classes absentes de l'équipe sont conservés.
-    let a = () => {
+    let sauverFormation = () => {
       parametres.formation = {
         ...parametres.formation,
-        ...Object.fromEntries(e.map((p) => [p.classeId, p.position < 4 ? `avant` : `arriere`])),
+        ...Object.fromEntries(
+          persos.map((perso) => [perso.classeId, perso.position < 4 ? `avant` : `arriere`]),
+        ),
       };
       sauverParametres(parametres);
     };
-    let o = (e) => {
-      let t = i(e);
-      let r = n === e ? `sel` : ``;
-      let a = t
-        ? `<img src="${imgSymboleClasse(t.classeId)}" alt="" onerror="this.remove()" /><span>${echapperHtml(CLASSES[t.classeId].nom)}</span>${pastillesElementsPerso(t)}`
+    let htmlCase = (position) => {
+      let perso = persoEn(position);
+      let classeSel = celluleChoisie === position ? `sel` : ``;
+      let contenu = perso
+        ? `<img src="${imgSymboleClasse(perso.classeId)}" alt="" onerror="this.remove()" /><span>${echapperHtml(CLASSES[perso.classeId].nom)}</span>${pastillesElementsPerso(perso)}`
         : `<span class="form-vide">+</span>`;
-      return `<button class="form-cell ${t ? `` : `vide`} ${r}" data-cell="${e}" aria-pressed="${n === e}"${t ? ` draggable="true"` : ` aria-label="Case libre"`}>${a}</button>`;
+      return `<button class="form-cell ${perso ? `` : `vide`} ${classeSel}" data-cell="${position}" aria-pressed="${celluleChoisie === position}"${perso ? ` draggable="true"` : ` aria-label="Case libre"`}>${contenu}</button>`;
     };
-    let s = (e) => e.map(o).join(``);
-    let c = (e, t) =>
-      !!e && t >= 4 && Object.values(e.equipement).some((e) => e && EQUIPEMENTS[e.id]?.ligneAvant);
-    let l = (e, t) => {
-      if (e === t) {
+    let htmlCases = (positions) => positions.map(htmlCase).join(``);
+    let reculeInterdit = (perso, position) =>
+      !!perso &&
+      position >= 4 &&
+      Object.values(perso.equipement).some((objet) => objet && EQUIPEMENTS[objet.id]?.ligneAvant);
+    let echanger = (positionA, positionB) => {
+      if (positionA === positionB) {
         return;
       }
-      let r = i(e);
-      let o = i(t);
-      if (c(r, t) || c(o, e)) {
-        let e = document.getElementById(`form-msg`);
-        if (e) {
-          e.textContent = `⛔ La Cape Edepee exige la ligne avant : dépose-la avant de reculer.`;
-          e.style.display = ``;
+      let persoA = persoEn(positionA);
+      let persoB = persoEn(positionB);
+      if (reculeInterdit(persoA, positionB) || reculeInterdit(persoB, positionA)) {
+        let message = document.getElementById(`form-msg`);
+        if (message) {
+          message.textContent = `⛔ La Cape Edepee exige la ligne avant : dépose-la avant de reculer.`;
+          message.style.display = ``;
         }
         return;
       }
-      if (r) {
-        r.position = t;
+      if (persoA) {
+        persoA.position = positionB;
       }
-      if (o) {
-        o.position = e;
+      if (persoB) {
+        persoB.position = positionA;
       }
-      n = -1;
+      celluleChoisie = -1;
       modifie = true;
-      a();
-      f();
+      sauverFormation();
+      afficher();
     };
-    let d = (t, n) => {
-      if (t === n || t < 0 || n < 0 || t >= e.length || n >= e.length) {
+    let deplacerJeton = (depart, arrivee) => {
+      if (
+        depart === arrivee ||
+        depart < 0 ||
+        arrivee < 0 ||
+        depart >= persos.length ||
+        arrivee >= persos.length
+      ) {
         return;
       }
-      let [i] = e.splice(t, 1);
-      e.splice(n, 0, i);
-      r = -1;
+      let [perso] = persos.splice(depart, 1);
+      persos.splice(arrivee, 0, perso);
+      jetonChoisi = -1;
       modifie = true;
-      a();
-      f();
+      sauverFormation();
+      afficher();
     };
-    let f = () => {
+    let afficher = () => {
       afficherEcran(`
         <h1>Formation</h1>
         <p class="sous-titre">Touche deux cases pour les échanger (ou glisse-dépose). <b>Ligne avant</b> : encaisse les sorts de ligne ennemis. <b>Ligne arrière</b> : protégée.</p>
         <p id="form-msg" class="muet settings-sous" style="display:none"></p>
         <div class="formation-grille">
-          <div class="form-rangee"><span class="form-ligne-lbl">Ligne avant</span><div class="form-cells">${s(
+          <div class="form-rangee"><span class="form-ligne-lbl">Ligne avant</span><div class="form-cells">${htmlCases(
             [0, 1, 2, 3],
           )}</div></div>
-          <div class="form-rangee arriere"><span class="form-ligne-lbl">Ligne arrière</span><div class="form-cells">${s(
+          <div class="form-rangee arriere"><span class="form-ligne-lbl">Ligne arrière</span><div class="form-cells">${htmlCases(
             [4, 5, 6, 7],
           )}</div></div>
         </div>
         <h2 class="settings-titre">Ordre de jeu</h2>
         <p class="muet settings-sous">Glisse-dépose, ou touche deux jetons (le premier prend la place du second), pour choisir qui joue en premier. Le camp qui ouvre le combat reste décidé par la moyenne d'initiative des deux équipes : ton ordre ne la change pas.</p>
         <div class="ordre-bande">
-          ${e
+          ${persos
             .map(
-              (e, t) => `
-            <button class="ordre-jeton ${r === t ? `sel` : ``}" data-ordre="${t}" aria-pressed="${r === t}" draggable="true" title="${echapperHtml(CLASSES[e.classeId].nom)}, position ${t + 1}">
-              <span class="ordre-rang">${t + 1}</span>
-              <img src="${imgSymboleClasse(e.classeId)}" alt="" onerror="this.remove()" />
-              <span class="ordre-nom">${echapperHtml(CLASSES[e.classeId].nom)}</span>
+              (perso, rang) => `
+            <button class="ordre-jeton ${jetonChoisi === rang ? `sel` : ``}" data-ordre="${rang}" aria-pressed="${jetonChoisi === rang}" draggable="true" title="${echapperHtml(CLASSES[perso.classeId].nom)}, position ${rang + 1}">
+              <span class="ordre-rang">${rang + 1}</span>
+              <img src="${imgSymboleClasse(perso.classeId)}" alt="" onerror="this.remove()" />
+              <span class="ordre-nom">${echapperHtml(CLASSES[perso.classeId].nom)}</span>
             </button>`,
             )
             .join(``)}
         </div>
         ${barreRetour(`form-retour`, `Retour au plateau`)}
       `);
-      racine.querySelectorAll(`.form-cell`).forEach((e) => {
-        let t = Number(e.dataset.cell);
-        e.addEventListener(`click`, () => {
-          n < 0 ? i(t) && ((n = t), f()) : n === t ? ((n = -1), f()) : l(n, t);
+      racine.querySelectorAll(`.form-cell`).forEach((cellule) => {
+        let position = Number(cellule.dataset.cell);
+        cellule.addEventListener(`click`, () => {
+          celluleChoisie < 0
+            ? persoEn(position) && ((celluleChoisie = position), afficher())
+            : celluleChoisie === position
+              ? ((celluleChoisie = -1), afficher())
+              : echanger(celluleChoisie, position);
         });
-        e.addEventListener(`dragstart`, (n) => {
-          if (!i(t)) {
-            n.preventDefault();
+        cellule.addEventListener(`dragstart`, (evenement) => {
+          if (!persoEn(position)) {
+            evenement.preventDefault();
             return;
           }
-          n.dataTransfer.setData(`text/plain`, `cell:${t}`);
-          n.dataTransfer.setData(`roguefus/cell`, String(t));
-          n.dataTransfer.effectAllowed = `move`;
-          e.classList.add(`drag-src`);
+          evenement.dataTransfer.setData(`text/plain`, `cell:${position}`);
+          evenement.dataTransfer.setData(`roguefus/cell`, String(position));
+          evenement.dataTransfer.effectAllowed = `move`;
+          cellule.classList.add(`drag-src`);
         });
-        e.addEventListener(`dragend`, () => e.classList.remove(`drag-src`));
-        e.addEventListener(`dragover`, (t) => {
-          if (t.dataTransfer?.types.includes(`roguefus/cell`)) {
-            t.preventDefault();
-            e.classList.add(`drop-cible`);
+        cellule.addEventListener(`dragend`, () => cellule.classList.remove(`drag-src`));
+        cellule.addEventListener(`dragover`, (evenement) => {
+          if (evenement.dataTransfer?.types.includes(`roguefus/cell`)) {
+            evenement.preventDefault();
+            cellule.classList.add(`drop-cible`);
           }
         });
-        e.addEventListener(`dragleave`, () => e.classList.remove(`drop-cible`));
-        e.addEventListener(`drop`, (n) => {
-          n.preventDefault();
-          e.classList.remove(`drop-cible`);
-          let r = n.dataTransfer.getData(`text/plain`);
-          if (!r.startsWith(`cell:`)) {
+        cellule.addEventListener(`dragleave`, () => cellule.classList.remove(`drop-cible`));
+        cellule.addEventListener(`drop`, (evenement) => {
+          evenement.preventDefault();
+          cellule.classList.remove(`drop-cible`);
+          let donnees = evenement.dataTransfer.getData(`text/plain`);
+          if (!donnees.startsWith(`cell:`)) {
             return;
           }
-          let i = Number(r.slice(5));
-          if (!Number.isNaN(i)) {
-            l(i, t);
+          let depart = Number(donnees.slice(5));
+          if (!Number.isNaN(depart)) {
+            echanger(depart, position);
           }
         });
       });
-      racine.querySelectorAll(`.ordre-jeton`).forEach((e) => {
-        let t = Number(e.dataset.ordre);
-        e.addEventListener(`click`, () => {
-          if (r < 0) {
-            r = t;
-            f();
-          } else if (r === t) {
-            r = -1;
-            f();
+      racine.querySelectorAll(`.ordre-jeton`).forEach((jeton) => {
+        let rang = Number(jeton.dataset.ordre);
+        jeton.addEventListener(`click`, () => {
+          if (jetonChoisi < 0) {
+            jetonChoisi = rang;
+            afficher();
+          } else if (jetonChoisi === rang) {
+            jetonChoisi = -1;
+            afficher();
           } else {
-            d(r, t);
+            deplacerJeton(jetonChoisi, rang);
           }
         });
-        e.addEventListener(`dragstart`, (n) => {
-          n.dataTransfer.setData(`text/plain`, `ordre:${t}`);
-          n.dataTransfer.setData(`roguefus/ordre`, String(t));
-          n.dataTransfer.effectAllowed = `move`;
-          e.classList.add(`drag-src`);
+        jeton.addEventListener(`dragstart`, (evenement) => {
+          evenement.dataTransfer.setData(`text/plain`, `ordre:${rang}`);
+          evenement.dataTransfer.setData(`roguefus/ordre`, String(rang));
+          evenement.dataTransfer.effectAllowed = `move`;
+          jeton.classList.add(`drag-src`);
         });
-        e.addEventListener(`dragend`, () => e.classList.remove(`drag-src`));
-        e.addEventListener(`dragover`, (t) => {
-          if (t.dataTransfer?.types.includes(`roguefus/ordre`)) {
-            t.preventDefault();
-            e.classList.add(`drop-cible`);
+        jeton.addEventListener(`dragend`, () => jeton.classList.remove(`drag-src`));
+        jeton.addEventListener(`dragover`, (evenement) => {
+          if (evenement.dataTransfer?.types.includes(`roguefus/ordre`)) {
+            evenement.preventDefault();
+            jeton.classList.add(`drop-cible`);
           }
         });
-        e.addEventListener(`dragleave`, () => e.classList.remove(`drop-cible`));
-        e.addEventListener(`drop`, (n) => {
-          n.preventDefault();
-          e.classList.remove(`drop-cible`);
-          let r = n.dataTransfer.getData(`text/plain`);
-          if (!r.startsWith(`ordre:`)) {
+        jeton.addEventListener(`dragleave`, () => jeton.classList.remove(`drop-cible`));
+        jeton.addEventListener(`drop`, (evenement) => {
+          evenement.preventDefault();
+          jeton.classList.remove(`drop-cible`);
+          let donnees = evenement.dataTransfer.getData(`text/plain`);
+          if (!donnees.startsWith(`ordre:`)) {
             return;
           }
-          let i = Number(r.slice(6));
-          if (!Number.isNaN(i)) {
-            d(i, t);
+          let depart = Number(donnees.slice(6));
+          if (!Number.isNaN(depart)) {
+            deplacerJeton(depart, rang);
           }
         });
       });
       document.getElementById(`form-retour`)?.addEventListener(`click`, () => {
         if (modifie) {
-          a();
+          sauverFormation();
         }
         resolve();
       });
     };
-    f();
+    afficher();
   });
 }

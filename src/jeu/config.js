@@ -8,27 +8,27 @@ import {
   SECRETS,
   ZONES,
 } from "../data/index.js";
-export function zonesDuMonde(e) {
-  return e.zones.map((e) => ZONES.find((t) => t.id === e));
+export function zonesDuMonde(monde) {
+  return monde.zones.map((zoneId) => ZONES.find((zone) => zone.id === zoneId));
 }
 // Le donjon secret d'un monde, présenté comme une zone (pour le bestiaire et l'armurerie).
 export function zoneSecrete(mondeId) {
-  const s = SECRETS[mondeId];
-  return s
+  const secret = SECRETS[mondeId];
+  return secret
     ? {
         id: `secret:${mondeId}`,
-        nom: `🗝️ ${s.nom}`,
+        nom: `🗝️ ${secret.nom}`,
         secret: true,
-        pools: { normales: [], elite: [], boss: [s.combat] },
+        pools: { normales: [], elite: [], boss: [secret.combat] },
       }
     : null;
 }
-export function getMonde(e, t = MONDES) {
-  return t.find((t) => t.id === e) ?? t[0];
+export function getMonde(id, mondes = MONDES) {
+  return mondes.find((monde) => monde.id === id) ?? mondes[0];
 }
-export function trouverZoneDansMonde(e, t = MONDES) {
-  for (let tranche of t) {
-    let index = tranche.zones.indexOf(e);
+export function trouverZoneDansMonde(zoneId, mondes = MONDES) {
+  for (let tranche of mondes) {
+    let index = tranche.zones.indexOf(zoneId);
     if (index >= 0) {
       return {
         tranche,
@@ -38,13 +38,13 @@ export function trouverZoneDansMonde(e, t = MONDES) {
   }
   return null;
 }
-export function indexDebutMonde(e, t = MONDES) {
-  let n = 0;
-  for (let r of t) {
-    if (r.id === e) {
-      return n;
+export function indexDebutMonde(mondeId, mondes = MONDES) {
+  let compteur = 0;
+  for (let monde of mondes) {
+    if (monde.id === mondeId) {
+      return compteur;
     }
-    n += r.zones.length;
+    compteur += monde.zones.length;
   }
   return 0;
 }
@@ -55,9 +55,9 @@ export const XP_PAR_COMBAT = {
   donjon: 195,
 };
 const XP_BONUS_PAR_TOILE = 0.3;
-export function calculerXpCombat(e, t, n) {
-  let r = 1 + XP_BONUS_PAR_TOILE * (t - 1);
-  return Math.round(e * r * (getMonde(n).xpMult ?? 1));
+export function calculerXpCombat(xpBase, numZone, mondeId) {
+  let facteur = 1 + XP_BONUS_PAR_TOILE * (numZone - 1);
+  return Math.round(xpBase * facteur * (getMonde(mondeId).xpMult ?? 1));
 }
 // Après chaque combat gagné, les héros encore debout récupèrent une part de leurs PV max.
 export const RECUPERATION = {
@@ -75,9 +75,11 @@ export const PUISSANCE_PAR_TYPE = {
 };
 // Facteur du type de combat pour la zone d'indice `index` (0 à `nb` - 1) de son monde.
 export function facteurType(type, index = 0, nb = 12) {
-  const f = PUISSANCE_PAR_TYPE[type];
-  if (!f) return 1;
-  return f[0] + (f[1] - f[0]) * (nb > 1 ? Math.min(1, Math.max(0, index / (nb - 1))) : 0);
+  const plage = PUISSANCE_PAR_TYPE[type];
+  if (!plage) return 1;
+  return (
+    plage[0] + (plage[1] - plage[0]) * (nb > 1 ? Math.min(1, Math.max(0, index / (nb - 1))) : 0)
+  );
 }
 export const CONFIG_CARTE = {
   lignesMin: 10,
@@ -112,16 +114,16 @@ export const RARETES_INFO = {
     poids: 3,
   },
 };
-export function butinDeZone(e) {
-  let t = trouverZoneDansMonde(e);
-  if (t) {
-    return BUTIN_ZONES[indexDebutMonde(t.tranche.id) + t.index + 1] ?? null;
+export function butinDeZone(zoneId) {
+  let trouve = trouverZoneDansMonde(zoneId);
+  if (trouve) {
+    return BUTIN_ZONES[indexDebutMonde(trouve.tranche.id) + trouve.index + 1] ?? null;
   }
   return null;
 }
-export function listerButin(e) {
-  if (e) {
-    return [...e.normales, ...e.elites, ...e.boss];
+export function listerButin(butin) {
+  if (butin) {
+    return [...butin.normales, ...butin.elites, ...butin.boss];
   }
   return [];
 }
@@ -256,53 +258,53 @@ export const DIFFICULTES = [
 ];
 export const DIFFICULTE_MAX = DIFFICULTES.length - 1;
 export const DOSSIER_ICONE_SORT = (() => {
-  let e = {};
-  for (let t of Object.values(CLASSES)) {
-    for (let n of t.sorts) {
-      e[n] = t.id;
+  let dossiers = {};
+  for (let classe of Object.values(CLASSES)) {
+    for (let sortId of classe.sorts) {
+      dossiers[sortId] = classe.id;
     }
   }
-  for (let t of Object.values(MONSTRES)) {
-    for (let n of t.sorts) {
-      if (!(n in e)) {
-        e[n] = `monstres`;
+  for (let monstre of Object.values(MONSTRES)) {
+    for (let sortId of monstre.sorts) {
+      if (!(sortId in dossiers)) {
+        dossiers[sortId] = `monstres`;
       }
     }
   }
-  return e;
+  return dossiers;
 })();
-export function monstresDeZone(e) {
-  let t = [...e.pools.normales, ...e.pools.elite, ...e.pools.boss];
-  let n = new Set();
-  for (let e of t) {
-    for (let t of COMBATS[e]?.ennemis ?? []) {
-      n.add(t.monstre);
+export function monstresDeZone(zone) {
+  let combatIds = [...zone.pools.normales, ...zone.pools.elite, ...zone.pools.boss];
+  let monstres = new Set();
+  for (let combatId of combatIds) {
+    for (let ennemi of COMBATS[combatId]?.ennemis ?? []) {
+      monstres.add(ennemi.monstre);
     }
   }
-  return [...n];
+  return [...monstres];
 }
-export function bossDeZone(e) {
-  let t = [];
-  for (let n of e.pools.boss) {
-    for (let e of COMBATS[n]?.ennemis ?? []) {
-      if (MONSTRES[e.monstre]?.boss && !t.includes(e.monstre)) {
-        t.push(e.monstre);
+export function bossDeZone(zone) {
+  let boss = [];
+  for (let combatId of zone.pools.boss) {
+    for (let ennemi of COMBATS[combatId]?.ennemis ?? []) {
+      if (MONSTRES[ennemi.monstre]?.boss && !boss.includes(ennemi.monstre)) {
+        boss.push(ennemi.monstre);
       }
     }
   }
-  return t;
+  return boss;
 }
-export function reliquesDuMonde(e) {
-  let t = MONDES.find((t) => t.id === e);
-  let n = [];
-  for (let e of t ? zonesDuMonde(t) : []) {
-    for (let t of bossDeZone(e)) {
-      if (RELIQUES[t] && !n.includes(t)) {
-        n.push(t);
+export function reliquesDuMonde(mondeId) {
+  let monde = MONDES.find((candidat) => candidat.id === mondeId);
+  let reliques = [];
+  for (let zone of monde ? zonesDuMonde(monde) : []) {
+    for (let bossId of bossDeZone(zone)) {
+      if (RELIQUES[bossId] && !reliques.includes(bossId)) {
+        reliques.push(bossId);
       }
     }
   }
-  return n;
+  return reliques;
 }
 
 // Relique équipée (E2) : un seul emplacement, un petit bonus qui dépend du monde du boss. Les clés
@@ -316,6 +318,6 @@ export const BONUS_RELIQUE_MONDE = {
 };
 /** Bonus d'une relique de boss (selon le monde où se trouve ce boss), ou undefined. */
 export function bonusRelique(id) {
-  const monde = MONDES.find((m) => reliquesDuMonde(m.id).includes(id));
+  const monde = MONDES.find((candidat) => reliquesDuMonde(candidat.id).includes(id));
   return monde ? BONUS_RELIQUE_MONDE[monde.id] : undefined;
 }
