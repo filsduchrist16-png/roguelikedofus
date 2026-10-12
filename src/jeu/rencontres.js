@@ -5,6 +5,8 @@ import { ECONOMIE, monstresDeZone } from "./config.js";
 import { bonusDofus } from "../sauvegarde/meta.js";
 import { nomCle, secretDuMonde } from "./secret.js";
 import { IDOLES_DEPART, cumulerIdoles, idolesDepartDeRun } from "./idolesDepart.js";
+import { prixForge, rareteSuivante } from "./economie.js";
+import { instancierObjet, pvMaxPerso } from "./run.js";
 
 // Bénédictions des dieux du Krosmoz : elles durent toute la run.
 export const BENEDICTIONS = {
@@ -83,7 +85,18 @@ export const IDOLES = {
 };
 
 const CROCHETEURS = new Set([`sram`, `roublard`, `ecaflip`]);
-const POIDS = { sanctuaire: 25, coffre: 25, marchand: 20, idoles: 15, traque: 15, cle: 12 };
+const POIDS = {
+  sanctuaire: 25,
+  coffre: 25,
+  marchand: 20,
+  idoles: 15,
+  traque: 15,
+  cle: 12,
+  forgemage: 10,
+  temple: 10,
+};
+// Part des PV max rendue à un héros relevé au temple.
+export const PV_TEMPLE = 0.5;
 
 /** Tire un type de rencontre ; `exclus` retire des types (par ex. la clé quand on en a déjà une). */
 export function tirerRencontre(rng, exclus = []) {
@@ -97,6 +110,61 @@ export function tirerRencontre(rng, exclus = []) {
     }
   }
   return `coffre`;
+}
+
+/** Types à écarter du tirage selon la run : clé inutile, temple sans K.O. (ou mort définitive),
+ * forgemage sans objet à monter. */
+export function rencontresExclues(run, { mortDefinitive = false } = {}) {
+  const exclus = [];
+  if (run.cle || !secretDuMonde(run.trancheId)) {
+    exclus.push(`cle`);
+  }
+  if (mortDefinitive || !herosKO(run).length) {
+    exclus.push(`temple`);
+  }
+  if (!objetsForgeables(run).length) {
+    exclus.push(`forgemage`);
+  }
+  return exclus;
+}
+
+/** Héros à 0 PV. */
+export const herosKO = (run) => run.persos.filter((p) => p.pvActuels <= 0);
+
+/** Prix du temple pour relever un héros. */
+export const prixTemple = (toile) => Math.round(gainBase(toile) * 2);
+
+/** Relève un héros K.O. avec une part de ses PV max (sans effet sur un héros debout). */
+export function releverHeros(perso, part = PV_TEMPLE) {
+  if (perso.pvActuels > 0) {
+    return false;
+  }
+  perso.pvActuels = Math.max(1, Math.round(pvMaxPerso(perso) * part));
+  return true;
+}
+
+/** Objets que le forgemage peut monter (portés ou en sac), les plus chers à forger d'abord. */
+export function objetsForgeables(run, max = 4) {
+  const tous = [
+    ...run.persos.flatMap((p) => Object.values(p.equipement ?? {}).filter(Boolean)),
+    ...run.inventaire,
+  ].filter((o) => rareteSuivante(o));
+  return tous.sort((a, b) => prixForge(b) - prixForge(a)).slice(0, max);
+}
+
+/** Forge sans frais ni risque : l'objet passe au palier de rareté supérieur. */
+export function forgerGratuit(inst) {
+  const suivante = rareteSuivante(inst);
+  if (!suivante) {
+    return false;
+  }
+  const o = instancierObjet(inst.id, suivante);
+  inst.rarete = o.rarete;
+  inst.stats = o.stats;
+  inst.adaptatif = o.adaptatif;
+  inst.resistances = o.resistances;
+  inst.pa = o.pa;
+  return true;
 }
 
 export const gainBase = (toile) =>

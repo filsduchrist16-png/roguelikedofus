@@ -31,6 +31,8 @@ export const normaliserTaillePolice = (v) => {
 export const normaliserCouleursAdaptees = (v) => v === true;
 // Lecture tolérante : seul `true` active l'option (ancienne sauvegarde ou valeur étrangère : désactivée).
 export const normaliserReduireAnimations = (v) => v === true;
+// Sons synthétisés : seul `true` les active (par défaut et pour toute valeur étrangère : coupés).
+export const normaliserSons = (v) => v === true;
 // Astuces de première partie : une par moment clé. `vuTuto` vaut null tant que le jeu n'a pas
 // décidé (anciens réglages), puis un objet { cle: true } des astuces déjà affichées.
 export const CLES_TUTO = [`carte`, `combat`, `butin`, `taverne`];
@@ -76,6 +78,8 @@ const PARAMETRES_DEFAUT = {
   couleursAdaptees: false,
   // animations réduites (effets de combat, défilements instantanés)
   reduireAnimations: false,
+  // sons synthétisés (coupés par défaut)
+  sons: false,
   // astuces de première partie déjà vues (null : pas encore décidé, voir main.js)
   vuTuto: null,
   formation: {
@@ -130,6 +134,7 @@ export function chargerParametres() {
       t.taillePolice = normaliserTaillePolice(t.taillePolice);
       t.couleursAdaptees = normaliserCouleursAdaptees(t.couleursAdaptees);
       t.reduireAnimations = normaliserReduireAnimations(t.reduireAnimations);
+      t.sons = normaliserSons(t.sons);
       t.vuTuto = normaliserVuTuto(t.vuTuto);
       let n = t.ordre && typeof t.ordre === `object` && !Array.isArray(t.ordre) ? t.ordre : {};
       t.ordre = {

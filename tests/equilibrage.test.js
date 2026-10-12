@@ -268,7 +268,7 @@ describe(`donjons secrets`, () => {
     const rng = rngFixe(7);
     const tirages = new Set(Array.from({ length: 400 }, () => tirerRencontre(rng, [`cle`])));
     expect(tirages.has(`cle`)).toBe(false);
-    expect(tirages.size).toBe(5);
+    expect(tirages.size).toBe(7);
   });
 });
 

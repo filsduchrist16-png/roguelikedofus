@@ -46,6 +46,7 @@ export const dateLisible = (iso) => {
     return iso;
   }
 };
+import { definirSons } from "../../son.js";
 import { telechargerTexte } from "../../sauvegarde/telechargement.js";
 import {
   afficherEcran,
@@ -114,6 +115,10 @@ export function ecranParametres(e) {
           <div class="setting-ligne">
             <span class="setting-lbl">Réduire les animations<br><small class="muet">effets de combat atténués, défilements instantanés</small></span>
             <button id="set-animations" class="secondaire ${parametres.reduireAnimations ? `on` : ``}" aria-pressed="${!!parametres.reduireAnimations}">${parametres.reduireAnimations ? `Activé` : `Désactivé`}</button>
+          </div>
+          <div class="setting-ligne">
+            <span class="setting-lbl">Sons<br><small class="muet">petits bruitages (clic, coup, soin, victoire, défaite), volume discret</small></span>
+            <button id="set-sons" class="secondaire ${parametres.sons ? `on` : ``}" aria-pressed="${!!parametres.sons}">${parametres.sons ? `Activé` : `Désactivé`}</button>
           </div>
           <div class="setting-ligne">
             <span class="setting-lbl">Astuces de première partie<br><small class="muet">${parametres.vuTuto && CLES_TUTO.every((k) => parametres.vuTuto[k]) ? `déjà toutes vues` : `affichées une fois, au fil de la partie`}</small></span>
@@ -320,6 +325,13 @@ export function ecranParametres(e) {
         parametres.reduireAnimations = !parametres.reduireAnimations;
         sauverParametres(parametres);
         appliquerAccessibilite(parametres);
+        i();
+      });
+      document.getElementById(`set-sons`)?.addEventListener(`click`, () => {
+        parametres.sons = !parametres.sons;
+        sauverParametres(parametres);
+        // ce clic est un geste du joueur : il autorise l'audio
+        definirSons(parametres.sons);
         i();
       });
       document.getElementById(`set-astuces`)?.addEventListener(`click`, () => {

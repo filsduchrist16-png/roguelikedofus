@@ -1,10 +1,11 @@
 import { decrireQuete } from "./jeu/obtention.js";
-import { CLASSES, COMBATS, DOFUS, MONSTRES, SORTS } from "./data/index.js";
+import { CLASSES, COMBATS, DOFUS, EQUIPEMENTS, MONSTRES, SORTS } from "./data/index.js";
 import {
   CONFIG_ARCHI,
   XP_PAR_COMBAT,
   butinDeZone,
   calculerXpCombat,
+  RARETES_INFO,
   getMonde,
   zonesDuMonde,
 } from "./jeu/config.js";
@@ -59,7 +60,13 @@ import {
   tirerIdsButinSecret,
   tirerRareteSecret,
 } from "./jeu/secret.js";
-import { ajouterKamas, gainKamas, genererStockHdv, numeroZone } from "./jeu/economie.js";
+import {
+  ajouterKamas,
+  gainKamas,
+  genererStockHdv,
+  numeroZone,
+  rareteSuivante,
+} from "./jeu/economie.js";
 import {
   ajouterDofus,
   appliquerBonusDofus,
@@ -125,6 +132,13 @@ import {
   peutCrocheter,
   prixMarchand,
   tirerRencontre,
+  rencontresExclues,
+  objetsForgeables,
+  forgerGratuit,
+  herosKO,
+  prixTemple,
+  releverHeros,
+  PV_TEMPLE,
   traqueActive,
   zoneAArchis,
 } from "./jeu/rencontres.js";
@@ -151,6 +165,7 @@ import {
   noterEnnemisVaincus,
 } from "./ui/ecrans/recap.js";
 import { afficherFinCombat, texteBilan } from "./ui/finCombat.js";
+import { installerSons } from "./son.js";
 import { CLES_TUTO, appliquerAccessibilite, sauverParametres } from "./sauvegarde/parametres.js";
 import { ecranHdv } from "./ui/ecrans/hdv.js";
 import { ecranForgemagie } from "./ui/ecrans/forgemagie.js";
@@ -174,6 +189,7 @@ function initialiserInterface(elementApp) {
   installerRaccourcisCombat();
   installerToucheEchap();
   installerRetourTelephone();
+  installerSons(parametres.sons);
 }
 const attendre = (e) => new Promise((resolve) => setTimeout(resolve, e));
 const choixAleatoireMath = (e) => e[Math.floor(Math.random() * e.length)];
@@ -678,7 +694,10 @@ async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
 // ---------- Rencontres (case « Rencontre » de la carte) ----------
 async function jouerRencontre(e, zone) {
   let toile = zone ? numeroZone(zone.id) : 1;
-  let type = tirerRencontre(Math.random, e.cle || !secretDuMonde(e.trancheId) ? [`cle`] : []);
+  let type = tirerRencontre(
+    Math.random,
+    rencontresExclues(e, { mortDefinitive: !!effetsDifficulte(e.ascension).mortDefinitive }),
+  );
   if (
     (type === `idoles` && idoleZone(e, zone?.id)) ||
     (type === `traque` && traqueActive(e, zone?.id))
@@ -909,6 +928,61 @@ async function jouerRencontre(e, zone) {
       afficherBandeau(
         `🗿 ${IDOLES[choix].nom} jusqu'à la fin de la zone : ${IDOLES[choix].malus} ; ${IDOLES[choix].bonus}`,
       );
+    }
+    return;
+  }
+  if (type === `forgemage`) {
+    let objets = objetsForgeables(e);
+    let choix = await ecranRencontre({
+      equipe: e.persos,
+      titre: `🔨 Forgemage itinérant`,
+      texte: `Un forgemage au tablier brûlé propose de monter un objet d'un palier de rareté, gratuitement et sans risque. Une seule fois.`,
+      choix: [
+        ...objets.map((o, i) => ({
+          id: `o${i}`,
+          img: `/assets/items/${o.id}.png`,
+          libelle: `${EQUIPEMENTS[o.id]?.nom ?? o.id} (${RARETES_INFO[o.rarete].nom})`,
+          detail: `Passe en ${RARETES_INFO[rareteSuivante(o)].nom}.`,
+        })),
+        { id: `partir`, libelle: `Passer son chemin` },
+      ],
+    });
+    let o = objets[Number(choix.slice(1))];
+    if (choix !== `partir` && o) {
+      let nom = EQUIPEMENTS[o.id]?.nom ?? o.id;
+      forgerGratuit(o);
+      for (let p of e.persos) {
+        p.pvActuels = Math.min(p.pvActuels, pvMaxPerso(p));
+      }
+      enregistrerCollection(meta, [o]);
+      afficherBandeau(`🔨 ${nom} → ${RARETES_INFO[o.rarete].nom}`);
+    }
+    return;
+  }
+  if (type === `temple`) {
+    let prix = prixTemple(toile);
+    let ko = herosKO(e);
+    let choix = await ecranRencontre({
+      equipe: e.persos,
+      titre: `⛪ Temple de résurrection`,
+      texte: `Des prêtres veillent sur un autel de lumière : contre une offrande, ils relèvent un héros tombé avec ${Math.round(PV_TEMPLE * 100)} % de ses PV max.`,
+      kamas: e.kamas,
+      choix: [
+        ...ko.map((p) => ({
+          id: p.classeId,
+          img: `/assets/class_symbol/${p.classeId}.png`,
+          libelle: `Relever ${CLASSES[p.classeId]?.nom ?? p.classeId}`,
+          prix,
+          desactive: e.kamas < prix ? `Pas assez de kamas.` : ``,
+        })),
+        { id: `partir`, libelle: `Repartir` },
+      ],
+    });
+    let h = ko.find((p) => p.classeId === choix);
+    if (h && e.kamas >= prix) {
+      e.kamas -= prix;
+      releverHeros(h);
+      afficherBandeau(`⛪ ${CLASSES[h.classeId]?.nom ?? h.classeId} est relevé (−${prix} kamas)`);
     }
     return;
   }
