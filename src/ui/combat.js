@@ -81,47 +81,63 @@ function replierObjectifs() {
   }
 }
 export function installerRaccourcisCombat() {
-  document.addEventListener(`keydown`, (e) => {
-    if (!contexteCombat || !combattantActif || e.repeat || e.ctrlKey || e.metaKey || e.altKey) {
+  document.addEventListener(`keydown`, (evenement) => {
+    if (
+      !contexteCombat ||
+      !combattantActif ||
+      evenement.repeat ||
+      evenement.ctrlKey ||
+      evenement.metaKey ||
+      evenement.altKey
+    ) {
       return;
     }
-    if (e.key === parametres.toucheFinTour) {
+    if (evenement.key === parametres.toucheFinTour) {
       // Espace sur un sort ou un bouton qui a le focus l'active : il ne doit pas finir le tour
       if (
         document.activeElement?.closest(`button, a[href], input, textarea, select, [role="button"]`)
       ) {
         return;
       }
-      e.preventDefault();
+      evenement.preventDefault();
       terminerAction(null);
       return;
     }
-    if (e.key === `Escape` && (sortChoisi || infoSort)) {
+    if (evenement.key === `Escape` && (sortChoisi || infoSort)) {
       sortChoisi = null;
       infoSort = null;
       rendreCombat();
       return;
     }
     if (sortChoisi && !sansCibleAChoisir(sortChoisi)) {
-      if (e.key === `ArrowLeft` || e.key === `ArrowRight` || e.key === `Tab`) {
-        e.preventDefault();
-        deplacerVisee(e.key === `ArrowLeft` || (e.key === `Tab` && e.shiftKey) ? -1 : 1);
+      if (
+        evenement.key === `ArrowLeft` ||
+        evenement.key === `ArrowRight` ||
+        evenement.key === `Tab`
+      ) {
+        evenement.preventDefault();
+        deplacerVisee(
+          evenement.key === `ArrowLeft` || (evenement.key === `Tab` && evenement.shiftKey) ? -1 : 1,
+        );
         return;
       }
       // Entrée sur un bouton de l'aide (Annuler, ⓘ…) garde son effet habituel
-      if (e.key === `Enter` && !document.activeElement?.closest?.(`.aide button, #fin-tour`)) {
-        e.preventDefault();
+      if (
+        evenement.key === `Enter` &&
+        !document.activeElement?.closest?.(`.aide button, #fin-tour`)
+      ) {
+        evenement.preventDefault();
         lancerSurVisee();
         return;
       }
     }
-    let t = /^(?:Digit|Numpad)([1-9])$/.exec(e.code);
-    if (t) {
-      let n = Number(t[1]);
-      let r = n === 1 ? combattantActif.armeSort : SORTS[combattantActif.sorts[n - 2]];
-      if (r) {
-        e.preventDefault();
-        choisirSort(r, true);
+    let chiffre = /^(?:Digit|Numpad)([1-9])$/.exec(evenement.code);
+    if (chiffre) {
+      let numero = Number(chiffre[1]);
+      let sort = numero === 1 ? combattantActif.armeSort : SORTS[combattantActif.sorts[numero - 2]];
+      if (sort) {
+        evenement.preventDefault();
+        choisirSort(sort, true);
       }
     }
   });
@@ -132,14 +148,14 @@ function cartesCiblables() {
 }
 function marquerVisee() {
   const cartes = cartesCiblables();
-  if (!cartes.some((c) => c.dataset.ref === refVisee)) {
+  if (!cartes.some((carte) => carte.dataset.ref === refVisee)) {
     // par défaut : la première cible que le sort achève, sinon la première
-    const mortelle = cartes.find((c) => c.querySelector(`.cc-apercu.mortel`));
+    const mortelle = cartes.find((carte) => carte.querySelector(`.cc-apercu.mortel`));
     refVisee = (mortelle ?? cartes[0])?.dataset.ref ?? null;
   }
-  for (const c of cartes) {
-    c.classList.toggle(`visee`, c.dataset.ref === refVisee);
-    c.classList.toggle(`unique`, cartes.length === 1);
+  for (const carte of cartes) {
+    carte.classList.toggle(`visee`, carte.dataset.ref === refVisee);
+    carte.classList.toggle(`unique`, cartes.length === 1);
   }
 }
 function deplacerVisee(pas) {
@@ -147,90 +163,93 @@ function deplacerVisee(pas) {
   if (!cartes.length) {
     return;
   }
-  const i = cartes.findIndex((c) => c.dataset.ref === refVisee);
-  refVisee = cartes[(i + pas + cartes.length) % cartes.length].dataset.ref;
+  const indice = cartes.findIndex((carte) => carte.dataset.ref === refVisee);
+  refVisee = cartes[(indice + pas + cartes.length) % cartes.length].dataset.ref;
   marquerVisee();
-  const c = cartes.find((x) => x.dataset.ref === refVisee);
-  c?.focus({ preventScroll: true });
-  c?.scrollIntoView({ block: `nearest`, inline: `nearest` });
+  const carte = cartes.find((candidate) => candidate.dataset.ref === refVisee);
+  carte?.focus({ preventScroll: true });
+  carte?.scrollIntoView({ block: `nearest`, inline: `nearest` });
 }
 function lancerSurVisee() {
-  const c = racine?.querySelector(`.carte.ciblable.visee`);
-  if (!c || !sortChoisi) {
+  const carte = racine?.querySelector(`.carte.ciblable.visee`);
+  if (!carte || !sortChoisi) {
     return false;
   }
-  terminerAction({ sort: sortChoisi, cibleRef: c.dataset.ref });
+  terminerAction({ sort: sortChoisi, cibleRef: carte.dataset.ref });
   return true;
 }
 export function installerInfobulleSorts() {
-  let e = document.createElement(`div`);
-  e.className = `sort-tip`;
-  e.style.display = `none`;
-  document.body.appendChild(e);
-  elementsAMasquer.push(e);
-  let t = (t) => {
-    let n = t.dataset.arme
+  let bulle = document.createElement(`div`);
+  bulle.className = `sort-tip`;
+  bulle.style.display = `none`;
+  document.body.appendChild(bulle);
+  elementsAMasquer.push(bulle);
+  let montrer = (bouton) => {
+    let sort = bouton.dataset.arme
       ? combattantActif?.armeSort
-      : t.dataset.sort
-        ? SORTS[t.dataset.sort]
+      : bouton.dataset.sort
+        ? SORTS[bouton.dataset.sort]
         : null;
-    if (!n) {
+    if (!sort) {
       return;
     }
-    let raison = combattantActif ? raisonIndisponible(combattantActif, n, combattants) : null;
-    e.innerHTML =
-      infobulleSort(n, combattantActif) +
+    let raison = combattantActif ? raisonIndisponible(combattantActif, sort, combattants) : null;
+    bulle.innerHTML =
+      infobulleSort(sort, combattantActif) +
       (raison ? `<div class="tip-indispo">⛔ ${echapperHtml(raison)}</div>` : ``);
-    e.style.display = `block`;
-    let r = t.getBoundingClientRect();
-    let i = e.getBoundingClientRect();
-    let a = r.left + r.width / 2 - i.width / 2;
-    a = Math.max(8, Math.min(a, window.innerWidth - i.width - 8));
-    let o = r.top - i.height - 10;
-    if (o < 8) {
-      o = r.bottom + 10;
+    bulle.style.display = `block`;
+    let cadre = bouton.getBoundingClientRect();
+    let cadreBulle = bulle.getBoundingClientRect();
+    let gauche = cadre.left + cadre.width / 2 - cadreBulle.width / 2;
+    gauche = Math.max(8, Math.min(gauche, window.innerWidth - cadreBulle.width - 8));
+    let haut = cadre.top - cadreBulle.height - 10;
+    if (haut < 8) {
+      haut = cadre.bottom + 10;
     }
-    e.style.left = `${a}px`;
-    e.style.top = `${o}px`;
+    bulle.style.left = `${gauche}px`;
+    bulle.style.top = `${haut}px`;
   };
-  document.addEventListener(`mouseover`, (e) => {
-    let n = e.target.closest?.(`button.sort[data-sort], button.sort[data-arme]`);
+  document.addEventListener(`mouseover`, (evenement) => {
+    let bouton = evenement.target.closest?.(`button.sort[data-sort], button.sort[data-arme]`);
     // le sort choisi est déjà détaillé dans l'aide : pas d'infobulle qui cacherait les cibles
-    if (n && !n.classList.contains(`choisi`)) {
-      t(n);
+    if (bouton && !bouton.classList.contains(`choisi`)) {
+      montrer(bouton);
     }
   });
-  document.addEventListener(`mouseout`, (t) => {
-    let n = t.target.closest?.(`button.sort[data-sort], button.sort[data-arme]`);
-    if (n && !n.contains(t.relatedTarget)) {
-      e.style.display = `none`;
+  document.addEventListener(`mouseout`, (evenement) => {
+    let bouton = evenement.target.closest?.(`button.sort[data-sort], button.sort[data-arme]`);
+    if (bouton && !bouton.contains(evenement.relatedTarget)) {
+      bulle.style.display = `none`;
     }
   });
 }
-function peutEncoreJouer(e, t) {
+function peutEncoreJouer(combattant, liste) {
   // l'attaque d'arme compte aussi : sans elle, un héros à qui il ne reste que les PA
   // de son arme voyait son tour passé automatiquement
-  return [e.armeSort, ...e.sorts.map((e) => SORTS[e])]
+  return [combattant.armeSort, ...combattant.sorts.map((idSort) => SORTS[idSort])]
     .filter(Boolean)
-    .some((n) => !raisonIndisponible(e, n, t));
+    .some((sort) => !raisonIndisponible(combattant, sort, liste));
 }
-function htmlLigneJournal(e) {
-  let t = `info`;
-  if (e.msg.startsWith(`▶`)) {
-    t = `tour`;
-  } else if (/dégâts|inflige|subit|meurt|perd/i.test(e.msg)) {
-    t = `degats`;
-  } else if (/récupère|soigne|soin|PV rendus|bouclier/i.test(e.msg)) {
-    t = `soin`;
-  } else if (/poison|empoisonne|☠/i.test(e.msg)) {
-    t = `poison`;
+function htmlLigneJournal(entree) {
+  let type = `info`;
+  if (entree.msg.startsWith(`▶`)) {
+    type = `tour`;
+  } else if (/dégâts|inflige|subit|meurt|perd/i.test(entree.msg)) {
+    type = `degats`;
+  } else if (/récupère|soigne|soin|PV rendus|bouclier/i.test(entree.msg)) {
+    type = `soin`;
+  } else if (/poison|empoisonne|☠/i.test(entree.msg)) {
+    type = `poison`;
   }
-  let n = echapperHtml(e.msg);
-  if (e.meta?.portion) {
-    let t = echapperHtml(e.meta.portion);
-    n = n.replace(t, `<span class="log-el el-${e.meta.element}">${t}</span>`);
+  let html = echapperHtml(entree.msg);
+  if (entree.meta?.portion) {
+    let portion = echapperHtml(entree.meta.portion);
+    html = html.replace(
+      portion,
+      `<span class="log-el el-${entree.meta.element}">${portion}</span>`,
+    );
   }
-  return `<div class="log-line log-${t}">${n}</div>`;
+  return `<div class="log-line log-${type}">${html}</div>`;
 }
 // Journal : on n'ajoute que la nouvelle ligne (appendChild) au lieu de tout réécrire, pour que les
 // lecteurs d'écran (role="log") n'annoncent que le nouveau message. Reconstruit seulement si besoin.
@@ -240,20 +259,20 @@ function elementLigneJournal(entree) {
   return modele.content.firstElementChild;
 }
 function rafraichirJournal(nouvelle = null) {
-  let e = document.getElementById(`journal`);
-  if (e) {
+  let journalEl = document.getElementById(`journal`);
+  if (journalEl) {
     // ne recolle en bas que si le joueur y était déjà : on peut remonter lire pendant un tour
-    const enBas = e.scrollHeight - e.scrollTop - e.clientHeight < 12;
-    if (nouvelle && e.children.length === journalCombat.length - 1) {
-      e.appendChild(elementLigneJournal(nouvelle));
-      while (e.children.length > journalCombat.length) {
-        e.firstElementChild.remove();
+    const enBas = journalEl.scrollHeight - journalEl.scrollTop - journalEl.clientHeight < 12;
+    if (nouvelle && journalEl.children.length === journalCombat.length - 1) {
+      journalEl.appendChild(elementLigneJournal(nouvelle));
+      while (journalEl.children.length > journalCombat.length) {
+        journalEl.firstElementChild.remove();
       }
-    } else if (e.children.length !== journalCombat.length) {
-      e.replaceChildren(...journalCombat.map(elementLigneJournal));
+    } else if (journalEl.children.length !== journalCombat.length) {
+      journalEl.replaceChildren(...journalCombat.map(elementLigneJournal));
     }
     if (enBas) {
-      e.scrollTop = e.scrollHeight;
+      journalEl.scrollTop = journalEl.scrollHeight;
     }
   }
 }
@@ -306,22 +325,22 @@ function htmlDefi() {
   if (!defiCombat) {
     return ``;
   }
-  const e = etatDefiCombat ?? { etat: `en_cours` };
-  const [icone, libelle] = ETATS_DEFI[e.etat] ?? ETATS_DEFI.en_cours;
-  return `<div class="defi-combat defi-${e.etat}" data-tip="Réussis le défi pour gagner +30 % d'XP et de kamas">
+  const etat = etatDefiCombat ?? { etat: `en_cours` };
+  const [icone, libelle] = ETATS_DEFI[etat.etat] ?? ETATS_DEFI.en_cours;
+  return `<div class="defi-combat defi-${etat.etat}" data-tip="Réussis le défi pour gagner +30 % d'XP et de kamas">
     <span class="defi-nom">🎯 Défi ${echapperHtml(defiCombat.nom)}</span>
     <span class="defi-texte">${echapperHtml(defiCombat.texte)}</span>
-    <span class="defi-etat">${icone ? `${icone} ` : ``}${libelle}${e.detail ? ` · ${echapperHtml(e.detail)}` : ``}</span>
+    <span class="defi-etat">${icone ? `${icone} ` : ``}${libelle}${etat.detail ? ` · ${echapperHtml(etat.detail)}` : ``}</span>
     <small class="defi-bonus">+30 % XP et kamas</small>
   </div>`;
 }
-export function initialiserVueCombat(e, t, n = null, options = {}) {
+export function initialiserVueCombat(liste, titre, resolveur = null, options = {}) {
   optionsVue = options;
   defiCombat = null;
   etatDefiCombat = null;
-  combattants = e;
-  titreCombat = t;
-  resolveurAction = n;
+  combattants = liste;
+  titreCombat = titre;
+  resolveurAction = resolveur;
   journalCombat = [];
   combattantActif = null;
   sortChoisi = null;
@@ -334,7 +353,7 @@ export function initialiserVueCombat(e, t, n = null, options = {}) {
   objectifsReplies = false;
   combatEnCours = false;
   rendreCombat();
-  memoriserEtats(e);
+  memoriserEtats(liste);
 }
 export function rafraichirCombat() {
   rendreCombat();
@@ -344,15 +363,15 @@ const etatsPrecedents = new Map();
 let coucheFx = null;
 let compteurFx = 0;
 const evenementsFx = new Map();
-export function enregistrerFx(e) {
-  let t = evenementsFx.get(e.ref) ?? {};
-  if (e.type === `crit`) {
-    t.crit = true;
+export function enregistrerFx(evenement) {
+  let entree = evenementsFx.get(evenement.ref) ?? {};
+  if (evenement.type === `crit`) {
+    entree.crit = true;
   }
-  if (e.type === `esquive`) {
-    t.esquive = true;
+  if (evenement.type === `esquive`) {
+    entree.esquive = true;
   }
-  evenementsFx.set(e.ref, t);
+  evenementsFx.set(evenement.ref, entree);
 }
 function obtenirCoucheFx() {
   if (!coucheFx || !coucheFx.isConnected) {
@@ -362,75 +381,77 @@ function obtenirCoucheFx() {
   }
   return coucheFx;
 }
-function memoriserEtats(e) {
+function memoriserEtats(liste) {
   etatsPrecedents.clear();
-  for (let t of e) {
-    etatsPrecedents.set(t.ref, {
-      pv: t.pvActuels,
-      bouclier: t.bouclier,
-      mort: t.pvActuels <= 0,
+  for (let combattant of liste) {
+    etatsPrecedents.set(combattant.ref, {
+      pv: combattant.pvActuels,
+      bouclier: combattant.bouclier,
+      mort: combattant.pvActuels <= 0,
     });
   }
 }
-function afficherNombreFx(ref, t, n) {
-  let r = racine.querySelector(`.carte[data-ref="${ref}"]`);
-  if (!r) {
+function afficherNombreFx(ref, texte, classe) {
+  let carte = racine.querySelector(`.carte[data-ref="${ref}"]`);
+  if (!carte) {
     return;
   }
-  let i = r.getBoundingClientRect();
-  let a = document.createElement(`div`);
-  a.className = `fx-num ${n}`;
-  a.textContent = t;
-  let o = (compteurFx++ % 3) * 16 - 16;
-  a.style.left = `${i.left + i.width / 2 + o}px`;
-  a.style.top = `${i.top + i.height * 0.32}px`;
-  a.addEventListener(`animationend`, () => a.remove());
-  obtenirCoucheFx().appendChild(a);
+  let cadre = carte.getBoundingClientRect();
+  let nombre = document.createElement(`div`);
+  nombre.className = `fx-num ${classe}`;
+  nombre.textContent = texte;
+  let decalage = (compteurFx++ % 3) * 16 - 16;
+  nombre.style.left = `${cadre.left + cadre.width / 2 + decalage}px`;
+  nombre.style.top = `${cadre.top + cadre.height * 0.32}px`;
+  nombre.addEventListener(`animationend`, () => nombre.remove());
+  obtenirCoucheFx().appendChild(nombre);
 }
 function afficherFlashFx(ref) {
-  let t = racine.querySelector(`.carte[data-ref="${ref}"]`);
-  if (!t) {
+  let carte = racine.querySelector(`.carte[data-ref="${ref}"]`);
+  if (!carte) {
     return;
   }
-  let n = t.getBoundingClientRect();
-  let r = document.createElement(`div`);
-  r.className = `fx-flash`;
-  r.style.left = `${n.left}px`;
-  r.style.top = `${n.top}px`;
-  r.style.width = `${n.width}px`;
-  r.style.height = `${n.height}px`;
-  r.addEventListener(`animationend`, () => r.remove());
-  obtenirCoucheFx().appendChild(r);
+  let cadre = carte.getBoundingClientRect();
+  let flash = document.createElement(`div`);
+  flash.className = `fx-flash`;
+  flash.style.left = `${cadre.left}px`;
+  flash.style.top = `${cadre.top}px`;
+  flash.style.width = `${cadre.width}px`;
+  flash.style.height = `${cadre.height}px`;
+  flash.addEventListener(`animationend`, () => flash.remove());
+  obtenirCoucheFx().appendChild(flash);
 }
 function jouerAnimationsFx() {
-  for (let e of combattants) {
-    let t = etatsPrecedents.get(e.ref);
-    if (!t) {
+  for (let combattant of combattants) {
+    let avant = etatsPrecedents.get(combattant.ref);
+    if (!avant) {
       continue;
     }
-    let n = Math.max(0, t.pv - e.pvActuels) + Math.max(0, t.bouclier - e.bouclier);
-    let r = Math.max(0, e.pvActuels - t.pv);
-    let i = Math.max(0, e.bouclier - t.bouclier);
-    let a = evenementsFx.get(e.ref);
-    if (n > 0) {
-      if (a?.crit) {
-        afficherNombreFx(e.ref, `-${n} !`, `crit`);
+    let degats =
+      Math.max(0, avant.pv - combattant.pvActuels) +
+      Math.max(0, avant.bouclier - combattant.bouclier);
+    let soins = Math.max(0, combattant.pvActuels - avant.pv);
+    let boucliers = Math.max(0, combattant.bouclier - avant.bouclier);
+    let fx = evenementsFx.get(combattant.ref);
+    if (degats > 0) {
+      if (fx?.crit) {
+        afficherNombreFx(combattant.ref, `-${degats} !`, `crit`);
       } else {
-        afficherNombreFx(e.ref, `-${n}`, `dmg`);
+        afficherNombreFx(combattant.ref, `-${degats}`, `dmg`);
       }
-      afficherFlashFx(e.ref);
+      afficherFlashFx(combattant.ref);
     }
-    if (a?.esquive) {
-      afficherNombreFx(e.ref, `Esquive !`, `esquive`);
+    if (fx?.esquive) {
+      afficherNombreFx(combattant.ref, `Esquive !`, `esquive`);
     }
-    if (r > 0) {
-      afficherNombreFx(e.ref, `+${r}`, `soin`);
+    if (soins > 0) {
+      afficherNombreFx(combattant.ref, `+${soins}`, `soin`);
     }
-    if (i > 0) {
-      afficherNombreFx(e.ref, `+${i}`, `bouclier`);
+    if (boucliers > 0) {
+      afficherNombreFx(combattant.ref, `+${boucliers}`, `bouclier`);
     }
-    if (!t.mort && e.pvActuels <= 0) {
-      afficherNombreFx(e.ref, `K.O.`, `mort`);
+    if (!avant.mort && combattant.pvActuels <= 0) {
+      afficherNombreFx(combattant.ref, `K.O.`, `mort`);
     }
   }
   evenementsFx.clear();
@@ -439,16 +460,16 @@ function jouerAnimationsFx() {
 // Écran tactile : pas de survol, donc pas d'infobulle. Un premier appui sur un sort l'affiche
 // (description + bouton « Lancer ») au lieu de le lancer directement.
 const sansCibleAChoisir = (sort) => sort.cible === `soi` || sort.cible === `allie_tous`;
-export function controleurJoueur(e, t) {
-  combattants = t;
-  combattantActif = e;
+export function controleurJoueur(combattant, liste) {
+  combattants = liste;
+  combattantActif = combattant;
   sortChoisi = null;
   infoSort = null;
   refVisee = null;
   return new Promise((resolve) => {
     contexteCombat = resolve;
-    if (parametres.autoFinTour && !peutEncoreJouer(e, t)) {
-      journaliser(`${e.nom} n'a plus rien à jouer, tour passé.`);
+    if (parametres.autoFinTour && !peutEncoreJouer(combattant, liste)) {
+      journaliser(`${combattant.nom} n'a plus rien à jouer, tour passé.`);
       rendreCombat();
       // ne termine que CE tour : si le joueur a déjà cliqué « Terminer » entre-temps,
       // le délai ne doit pas écourter le tour du héros suivant
@@ -481,15 +502,15 @@ function montrerHerosActif() {
     carte.scrollIntoView({ block: `nearest` });
   }
 }
-function terminerAction(e) {
-  let t = contexteCombat;
+function terminerAction(action) {
+  let resolveur = contexteCombat;
   combattantActif = null;
   sortChoisi = null;
   infoSort = null;
   refVisee = null;
   contexteCombat = null;
   rendreCombat();
-  t?.(e);
+  resolveur?.(action);
 }
 function sortJouable(lanceur, sort) {
   return !raisonIndisponible(lanceur, sort, combattants);
@@ -501,12 +522,12 @@ function lancerSurSoi(sort) {
   });
 }
 function choisirSort(sort, depuisClavier = false) {
-  let t = combattantActif;
-  if (!t || !contexteCombat || !sort) {
+  let acteur = combattantActif;
+  if (!acteur || !contexteCombat || !sort) {
     return;
   }
   replierObjectifs();
-  document.querySelectorAll(`.sort-tip`).forEach((x) => (x.style.display = `none`));
+  document.querySelectorAll(`.sort-tip`).forEach((tip) => (tip.style.display = `none`));
   // un second appui sur le sort choisi le lance sur la cible pointée (touche du sort, ou cible
   // unique), le lance sur soi s'il n'a pas de cible à choisir, sinon l'annule
   if (sortChoisi?.id === sort.id) {
@@ -522,7 +543,7 @@ function choisirSort(sort, depuisClavier = false) {
   }
   // les raccourcis clavier passent par ici : mêmes conditions que les boutons (PA, recharge,
   // cibles) ; un sort indisponible montre son aide et la raison, sans passer en visée
-  if (!sortJouable(t, sort)) {
+  if (!sortJouable(acteur, sort)) {
     infoSort = infoSort?.id === sort.id ? null : sort;
     sortChoisi = null;
     rendreCombat();
@@ -537,45 +558,54 @@ function choisirSort(sort, depuisClavier = false) {
   refVisee = null;
   rendreCombat();
 }
-function badgeArchi(e) {
-  if (e.camp !== `ennemi` || !e.archi || !e.archiNom) {
+function badgeArchi(combattant) {
+  if (combattant.camp !== `ennemi` || !combattant.archi || !combattant.archiNom) {
     return ``;
   }
-  let t =
-    e.monstreId && resolveurAction?.archis.includes(e.monstreId)
-      ? `Archimonstre (âme déjà capturée) : ${e.archiNom}`
-      : `Archimonstre : vaincs-le pour capturer son âme : ${e.archiNom}`;
-  return `<img class="archi-badge capture" src="${cheminAsset(`/assets/divers/Archmonster.webp`)}" alt="" data-tip="${echapperHtml(t)}" onerror="this.remove()" />`;
+  let texte =
+    combattant.monstreId && resolveurAction?.archis.includes(combattant.monstreId)
+      ? `Archimonstre (âme déjà capturée) : ${combattant.archiNom}`
+      : `Archimonstre : vaincs-le pour capturer son âme : ${combattant.archiNom}`;
+  return `<img class="archi-badge capture" src="${cheminAsset(`/assets/divers/Archmonster.webp`)}" alt="" data-tip="${echapperHtml(texte)}" onerror="this.remove()" />`;
 }
-function compterPieges(e, t) {
-  let n = 0;
-  for (let r of combattants) {
-    for (let i of r.pieges ?? []) {
-      i.camp === e && i.avant === t && n++;
+function compterPieges(camp, avant) {
+  let nb = 0;
+  for (let combattant of combattants) {
+    for (let piege of combattant.pieges ?? []) {
+      piege.camp === camp && piege.avant === avant && nb++;
     }
   }
-  return n;
+  return nb;
 }
 // Dégâts prévus du sort choisi sur une cible (sans esquive ni critique) : [min, max], ou null.
 function apercuDegats(cible) {
-  const s = sortChoisi;
+  const sort = sortChoisi;
   const lanceur = combattantActif;
-  if (!s || !lanceur || s.type !== `degats` || !(s.baseMax > 0) || cible.camp === lanceur.camp) {
+  if (
+    !sort ||
+    !lanceur ||
+    sort.type !== `degats` ||
+    !(sort.baseMax > 0) ||
+    cible.camp === lanceur.camp
+  ) {
     return null;
   }
   try {
-    const calc = (x) => {
-      const suite = s.sansEsquiveNiCrit ? [x] : [0.999, x, 0.999];
-      let k = 0;
+    const calc = (tirage) => {
+      const suite = sort.sansEsquiveNiCrit ? [tirage] : [0.999, tirage, 0.999];
+      let indice = 0;
       const ctx = {
-        rng: () => suite[k++] ?? 0.999,
+        rng: () => suite[indice++] ?? 0.999,
         log: () => {},
         playerDamageBonus: optionsVue.playerDamageBonus ?? 1,
         enemyDamageBonus: optionsVue.enemyDamageBonus ?? 1,
         reliquesActives: optionsVue.reliquesActives ?? new Set(),
       };
-      return calculerDegatsDetail(lanceur, s, cible, { ctx, mult: 1, paAvant: lanceur.paActuels })
-        .dmg;
+      return calculerDegatsDetail(lanceur, sort, cible, {
+        ctx,
+        mult: 1,
+        paAvant: lanceur.paActuels,
+      }).dmg;
     };
     const min = calc(0);
     const max = calc(0.999);
@@ -586,35 +616,35 @@ function apercuDegats(cible) {
 }
 // Effets temporaires lisibles sur les cartes : un badge chiffré par effet (les effets identiques
 // se cumulent), et une explication longue au survol ou au toucher (data-tip).
-const pct = (v) => Math.round(Math.abs(v) * 100);
-const signe = (v) => (v >= 0 ? `+` : `−`);
+const pct = (valeur) => Math.round(Math.abs(valeur) * 100);
+const signe = (valeur) => (valeur >= 0 ? `+` : `−`);
 export const EFFETS_AFFICHAGE = {
   poison: {
     icone: `☠`,
-    court: (v) => `poison ${v}/t`,
-    long: (v) => `Poison : perd ${v} PV au début de chacun de ses tours.`,
+    court: (valeur) => `poison ${valeur}/t`,
+    long: (valeur) => `Poison : perd ${valeur} PV au début de chacun de ses tours.`,
     classe: `mal`,
   },
   hot: {
     icone: `♥`,
-    court: (v) => `soin ${v}/t`,
-    long: (v) => `Régénère ${v} PV au début de chacun de ses tours.`,
+    court: (valeur) => `soin ${valeur}/t`,
+    long: (valeur) => `Régénère ${valeur} PV au début de chacun de ses tours.`,
     classe: `bien`,
   },
   degatsInfliges: {
     icone: `⚔`,
-    court: (v) => `${signe(v)}${pct(v)} % dgts`,
-    long: (v) => `Dégâts infligés ${signe(v)}${pct(v)} %.`,
+    court: (valeur) => `${signe(valeur)}${pct(valeur)} % dgts`,
+    long: (valeur) => `Dégâts infligés ${signe(valeur)}${pct(valeur)} %.`,
   },
   resAll: {
     icone: `🛡`,
-    court: (v) => `${signe(v)}${pct(v)} % rés.`,
-    long: (v) => `Résistances à tous les éléments ${signe(v)}${pct(v)} %.`,
+    court: (valeur) => `${signe(valeur)}${pct(valeur)} % rés.`,
+    long: (valeur) => `Résistances à tous les éléments ${signe(valeur)}${pct(valeur)} %.`,
   },
   reductionDegats: {
     icone: `🛡`,
-    court: (v) => `−${pct(v)} % subis`,
-    long: (v) => `Dégâts subis réduits de ${pct(v)} %.`,
+    court: (valeur) => `−${pct(valeur)} % subis`,
+    long: (valeur) => `Dégâts subis réduits de ${pct(valeur)} %.`,
     classe: `bien`,
   },
   friction: {
@@ -631,50 +661,52 @@ export const EFFETS_AFFICHAGE = {
   },
   crit: {
     icone: `🎯`,
-    court: (v) => `+${v} % crit`,
-    long: (v) => `Chance de coup critique +${v} %.`,
+    court: (valeur) => `+${valeur} % crit`,
+    long: (valeur) => `Chance de coup critique +${valeur} %.`,
     classe: `bien`,
   },
   force: {
     icone: `💪`,
-    court: (v) => `${signe(v)}${Math.abs(v)} Force`,
-    long: (v) => `Force ${signe(v)}${Math.abs(v)} (cumulable).`,
+    court: (valeur) => `${signe(valeur)}${Math.abs(valeur)} Force`,
+    long: (valeur) => `Force ${signe(valeur)}${Math.abs(valeur)} (cumulable).`,
   },
   intelligence: {
     icone: `🔥`,
-    court: (v) => `${signe(v)}${Math.abs(v)} Intel.`,
-    long: (v) => `Intelligence ${signe(v)}${Math.abs(v)} (cumulable).`,
+    court: (valeur) => `${signe(valeur)}${Math.abs(valeur)} Intel.`,
+    long: (valeur) => `Intelligence ${signe(valeur)}${Math.abs(valeur)} (cumulable).`,
   },
   agilite: {
     icone: `💨`,
-    court: (v) => `${signe(v)}${Math.abs(v)} Agi.`,
-    long: (v) => `Agilité ${signe(v)}${Math.abs(v)} (cumulable).`,
+    court: (valeur) => `${signe(valeur)}${Math.abs(valeur)} Agi.`,
+    long: (valeur) => `Agilité ${signe(valeur)}${Math.abs(valeur)} (cumulable).`,
   },
   chance: {
     icone: `💧`,
-    court: (v) => `${signe(v)}${Math.abs(v)} Chance`,
-    long: (v) => `Chance ${signe(v)}${Math.abs(v)} (cumulable).`,
+    court: (valeur) => `${signe(valeur)}${Math.abs(valeur)} Chance`,
+    long: (valeur) => `Chance ${signe(valeur)}${Math.abs(valeur)} (cumulable).`,
   },
   vitalite: {
     icone: `❤`,
-    court: (v) => `${signe(v)}${pct(v)} % PV`,
-    long: (v) => `PV max ${signe(v)}${pct(v)} %.`,
+    court: (valeur) => `${signe(valeur)}${pct(valeur)} % PV`,
+    long: (valeur) => `PV max ${signe(valeur)}${pct(valeur)} %.`,
   },
   initiative: {
     icone: `⏳`,
-    court: (v) => `init ${v >= 0 ? `+` : ``}${v}`,
-    long: (v) => `Initiative ${v >= 0 ? `+` : ``}${v} : change sa place dans l'ordre de jeu.`,
+    court: (valeur) => `init ${valeur >= 0 ? `+` : ``}${valeur}`,
+    long: (valeur) =>
+      `Initiative ${valeur >= 0 ? `+` : ``}${valeur} : change sa place dans l'ordre de jeu.`,
   },
   contre: {
     icone: `⚔️`,
-    court: (v) => `contre ${pct(v)} %`,
-    long: (v) => `Contre : ${pct(v)} % de chances de riposter quand il est frappé.`,
+    court: (valeur) => `contre ${pct(valeur)} %`,
+    long: (valeur) => `Contre : ${pct(valeur)} % de chances de riposter quand il est frappé.`,
     classe: `bien`,
   },
   proie: {
     icone: `🎯`,
-    court: (v) => `proie · vol ${pct(v)} %`,
-    long: (v) => `Proie : l'équipe adverse récupère ${pct(v)} % des dégâts qu'elle lui inflige.`,
+    court: (valeur) => `proie · vol ${pct(valeur)} %`,
+    long: (valeur) =>
+      `Proie : l'équipe adverse récupère ${pct(valeur)} % des dégâts qu'elle lui inflige.`,
     classe: `mal`,
   },
   tetanise: {
@@ -691,32 +723,32 @@ export const EFFETS_AFFICHAGE = {
   },
   echecCritique: {
     icone: `🌀`,
-    court: (v) => `échec ${pct(v)} %`,
-    long: (v) => `${pct(v)} % de chances que chacun de ses sorts échoue.`,
+    court: (valeur) => `échec ${pct(valeur)} %`,
+    long: (valeur) => `${pct(valeur)} % de chances que chacun de ses sorts échoue.`,
     classe: `mal`,
   },
   armure: {
     icone: `🪨`,
-    court: (v) => `armure +${v}`,
-    long: (v) => `Armure : retire ${v} à chaque frappe reçue.`,
+    court: (valeur) => `armure +${valeur}`,
+    long: (valeur) => `Armure : retire ${valeur} à chaque frappe reçue.`,
     classe: `bien`,
   },
   degatsCritSubis: {
     icone: `🃏`,
-    court: (v) => `+${pct(v)} % crit subis`,
-    long: (v) => `Subit ${pct(v)} % de dégâts en plus sur les coups critiques.`,
+    court: (valeur) => `+${pct(valeur)} % crit subis`,
+    long: (valeur) => `Subit ${pct(valeur)} % de dégâts en plus sur les coups critiques.`,
     classe: `mal`,
   },
   esquive: {
     icone: `💨`,
-    court: (v) => `+${pct(v)} % esq.`,
-    long: (v) => `Esquive +${pct(v)} % : chance d'éviter complètement une attaque.`,
+    court: (valeur) => `+${pct(valeur)} % esq.`,
+    long: (valeur) => `Esquive +${pct(valeur)} % : chance d'éviter complètement une attaque.`,
     classe: `bien`,
   },
   bonusPieges: {
     icone: `🪤`,
-    court: (v) => `pièges +${pct(v)} %`,
-    long: (v) => `Ses pièges font ${pct(v)} % de dégâts en plus.`,
+    court: (valeur) => `pièges +${pct(valeur)} %`,
+    long: (valeur) => `Ses pièges font ${pct(valeur)} % de dégâts en plus.`,
     classe: `bien`,
   },
   infection: {
@@ -727,8 +759,8 @@ export const EFFETS_AFFICHAGE = {
   },
   paParTour: {
     icone: `★`,
-    court: (v) => `+${v} PA/tour`,
-    long: (v) => `Gagne ${v} PA au début de chacun de ses tours.`,
+    court: (valeur) => `+${valeur} PA/tour`,
+    long: (valeur) => `Gagne ${valeur} PA au début de chacun de ses tours.`,
     classe: `bien`,
   },
   aiguille: {
@@ -739,60 +771,62 @@ export const EFFETS_AFFICHAGE = {
   },
 };
 // les effets « permanents » (99 tours) n'affichent pas de durée
-const duree = (t) => (t > 0 && t < 90 ? ` · ${t} t` : ``);
-const dureeLongue = (t) =>
-  t > 0 && t < 90 ? ` Encore ${t} tour${t > 1 ? `s` : ``}.` : ` Jusqu'à la fin du combat.`;
-export function badgesEffets(e) {
+const duree = (tours) => (tours > 0 && tours < 90 ? ` · ${tours} t` : ``);
+const dureeLongue = (tours) =>
+  tours > 0 && tours < 90
+    ? ` Encore ${tours} tour${tours > 1 ? `s` : ``}.`
+    : ` Jusqu'à la fin du combat.`;
+export function badgesEffets(combattant) {
   const cumuls = new Map();
-  for (const ef of e.effets) {
+  for (const ef of combattant.effets) {
     // les effets d'un état de classe sont expliqués par le badge de l'état
     if (ef.source === `etat`) {
       continue;
     }
-    const c = cumuls.get(ef.stat) ?? { valeur: 0, tours: 0 };
-    c.valeur += ef.valeur;
-    c.tours = Math.max(c.tours, ef.toursRestants ?? 0);
-    cumuls.set(ef.stat, c);
+    const cumul = cumuls.get(ef.stat) ?? { valeur: 0, tours: 0 };
+    cumul.valeur += ef.valeur;
+    cumul.tours = Math.max(cumul.tours, ef.toursRestants ?? 0);
+    cumuls.set(ef.stat, cumul);
   }
   const badges = [];
   for (const [stat, { valeur, tours }] of cumuls) {
-    const v = Math.round(valeur * 100) / 100;
+    const arrondi = Math.round(valeur * 100) / 100;
     const def = EFFETS_AFFICHAGE[stat];
     if (!def) {
       badges.push({ texte: `${stat}${duree(tours)}`, tip: `${stat}.${dureeLongue(tours)}` });
       continue;
     }
     badges.push({
-      texte: `${def.icone} ${def.court(v)}${duree(tours)}`,
-      tip: `${def.long(v)}${dureeLongue(tours)}`,
+      texte: `${def.icone} ${def.court(arrondi)}${duree(tours)}`,
+      tip: `${def.long(arrondi)}${dureeLongue(tours)}`,
       classe: def.classe,
     });
   }
-  const temporaires = e.boucliersTemporaires ?? [];
+  const temporaires = combattant.boucliersTemporaires ?? [];
   if (temporaires.length) {
-    const montant = temporaires.reduce((acc, b) => acc + b.montant, 0);
-    const tours = Math.max(...temporaires.map((b) => b.tours));
+    const montant = temporaires.reduce((acc, temporaire) => acc + temporaire.montant, 0);
+    const tours = Math.max(...temporaires.map((temporaire) => temporaire.tours));
     badges.push({
       texte: `🛡 bouclier ${Math.round(montant)}${duree(tours)}`,
       tip: `Bouclier temporaire : absorbe ${Math.round(montant)} dégâts avant les PV, puis s'estompe.${dureeLongue(tours)}`,
       classe: `bien`,
     });
   }
-  if ((e.armure ?? 0) > 0) {
+  if ((combattant.armure ?? 0) > 0) {
     badges.push({
-      texte: `🪨 armure ${e.armure}`,
-      tip: `Armure permanente : retire ${e.armure} à chaque frappe reçue.`,
+      texte: `🪨 armure ${combattant.armure}`,
+      tip: `Armure permanente : retire ${combattant.armure} à chaque frappe reçue.`,
     });
   }
   return badges;
 }
-function badgesCombattant(e) {
-  const c = badgesEffets(e);
-  const ajouter = (texte, tip, classe) => c.push({ texte, tip, classe });
-  const etat = e.etatClasse && ETATS_CLASSE[e.etatClasse];
+function badgesCombattant(combattant) {
+  const badges = badgesEffets(combattant);
+  const ajouter = (texte, tip, classe) => badges.push({ texte, tip, classe });
+  const etat = combattant.etatClasse && ETATS_CLASSE[combattant.etatClasse];
   if (etat) {
     const effets = etat.effets
-      .map((x) => EFFETS_AFFICHAGE[x.stat]?.court(x.valeur))
+      .map((effet) => EFFETS_AFFICHAGE[effet.stat]?.court(effet.valeur))
       .filter(Boolean)
       .join(`, `);
     ajouter(
@@ -800,71 +834,91 @@ function badgesCombattant(e) {
       `État ${etat.nom}${effets ? ` : ${effets}` : ``}, tant que l'état dure.`,
     );
   }
-  if (e.marqueElement) {
+  if (combattant.marqueElement) {
     ajouter(
-      `${ICONES_MARQUES[e.marqueElement]} Marque ${NOMS_ELEMENTS[e.marqueElement]}`,
-      `Marque ${NOMS_ELEMENTS[e.marqueElement]} : un sort d'un autre élément la combine pour un effet bonus.`,
+      `${ICONES_MARQUES[combattant.marqueElement]} Marque ${NOMS_ELEMENTS[combattant.marqueElement]}`,
+      `Marque ${NOMS_ELEMENTS[combattant.marqueElement]} : un sort d'un autre élément la combine pour un effet bonus.`,
     );
   }
-  if (e.tourelle) {
-    ajouter(`⚙️ Tourelle niv. ${e.niveauTourelle ?? 1}`, `Tourelle : joue seule à chaque tour.`);
-  } else if (e.creature) {
+  if (combattant.tourelle) {
+    ajouter(
+      `⚙️ Tourelle niv. ${combattant.niveauTourelle ?? 1}`,
+      `Tourelle : joue seule à chaque tour.`,
+    );
+  } else if (combattant.creature) {
     ajouter(`🐾 Créature`, `Créature invoquée : joue seule et disparaît si son invocateur tombe.`);
   }
-  if ((e.bombes ?? 0) > 0) {
-    ajouter(`💣 ×${e.bombes}`, `${e.bombes} bombe(s) collée(s) : Kaboom les fait exploser.`);
-  }
-  if ((e.telefrags ?? 0) > 0) {
-    ajouter(`⌛ ×${e.telefrags}`, `${e.telefrags} Téléfrag(s) posé(s) (4 au plus).`);
-  }
-  if ((e.portails ?? 0) > 0) {
-    ajouter(`🌀 ×${e.portails}`, `${e.portails} portail(s) ouvert(s) : +2 % de dégâts chacun.`);
-  }
-  if ((e.rage ?? 0) > 0) {
-    ajouter(`🐺 Rage ×${e.rage}`, `Rage ×${e.rage} : +${5 * e.rage} % de dégâts.`, `bien`);
-  }
-  if ((e.chausseTrappe ?? 0) > 0) {
+  if ((combattant.bombes ?? 0) > 0) {
     ajouter(
-      `🪤 Chausse-Trappe ×${e.chausseTrappe}`,
-      `Chausse-Trappe ×${e.chausseTrappe} (5 au plus) : renforce ses sorts liés.`,
+      `💣 ×${combattant.bombes}`,
+      `${combattant.bombes} bombe(s) collée(s) : Kaboom les fait exploser.`,
     );
   }
-  if (e.provoque) {
+  if ((combattant.telefrags ?? 0) > 0) {
+    ajouter(
+      `⌛ ×${combattant.telefrags}`,
+      `${combattant.telefrags} Téléfrag(s) posé(s) (4 au plus).`,
+    );
+  }
+  if ((combattant.portails ?? 0) > 0) {
+    ajouter(
+      `🌀 ×${combattant.portails}`,
+      `${combattant.portails} portail(s) ouvert(s) : +2 % de dégâts chacun.`,
+    );
+  }
+  if ((combattant.rage ?? 0) > 0) {
+    ajouter(
+      `🐺 Rage ×${combattant.rage}`,
+      `Rage ×${combattant.rage} : +${5 * combattant.rage} % de dégâts.`,
+      `bien`,
+    );
+  }
+  if ((combattant.chausseTrappe ?? 0) > 0) {
+    ajouter(
+      `🪤 Chausse-Trappe ×${combattant.chausseTrappe}`,
+      `Chausse-Trappe ×${combattant.chausseTrappe} (5 au plus) : renforce ses sorts liés.`,
+    );
+  }
+  if (combattant.provoque) {
     ajouter(`🛡 Provoque`, `Provocation : les ennemis doivent le viser en priorité.`);
   }
-  if ((e.coupsAnnulesRestants ?? 0) > 0) {
+  if ((combattant.coupsAnnulesRestants ?? 0) > 0) {
     ajouter(
-      `🐺 ${e.coupsAnnulesRestants} coup(s) annulé(s)`,
-      `Encaisse sans broncher : ses ${e.coupsAnnulesRestants} prochain(s) coup(s) reçu(s) sont annulés (rechargé à chacun de ses tours).`,
+      `🐺 ${combattant.coupsAnnulesRestants} coup(s) annulé(s)`,
+      `Encaisse sans broncher : ses ${combattant.coupsAnnulesRestants} prochain(s) coup(s) reçu(s) sont annulés (rechargé à chacun de ses tours).`,
       `bien`,
     );
   }
-  if (e.bonusOffensifProchain > 0) {
-    const p = Math.round(e.bonusOffensifProchain * 100);
-    ajouter(`+${p} % prochain`, `Son prochain sort offensif fait +${p} % de dégâts.`, `bien`);
-  }
-  if (e.maxRollCharges > 0) {
+  if (combattant.bonusOffensifProchain > 0) {
+    const pctBonus = Math.round(combattant.bonusOffensifProchain * 100);
     ajouter(
-      `Œil affûté ×${e.maxRollCharges}`,
-      `Ses ${e.maxRollCharges} prochain(s) sort(s) font leurs dégâts maximaux.`,
+      `+${pctBonus} % prochain`,
+      `Son prochain sort offensif fait +${pctBonus} % de dégâts.`,
       `bien`,
     );
   }
-  if (e.paBonusNextTurn !== 0) {
-    const v = e.paBonusNextTurn;
-    ajouter(`${v > 0 ? `+` : ``}${v} PA`, `${v > 0 ? `+` : ``}${v} PA à son prochain tour.`);
-  }
-  if (e.estEgide && (e.toursRestantsInvocation ?? 0) > 0) {
+  if (combattant.maxRollCharges > 0) {
     ajouter(
-      `🛡️ Égide · ${e.toursRestantsInvocation} t`,
-      `Égide : protège sa ligne, disparaît dans ${e.toursRestantsInvocation} tour(s).`,
+      `Œil affûté ×${combattant.maxRollCharges}`,
+      `Ses ${combattant.maxRollCharges} prochain(s) sort(s) font leurs dégâts maximaux.`,
+      `bien`,
     );
   }
-  return c;
+  if (combattant.paBonusNextTurn !== 0) {
+    const pa = combattant.paBonusNextTurn;
+    ajouter(`${pa > 0 ? `+` : ``}${pa} PA`, `${pa > 0 ? `+` : ``}${pa} PA à son prochain tour.`);
+  }
+  if (combattant.estEgide && (combattant.toursRestantsInvocation ?? 0) > 0) {
+    ajouter(
+      `🛡️ Égide · ${combattant.toursRestantsInvocation} t`,
+      `Égide : protège sa ligne, disparaît dans ${combattant.toursRestantsInvocation} tour(s).`,
+    );
+  }
+  return badges;
 }
 // niveau de PV pour colorer les barres : « crit » sous 25 %, « bas » sous 50 %
-export function niveauPv(pct) {
-  return pct <= 25 ? `crit` : pct <= 50 ? `bas` : ``;
+export function niveauPv(pctPv) {
+  return pctPv <= 25 ? `crit` : pctPv <= 50 ? `bas` : ``;
 }
 // la barre du bas est collée en bas de l'écran : on fait défiler la page pour que les cibles restent au-dessus
 function degagerCibles() {
@@ -874,103 +928,109 @@ function degagerCibles() {
     return;
   }
   const hautBarre = barre.getBoundingClientRect().top;
-  const bas = Math.max(...cartes.map((c) => c.getBoundingClientRect().bottom));
-  const haut = Math.min(...cartes.map((c) => c.getBoundingClientRect().top));
+  const bas = Math.max(...cartes.map((carte) => carte.getBoundingClientRect().bottom));
+  const haut = Math.min(...cartes.map((carte) => carte.getBoundingClientRect().top));
   const decalage = Math.min(bas - hautBarre + 10, haut - 8);
   if (decalage > 0) {
     window.scrollBy({ top: decalage, behavior: comportementDefilement() });
   }
 }
-function htmlCarteCombattant(e, t) {
-  let n = e.pvActuels <= 0;
-  let r = Math.max(0, Math.round(e.pvActuels));
-  let i = e.pvMax > 0 ? Math.max(0, Math.min(100, Math.round((e.pvActuels / e.pvMax) * 100))) : 0;
-  let a = Math.round(e.bouclier);
-  let o =
+function htmlCarteCombattant(combattant, ciblable) {
+  let ko = combattant.pvActuels <= 0;
+  let pv = Math.max(0, Math.round(combattant.pvActuels));
+  let pctPv =
+    combattant.pvMax > 0
+      ? Math.max(0, Math.min(100, Math.round((combattant.pvActuels / combattant.pvMax) * 100)))
+      : 0;
+  let bouclier = Math.round(combattant.bouclier);
+  let elementVise =
     combattantActif &&
     combattantActif.camp === `joueur` &&
-    e.camp === `ennemi` &&
+    combattant.camp === `ennemi` &&
     combattantActif.pvActuels > 0 &&
-    e.pvActuels > 0
-      ? choisirElement(combattantActif, e, sortChoisi ?? undefined)
+    combattant.pvActuels > 0
+      ? choisirElement(combattantActif, combattant, sortChoisi ?? undefined)
       : null;
-  let s = ELEMENTS.filter((t) => Math.round(resistanceTotale(e, t) * 100) !== 0 || t === o)
-    .map((t) => {
-      let n = Math.round(resistanceTotale(e, t) * 100);
-      return `<span class="res-chip ${n < 0 ? `faible` : n === 0 ? `zero` : `forte`}${t === o ? ` vise` : ``}" ${t === o ? `data-tip="Résistance ${NOMS_ELEMENTS[t]} · ton élément de frappe contre cette cible (celui qui lui fait le plus mal)"` : `data-tip="Résistance ${NOMS_ELEMENTS[t]}"`}><img src="${IMGS_RESISTANCE[t]}" alt="" onerror="this.remove()" />${n > 0 ? `+` : ``}${n}%</span>`;
+  let htmlRes = ELEMENTS.filter(
+    (element) =>
+      Math.round(resistanceTotale(combattant, element) * 100) !== 0 || element === elementVise,
+  )
+    .map((element) => {
+      let resPct = Math.round(resistanceTotale(combattant, element) * 100);
+      return `<span class="res-chip ${resPct < 0 ? `faible` : resPct === 0 ? `zero` : `forte`}${element === elementVise ? ` vise` : ``}" ${element === elementVise ? `data-tip="Résistance ${NOMS_ELEMENTS[element]} · ton élément de frappe contre cette cible (celui qui lui fait le plus mal)"` : `data-tip="Résistance ${NOMS_ELEMENTS[element]}"`}><img src="${IMGS_RESISTANCE[element]}" alt="" onerror="this.remove()" />${resPct > 0 ? `+` : ``}${resPct}%</span>`;
     })
     .join(``);
-  let c = badgesCombattant(e);
-  let l = enLigneAvant(e) ? `avant` : `arriere`;
+  let badges = badgesCombattant(combattant);
+  let ligne = enLigneAvant(combattant) ? `avant` : `arriere`;
   return `
     <div class="${[
       `carte`,
-      e.camp === `joueur` ? `carte-joueur` : `carte-ennemi`,
-      `ligne-${l}`,
-      n ? `ko` : ``,
-      e.ref === refActive() ? `actif` : ``,
-      t ? `ciblable` : ``,
-      e.archi ? `archi` : ``,
+      combattant.camp === `joueur` ? `carte-joueur` : `carte-ennemi`,
+      `ligne-${ligne}`,
+      ko ? `ko` : ``,
+      combattant.ref === refActive() ? `actif` : ``,
+      ciblable ? `ciblable` : ``,
+      combattant.archi ? `archi` : ``,
     ]
       .filter(Boolean)
       .join(
         ` `,
-      )}" data-ref="${e.ref}"${t ? ` tabindex="0" role="button" aria-label="${echapperHtml(libelleCible(e))}"` : ``}>
+      )}" data-ref="${combattant.ref}"${ciblable ? ` tabindex="0" role="button" aria-label="${echapperHtml(libelleCible(combattant))}"` : ``}>
       <div class="carte-tete">
-        <span class="carte-nom">${defiCombat?.cible === e.ref ? `<span class="badge-defi" data-tip="Cible du défi ${echapperHtml(defiCombat.nom)}">🎯</span>` : ``}${echapperHtml(e.nom)}</span>
-        <span class="rang rang-${l}">${l === `avant` ? `AVANT` : `ARR.`}</span>
+        <span class="carte-nom">${defiCombat?.cible === combattant.ref ? `<span class="badge-defi" data-tip="Cible du défi ${echapperHtml(defiCombat.nom)}">🎯</span>` : ``}${echapperHtml(combattant.nom)}</span>
+        <span class="rang rang-${ligne}">${ligne === `avant` ? `AVANT` : `ARR.`}</span>
       </div>
       <div class="portrait-wrap">
-        ${e.img ? `<img class="portrait" src="${cheminAsset(e.img)}" alt="" onerror="this.remove()" />` : `<div class="portrait"></div>`}
-        ${badgeArchi(e)}
-        <span class="pa-gem" title="${e.paActuels} / ${e.paMax} PA"><img src="${IMG_ETOILE}" alt="" onerror="this.remove()" /><b>${e.paActuels}</b></span>
-        <span class="pv-gem ${n ? `ko` : ``} ${a > 0 ? `protege` : ``}" title="${r} / ${e.pvMax} PV${a > 0 ? ` · ${a} bouclier` : ``}" style="--pv-pct:${i}%">
+        ${combattant.img ? `<img class="portrait" src="${cheminAsset(combattant.img)}" alt="" onerror="this.remove()" />` : `<div class="portrait"></div>`}
+        ${badgeArchi(combattant)}
+        <span class="pa-gem" title="${combattant.paActuels} / ${combattant.paMax} PA"><img src="${IMG_ETOILE}" alt="" onerror="this.remove()" /><b>${combattant.paActuels}</b></span>
+        <span class="pv-gem ${ko ? `ko` : ``} ${bouclier > 0 ? `protege` : ``}" title="${pv} / ${combattant.pvMax} PV${bouclier > 0 ? ` · ${bouclier} bouclier` : ``}" style="--pv-pct:${pctPv}%">
           <img class="pv-vide" src="${IMG_COEUR}" alt="" onerror="this.remove()" />
           <img class="pv-plein" src="${IMG_COEUR}" alt="" onerror="this.remove()" />
-          <b class="pv-num">${r}<span>/${e.pvMax}</span></b>
-          ${a > 0 ? `<span class="pv-bouclier" title="Bouclier">${a}</span>` : ``}
+          <b class="pv-num">${pv}<span>/${combattant.pvMax}</span></b>
+          ${bouclier > 0 ? `<span class="pv-bouclier" title="Bouclier">${bouclier}</span>` : ``}
         </span>
       </div>
-      <div class="pv-barre${n ? ` ko` : ``}${n ? `` : ` ${niveauPv(i)}`}" style="--pv-pct:${i}%" title="${r} / ${e.pvMax} PV">
-        <span class="pv-barre-txt">❤ ${r} / ${e.pvMax}${a > 0 ? ` · 🛡 ${a}` : ``}</span>
-        <span class="pa-txt">★ ${e.paActuels} PA</span>
+      <div class="pv-barre${ko ? ` ko` : ``}${ko ? `` : ` ${niveauPv(pctPv)}`}" style="--pv-pct:${pctPv}%" title="${pv} / ${combattant.pvMax} PV">
+        <span class="pv-barre-txt">❤ ${pv} / ${combattant.pvMax}${bouclier > 0 ? ` · 🛡 ${bouclier}` : ``}</span>
+        <span class="pa-txt">★ ${combattant.paActuels} PA</span>
       </div>
       ${(() => {
-        if (e.estEgide) {
+        if (combattant.estEgide) {
           return ``;
         }
-        let t = statsEffectives(e);
+        let statsEff = statsEffectives(combattant);
         return `<div class="mini-stats">
-        <span class="ms" data-tip="Coup critique (Agilité)"><img src="${IMG_CRITIQUE}" alt="" onerror="this.remove()" />${pctCritique(t)}%</span>
-        <span class="ms" data-tip="Dégâts critiques (Agilité)"><img src="${IMG_DMG_CRITIQUE}" alt="" onerror="this.remove()" />${pctDegatsCritiques(t)}%</span>
-        <span class="ms" data-tip="Soins (Soin + élément de frappe)"><img src="${IMG_SOIN}" alt="" onerror="this.remove()" />${pctSoin(t, statElement(t, meilleurElement(e)))}%</span>
-        <span class="ms" data-tip="Dégâts finaux (Intelligence)"><img src="${IMG_PUISSANCE}" alt="" onerror="this.remove()" />${pctPuissanceIntel(t)}%</span>
-        ${(e.armure ?? 0) > 0 ? `<span class="ms" data-tip="Armure : retranchée de chaque frappe reçue">🪨 ${e.armure}</span>` : ``}
+        <span class="ms" data-tip="Coup critique (Agilité)"><img src="${IMG_CRITIQUE}" alt="" onerror="this.remove()" />${pctCritique(statsEff)}%</span>
+        <span class="ms" data-tip="Dégâts critiques (Agilité)"><img src="${IMG_DMG_CRITIQUE}" alt="" onerror="this.remove()" />${pctDegatsCritiques(statsEff)}%</span>
+        <span class="ms" data-tip="Soins (Soin + élément de frappe)"><img src="${IMG_SOIN}" alt="" onerror="this.remove()" />${pctSoin(statsEff, statElement(statsEff, meilleurElement(combattant)))}%</span>
+        <span class="ms" data-tip="Dégâts finaux (Intelligence)"><img src="${IMG_PUISSANCE}" alt="" onerror="this.remove()" />${pctPuissanceIntel(statsEff)}%</span>
+        ${(combattant.armure ?? 0) > 0 ? `<span class="ms" data-tip="Armure : retranchée de chaque frappe reçue">🪨 ${combattant.armure}</span>` : ``}
       </div>`;
       })()}
-      ${e.camp === `joueur` && !e.estEgide ? `<div class="pp-row" title="Prospection"><img src="${IMG_PP}" alt="" onerror="this.remove()" /><b>${e.stats.prospection ?? 0}</b></div>` : ``}
-      ${s && !e.estEgide ? `<div class="res-row">${s}</div>` : ``}
-      <div class="badges">${c.map((b) => `<span class="badge${b.classe ? ` ${b.classe}` : ``}" data-tip="${echapperHtml(b.tip)}">${echapperHtml(b.texte)}</span>`).join(``)}</div>
+      ${combattant.camp === `joueur` && !combattant.estEgide ? `<div class="pp-row" title="Prospection"><img src="${IMG_PP}" alt="" onerror="this.remove()" /><b>${combattant.stats.prospection ?? 0}</b></div>` : ``}
+      ${htmlRes && !combattant.estEgide ? `<div class="res-row">${htmlRes}</div>` : ``}
+      <div class="badges">${badges.map((badge) => `<span class="badge${badge.classe ? ` ${badge.classe}` : ``}" data-tip="${echapperHtml(badge.tip)}">${echapperHtml(badge.texte)}</span>`).join(``)}</div>
       ${(() => {
-        let ap = t ? apercuDegats(e) : null;
+        let ap = ciblable ? apercuDegats(combattant) : null;
         if (!ap) {
           return ``;
         }
-        let mortel = ap[0] >= e.pvActuels + (e.bouclier ?? 0);
+        let mortel = ap[0] >= combattant.pvActuels + (combattant.bouclier ?? 0);
         return `<div class="cc-apercu${mortel ? ` mortel` : ``}" title="Dégâts prévus du sort (hors critique et esquive)${mortel ? ` : la cible tombe` : ``}">${mortel ? `☠` : `💥`} ${ap[0]}${ap[1] !== ap[0] ? `–${ap[1]}` : ``} dégâts</div>`;
       })()}
-      ${!t && protegeParLigneAvant(e) ? `<span class="cc-protege" data-tip="Protégé par la ligne avant : ce sort vise d'abord un ennemi de devant">🛡 protégé</span>` : ``}
-      ${n ? `<div class="ko-label">K.O.</div>` : ``}
+      ${!ciblable && protegeParLigneAvant(combattant) ? `<span class="cc-protege" data-tip="Protégé par la ligne avant : ce sort vise d'abord un ennemi de devant">🛡 protégé</span>` : ``}
+      ${ko ? `<div class="ko-label">K.O.</div>` : ``}
     </div>`;
 }
 // Libellé d'une cible en visée, pour les lecteurs d'écran : « Zénith sur Chafer, 10-16 dégâts ».
-function libelleCible(e) {
+function libelleCible(combattant) {
   if (!sortChoisi) {
-    return e.nom;
+    return combattant.nom;
   }
-  const ap = apercuDegats(e);
+  const ap = apercuDegats(combattant);
   const degats = ap ? `, ${ap[0]}${ap[1] !== ap[0] ? `-${ap[1]}` : ``} dégâts` : ``;
-  return `${sortChoisi.nom} sur ${e.nom}${degats}`;
+  return `${sortChoisi.nom} sur ${combattant.nom}${degats}`;
 }
 // En visée d'un sort de ligne : l'ennemi de la ligne arrière est protégé par sa ligne avant.
 function sortDeLigne() {
@@ -980,60 +1040,66 @@ function sortDeLigne() {
     sommeEffets(combattantActif, `ignoreLigne`) <= 0
   );
 }
-function protegeParLigneAvant(e) {
+function protegeParLigneAvant(combattant) {
   return (
     sortDeLigne() &&
-    e.camp !== combattantActif.camp &&
-    e.pvActuels > 0 &&
-    !enLigneAvant(e) &&
-    !e.estLance &&
+    combattant.camp !== combattantActif.camp &&
+    combattant.pvActuels > 0 &&
+    !enLigneAvant(combattant) &&
+    !combattant.estLance &&
     combattants.some(
-      (x) => x.camp === e.camp && x.pvActuels > 0 && enLigneAvant(x) && !x.estLance && !x.estEgide,
+      (allie) =>
+        allie.camp === combattant.camp &&
+        allie.pvActuels > 0 &&
+        enLigneAvant(allie) &&
+        !allie.estLance &&
+        !allie.estEgide,
     )
   );
 }
 // Pourquoi une carte n'est pas ciblable par le sort choisi (appui sur une carte refusée).
-function raisonCibleRefusee(e) {
-  const s = sortChoisi;
-  const l = combattantActif;
-  if (!s || !l) {
+function raisonCibleRefusee(cible) {
+  const sort = sortChoisi;
+  const lanceur = combattantActif;
+  if (!sort || !lanceur) {
     return ``;
   }
-  if (e.pvActuels <= 0) {
-    return `${e.nom} est K.O.`;
+  if (cible.pvActuels <= 0) {
+    return `${cible.nom} est K.O.`;
   }
-  const visEnnemi = [`ennemi_ligne`, `ennemi_tous`].includes(s.cible);
-  if (visEnnemi && e.camp === l.camp) {
-    return `${e.nom} est un allié : ce sort vise un ennemi.`;
+  const visEnnemi = [`ennemi_ligne`, `ennemi_tous`].includes(sort.cible);
+  if (visEnnemi && cible.camp === lanceur.camp) {
+    return `${cible.nom} est un allié : ce sort vise un ennemi.`;
   }
-  if ([`allie`, `allie_tous`].includes(s.cible) && e.camp !== l.camp) {
-    return `${e.nom} est un ennemi : ce sort vise un allié.`;
+  if ([`allie`, `allie_tous`].includes(sort.cible) && cible.camp !== lanceur.camp) {
+    return `${cible.nom} est un ennemi : ce sort vise un allié.`;
   }
-  if (s.cible === `soi`) {
-    return `Ce sort se lance sur ${l.nom} uniquement.`;
+  if (sort.cible === `soi`) {
+    return `Ce sort se lance sur ${lanceur.nom} uniquement.`;
   }
-  if (e.estLance) {
+  if (cible.estLance) {
     return `La Lance n'est pas une cible.`;
   }
-  if (e.estEgide) {
+  if (cible.estEgide) {
     return `L'Égide n'est pas une cible.`;
   }
-  if (protegeParLigneAvant(e)) {
-    return `${e.nom} est protégé par la ligne avant : vise d'abord un ennemi de devant.`;
+  if (protegeParLigneAvant(cible)) {
+    return `${cible.nom} est protégé par la ligne avant : vise d'abord un ennemi de devant.`;
   }
-  if (sommeEffets(l, `tetanise`) > 0 && !enLigneAvant(e) && e.camp !== l.camp) {
-    return `${l.nom} est tétanisé : il ne peut viser que la ligne avant.`;
+  if (sommeEffets(lanceur, `tetanise`) > 0 && !enLigneAvant(cible) && cible.camp !== lanceur.camp) {
+    return `${lanceur.nom} est tétanisé : il ne peut viser que la ligne avant.`;
   }
   if (
-    (s.cooldown && (l.cooldowns[`${s.id}:${e.ref}`] ?? 0) > 0) ||
-    (s.maxParCibleParTour && (l.lancersCeTour?.[`${s.id}:${e.ref}`] ?? 0) >= s.maxParCibleParTour)
+    (sort.cooldown && (lanceur.cooldowns[`${sort.id}:${cible.ref}`] ?? 0) > 0) ||
+    (sort.maxParCibleParTour &&
+      (lanceur.lancersCeTour?.[`${sort.id}:${cible.ref}`] ?? 0) >= sort.maxParCibleParTour)
   ) {
-    return `${e.nom} a déjà été visé par ${s.nom} : choisis une autre cible.`;
+    return `${cible.nom} a déjà été visé par ${sort.nom} : choisis une autre cible.`;
   }
-  if (s.transfertPvPct && e.ref === l.ref) {
-    return `${l.nom} ne peut pas se viser lui-même avec ce sort.`;
+  if (sort.transfertPvPct && cible.ref === lanceur.ref) {
+    return `${lanceur.nom} ne peut pas se viser lui-même avec ce sort.`;
   }
-  return `${e.nom} ne peut pas être visé par ${s.nom}.`;
+  return `${cible.nom} ne peut pas être visé par ${sort.nom}.`;
 }
 // Sur téléphone : si aucune cible du sort choisi n'est visible (cachée par la barre des sorts ou
 // hors de l'écran), on fait défiler jusqu'à elles.
@@ -1044,15 +1110,17 @@ function montrerCibles() {
   }
   const barre = document.getElementById(`cb-barre`)?.getBoundingClientRect();
   const bas = barre && barre.top > 0 && barre.top < innerHeight ? barre.top : innerHeight;
-  const visible = (c) => {
-    const r = c.getBoundingClientRect();
-    return r.top >= 0 && r.bottom <= bas;
+  const visible = (carte) => {
+    const cadre = carte.getBoundingClientRect();
+    return cadre.top >= 0 && cadre.bottom <= bas;
   };
   if (cartes.some(visible)) {
     return;
   }
-  const r = cartes[0].getBoundingClientRect();
-  window.scrollTo({ top: Math.max(0, scrollY + r.top - Math.max(8, (bas - r.height) / 2)) });
+  const cadre = cartes[0].getBoundingClientRect();
+  window.scrollTo({
+    top: Math.max(0, scrollY + cadre.top - Math.max(8, (bas - cadre.height) / 2)),
+  });
 }
 function rendreCombat() {
   if (!racine) {
@@ -1060,33 +1128,35 @@ function rendreCombat() {
   }
   masquerElements();
   // calculées une seule fois par rendu, puis passées à la frise et à la barre des sorts
-  let e =
+  let cibles =
     combattantActif && sortChoisi ? ciblesValides(combattantActif, sortChoisi, combattants) : [];
-  let t = (t) => e.some((e) => e.ref === t.ref);
-  let n = (e) => {
-    let n = combattants.filter((t) => t.camp === e).sort((e, t) => e.position - t.position);
-    let r = (n, r, i) => {
-      let a = compterPieges(e, i);
+  let estCiblable = (combattant) => cibles.some((cible) => cible.ref === combattant.ref);
+  let htmlCamp = (camp) => {
+    let membres = combattants
+      .filter((combattant) => combattant.camp === camp)
+      .sort((premier, second) => premier.position - second.position);
+    let htmlLigne = (libelle, cartes, avant) => {
+      let nbPieges = compterPieges(camp, avant);
       return `<div class="ligne-col">
-         <span class="ligne-label">${n}${a > 0 ? `<span class="piege-indicateur" tabindex="0" data-tip="${echapperHtml(AIDE_PIEGE)}">🪤 ×${a}</span>` : ``}</span>
-         <div class="ligne-cards">${r.map((e) => htmlCarteCombattant(e, t(e))).join(``) || `<span class="ligne-vide">—</span>`}</div>
+         <span class="ligne-label">${libelle}${nbPieges > 0 ? `<span class="piege-indicateur" tabindex="0" data-tip="${echapperHtml(AIDE_PIEGE)}">🪤 ×${nbPieges}</span>` : ``}</span>
+         <div class="ligne-cards">${cartes.map((carte) => htmlCarteCombattant(carte, estCiblable(carte))).join(``) || `<span class="ligne-vide">—</span>`}</div>
        </div>`;
     };
-    let i = r(`Ligne avant`, n.filter(enLigneAvant), true);
-    let a = r(
+    let htmlAvant = htmlLigne(`Ligne avant`, membres.filter(enLigneAvant), true);
+    let htmlArriere = htmlLigne(
       `Ligne arrière`,
-      n.filter((e) => !enLigneAvant(e)),
+      membres.filter((carte) => !enLigneAvant(carte)),
       false,
     );
-    let o = `<img class="ligne-sep" src="${cheminAsset(`/assets/divers/delimiter.png`)}" alt="" onerror="this.remove()" />`;
-    return `<div class="camp-lignes ${e}">${e === `joueur` ? a + o + i : i + o + a}</div>`;
+    let separateur = `<img class="ligne-sep" src="${cheminAsset(`/assets/divers/delimiter.png`)}" alt="" onerror="this.remove()" />`;
+    return `<div class="camp-lignes ${camp}">${camp === `joueur` ? htmlArriere + separateur + htmlAvant : htmlAvant + separateur + htmlArriere}</div>`;
   };
   combatEnCours ||=
     ((racine.innerHTML = `
       <div class="combat">
         <h1 class="sr-only">Combat : ${echapperHtml(titreCombat)}</h1>
         <h2 class="titre-combat" aria-hidden="true">${echapperHtml(titreCombat)}</h2>
-        <div class="affixes-combat">${(optionsVue.affixes ?? []).map((a) => `<span class="affixe-pastille" tabindex="0" data-tip="${echapperHtml(a.desc)}">⚔ ${echapperHtml(a.nom)}</span>`).join(``)}</div>
+        <div class="affixes-combat">${(optionsVue.affixes ?? []).map((affixe) => `<span class="affixe-pastille" tabindex="0" data-tip="${echapperHtml(affixe.desc)}">⚔ ${echapperHtml(affixe.nom)}</span>`).join(``)}</div>
         <div id="cb-defi"></div>
         <div id="cb-timeline"></div>
         <div class="plateau">
@@ -1107,17 +1177,17 @@ function rendreCombat() {
     installerEcouteursPlateau(),
     installerEcouteursBarre(),
     true);
-  let r = (e, t) => {
-    let n = document.getElementById(e);
-    if (n) {
-      n.innerHTML = t;
+  let injecter = (id, html) => {
+    let element = document.getElementById(id);
+    if (element) {
+      element.innerHTML = html;
     }
   };
-  r(`cb-defi`, htmlDefi());
-  r(`cb-timeline`, htmlTimeline(e));
-  r(`cb-joueur`, n(`joueur`));
-  r(`cb-ennemi`, n(`ennemi`));
-  r(`cb-barre`, htmlBarreSorts(e));
+  injecter(`cb-defi`, htmlDefi());
+  injecter(`cb-timeline`, htmlTimeline(cibles));
+  injecter(`cb-joueur`, htmlCamp(`joueur`));
+  injecter(`cb-ennemi`, htmlCamp(`ennemi`));
+  injecter(`cb-barre`, htmlBarreSorts(cibles));
   racine.querySelector(`.combat`)?.classList.toggle(`ciblage`, !!(combattantActif && sortChoisi));
   document.getElementById(`journal`)?.classList.toggle(`deplie`, journalDeplie);
   rafraichirJournal();
@@ -1125,44 +1195,48 @@ function rendreCombat() {
     montrerCibles();
     marquerVisee();
     degagerCibles();
-    racine.querySelectorAll(`.carte.ciblable, .tl-pastille.ciblable`).forEach((e) => {
-      e.addEventListener(`click`, (ev) => {
+    racine.querySelectorAll(`.carte.ciblable, .tl-pastille.ciblable`).forEach((carte) => {
+      carte.addEventListener(`click`, (ev) => {
         // un appui pour lire un badge ou une résistance ne lance pas le sort
         if (ev.target.closest(`.badge, [data-tip]`)) {
           return;
         }
         terminerAction({
           sort: sortChoisi,
-          cibleRef: e.dataset.ref,
+          cibleRef: carte.dataset.ref,
         });
       });
     });
-    racine.querySelectorAll(`.carte.ciblable`).forEach((e) => {
-      e.addEventListener(`focus`, () => {
-        refVisee = e.dataset.ref;
+    racine.querySelectorAll(`.carte.ciblable`).forEach((carte) => {
+      carte.addEventListener(`focus`, () => {
+        refVisee = carte.dataset.ref;
         marquerVisee();
       });
     });
     if (!sansCibleAChoisir(sortChoisi)) {
-      racine.querySelectorAll(`.carte:not(.ciblable)`).forEach((e) => {
-        e.addEventListener(`click`, (ev) => {
-          const c = combattants.find((x) => x.ref === e.dataset.ref);
+      racine.querySelectorAll(`.carte:not(.ciblable)`).forEach((carte) => {
+        carte.addEventListener(`click`, (ev) => {
+          const combattant = combattants.find((candidat) => candidat.ref === carte.dataset.ref);
           const zone = document.getElementById(`aide-refus`);
-          if (!c || !zone || ev.target.closest(`.badge, [data-tip]`)) {
+          if (!combattant || !zone || ev.target.closest(`.badge, [data-tip]`)) {
             return;
           }
-          zone.textContent = `⛔ ${raisonCibleRefusee(c)}`;
+          zone.textContent = `⛔ ${raisonCibleRefusee(combattant)}`;
           zone.hidden = false;
         });
       });
     }
   }
   suivreTourActif();
-  racine.querySelectorAll(`[data-ref]`).forEach((e) => {
-    let ref = e.dataset.ref;
-    let n = () => racine.querySelectorAll(`[data-ref="${ref}"]`);
-    e.addEventListener(`mouseenter`, () => n().forEach((e) => e.classList.add(`lie-survol`)));
-    e.addEventListener(`mouseleave`, () => n().forEach((e) => e.classList.remove(`lie-survol`)));
+  racine.querySelectorAll(`[data-ref]`).forEach((element) => {
+    let ref = element.dataset.ref;
+    let lies = () => racine.querySelectorAll(`[data-ref="${ref}"]`);
+    element.addEventListener(`mouseenter`, () =>
+      lies().forEach((lie) => lie.classList.add(`lie-survol`)),
+    );
+    element.addEventListener(`mouseleave`, () =>
+      lies().forEach((lie) => lie.classList.remove(`lie-survol`)),
+    );
   });
 }
 // Écouteurs posés une fois par combat sur la coquille (les zones internes sont re-rendues).
@@ -1201,39 +1275,45 @@ function suivreTourActif() {
   if (!pastille || !liste) {
     return;
   }
-  for (const c of [pastille.parentElement, liste]) {
-    if (c.scrollWidth > c.clientWidth + 1) {
-      const p = pastille.getBoundingClientRect();
-      const r = c.getBoundingClientRect();
-      c.scrollLeft += p.left + p.width / 2 - (r.left + r.width / 2);
+  for (const conteneur of [pastille.parentElement, liste]) {
+    if (conteneur.scrollWidth > conteneur.clientWidth + 1) {
+      const cadrePastille = pastille.getBoundingClientRect();
+      const cadreConteneur = conteneur.getBoundingClientRect();
+      conteneur.scrollLeft +=
+        cadrePastille.left +
+        cadrePastille.width / 2 -
+        (cadreConteneur.left + cadreConteneur.width / 2);
     }
   }
 }
-function initiativeEffective(e) {
+function initiativeEffective(combattant) {
   return (
-    e.initiative +
-    e.effets.filter((e) => e.stat === `initiative`).reduce((acc, item) => acc + item.valeur, 0)
+    combattant.initiative +
+    combattant.effets
+      .filter((effet) => effet.stat === `initiative`)
+      .reduce((acc, item) => acc + item.valeur, 0)
   );
 }
 function htmlTimeline(ciblesRendu) {
-  let e = new Map(combattants.map((e) => [e.ref, e]));
-  let t = ordreDeJeu(combattants)
-    .map((t) => e.get(t))
-    .filter((e) => !!e && e.pvActuels > 0);
-  if (t.length < 2) {
+  let parRef = new Map(combattants.map((combattant) => [combattant.ref, combattant]));
+  let ordre = ordreDeJeu(combattants)
+    .map((ref) => parRef.get(ref))
+    .filter((combattant) => !!combattant && combattant.pvActuels > 0);
+  if (ordre.length < 2) {
     return ``;
   }
-  let n = ciblesRendu;
+  let cibles = ciblesRendu;
   const actif = refActive();
-  return `<div class="timeline"><span class="tl-ronde" title="Ronde en cours : chacun joue une fois par ronde">Ronde ${numeroRonde}</span><div class="tl-liste">${t
-    .map((e) => {
-      let e_camp = e.camp;
-      let r = e.ref === actif ? `actif` : dejaJoues.has(e.ref) ? `deja-joue` : ``;
-      let i = n.some((t) => t.ref === e.ref) ? `ciblable` : ``;
-      let a = e.img
-        ? `<img src="${cheminAsset(e.img)}" alt="" onerror="this.remove()" />`
-        : `<span class="tl-ini">${initiativeEffective(e)}</span>`;
-      return `<div class="tl-pastille ${e_camp} ${r} ${i}" data-ref="${e.ref}" title="${echapperHtml(e.nom)} · init ${initiativeEffective(e)}">${a}</div>`;
+  return `<div class="timeline"><span class="tl-ronde" title="Ronde en cours : chacun joue une fois par ronde">Ronde ${numeroRonde}</span><div class="tl-liste">${ordre
+    .map((combattant) => {
+      let camp = combattant.camp;
+      let classeEtat =
+        combattant.ref === actif ? `actif` : dejaJoues.has(combattant.ref) ? `deja-joue` : ``;
+      let classeCible = cibles.some((cible) => cible.ref === combattant.ref) ? `ciblable` : ``;
+      let contenu = combattant.img
+        ? `<img src="${cheminAsset(combattant.img)}" alt="" onerror="this.remove()" />`
+        : `<span class="tl-ini">${initiativeEffective(combattant)}</span>`;
+      return `<div class="tl-pastille ${camp} ${classeEtat} ${classeCible}" data-ref="${combattant.ref}" title="${echapperHtml(combattant.nom)} · init ${initiativeEffective(combattant)}">${contenu}</div>`;
     })
     .join(``)}</div></div>`;
 }
@@ -1342,7 +1422,9 @@ function installerEcouteursBarre() {
 function htmlBarreSorts(ciblesRendu) {
   if (!combattantActif) {
     // tour d'un monstre ou d'une créature : on montre qui joue, à la place des sorts
-    const joueur = combattants.find((x) => x.ref === refTourEnCours && x.pvActuels > 0);
+    const joueur = combattants.find(
+      (combattant) => combattant.ref === refTourEnCours && combattant.pvActuels > 0,
+    );
     if (!joueur) {
       return `<div class="attente">En attente…</div>`;
     }
@@ -1351,35 +1433,37 @@ function htmlBarreSorts(ciblesRendu) {
       <span>Tour de <b>${echapperHtml(joueur.nom)}</b>…</span>
     </div>`;
   }
-  let e = combattantActif;
-  let e_armeSort = e.armeSort;
-  let n =
-    (e_armeSort
+  let lanceur = combattantActif;
+  let armeSort = lanceur.armeSort;
+  let htmlSorts =
+    (armeSort
       ? htmlBoutonSort(
-          e,
-          e_armeSort,
+          lanceur,
+          armeSort,
           1,
-          `<span class="sort-icon-wrap"><img class="sort-icon" src="${e_armeSort.img ? cheminAsset(e_armeSort.img) : ``}" alt="" onerror="this.closest('.sort-icon-wrap')?.remove()" /></span>`,
+          `<span class="sort-icon-wrap"><img class="sort-icon" src="${armeSort.img ? cheminAsset(armeSort.img) : ``}" alt="" onerror="this.closest('.sort-icon-wrap')?.remove()" /></span>`,
           true,
         )
       : `<div class="sort sort-cac" title="Corps à corps, aucune arme équipée">
         <span class="sort-touche">1</span>
         <span class="sort-icon-vide">🗡️</span>
       </div>`) +
-    e.sorts
-      .map((e) => SORTS[e])
-      .map((t, n) =>
+    lanceur.sorts
+      .map((idSort) => SORTS[idSort])
+      .map((sort, indice) =>
         htmlBoutonSort(
-          e,
-          t,
-          n + 2,
-          `<span class="sort-icon-wrap"${attrElementSort(t, e)}><span class="sort-nom-fallback">${echapperHtml(t.nom)}</span><img class="sort-icon" src="${iconeSort(t.id)}" alt="" onerror="this.closest('.sort-icon-wrap')?.classList.add('noicon'); this.remove()" /></span>`,
+          lanceur,
+          sort,
+          indice + 2,
+          `<span class="sort-icon-wrap"${attrElementSort(sort, lanceur)}><span class="sort-nom-fallback">${echapperHtml(sort.nom)}</span><img class="sort-icon" src="${iconeSort(sort.id)}" alt="" onerror="this.closest('.sort-icon-wrap')?.classList.add('noicon'); this.remove()" /></span>`,
         ),
       )
       .join(``);
-  let r;
+  let htmlAide;
   if (sortChoisi) {
-    const cibles = sansCibleAChoisir(sortChoisi) ? [] : ciblesRendu.filter((c) => c.pvActuels > 0);
+    const cibles = sansCibleAChoisir(sortChoisi)
+      ? []
+      : ciblesRendu.filter((cible) => cible.pvActuels > 0);
     const clavier = ecranTactile()
       ? ``
       : `<span class="aide-clavier"><kbd>←</kbd>/<kbd>→</kbd> cible · <kbd>Entrée</kbd> lancer</span>`;
@@ -1392,34 +1476,36 @@ function htmlBarreSorts(ciblesRendu) {
     } else {
       consigne = `<span class="aide-consigne">Choisis une cible${sortDeLigne() ? ` (ligne avant)` : ``} pour <b>${echapperHtml(sortChoisi.nom)}</b>. ${clavier}</span>`;
     }
-    r = `<div class="aide aide-sort${aideDepliee ? ` deplie` : ``}">
+    htmlAide = `<div class="aide aide-sort${aideDepliee ? ` deplie` : ``}">
       <div class="aide-sort-tete">${consigne}<button id="sort-info" class="secondaire sort-info" aria-label="Détails du sort" aria-pressed="${aideDepliee}">ⓘ</button><button id="sort-annuler" class="secondaire">Annuler</button></div>
       <div id="aide-refus" class="aide-refus" role="status" hidden></div>
-      <div class="aide-sort-detail">${infobulleSort(sortChoisi, e)}</div>
+      <div class="aide-sort-detail">${infobulleSort(sortChoisi, lanceur)}</div>
     </div>`;
   } else if (infoSort) {
-    const raison = raisonIndisponible(e, infoSort, combattants);
-    r = `<div class="aide aide-sort aide-indispo deplie">
+    const raison = raisonIndisponible(lanceur, infoSort, combattants);
+    htmlAide = `<div class="aide aide-sort aide-indispo deplie">
       <div class="aide-sort-tete"><span class="aide-consigne">⛔ <b>${echapperHtml(infoSort.nom)}</b>${raison ? ` : ${echapperHtml(raison)}` : ``}</span><button id="sort-annuler" class="secondaire">Fermer</button></div>
-      <div class="aide-sort-detail">${infobulleSort(infoSort, e)}</div>
+      <div class="aide-sort-detail">${infobulleSort(infoSort, lanceur)}</div>
     </div>`;
   } else {
-    r = `<div class="aide">Tour de <b>${echapperHtml(e.nom)}</b> : choisis un sort · <span class="aide-pa">${e.paActuels}/${e.paMax} PA</span></div>`;
+    htmlAide = `<div class="aide">Tour de <b>${echapperHtml(lanceur.nom)}</b> : choisis un sort · <span class="aide-pa">${lanceur.paActuels}/${lanceur.paMax} PA</span></div>`;
   }
   // PV des héros toujours visibles (téléphone) : la barre recouvre les cartes de l'équipe
   const equipeMini = combattants
-    .filter((c) => c.camp === `joueur`)
-    .map((c) => {
-      const pct =
-        c.pvMax > 0 ? Math.max(0, Math.min(100, Math.round((c.pvActuels / c.pvMax) * 100))) : 0;
-      return `<span class="em-heros${c.pvActuels <= 0 ? ` mort` : ` ${niveauPv(pct)}`}${c === e ? ` actif` : ``}" style="--pv-pct:${pct}%"><b>${echapperHtml(c.nom)}</b> <span class="em-pv">${Math.max(0, Math.round(c.pvActuels))}/${c.pvMax}</span></span>`;
+    .filter((combattant) => combattant.camp === `joueur`)
+    .map((combattant) => {
+      const pctPvCombattant =
+        combattant.pvMax > 0
+          ? Math.max(0, Math.min(100, Math.round((combattant.pvActuels / combattant.pvMax) * 100)))
+          : 0;
+      return `<span class="em-heros${combattant.pvActuels <= 0 ? ` mort` : ` ${niveauPv(pctPvCombattant)}`}${combattant === lanceur ? ` actif` : ``}" style="--pv-pct:${pctPvCombattant}%"><b>${echapperHtml(combattant.nom)}</b> <span class="em-pv">${Math.max(0, Math.round(combattant.pvActuels))}/${combattant.pvMax}</span></span>`;
     })
     .join(``);
   return `
     <div class="equipe-mini" aria-hidden="true">${equipeMini}</div>
     <div class="sorts-rangee">
-      <div class="sorts-zone"><div class="sorts-liste">${n}</div></div>
-      <div class="barre-actions-fin"><button id="vitesse-combat" class="secondaire vitesse-combat${parametres.combatRapide ? ` on` : ``}" title="Tours des monstres rapides (aussi dans les Paramètres)" aria-pressed="${!!parametres.combatRapide}">⏩</button><button id="fin-tour" class="fin-tour primaire${finTourConfirme() ? ` confirme` : ``}" title="Terminer le tour"><span class="fin-tour-txt">${finTourConfirme() ? `Encore ${e.paActuels} PA : confirmer` : `Fin du tour`}</span> <kbd>${echapperHtml(nomTouche(parametres.toucheFinTour))}</kbd></button></div>
+      <div class="sorts-zone"><div class="sorts-liste">${htmlSorts}</div></div>
+      <div class="barre-actions-fin"><button id="vitesse-combat" class="secondaire vitesse-combat${parametres.combatRapide ? ` on` : ``}" title="Tours des monstres rapides (aussi dans les Paramètres)" aria-pressed="${!!parametres.combatRapide}">⏩</button><button id="fin-tour" class="fin-tour primaire${finTourConfirme() ? ` confirme` : ``}" title="Terminer le tour"><span class="fin-tour-txt">${finTourConfirme() ? `Encore ${lanceur.paActuels} PA : confirmer` : `Fin du tour`}</span> <kbd>${echapperHtml(nomTouche(parametres.toucheFinTour))}</kbd></button></div>
     </div>
-    ${r}`;
+    ${htmlAide}`;
 }
