@@ -1,0 +1,11 @@
+# fichier: src/ui/ecrans/butin.js
+22 e objets
+28 n html
+29 e objet
+29 k indice
+53 _ _objet
+53 k indice
+58 k indice
+59 p perso
+84 _ _objet
+84 k indice

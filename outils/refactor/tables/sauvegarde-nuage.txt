@@ -1,0 +1,16 @@
+# fichier: src/sauvegarde/nuage.js
+50 s modif
+71 c acces
+76 d donnees
+85 i debut
+114 r resoudre
+120 e erreur
+131 c acces
+143 n nbMorceaux
+153 k indice
+178 c acces
+182 d entete
+186 e erreur
+194 k indice
+199 m morceau
+201 e erreur

@@ -1,0 +1,13 @@
+# fichier: src/sauvegarde/run.js
+41 x valeur
+46 k stat
+60 k element
+70 e brut
+74 t sauvegarde
+81 m monde
+84 e perso
+89 e objet
+91 e perso
+93 k emplacement
+116 e noeud
+117 t modif

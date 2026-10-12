@@ -15,17 +15,17 @@ import {
 } from "../commun.js";
 export function ecranEncyclopedie() {
   return new Promise((resolve) => {
-    let t = classesJouables()[0];
-    let n = (e) => {
-      let t = CLASSES[e];
-      let cid = e;
-      let n = t.sorts
-        .map((e) => {
-          let t = SORTS[e];
-          if (t) {
+    let classeChoisie = classesJouables()[0];
+    let htmlFiche = (classeId) => {
+      let classe = CLASSES[classeId];
+      let cid = classeId;
+      let htmlSorts = classe.sorts
+        .map((sortId) => {
+          let sort = SORTS[sortId];
+          if (sort) {
             return `<div class="ency-sort">
-            <span class="ency-sort-icone"${attrElementSort(t, null, CLASSES[cid].elements)}><img src="${iconeSort(e)}" alt="" loading="lazy" onerror="this.remove()" /></span>
-            <div class="ency-sort-detail">${infobulleSort(t, null)}</div>
+            <span class="ency-sort-icone"${attrElementSort(sort, null, CLASSES[cid].elements)}><img src="${iconeSort(sortId)}" alt="" loading="lazy" onerror="this.remove()" /></span>
+            <div class="ency-sort-detail">${infobulleSort(sort, null)}</div>
           </div>`;
           }
           return ``;
@@ -34,42 +34,42 @@ export function ecranEncyclopedie() {
       return `
         <div class="ency-fiche">
           <div class="ency-tete">
-            <img class="ency-portrait" src="${imgClasse(e)}" alt="" onerror="this.remove()" />
+            <img class="ency-portrait" src="${imgClasse(classeId)}" alt="" onerror="this.remove()" />
             <div>
-              <h2>${echapperHtml(t.nom)}</h2>
-              <p class="ency-role">${echapperHtml(ROLES_CLASSES[e] ?? ``)}</p>
-              <p class="ency-archetype">${htmlElementsClasse(e, {
+              <h2>${echapperHtml(classe.nom)}</h2>
+              <p class="ency-role">${echapperHtml(ROLES_CLASSES[classeId] ?? ``)}</p>
+              <p class="ency-archetype">${htmlElementsClasse(classeId, {
                 icone: true,
               })}</p>
-              <p class="ency-bases muet">PV ${t.pvBase} · PA ${t.pa} · Initiative ${t.initiative}</p>
+              <p class="ency-bases muet">PV ${classe.pvBase} · PA ${classe.pa} · Initiative ${classe.initiative}</p>
             </div>
           </div>
-          <div class="ency-sorts">${n}</div>
+          <div class="ency-sorts">${htmlSorts}</div>
         </div>`;
     };
-    let r = () => {
+    let afficher = () => {
       afficherEcran(`
         <h1>Encyclopédie des classes</h1>
         <p class="sous-titre">Les classes jouables et leurs sorts : les dégâts affichés sont les jets de base, avant caractéristiques.</p>
         <div class="ency-onglets">${classesJouables()
           .map(
-            (e) => `
-          <button class="ency-onglet${e === t ? ` actif` : ``}" data-classe="${e}" title="${echapperHtml(CLASSES[e].nom)}">
-            <img src="${imgSymboleClasse(e)}" alt="" onerror="this.src='${imgClasse(e)}'" />
+            (classeId) => `
+          <button class="ency-onglet${classeId === classeChoisie ? ` actif` : ``}" data-classe="${classeId}" title="${echapperHtml(CLASSES[classeId].nom)}">
+            <img src="${imgSymboleClasse(classeId)}" alt="" onerror="this.src='${imgClasse(classeId)}'" />
           </button>`,
           )
           .join(``)}</div>
-        ${n(t)}
+        ${htmlFiche(classeChoisie)}
         ${barreRetour(`retour`)}
       `);
-      racine.querySelectorAll(`.ency-onglet`).forEach((e) => {
-        e.addEventListener(`click`, () => {
-          t = e.dataset.classe;
-          r();
+      racine.querySelectorAll(`.ency-onglet`).forEach((onglet) => {
+        onglet.addEventListener(`click`, () => {
+          classeChoisie = onglet.dataset.classe;
+          afficher();
         });
       });
       racine.querySelector(`#retour`)?.addEventListener(`click`, () => resolve());
     };
-    r();
+    afficher();
   });
 }

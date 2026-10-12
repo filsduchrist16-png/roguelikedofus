@@ -19,19 +19,19 @@ const CLES_BASE = new Set([
   `toile`,
 ]);
 export const effetsSpeciaux = (id) =>
-  Object.keys(EQUIPEMENTS[id] ?? {}).filter((k) => !CLES_BASE.has(k));
+  Object.keys(EQUIPEMENTS[id] ?? {}).filter((cle) => !CLES_BASE.has(cle));
 // Effets spéciaux qui comptent comme un avantage. Les autres sont chiffrés ailleurs : paGamble est
 // une espérance de PA (négative), comptée dans `pa` de la clé d'équipement.
-export const effetsAvantageux = (id) => effetsSpeciaux(id).filter((k) => k !== `paGamble`);
+export const effetsAvantageux = (id) => effetsSpeciaux(id).filter((cle) => cle !== `paGamble`);
 // Espérance de PA par tour d'un objet à PA aléatoires (1/3 de +1, 2/3 de −1 : environ −0,33).
 const esperancePAGamble = (id) => {
-  const g = EQUIPEMENTS[id]?.paGamble;
-  return g ? g.pPlus * g.plus - (1 - g.pPlus) * g.moins : 0;
+  const gamble = EQUIPEMENTS[id]?.paGamble;
+  return gamble ? gamble.pPlus * gamble.plus - (1 - gamble.pPlus) * gamble.moins : 0;
 };
 
 export const degatsMoyensArme = (inst) => {
-  const a = inst?.rarete ? EQUIPEMENTS[inst.id]?.tiers?.[inst.rarete]?.attaque : undefined;
-  return a ? (a.baseMin + a.baseMax) / 2 : 0;
+  const attaque = inst?.rarete ? EQUIPEMENTS[inst.id]?.tiers?.[inst.rarete]?.attaque : undefined;
+  return attaque ? (attaque.baseMin + attaque.baseMax) / 2 : 0;
 };
 
 // Un PA passe avant tout : un objet (ou une panoplie qui se complète) qui en donne un de plus est
@@ -48,33 +48,33 @@ const VALEUR_EFFET = 10;
  * sec : survie et effets spéciaux, uniquement pour départager.
  */
 export function cleEquipement(perso) {
-  const b = bonusEquipement(perso);
-  const s = b.stats;
+  const bonus = bonusEquipement(perso);
+  const stats = bonus.stats;
   const elements = CLASSES[perso.classeId].elements
-    .map((x) => s[STAT_PAR_ELEMENT[x]] ?? 0)
-    .sort((x, y) => y - x);
-  const res = Object.values(b.resistances).reduce((a, v) => a + v, 0);
+    .map((element) => stats[STAT_PAR_ELEMENT[element]] ?? 0)
+    .sort((premier, second) => second - premier);
+  const res = Object.values(bonus.resistances).reduce((somme, resistance) => somme + resistance, 0);
   const effets = Object.values(perso.equipement).reduce(
-    (a, inst) => a + (inst ? effetsAvantageux(inst.id).length : 0),
+    (total, inst) => total + (inst ? effetsAvantageux(inst.id).length : 0),
     0,
   );
   const paAleatoire = Object.values(perso.equipement).reduce(
-    (a, inst) => a + (inst ? esperancePAGamble(inst.id) : 0),
+    (total, inst) => total + (inst ? esperancePAGamble(inst.id) : 0),
     0,
   );
   const off =
     (elements[0] ?? 0) +
     (elements[1] ?? 0) * 0.5 +
-    (s.intelligence ?? 0) * 0.4 +
-    (s.agilite ?? 0) * 0.3 +
-    (s.crit ?? 0) * 2.5 +
+    (stats.intelligence ?? 0) * 0.4 +
+    (stats.agilite ?? 0) * 0.3 +
+    (stats.crit ?? 0) * 2.5 +
     degatsMoyensArme(perso.equipement.arme) * 2;
-  const sec = pvMaxPerso(perso) * 0.05 + res * 20 + (s.soin ?? 0) * 0.1 + effets * VALEUR_EFFET;
-  return { pa: b.paBonus + paAleatoire, off, sec };
+  const sec = pvMaxPerso(perso) * 0.05 + res * 20 + (stats.soin ?? 0) * 0.1 + effets * VALEUR_EFFET;
+  return { pa: bonus.paBonus + paAleatoire, off, sec };
 }
 
 /** Valeur chiffrée d'un équipement (pour les scores affichés) : PA, puis dégâts, puis survie. */
 export function valeurEquipement(perso) {
-  const c = cleEquipement(perso);
-  return c.pa * VALEUR_PA + c.off + c.sec;
+  const cle = cleEquipement(perso);
+  return cle.pa * VALEUR_PA + cle.off + cle.sec;
 }

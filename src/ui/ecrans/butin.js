@@ -19,17 +19,17 @@ import {
 import { afficherAstuce, afficherBandeau } from "./succes.js";
 // run (facultatif) : pour montrer à qui sert chaque objet et proposer de l'équiper tout de suite.
 // bilan (facultatif) : XP et kamas gagnés au combat, en sous-titre.
-export function ecranButin(e, run, bilan) {
+export function ecranButin(objets, run, bilan) {
   return new Promise((resolve) => {
     afficherAstuce(
       `butin`,
       `Prends ce qui te sert : dans l'inventaire, ⚡ Équiper le meilleur équipe tes héros en un geste.`,
     );
-    let n = e
-      .map((e, k) => {
-        return `<div class="drop-item${classeRarete(e)}"${attrTipObjet(e.id)} data-drop="${k}">
-        <img src="${imgObjet(e.id)}" alt="" loading="lazy" onerror="this.remove()" />
-        <span class="drop-nom">${htmlNomObjet(e)}<small><span class="ic-meta">${htmlMetaObjet(e)}</span> ${htmlChipsObjet(e)}</small>${run ? htmlBadgesHeros(e, run.persos) : ``}</span>
+    let html = objets
+      .map((objet, indice) => {
+        return `<div class="drop-item${classeRarete(objet)}"${attrTipObjet(objet.id)} data-drop="${indice}">
+        <img src="${imgObjet(objet.id)}" alt="" loading="lazy" onerror="this.remove()" />
+        <span class="drop-nom">${htmlNomObjet(objet)}<small><span class="ic-meta">${htmlMetaObjet(objet)}</span> ${htmlChipsObjet(objet)}</small>${run ? htmlBadgesHeros(objet, run.persos) : ``}</span>
       </div>`;
       })
       .join(``);
@@ -37,8 +37,8 @@ export function ecranButin(e, run, bilan) {
     afficherEcran(`
       <h1>🎁 Butin !</h1>
       ${bilan ? `<p class="sous-titre drop-bilan">${echapperHtml(bilan)}</p>` : ``}
-      <p class="sous-titre">L'équipe ramasse ${e.length} pièce${e.length > 1 ? `s` : ``} d'équipement.</p>
-      <div class="drop-liste">${n}</div>
+      <p class="sous-titre">L'équipe ramasse ${objets.length} pièce${objets.length > 1 ? `s` : ``} d'équipement.</p>
+      <div class="drop-liste">${html}</div>
       ${
         utiles
           ? `<div class="boutons-ecran butin-boutons"><button id="drop-equiper" class="primaire">⚡ Équiper (${utiles})</button>${boutonContinuer(`drop-ok`)}</div>`
@@ -49,15 +49,16 @@ export function ecranButin(e, run, bilan) {
       const bouton = ev.currentTarget;
       // de quoi annuler : l'équipement d'avant et les pastilles « pour qui » de chaque objet
       const photo = photoEquipement(run);
-      const badgesAvant = e.map(
-        (_, k) => document.querySelector(`[data-drop="${k}"] .badges-heros`)?.outerHTML ?? ``,
+      const badgesAvant = objets.map(
+        (_objet, indice) =>
+          document.querySelector(`[data-drop="${indice}"] .badges-heros`)?.outerHTML ?? ``,
       );
       const nb = equiperMeilleur(run);
       bouton.disabled = true;
       // qui porte maintenant chaque objet du butin
-      e.forEach((inst, k) => {
-        const porteur = run.persos.find((p) => Object.values(p.equipement).includes(inst));
-        const ligne = document.querySelector(`[data-drop="${k}"] .drop-nom`);
+      objets.forEach((inst, indice) => {
+        const porteur = run.persos.find((perso) => Object.values(perso.equipement).includes(inst));
+        const ligne = document.querySelector(`[data-drop="${indice}"] .drop-nom`);
         if (!porteur || !ligne) {
           return;
         }
@@ -81,11 +82,11 @@ export function ecranButin(e, run, bilan) {
       annuler.focus({ preventScroll: true });
       annuler.addEventListener(`click`, () => {
         restaurerEquipement(run, photo);
-        e.forEach((_, k) => {
-          const ligne = document.querySelector(`[data-drop="${k}"] .drop-nom`);
+        objets.forEach((_objet, indice) => {
+          const ligne = document.querySelector(`[data-drop="${indice}"] .drop-nom`);
           ligne?.querySelector(`.badges-heros`)?.remove();
-          if (badgesAvant[k]) {
-            ligne?.insertAdjacentHTML(`beforeend`, badgesAvant[k]);
+          if (badgesAvant[indice]) {
+            ligne?.insertAdjacentHTML(`beforeend`, badgesAvant[indice]);
           }
         });
         ligneAnnul.remove();

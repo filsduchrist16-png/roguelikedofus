@@ -7,23 +7,23 @@ import { SUPABASE_CLE, SUPABASE_URL } from "../config-en-ligne.js";
 const CLE_SESSION = `rld_auth_v0`;
 let config = { url: SUPABASE_URL, cle: SUPABASE_CLE };
 /** Pour les tests. */
-export const configurerCompte = (c) => {
-  config = c;
+export const configurerCompte = (nouvelleConfig) => {
+  config = nouvelleConfig;
 };
 export const compteConfigure = () => !!(config.url && config.cle);
 
 function lireSession() {
   try {
-    const s = JSON.parse(localStorage.getItem(CLE_SESSION) ?? `null`);
-    return s?.access_token && s?.refresh_token && s?.user?.id ? s : null;
+    const session = JSON.parse(localStorage.getItem(CLE_SESSION) ?? `null`);
+    return session?.access_token && session?.refresh_token && session?.user?.id ? session : null;
   } catch {
     return null;
   }
 }
-function ecrireSession(s) {
+function ecrireSession(session) {
   try {
-    if (s) {
-      localStorage.setItem(CLE_SESSION, JSON.stringify(s));
+    if (session) {
+      localStorage.setItem(CLE_SESSION, JSON.stringify(session));
     } else {
       localStorage.removeItem(CLE_SESSION);
     }
@@ -32,8 +32,8 @@ function ecrireSession(s) {
 
 /** Le compte connecté sur cet appareil : { id, email } ou null. */
 export function compteConnecte() {
-  const s = lireSession();
-  return s ? { id: s.user.id, email: s.user.email } : null;
+  const session = lireSession();
+  return session ? { id: session.user.id, email: session.user.email } : null;
 }
 
 const MESSAGES = {
@@ -80,12 +80,12 @@ async function appeler(chemin, { methode = `GET`, corps, jeton, entetes = {} } =
   return donnees;
 }
 
-function memoriser(d) {
+function memoriser(donnees) {
   const session = {
-    access_token: d.access_token,
-    refresh_token: d.refresh_token,
-    expires_at: Math.floor(Date.now() / 1000) + (d.expires_in ?? 3600),
-    user: { id: d.user.id, email: d.user.email },
+    access_token: donnees.access_token,
+    refresh_token: donnees.refresh_token,
+    expires_at: Math.floor(Date.now() / 1000) + (donnees.expires_in ?? 3600),
+    user: { id: donnees.user.id, email: donnees.user.email },
   };
   ecrireSession(session);
   return session;
@@ -93,23 +93,23 @@ function memoriser(d) {
 
 /** Crée un compte. Renvoie { connecte: true } ou { connecte: false } si l'email doit être confirmé. */
 export async function creerCompte(email, motDePasse) {
-  const d = await appeler(`/auth/v1/signup`, {
+  const donnees = await appeler(`/auth/v1/signup`, {
     methode: `POST`,
     corps: { email: email.trim(), password: motDePasse },
   });
-  if (d?.access_token) {
-    memoriser(d);
+  if (donnees?.access_token) {
+    memoriser(donnees);
     return { connecte: true };
   }
   return { connecte: false };
 }
 
 export async function seConnecter(email, motDePasse) {
-  const d = await appeler(`/auth/v1/token?grant_type=password`, {
+  const donnees = await appeler(`/auth/v1/token?grant_type=password`, {
     methode: `POST`,
     corps: { email: email.trim(), password: motDePasse },
   });
-  memoriser(d);
+  memoriser(donnees);
 }
 
 export function seDeconnecter() {
@@ -141,22 +141,22 @@ export function jouerSansCompte() {
 
 // Jeton d'accès valide : renouvelé s'il expire dans moins d'une minute.
 async function jetonValide() {
-  const s = lireSession();
-  if (!s) {
+  const session = lireSession();
+  if (!session) {
     return null;
   }
-  if (s.expires_at - Math.floor(Date.now() / 1000) > 60) {
-    return s.access_token;
+  if (session.expires_at - Math.floor(Date.now() / 1000) > 60) {
+    return session.access_token;
   }
   try {
-    const d = await appeler(`/auth/v1/token?grant_type=refresh_token`, {
+    const donnees = await appeler(`/auth/v1/token?grant_type=refresh_token`, {
       methode: `POST`,
-      corps: { refresh_token: s.refresh_token },
+      corps: { refresh_token: session.refresh_token },
     });
-    return memoriser(d).access_token;
-  } catch (e) {
+    return memoriser(donnees).access_token;
+  } catch (echec) {
     // refus définitif (session révoquée) : on se déconnecte ; simple coupure réseau : on garde
-    if (e.statut >= 400 && e.statut < 500) {
+    if (echec.statut >= 400 && echec.statut < 500) {
       ecrireSession(null);
     }
     return null;

@@ -1,0 +1,15 @@
+# fichier: src/jeu/rencontres.js
+104 a somme
+104 b poidsType
+105 x tirage
+106 p poidsType
+132 p perso
+149 p perso
+151 o objet
+152 a premier
+152 b second
+161 o neuf
+189 p perso
+192 g gain
+225 t bonus
+227 r effet

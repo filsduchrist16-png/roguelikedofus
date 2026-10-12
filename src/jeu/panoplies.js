@@ -8,17 +8,17 @@ const NOMS_ELEMENTS_RES = { terre: `Terre`, feu: `Feu`, eau: `Eau`, air: `Air` }
 
 /** Nombre de pièces de chaque panoplie portées par un héros. */
 export function compterPanoplies(perso) {
-  const t = {};
+  const comptes = {};
   const vus = new Set();
   for (const inst of Object.values(perso.equipement)) {
     const nom = inst && EQUIPEMENTS[inst.id]?.panoplie;
     // une même pièce portée deux fois (deux anneaux identiques) ne compte qu'une fois
     if (nom && !vus.has(inst.id)) {
       vus.add(inst.id);
-      t[nom] = (t[nom] ?? 0) + 1;
+      comptes[nom] = (comptes[nom] ?? 0) + 1;
     }
   }
-  return t;
+  return comptes;
 }
 
 export const taillePanoplie = (nom) => PANOPLIES[nom]?.pieces.length ?? 0;
@@ -26,43 +26,46 @@ export const taillePanoplie = (nom) => PANOPLIES[nom]?.pieces.length ?? 0;
 export const paliersPanoplie = (nom) =>
   Object.keys(PANOPLIES[nom]?.paliers ?? {})
     .map(Number)
-    .sort((a, b) => a - b);
+    .sort((petit, grand) => petit - grand);
 
 /** Bonus actif pour `nb` pièces portées (le plus haut palier atteint), ou null. */
 export function bonusPanoplie(nom, nb) {
-  const p = PANOPLIES[nom];
-  if (!p) {
+  const panoplie = PANOPLIES[nom];
+  if (!panoplie) {
     return null;
   }
   const palier = paliersPanoplie(nom)
-    .filter((k) => k <= nb)
+    .filter((seuil) => seuil <= nb)
     .at(-1);
-  return palier ? { palier, ...p.paliers[palier] } : null;
+  return palier ? { palier, ...panoplie.paliers[palier] } : null;
 }
 
 /** Texte court d'un palier : « +12 élément, +10 Vitalité, +1 PA ». */
-export function texteBonusPanoplie(b) {
-  if (!b) {
+export function texteBonusPanoplie(bonus) {
+  if (!bonus) {
     return ``;
   }
   const out = [];
-  if (b.pa) {
-    out.push(`+${b.pa} PA`);
+  if (bonus.pa) {
+    out.push(`+${bonus.pa} PA`);
   }
-  if (b.adaptatif) {
-    out.push(`+${b.adaptatif} aux caracs d'élément`);
+  if (bonus.adaptatif) {
+    out.push(`+${bonus.adaptatif} aux caracs d'élément`);
   }
-  for (const [k, v] of Object.entries(b.stats ?? {})) {
-    out.push(`+${v} ${k === `vitalite` ? `Vitalité` : k}`);
+  for (const [stat, valeur] of Object.entries(bonus.stats ?? {})) {
+    out.push(`+${valeur} ${stat === `vitalite` ? `Vitalité` : stat}`);
   }
-  const res = Object.values(b.resistances ?? {});
+  const res = Object.values(bonus.resistances ?? {});
   if (res.length) {
-    const tous = res.length === 4 && res.every((v) => v === res[0]);
+    const tous = res.length === 4 && res.every((resistance) => resistance === res[0]);
     out.push(
       tous
         ? `+${Math.round(res[0] * 100)} % de résistance partout`
-        : Object.entries(b.resistances)
-            .map(([e, v]) => `+${Math.round(v * 100)} % ${NOMS_ELEMENTS_RES[e]}`)
+        : Object.entries(bonus.resistances)
+            .map(
+              ([element, resistance]) =>
+                `+${Math.round(resistance * 100)} % ${NOMS_ELEMENTS_RES[element]}`,
+            )
             .join(`, `),
     );
   }
@@ -72,6 +75,6 @@ export function texteBonusPanoplie(b) {
 /** Description complète des paliers, pour les infobulles. */
 export function descriptionPanoplie(nom) {
   return paliersPanoplie(nom)
-    .map((k) => `${k} pièces : ${texteBonusPanoplie(PANOPLIES[nom].paliers[k])}`)
+    .map((seuil) => `${seuil} pièces : ${texteBonusPanoplie(PANOPLIES[nom].paliers[seuil])}`)
     .join(` · `);
 }

@@ -101,11 +101,11 @@ export const PV_TEMPLE = 0.5;
 /** Tire un type de rencontre ; `exclus` retire des types (par ex. la clé quand on en a déjà une). */
 export function tirerRencontre(rng, exclus = []) {
   const poids = Object.entries(POIDS).filter(([id]) => !exclus.includes(id));
-  const total = poids.reduce((a, [, b]) => a + b, 0);
-  let x = rng() * total;
-  for (const [id, p] of poids) {
-    x -= p;
-    if (x < 0) {
+  const total = poids.reduce((somme, [, poidsType]) => somme + poidsType, 0);
+  let tirage = rng() * total;
+  for (const [id, poidsType] of poids) {
+    tirage -= poidsType;
+    if (tirage < 0) {
       return id;
     }
   }
@@ -129,7 +129,7 @@ export function rencontresExclues(run, { mortDefinitive = false } = {}) {
 }
 
 /** Héros à 0 PV. */
-export const herosKO = (run) => run.persos.filter((p) => p.pvActuels <= 0);
+export const herosKO = (run) => run.persos.filter((perso) => perso.pvActuels <= 0);
 
 /** Prix du temple pour relever un héros. */
 export const prixTemple = (toile) => Math.round(gainBase(toile) * 2);
@@ -146,10 +146,10 @@ export function releverHeros(perso, part = PV_TEMPLE) {
 /** Objets que le forgemage peut monter (portés ou en sac), les plus chers à forger d'abord. */
 export function objetsForgeables(run, max = 4) {
   const tous = [
-    ...run.persos.flatMap((p) => Object.values(p.equipement ?? {}).filter(Boolean)),
+    ...run.persos.flatMap((perso) => Object.values(perso.equipement ?? {}).filter(Boolean)),
     ...run.inventaire,
-  ].filter((o) => rareteSuivante(o));
-  return tous.sort((a, b) => prixForge(b) - prixForge(a)).slice(0, max);
+  ].filter((objet) => rareteSuivante(objet));
+  return tous.sort((premier, second) => prixForge(second) - prixForge(premier)).slice(0, max);
 }
 
 /** Forge sans frais ni risque : l'objet passe au palier de rareté supérieur. */
@@ -158,12 +158,12 @@ export function forgerGratuit(inst) {
   if (!suivante) {
     return false;
   }
-  const o = instancierObjet(inst.id, suivante);
-  inst.rarete = o.rarete;
-  inst.stats = o.stats;
-  inst.adaptatif = o.adaptatif;
-  inst.resistances = o.resistances;
-  inst.pa = o.pa;
+  const neuf = instancierObjet(inst.id, suivante);
+  inst.rarete = neuf.rarete;
+  inst.stats = neuf.stats;
+  inst.adaptatif = neuf.adaptatif;
+  inst.resistances = neuf.resistances;
+  inst.pa = neuf.pa;
   return true;
 }
 
@@ -186,15 +186,15 @@ export function idolesProposees(rng) {
   return ids;
 }
 
-export const peutCrocheter = (run) => run.persos.some((p) => CROCHETEURS.has(p.classeId));
+export const peutCrocheter = (run) => run.persos.some((perso) => CROCHETEURS.has(perso.classeId));
 
 export function prixMarchand(toile) {
-  const g = gainBase(toile);
+  const gain = gainBase(toile);
   return {
-    potion: g,
-    parchemin: Math.round(g * 1.5),
-    philtre: Math.round(g * 1.2),
-    cle: Math.round(g * 2),
+    potion: gain,
+    parchemin: Math.round(gain * 1.5),
+    philtre: Math.round(gain * 1.2),
+    cle: Math.round(gain * 2),
   };
 }
 
@@ -222,20 +222,20 @@ export function traqueActive(run, zoneId) {
 
 // Bonus de l'équipe : Dofus possédés + bénédictions de la run.
 export function bonusEquipeRun(meta, run) {
-  const t = bonusDofus(meta);
+  const bonus = bonusDofus(meta);
   for (const id of run?.benedictions ?? []) {
-    const r = BENEDICTIONS[id]?.effet ?? {};
-    t.damageMult *= 1 + (r.degatsPct ?? 0);
-    t.pvPct += r.pvPct ?? 0;
-    t.resAllBonus += r.resAll ?? 0;
-    t.multKamas *= r.multKamas ?? 1;
-    t.prospection += r.prospectionPlat ?? 0;
-    t.critPlat += r.critPlat ?? 0;
-    t.soinPlat += r.soinPlat ?? 0;
-    t.initiativeBonus += r.initiativeBonus ?? 0;
-    t.esquiveBonus += r.esquiveBonus ?? 0;
+    const effet = BENEDICTIONS[id]?.effet ?? {};
+    bonus.damageMult *= 1 + (effet.degatsPct ?? 0);
+    bonus.pvPct += effet.pvPct ?? 0;
+    bonus.resAllBonus += effet.resAll ?? 0;
+    bonus.multKamas *= effet.multKamas ?? 1;
+    bonus.prospection += effet.prospectionPlat ?? 0;
+    bonus.critPlat += effet.critPlat ?? 0;
+    bonus.soinPlat += effet.soinPlat ?? 0;
+    bonus.initiativeBonus += effet.initiativeBonus ?? 0;
+    bonus.esquiveBonus += effet.esquiveBonus ?? 0;
   }
-  return t;
+  return bonus;
 }
 
 // Effets en cours (affichés sur la carte).

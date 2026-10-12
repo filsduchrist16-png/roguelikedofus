@@ -1,0 +1,15 @@
+# fichier: src/jeu/evaluation.js
+22 k cle
+25 k cle
+28 g gamble
+33 a attaque
+51 b bonus
+52 s stats
+54 x element
+55 x premier
+55 y second
+56 a somme
+56 v resistance
+58 a total
+62 a total
+78 c cle

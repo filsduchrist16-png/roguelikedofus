@@ -7,33 +7,35 @@ import { cheminAsset, echapperHtml } from "./commun.js";
 
 /** Les Dofus à viser, du plus avancé au moins avancé. */
 export function dofusAPortee(meta) {
-  const possedes = new Set(meta.dofus.map((d) => d.id));
+  const possedes = new Set(meta.dofus.map((dofus) => dofus.id));
   const etat = meta.quetes ?? { faites: [], compteurs: {} };
   return Object.values(DOFUS)
-    .filter((d) => !possedes.has(d.id) && succesDuDofus(d.id))
-    .map((d) => {
-      const p = progressionSucces(etat, succesDuDofus(d.id));
-      return { d, avance: p.faites / Math.max(1, p.total) };
+    .filter((dofus) => !possedes.has(dofus.id) && succesDuDofus(dofus.id))
+    .map((dofus) => {
+      const progression = progressionSucces(etat, succesDuDofus(dofus.id));
+      return { d: dofus, avance: progression.faites / Math.max(1, progression.total) };
     })
-    .sort((a, b) => b.avance - a.avance || a.d.niveau - b.d.niveau)
-    .map((x) => x.d);
+    .sort((premier, second) => second.avance - premier.avance || premier.d.niveau - second.d.niveau)
+    .map((element) => element.d);
 }
 
-function htmlUnDofus(meta, d) {
-  const succes = succesDuDofus(d.id);
+function htmlUnDofus(meta, dofus) {
+  const succes = succesDuDofus(dofus.id);
   const ctx = contexteMeta(meta);
   const etat = meta.quetes ?? { faites: [], compteurs: {} };
-  const lignes = succes.quetes.map((q) => {
-    const e = etatQuete(etat, q, ctx);
+  const lignes = succes.quetes.map((quete) => {
+    const avancement = etatQuete(etat, quete, ctx);
     const compteur =
-      e.compteur && !e.faite ? ` <small>${e.compteur[0]}/${e.compteur[1]}</small>` : ``;
-    return `<li class="${e.faite ? `fait` : ``}" data-tip="${echapperHtml(indiceQuete(q))}">${e.faite ? `✔` : `○`} ${echapperHtml(decrireQuete(q).titre)}${compteur}</li>`;
+      avancement.compteur && !avancement.faite
+        ? ` <small>${avancement.compteur[0]}/${avancement.compteur[1]}</small>`
+        : ``;
+    return `<li class="${avancement.faite ? `fait` : ``}" data-tip="${echapperHtml(indiceQuete(quete))}">${avancement.faite ? `✔` : `○`} ${echapperHtml(decrireQuete(quete).titre)}${compteur}</li>`;
   });
-  const monde = mondeDuDofus(d.id);
-  return `<div class="pd-dofus" data-dofus="${echapperHtml(d.id)}">
-    <img class="pd-img" src="${cheminAsset(d.img)}" alt="" onerror="this.remove()" />
+  const monde = mondeDuDofus(dofus.id);
+  return `<div class="pd-dofus" data-dofus="${echapperHtml(dofus.id)}">
+    <img class="pd-img" src="${cheminAsset(dofus.img)}" alt="" onerror="this.remove()" />
     <div class="pd-corps">
-      <p class="pd-titre"><b>${echapperHtml(d.nom)}</b> <span class="pd-niv">niv. ${d.niveau}${monde ? ` · ${echapperHtml(monde.nom)}` : ``}</span></p>
+      <p class="pd-titre"><b>${echapperHtml(dofus.nom)}</b> <span class="pd-niv">niv. ${dofus.niveau}${monde ? ` · ${echapperHtml(monde.nom)}` : ``}</span></p>
       <ul class="pd-quetes">${lignes.join(``)}</ul>
     </div>
   </div>`;
@@ -46,6 +48,6 @@ export function htmlProchainDofus(meta) {
   }
   return `<section class="prochain-dofus" aria-label="Dofus à portée">
     <p class="pd-entete">🥚 Dofus à portée <small>${meta.dofus.length}/${Object.keys(DOFUS).length} obtenus</small></p>
-    ${liste.map((d) => htmlUnDofus(meta, d)).join(``)}
+    ${liste.map((dofus) => htmlUnDofus(meta, dofus)).join(``)}
   </section>`;
 }

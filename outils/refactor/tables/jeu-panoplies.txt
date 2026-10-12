@@ -1,0 +1,13 @@
+# fichier: src/jeu/panoplies.js
+11 t comptes
+29 a petit
+29 b grand
+33 p panoplie
+38 k seuil
+44 b bonus
+55 k stat
+55 v valeur
+60 v resistance
+65 e element
+65 v resistance
+75 k seuil

@@ -1,0 +1,11 @@
+# fichier: src/ui/ecrans/encyclopedie.js
+18 t classeChoisie
+19 n htmlFiche
+19 e classeId
+20 t classe
+22 n htmlSorts
+23 e sortId
+24 t sort
+50 r afficher
+56 e classeId
+65 e onglet

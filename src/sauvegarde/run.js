@@ -38,14 +38,15 @@ const STATS_VALIDES = [
   `crit`,
 ];
 const ELEMENTS_VALIDES = [`terre`, `feu`, `eau`, `air`];
-const nombre = (x) => (typeof x === `number` && Number.isFinite(x) ? x : undefined);
+const nombre = (valeur) =>
+  typeof valeur === `number` && Number.isFinite(valeur) ? valeur : undefined;
 function assainirObjet(inst) {
   const tiers = EQUIPEMENTS[inst.id].tiers ?? {};
   const rarete = Object.keys(tiers).includes(inst.rarete) ? inst.rarete : Object.keys(tiers)[0];
   const stats = {};
-  for (const k of STATS_VALIDES) {
-    if (nombre(inst.stats?.[k]) !== undefined) {
-      stats[k] = inst.stats[k];
+  for (const stat of STATS_VALIDES) {
+    if (nombre(inst.stats?.[stat]) !== undefined) {
+      stats[stat] = inst.stats[stat];
     }
   }
   const out = { id: inst.id, rarete, stats };
@@ -57,9 +58,9 @@ function assainirObjet(inst) {
   }
   if (inst.resistances && typeof inst.resistances === `object`) {
     out.resistances = {};
-    for (const k of ELEMENTS_VALIDES) {
-      if (nombre(inst.resistances[k]) !== undefined) {
-        out.resistances[k] = inst.resistances[k];
+    for (const element of ELEMENTS_VALIDES) {
+      if (nombre(inst.resistances[element]) !== undefined) {
+        out.resistances[element] = inst.resistances[element];
       }
     }
   }
@@ -67,59 +68,61 @@ function assainirObjet(inst) {
 }
 export function chargerRun() {
   try {
-    let e = localStorage.getItem(CLE_RUN);
-    if (!e) {
+    let brut = localStorage.getItem(CLE_RUN);
+    if (!brut) {
       return null;
     }
-    let t = JSON.parse(e);
+    let sauvegarde = JSON.parse(brut);
     if (
-      typeof t.version !== `number` ||
-      t.version < 1 ||
-      t.version > 2 ||
-      !Number.isInteger(t.zoneIdx) ||
-      t.zoneIdx < 0 ||
-      !MONDES.some((m) => m.id === (t.run?.trancheId ?? `t1`)) ||
-      t.zoneIdx >= zonesDuMonde(getMonde(t.run?.trancheId ?? `t1`)).length ||
-      !t.run?.persos?.length ||
-      !t.run.persos.every((e) => CLASSES[e.classeId])
+      typeof sauvegarde.version !== `number` ||
+      sauvegarde.version < 1 ||
+      sauvegarde.version > 2 ||
+      !Number.isInteger(sauvegarde.zoneIdx) ||
+      sauvegarde.zoneIdx < 0 ||
+      !MONDES.some((monde) => monde.id === (sauvegarde.run?.trancheId ?? `t1`)) ||
+      sauvegarde.zoneIdx >= zonesDuMonde(getMonde(sauvegarde.run?.trancheId ?? `t1`)).length ||
+      !sauvegarde.run?.persos?.length ||
+      !sauvegarde.run.persos.every((perso) => CLASSES[perso.classeId])
     ) {
       return null;
     }
-    t.run.inventaire = (t.run.inventaire ?? [])
-      .filter((e) => EQUIPEMENTS[e?.id])
+    sauvegarde.run.inventaire = (sauvegarde.run.inventaire ?? [])
+      .filter((objet) => EQUIPEMENTS[objet?.id])
       .map(assainirObjet);
-    for (let e of t.run.persos) {
-      e.equipement ??= {};
-      for (let k of Object.keys(e.equipement)) {
-        const inst = e.equipement[k];
+    for (let perso of sauvegarde.run.persos) {
+      perso.equipement ??= {};
+      for (let emplacement of Object.keys(perso.equipement)) {
+        const inst = perso.equipement[emplacement];
         const def = EQUIPEMENTS[inst?.id];
-        if (!EMPLACEMENTS.includes(k) || !def) {
-          delete e.equipement[k];
-        } else if (!emplacementsDuType(def.slot).includes(k)) {
+        if (!EMPLACEMENTS.includes(emplacement) || !def) {
+          delete perso.equipement[emplacement];
+        } else if (!emplacementsDuType(def.slot).includes(emplacement)) {
           // objet dont l'emplacement a changé : il retourne dans l'inventaire
-          t.run.inventaire.push(assainirObjet(inst));
-          delete e.equipement[k];
+          sauvegarde.run.inventaire.push(assainirObjet(inst));
+          delete perso.equipement[emplacement];
         } else {
-          e.equipement[k] = assainirObjet(inst);
+          perso.equipement[emplacement] = assainirObjet(inst);
         }
       }
     }
-    t.run.stats = t.run.stats ?? nouvellesStatsRun();
-    t.run.stats.reliques ??= [];
-    t.run.kamas = t.run.kamas ?? 0;
-    t.run.ascension =
-      t.version < 2 ? 0 : Math.max(0, Math.min(t.run.ascension ?? 0, DIFFICULTE_MAX));
-    t.run.philtres = t.run.philtres ?? 0;
+    sauvegarde.run.stats = sauvegarde.run.stats ?? nouvellesStatsRun();
+    sauvegarde.run.stats.reliques ??= [];
+    sauvegarde.run.kamas = sauvegarde.run.kamas ?? 0;
+    sauvegarde.run.ascension =
+      sauvegarde.version < 2
+        ? 0
+        : Math.max(0, Math.min(sauvegarde.run.ascension ?? 0, DIFFICULTE_MAX));
+    sauvegarde.run.philtres = sauvegarde.run.philtres ?? 0;
     // ancienne sauvegarde sans idoles de départ : aucune
-    t.run.idolesDepart = idolesDepartValides(t.run.idolesDepart);
-    t.run.trancheId = t.run.trancheId ?? `t1`;
-    for (let e of t.run.carte?.noeuds ?? []) {
-      let t = e.eliteModif;
-      if (t && !e.eliteModifs) {
-        e.eliteModifs = [t];
+    sauvegarde.run.idolesDepart = idolesDepartValides(sauvegarde.run.idolesDepart);
+    sauvegarde.run.trancheId = sauvegarde.run.trancheId ?? `t1`;
+    for (let noeud of sauvegarde.run.carte?.noeuds ?? []) {
+      let modif = noeud.eliteModif;
+      if (modif && !noeud.eliteModifs) {
+        noeud.eliteModifs = [modif];
       }
     }
-    return t;
+    return sauvegarde;
   } catch {
     return null;
   }

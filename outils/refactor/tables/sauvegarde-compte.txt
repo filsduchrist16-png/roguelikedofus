@@ -1,0 +1,11 @@
+# fichier: src/sauvegarde/compte.js
+10 c nouvelleConfig
+17 s session
+23 s session
+35 s session
+83 d donnees
+96 d donnees
+108 d donnees
+144 s session
+152 d donnees
+157 e echec

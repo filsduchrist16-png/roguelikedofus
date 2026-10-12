@@ -1,0 +1,10 @@
+# fichier: src/ui/objectifs.js
+20 e info
+25 o objectif
+34 o objectif
+44 o objectif
+58 o objectif
+58 k indice
+98 o objectif
+98 k indice
+99 e etat

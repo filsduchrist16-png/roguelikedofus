@@ -17,12 +17,12 @@ export function retirerObjectifsCombat() {
   document.getElementById(`objectifs-combat`)?.remove();
 }
 
-function htmlEtat(e) {
-  return `<span class="objectif-etat etat-${e.etat}">${ICONES[e.etat]}${e.detail ? ` ${echapperHtml(e.detail)}` : ``}</span>`;
+function htmlEtat(info) {
+  return `<span class="objectif-etat etat-${info.etat}">${ICONES[info.etat]}${info.detail ? ` ${echapperHtml(info.detail)}` : ``}</span>`;
 }
 
 function htmlPastille() {
-  const ok = objectifsCourants.filter((o) => o.etat?.etat === `assure`).length;
+  const ok = objectifsCourants.filter((objectif) => objectif.etat?.etat === `assure`).length;
   return `🏆 <b>${ok ? `${ok}/` : ``}${objectifsCourants.length}</b>`;
 }
 
@@ -31,17 +31,21 @@ export function afficherObjectifsCombat(objectifs, { replierApres = 9000 } = {})
   if (!objectifs.length) {
     return;
   }
-  objectifsCourants = objectifs.map((o) => ({
-    ...o,
+  objectifsCourants = objectifs.map((objectif) => ({
+    ...objectif,
     etat: {
       etat: `en_cours`,
-      detail: o.suivi?.type === `compteur` ? `${o.suivi.base}/${o.suivi.seuil}` : undefined,
+      detail:
+        objectif.suivi?.type === `compteur`
+          ? `${objectif.suivi.base}/${objectif.suivi.seuil}`
+          : undefined,
     },
   }));
   // Sur téléphone, la boîte ouverte cachait le défi et l'ordre de jeu : elle démarre repliée
   // (pastille qui pulse). Partout, un simple compteur cumulé ne mérite pas d'ouverture d'office.
   const mobile = window.matchMedia?.(`(max-width: 700px)`).matches ?? false;
-  const ouvrir = !mobile && objectifsCourants.some((o) => o.suivi?.type !== `compteur`);
+  const ouvrir =
+    !mobile && objectifsCourants.some((objectif) => objectif.suivi?.type !== `compteur`);
   const boite = document.createElement(`aside`);
   boite.id = `objectifs-combat`;
   boite.className = `objectifs-combat${ouvrir ? ` ouvert` : ` pulse`}`;
@@ -55,12 +59,12 @@ export function afficherObjectifsCombat(objectifs, { replierApres = 9000 } = {})
       </div>
       <ul>${objectifsCourants
         .map(
-          (o, k) => `<li data-objectif="${k}">
-          <span class="objectif-img">${o.img ? `<img src="${cheminAsset(o.img)}" alt="" onerror="this.remove()" />` : `🏆`}</span>
+          (objectif, indice) => `<li data-objectif="${indice}">
+          <span class="objectif-img">${objectif.img ? `<img src="${cheminAsset(objectif.img)}" alt="" onerror="this.remove()" />` : `🏆`}</span>
           <span class="objectif-texte">
-            <span class="objectif-ligne1"><b>${echapperHtml(o.quete)}</b>${htmlEtat(o.etat)}</span>
-            <span class="objectif-consigne">${echapperHtml(o.consigne)}</span>
-            ${o.succes ? `<small>${echapperHtml(o.dofus ? `Succès « ${o.succes} » → ${o.dofus}` : `Succès « ${o.succes} »`)}</small>` : ``}
+            <span class="objectif-ligne1"><b>${echapperHtml(objectif.quete)}</b>${htmlEtat(objectif.etat)}</span>
+            <span class="objectif-consigne">${echapperHtml(objectif.consigne)}</span>
+            ${objectif.succes ? `<small>${echapperHtml(objectif.dofus ? `Succès « ${objectif.succes} » → ${objectif.dofus}` : `Succès « ${objectif.succes} »`)}</small>` : ``}
           </span>
         </li>`,
         )
@@ -95,22 +99,22 @@ export function majObjectifsCombat(suivi, combattants) {
     return;
   }
   let change = false;
-  objectifsCourants.forEach((o, k) => {
-    const e = etatObjectif(o, suivi, combattants);
-    if (e.etat === o.etat?.etat && e.detail === o.etat?.detail) {
+  objectifsCourants.forEach((objectif, indice) => {
+    const etat = etatObjectif(objectif, suivi, combattants);
+    if (etat.etat === objectif.etat?.etat && etat.detail === objectif.etat?.detail) {
       return;
     }
-    const nouveau = e.etat !== o.etat?.etat;
-    o.etat = e;
+    const nouveau = etat.etat !== objectif.etat?.etat;
+    objectif.etat = etat;
     change = true;
-    const li = boite.querySelector(`[data-objectif="${k}"]`);
+    const li = boite.querySelector(`[data-objectif="${indice}"]`);
     const ligne = li?.querySelector(`.objectif-ligne1`);
     if (ligne) {
       ligne.querySelector(`.objectif-etat`)?.remove();
-      ligne.insertAdjacentHTML(`beforeend`, htmlEtat(e));
-      li.classList.toggle(`fait`, e.etat === `assure`);
-      li.classList.toggle(`rate`, e.etat === `rate`);
-      if (nouveau && e.etat !== `en_cours`) {
+      ligne.insertAdjacentHTML(`beforeend`, htmlEtat(etat));
+      li.classList.toggle(`fait`, etat.etat === `assure`);
+      li.classList.toggle(`rate`, etat.etat === `rate`);
+      if (nouveau && etat.etat !== `en_cours`) {
         li.classList.add(`flash`);
         setTimeout(() => li.classList.remove(`flash`), 900);
       }
