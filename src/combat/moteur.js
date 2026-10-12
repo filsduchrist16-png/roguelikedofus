@@ -9,209 +9,241 @@ import {
 } from "./stats.js";
 import { appliquerSoinsEtBoucliers, debutTourEffets, finTourEffets } from "./effets.js";
 import { lancerSort } from "./sorts.js";
-function mueElementaire(e, t) {
-  if (e.mueElementaire === undefined) {
+function mueElementaire(combattant, contexte) {
+  if (combattant.mueElementaire === undefined) {
     return;
   }
-  let n = ELEMENTS[Math.floor(t.rng() * ELEMENTS.length)];
-  let e_mueElementaire = e.mueElementaire;
-  e.resistances = {
-    terre: e_mueElementaire,
-    feu: e_mueElementaire,
-    eau: e_mueElementaire,
-    air: e_mueElementaire,
-    [n]: 0,
+  let element = ELEMENTS[Math.floor(contexte.rng() * ELEMENTS.length)];
+  let resistanceMue = combattant.mueElementaire;
+  combattant.resistances = {
+    terre: resistanceMue,
+    feu: resistanceMue,
+    eau: resistanceMue,
+    air: resistanceMue,
+    [element]: 0,
   };
-  t.log(`${e.nom} mue : son plumage ne protège plus contre l'élément ${n.toUpperCase()} !`);
+  contexte.log(
+    `${combattant.nom} mue : son plumage ne protège plus contre l'élément ${element.toUpperCase()} !`,
+  );
 }
-function chanceEcaflip(e, t) {
-  if (!e.paGamble) {
+function chanceEcaflip(combattant, contexte) {
+  if (!combattant.paGamble) {
     return;
   }
-  let e_paGamble = e.paGamble;
-  if (t.rng() < e_paGamble.pPlus) {
-    e.paActuels += e_paGamble.plus;
-    t.log(`😼 La Chance d'Ecaflip sourit à ${e.nom} : +${e_paGamble.plus} PA !`);
+  let gamble = combattant.paGamble;
+  if (contexte.rng() < gamble.pPlus) {
+    combattant.paActuels += gamble.plus;
+    contexte.log(`😼 La Chance d'Ecaflip sourit à ${combattant.nom} : +${gamble.plus} PA !`);
   } else {
-    e.paActuels = Math.max(0, e.paActuels - e_paGamble.moins);
-    t.log(`🙀 La Chance d'Ecaflip grimace : ${e.nom} perd ${e_paGamble.moins} PA.`);
+    combattant.paActuels = Math.max(0, combattant.paActuels - gamble.moins);
+    contexte.log(`🙀 La Chance d'Ecaflip grimace : ${combattant.nom} perd ${gamble.moins} PA.`);
   }
 }
-const campVaincu = (e, t) => vivants(e).every((e) => e.camp !== t || e.estLance || e.estEgide);
-const combatTermine = (e) => campVaincu(e, `joueur`) || campVaincu(e, `ennemi`);
-const victoireJoueur = (e) => campVaincu(e, `ennemi`) && !campVaincu(e, `joueur`);
-export function ordreDeJeu(e) {
-  let t = e.filter((e) => !e.estInvocation && !e.invoquePar);
-  let n = {
-    joueur: t.filter((e) => e.camp === `joueur`),
-    ennemi: ((e) => [...e].sort((e, t) => t.initiative - e.initiative))(
-      t.filter((e) => e.camp === `ennemi`),
+const campVaincu = (combattants, camp) =>
+  vivants(combattants).every(
+    (combattant) => combattant.camp !== camp || combattant.estLance || combattant.estEgide,
+  );
+const combatTermine = (combattants) =>
+  campVaincu(combattants, `joueur`) || campVaincu(combattants, `ennemi`);
+const victoireJoueur = (combattants) =>
+  campVaincu(combattants, `ennemi`) && !campVaincu(combattants, `joueur`);
+export function ordreDeJeu(combattants) {
+  let principaux = combattants.filter(
+    (combattant) => !combattant.estInvocation && !combattant.invoquePar,
+  );
+  let files = {
+    joueur: principaux.filter((combattant) => combattant.camp === `joueur`),
+    ennemi: ((liste) =>
+      [...liste].sort((premier, second) => second.initiative - premier.initiative))(
+      principaux.filter((combattant) => combattant.camp === `ennemi`),
     ),
   };
-  let r = (e) => {
-    if (e.length) {
-      return e.reduce((acc, item) => acc + item.initiative, 0) / e.length;
+  let moyenneInitiative = (liste) => {
+    if (liste.length) {
+      return liste.reduce((acc, item) => acc + item.initiative, 0) / liste.length;
     }
     return 0;
   };
-  let i = n.joueur.some((e) => e.ouvreToujours);
-  let a = `joueur`;
-  if (!i && r(n.ennemi) > r(n.joueur)) {
-    a = `ennemi`;
+  let joueurOuvre = files.joueur.some((combattant) => combattant.ouvreToujours);
+  let campCourant = `joueur`;
+  if (!joueurOuvre && moyenneInitiative(files.ennemi) > moyenneInitiative(files.joueur)) {
+    campCourant = `ennemi`;
   }
-  let o = [];
-  while (n.joueur.length || n.ennemi.length) {
-    if (!n[a].length) {
-      a = a === `joueur` ? `ennemi` : `joueur`;
+  let ordre = [];
+  while (files.joueur.length || files.ennemi.length) {
+    if (!files[campCourant].length) {
+      campCourant = campCourant === `joueur` ? `ennemi` : `joueur`;
     }
-    o.push(n[a].shift().ref);
-    let e = a === `joueur` ? `ennemi` : `joueur`;
-    if (n[e].length) {
-      a = e;
+    ordre.push(files[campCourant].shift().ref);
+    let autreCamp = campCourant === `joueur` ? `ennemi` : `joueur`;
+    if (files[autreCamp].length) {
+      campCourant = autreCamp;
     }
   }
-  for (let t of e) {
-    if (!t.invoquePar || t.estInvocation) {
+  for (let combattant of combattants) {
+    if (!combattant.invoquePar || combattant.estInvocation) {
       continue;
     }
-    let n = o.indexOf(t.invoquePar);
-    if (n < 0) {
+    let position = ordre.indexOf(combattant.invoquePar);
+    if (position < 0) {
       continue;
     }
-    let r = new Set(e.filter((e) => e.invoquePar === t.invoquePar).map((e) => e.ref));
-    while (n + 1 < o.length && r.has(o[n + 1])) {
-      n++;
+    let groupe = new Set(
+      combattants
+        .filter((membre) => membre.invoquePar === combattant.invoquePar)
+        .map((membre) => membre.ref),
+    );
+    while (position + 1 < ordre.length && groupe.has(ordre[position + 1])) {
+      position++;
     }
-    o.splice(n + 1, 0, t.ref);
+    ordre.splice(position + 1, 0, combattant.ref);
   }
-  return o;
+  return ordre;
 }
-function prochainAJouer(e, t) {
-  let n = new Map(e.map((e) => [e.ref, e]));
-  for (let r of ordreDeJeu(e)) {
-    let e = n.get(r);
-    if (e && e.pvActuels > 0 && !t.has(r)) {
-      return e;
+function prochainAJouer(combattants, dejaJoues) {
+  let parRef = new Map(combattants.map((combattant) => [combattant.ref, combattant]));
+  for (let ref of ordreDeJeu(combattants)) {
+    let candidat = parRef.get(ref);
+    if (candidat && candidat.pvActuels > 0 && !dejaJoues.has(ref)) {
+      return candidat;
     }
   }
   return null;
 }
-function retirerInvocationsOrphelines(e, t) {
+function retirerInvocationsOrphelines(combattants, contexte) {
   while (true) {
-    let n = new Set(e.filter((e) => e.pvActuels <= 0).map((e) => e.ref));
-    let r = e.filter(
-      (e) =>
-        e.pvActuels > 0 &&
-        ((e.invoquePar !== undefined && n.has(e.invoquePar)) ||
-          ((e.estLance || e.estEgide) && e.lanceurRef !== undefined && n.has(e.lanceurRef))),
+    let morts = new Set(
+      combattants
+        .filter((combattant) => combattant.pvActuels <= 0)
+        .map((combattant) => combattant.ref),
     );
-    if (!r.length) {
+    let orphelines = combattants.filter(
+      (combattant) =>
+        combattant.pvActuels > 0 &&
+        ((combattant.invoquePar !== undefined && morts.has(combattant.invoquePar)) ||
+          ((combattant.estLance || combattant.estEgide) &&
+            combattant.lanceurRef !== undefined &&
+            morts.has(combattant.lanceurRef))),
+    );
+    if (!orphelines.length) {
       return;
     }
-    for (let e of r) {
-      e.pvActuels = 0;
-      if (e.estLance) {
-        t.log(`La lance se brise : son porteur est tombé.`);
-      } else if (e.estEgide) {
-        t.log(`L'Égide s'efface : son invocateur est tombé.`);
+    for (let orpheline of orphelines) {
+      orpheline.pvActuels = 0;
+      if (orpheline.estLance) {
+        contexte.log(`La lance se brise : son porteur est tombé.`);
+      } else if (orpheline.estEgide) {
+        contexte.log(`L'Égide s'efface : son invocateur est tombé.`);
       } else {
-        t.log(`${e.nom} disparaît avec son invocateur !`);
+        contexte.log(`${orpheline.nom} disparaît avec son invocateur !`);
       }
     }
   }
 }
-export async function executerCombat(e, t) {
-  let n = {
-    rng: t.rng ?? Math.random,
-    log: t.log ?? (() => {}),
-    playerDamageBonus: t.playerDamageBonus ?? 1,
-    enemyDamageBonus: t.enemyDamageBonus ?? 1,
-    fx: t.fx,
-    onDegats: t.onDegats,
-    onEvenement: t.onEvenement,
-    reliquesActives: t.reliquesActives,
+export async function executerCombat(combattants, options) {
+  let contexte = {
+    rng: options.rng ?? Math.random,
+    log: options.log ?? (() => {}),
+    playerDamageBonus: options.playerDamageBonus ?? 1,
+    enemyDamageBonus: options.enemyDamageBonus ?? 1,
+    fx: options.fx,
+    onDegats: options.onDegats,
+    onEvenement: options.onEvenement,
+    reliquesActives: options.reliquesActives,
   };
-  let r = 0;
-  while (!combatTermine(e) && !(++r > 1000)) {
-    n.onEvenement?.({
+  let ronde = 0;
+  while (!combatTermine(combattants) && !(++ronde > 1000)) {
+    contexte.onEvenement?.({
       type: `ronde`,
     });
     // méta sans texte : l'interface remet la frise à zéro (rien n'est affiché)
-    n.log(``, { ronde: true });
-    let r = new Set();
-    while (!combatTermine(e)) {
-      let i = prochainAJouer(e, r);
-      if (!i) {
+    contexte.log(``, { ronde: true });
+    let dejaJoues = new Set();
+    while (!combatTermine(combattants)) {
+      let acteur = prochainAJouer(combattants, dejaJoues);
+      if (!acteur) {
         break;
       }
-      r.add(i.ref);
-      n.tourDeRef = i.ref;
-      reinitialiserTour(i);
-      i.toursJoues = (i.toursJoues ?? 0) + 1;
-      if (i.nullifieParTour) {
-        i.coupsAnnulesRestants = i.nullifieParTour;
+      dejaJoues.add(acteur.ref);
+      contexte.tourDeRef = acteur.ref;
+      reinitialiserTour(acteur);
+      acteur.toursJoues = (acteur.toursJoues ?? 0) + 1;
+      if (acteur.nullifieParTour) {
+        acteur.coupsAnnulesRestants = acteur.nullifieParTour;
       }
-      mueElementaire(i, n);
-      chanceEcaflip(i, n);
-      for (let t of e) {
-        if (t.estEgide && t.lanceurRef === i.ref && t.pvActuels > 0) {
-          let e = (t.toursRestantsInvocation ?? 0) - 1;
-          t.toursRestantsInvocation = e;
-          if (e <= 0) {
-            t.pvActuels = 0;
-            n.log(`🛡️ L'Égide de ${i.nom} expire.`);
+      mueElementaire(acteur, contexte);
+      chanceEcaflip(acteur, contexte);
+      for (let combattant of combattants) {
+        if (
+          combattant.estEgide &&
+          combattant.lanceurRef === acteur.ref &&
+          combattant.pvActuels > 0
+        ) {
+          let toursRestants = (combattant.toursRestantsInvocation ?? 0) - 1;
+          combattant.toursRestantsInvocation = toursRestants;
+          if (toursRestants <= 0) {
+            combattant.pvActuels = 0;
+            contexte.log(`🛡️ L'Égide de ${acteur.nom} expire.`);
           }
         }
       }
-      if (debutTourEffets(i, e, n)) {
-        retirerInvocationsOrphelines(e, n);
-        await t.onUpdate?.();
+      if (debutTourEffets(acteur, combattants, contexte)) {
+        retirerInvocationsOrphelines(combattants, contexte);
+        await options.onUpdate?.();
         continue;
       }
-      let a = effetsDebutTourReliques(i, e, reliquesActivesDe(i, n));
-      appliquerSoinsEtBoucliers(a, e, n);
-      i.degatsPctDofus = a.degatsPct;
-      if (i.effets.some((e) => e.stat === `assome`)) {
-        i.effets = i.effets.filter((e) => e.stat !== `assome`);
-        n.log(`💫 ${i.nom} est assommé et passe son tour !`, { tour: i.ref });
-        await t.onUpdate?.();
+      let effetsDebut = effetsDebutTourReliques(
+        acteur,
+        combattants,
+        reliquesActivesDe(acteur, contexte),
+      );
+      appliquerSoinsEtBoucliers(effetsDebut, combattants, contexte);
+      acteur.degatsPctDofus = effetsDebut.degatsPct;
+      if (acteur.effets.some((effet) => effet.stat === `assome`)) {
+        acteur.effets = acteur.effets.filter((effet) => effet.stat !== `assome`);
+        contexte.log(`💫 ${acteur.nom} est assommé et passe son tour !`, { tour: acteur.ref });
+        await options.onUpdate?.();
       } else {
-        n.log(`▶ Tour de ${i.nom} (${i.paActuels} PA).`, { tour: i.ref });
-        await t.onUpdate?.();
-        let r = 0;
-        while (i.pvActuels > 0 && !combatTermine(e) && !(++r > 50)) {
-          let r = await t.controllers[i.camp](i, e);
-          if (!r) {
+        contexte.log(`▶ Tour de ${acteur.nom} (${acteur.paActuels} PA).`, { tour: acteur.ref });
+        await options.onUpdate?.();
+        let actions = 0;
+        while (acteur.pvActuels > 0 && !combatTermine(combattants) && !(++actions > 50)) {
+          let action = await options.controllers[acteur.camp](acteur, combattants);
+          if (!action) {
             break;
           }
-          let a = coutPA(r.sort, i);
-          if (i.paActuels < a) {
+          let cout = coutPA(action.sort, acteur);
+          if (acteur.paActuels < cout) {
             break;
           }
-          i.paActuels -= a;
-          lancerSort(i, r.sort, r.cibleRef, e, n);
-          if (i.recupPASort && a > 0 && n.rng() < i.recupPASort.chance) {
-            i.paActuels += i.recupPASort.pa;
-            n.log(`✨ ${i.nom} récupère ${i.recupPASort.pa} PA.`);
+          acteur.paActuels -= cout;
+          lancerSort(acteur, action.sort, action.cibleRef, combattants, contexte);
+          if (acteur.recupPASort && cout > 0 && contexte.rng() < acteur.recupPASort.chance) {
+            acteur.paActuels += acteur.recupPASort.pa;
+            contexte.log(`✨ ${acteur.nom} récupère ${acteur.recupPASort.pa} PA.`);
           }
-          retirerInvocationsOrphelines(e, n);
-          await t.onUpdate?.();
+          retirerInvocationsOrphelines(combattants, contexte);
+          await options.onUpdate?.();
         }
       }
-      appliquerSoinsEtBoucliers(effetsFinTourReliques(i, e, reliquesActivesDe(i, n)), e, n);
-      finTourEffets(i);
-      for (let t of e) {
-        if (t.conjuration) {
-          if (t.conjuration.lanceurRef === i.ref) {
-            --t.conjuration.tours <= 0 && delete t.conjuration;
+      appliquerSoinsEtBoucliers(
+        effetsFinTourReliques(acteur, combattants, reliquesActivesDe(acteur, contexte)),
+        combattants,
+        contexte,
+      );
+      finTourEffets(acteur);
+      for (let combattant of combattants) {
+        if (combattant.conjuration) {
+          if (combattant.conjuration.lanceurRef === acteur.ref) {
+            --combattant.conjuration.tours <= 0 && delete combattant.conjuration;
           } else {
-            let n = trouverParRef(e, t.conjuration.lanceurRef);
-            (!n || n.pvActuels <= 0) && delete t.conjuration;
+            let lanceur = trouverParRef(combattants, combattant.conjuration.lanceurRef);
+            (!lanceur || lanceur.pvActuels <= 0) && delete combattant.conjuration;
           }
         }
       }
-      i.paActuels = i.paMax;
+      acteur.paActuels = acteur.paMax;
     }
   }
-  return victoireJoueur(e);
+  return victoireJoueur(combattants);
 }

@@ -8,178 +8,179 @@ import {
   trouverZoneDansMonde,
 } from "./config.js";
 import { instancierObjet, tirerObjet } from "./run.js";
-export function numeroZone(e, t = MONDES) {
-  let n = trouverZoneDansMonde(e, t);
-  if (n) {
-    return indexDebutMonde(n.tranche.id, t) + n.index + 1;
+export function numeroZone(zoneId, mondes = MONDES) {
+  let trouve = trouverZoneDansMonde(zoneId, mondes);
+  if (trouve) {
+    return indexDebutMonde(trouve.tranche.id, mondes) + trouve.index + 1;
   }
   return 1;
 }
 // Le Tier d'un objet ne change pas en cours de partie : on le garde en mémoire.
 const cacheTier = new Map();
-export function numeroZoneObjet(e, t = MONDES) {
-  if (t !== MONDES) {
-    return calculerTier(e, t);
+export function numeroZoneObjet(objetId, mondes = MONDES) {
+  if (mondes !== MONDES) {
+    return calculerTier(objetId, mondes);
   }
-  if (!cacheTier.has(e)) {
-    cacheTier.set(e, calculerTier(e, t));
+  if (!cacheTier.has(objetId)) {
+    cacheTier.set(objetId, calculerTier(objetId, mondes));
   }
-  return cacheTier.get(e);
+  return cacheTier.get(objetId);
 }
-function calculerTier(e, t) {
-  for (let n of t) {
-    for (let r = 0; r < n.zones.length; r++) {
-      if (listerButin(butinDeZone(n.zones[r])).includes(e)) {
-        return indexDebutMonde(n.id, t) + r + 1;
+function calculerTier(objetId, mondes) {
+  for (let monde of mondes) {
+    for (let indice = 0; indice < monde.zones.length; indice++) {
+      if (listerButin(butinDeZone(monde.zones[indice])).includes(objetId)) {
+        return indexDebutMonde(monde.id, mondes) + indice + 1;
       }
     }
     // butin d'un donjon secret : estimé comme un objet de la 10e zone du monde
-    if (SECRETS[n.id]?.butin.includes(e)) {
-      return indexDebutMonde(n.id, t) + Math.min(10, n.zones.length);
+    if (SECRETS[monde.id]?.butin.includes(objetId)) {
+      return indexDebutMonde(monde.id, mondes) + Math.min(10, monde.zones.length);
     }
   }
   // objet retiré du butin (ancienne version) : sa toile d'origine
-  return EQUIPEMENTS[e]?.toile ?? 1;
+  return EQUIPEMENTS[objetId]?.toile ?? 1;
 }
-export function gainKamas(e, t, n) {
-  let r = ECONOMIE.gain[e] ?? 0;
-  if (!r) {
+export function gainKamas(type, numZone, rng) {
+  let gain = ECONOMIE.gain[type] ?? 0;
+  if (!gain) {
     return 0;
   }
-  let i = 1 + ECONOMIE.gainParToile * (t - 1);
-  return Math.round(r * i * (0.85 + n() * 0.3));
+  let facteur = 1 + ECONOMIE.gainParToile * (numZone - 1);
+  return Math.round(gain * facteur * (0.85 + rng() * 0.3));
 }
-export function ajouterKamas(e, t) {
-  e.kamas += t;
-  e.stats.kamasGagnes = (e.stats.kamasGagnes ?? 0) + t;
+export function ajouterKamas(run, montant) {
+  run.kamas += montant;
+  run.stats.kamasGagnes = (run.stats.kamasGagnes ?? 0) + montant;
 }
-function prixObjet(e) {
-  let t = ECONOMIE.prix[e.rarete ?? `commun`];
-  let n = numeroZoneObjet(e.id);
-  return Math.round(t * (1 + ECONOMIE.prixParToile * (n - 1)));
+function prixObjet(objet) {
+  let prixBase = ECONOMIE.prix[objet.rarete ?? `commun`];
+  let numZone = numeroZoneObjet(objet.id);
+  return Math.round(prixBase * (1 + ECONOMIE.prixParToile * (numZone - 1)));
 }
-export const prixRevente = (e) => Math.max(1, Math.round(prixObjet(e) * ECONOMIE.tauxRevente));
-export function genererStockHdv(e, t) {
-  let n = trouverZoneDansMonde(e);
-  let r = n ? n.tranche.zones : MONDES[0].zones;
-  let i = n ? n.index : 0;
+export const prixRevente = (objet) =>
+  Math.max(1, Math.round(prixObjet(objet) * ECONOMIE.tauxRevente));
+export function genererStockHdv(zoneId, rng) {
+  let trouve = trouverZoneDansMonde(zoneId);
+  let zones = trouve ? trouve.tranche.zones : MONDES[0].zones;
+  let indice = trouve ? trouve.index : 0;
   // sans doublon : une pièce de boss recopiée dans les élites ne doit pas peser double
-  let a = (e) => [...new Set(listerButin(e ? butinDeZone(e) : null))];
-  let o = a(r[i]);
-  let s = a(r[i + 1]);
-  let c = [];
-  for (let e = 0; e < ECONOMIE.tailleStock; e++) {
-    let e = s.length > 0 && (o.length === 0 || t() < 0.4);
-    let n = e ? s : o;
-    if (!n.length) {
+  let butinUnique = (idZone) => [...new Set(listerButin(idZone ? butinDeZone(idZone) : null))];
+  let butinActuel = butinUnique(zones[indice]);
+  let butinSuivant = butinUnique(zones[indice + 1]);
+  let stock = [];
+  for (let tirage = 0; tirage < ECONOMIE.tailleStock; tirage++) {
+    let depuisSuivante = butinSuivant.length > 0 && (butinActuel.length === 0 || rng() < 0.4);
+    let sources = depuisSuivante ? butinSuivant : butinActuel;
+    if (!sources.length) {
       break;
     }
-    let r = e ? [`rare`, `epique`, `legendaire`] : [`epique`, `legendaire`];
-    let inst = tirerObjet(n[Math.floor(t() * n.length)], t, r);
+    let raretes = depuisSuivante ? [`rare`, `epique`, `legendaire`] : [`epique`, `legendaire`];
+    let inst = tirerObjet(sources[Math.floor(rng() * sources.length)], rng, raretes);
     if (inst) {
-      c.push({
+      stock.push({
         inst,
         prix: prixObjet(inst),
       });
     }
   }
-  return c;
+  return stock;
 }
-export function acheterObjet(e, t, n) {
-  let r = t[n];
-  if (!r || e.kamas < r.prix) {
+export function acheterObjet(run, stock, index) {
+  let offre = stock[index];
+  if (!offre || run.kamas < offre.prix) {
     return false;
   }
-  return ((e.kamas -= r.prix), e.inventaire.push(r.inst), t.splice(n, 1), true);
+  return ((run.kamas -= offre.prix), run.inventaire.push(offre.inst), stock.splice(index, 1), true);
 }
-export function rareteSuivante(e) {
-  let t = EQUIPEMENTS[e.id]?.tiers;
-  if (!t || !e.rarete) {
+export function rareteSuivante(objet) {
+  let tiers = EQUIPEMENTS[objet.id]?.tiers;
+  if (!tiers || !objet.rarete) {
     return null;
   }
-  for (let n = RARETES.indexOf(e.rarete) + 1; n < RARETES.length; n++) {
-    if (t[RARETES[n]]) {
-      return RARETES[n];
+  for (let indice = RARETES.indexOf(objet.rarete) + 1; indice < RARETES.length; indice++) {
+    if (tiers[RARETES[indice]]) {
+      return RARETES[indice];
     }
   }
   return null;
 }
-export function prixForge(e, t = false) {
-  let rarete = rareteSuivante(e);
+export function prixForge(objet, temeraire = false) {
+  let rarete = rareteSuivante(objet);
   if (!rarete) {
     return null;
   }
-  let r = t ? ECONOMIE.forgeTemeraire.coef : ECONOMIE.forgeCoef;
+  let coef = temeraire ? ECONOMIE.forgeTemeraire.coef : ECONOMIE.forgeCoef;
   return Math.round(
     prixObjet({
-      ...e,
+      ...objet,
       rarete,
-    }) * r,
+    }) * coef,
   );
 }
-export function forgerObjet(e, t, n, r) {
-  let i = rareteSuivante(t);
-  let a = prixForge(t, n);
-  if (!i || a === null || e.kamas < a) {
+export function forgerObjet(run, objet, temeraire, rng) {
+  let suivante = rareteSuivante(objet);
+  let prix = prixForge(objet, temeraire);
+  if (!suivante || prix === null || run.kamas < prix) {
     return null;
   }
-  e.kamas -= a;
-  if (n && r() < ECONOMIE.forgeTemeraire.pEchec) {
+  run.kamas -= prix;
+  if (temeraire && rng() < ECONOMIE.forgeTemeraire.pEchec) {
     return `echec`;
   }
-  let o = instancierObjet(t.id, i);
-  t.rarete = o.rarete;
-  t.stats = o.stats;
-  t.adaptatif = o.adaptatif;
-  t.resistances = o.resistances;
-  t.pa = o.pa;
+  let neuf = instancierObjet(objet.id, suivante);
+  objet.rarete = neuf.rarete;
+  objet.stats = neuf.stats;
+  objet.adaptatif = neuf.adaptatif;
+  objet.resistances = neuf.resistances;
+  objet.pa = neuf.pa;
   return `forge`;
 }
-export function vendreTout(e) {
-  let t = 0;
-  for (let n of e.inventaire) {
-    t += prixRevente(n);
+export function vendreTout(run) {
+  let total = 0;
+  for (let objet of run.inventaire) {
+    total += prixRevente(objet);
   }
-  e.inventaire.length = 0;
-  if (t) {
-    ajouterKamas(e, t);
+  run.inventaire.length = 0;
+  if (total) {
+    ajouterKamas(run, total);
   }
-  return t;
+  return total;
 }
-export function vendreObjet(e, t) {
-  let n = e.inventaire[t];
-  if (n) {
-    return (e.inventaire.splice(t, 1), ajouterKamas(e, prixRevente(n)), true);
+export function vendreObjet(run, index) {
+  let objet = run.inventaire[index];
+  if (objet) {
+    return (run.inventaire.splice(index, 1), ajouterKamas(run, prixRevente(objet)), true);
   }
   return false;
 }
 // Annule une vente : l'objet revient dans l'inventaire contre le prix touché.
-export function annulerVente(e, inst, prix) {
-  if (e.kamas < prix) {
+export function annulerVente(run, inst, prix) {
+  if (run.kamas < prix) {
     return false;
   }
-  ajouterKamas(e, -prix);
-  e.inventaire.push(inst);
+  ajouterKamas(run, -prix);
+  run.inventaire.push(inst);
   return true;
 }
 // Annule plusieurs ventes d'un coup (« Vendre l'inutile ») : tout ou rien.
-export function annulerVentes(e, ventes) {
-  const total = ventes.reduce((a, v) => a + v.prix, 0);
-  if (!ventes.length || e.kamas < total) {
+export function annulerVentes(run, ventes) {
+  const total = ventes.reduce((somme, vente) => somme + vente.prix, 0);
+  if (!ventes.length || run.kamas < total) {
     return false;
   }
-  ajouterKamas(e, -total);
-  e.inventaire.push(...ventes.map((v) => v.inst));
+  ajouterKamas(run, -total);
+  run.inventaire.push(...ventes.map((vente) => vente.inst));
   return true;
 }
 // Annule un achat : remboursé à 100 %, l'objet retourne dans le stock, à sa place.
-export function annulerAchat(e, stock, inst, prix, index) {
-  const i = e.inventaire.indexOf(inst);
-  if (i < 0) {
+export function annulerAchat(run, stock, inst, prix, index) {
+  const indice = run.inventaire.indexOf(inst);
+  if (indice < 0) {
     return false;
   }
-  e.inventaire.splice(i, 1);
-  e.kamas += prix;
+  run.inventaire.splice(indice, 1);
+  run.kamas += prix;
   stock.splice(Math.min(Math.max(0, index), stock.length), 0, { inst, prix });
   return true;
 }
