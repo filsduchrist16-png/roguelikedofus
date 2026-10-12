@@ -625,7 +625,7 @@ export function htmlRackDofus(e, t = false) {
       let i = t.id === `dofus_ocre` ? `data-ocre="1"` : ``;
       return `
         <div class="dofus-slot ${r ? `` : `locked`}" data-nom="${echapperHtml(t.nom)}" data-effet="${echapperHtml(t.desc)}" data-obtention="${echapperHtml(texteObtentionDofus(t.id))}" data-possede="${r ? 1 : ``}" ${i}>
-          ${t.img ? `<img src="${cheminAsset(t.img)}" alt="${echapperHtml(t.nom)}" loading="lazy" onerror="this.remove()" />` : ``}
+          ${t.img ? `<img src="${cheminAsset(t.img)}" alt="${echapperHtml(t.nom)}" loading="lazy" decoding="async" onerror="this.remove()" />` : ``}
           ${length > 1 ? `<span class="dofus-count">×${length}</span>` : ``}
         </div>`;
     })
@@ -656,7 +656,7 @@ export const ROLES_CLASSES = {
 export function htmlCarteClasse(e, t, n) {
   let r = CLASSES[e];
   return `<button class="classe-carte ${t ? `sel` : ``}" ${n}="${e}">
-    <img class="classe-portrait" src="${imgClasse(e)}" alt="" onerror="this.remove()" />
+    <img class="classe-portrait" src="${imgClasse(e)}" alt="" loading="lazy" decoding="async" onerror="this.remove()" />
     <span class="classe-nom">${echapperHtml(r.nom)}</span>
     ${htmlElementsClasse(e)}
     <span class="classe-role">${echapperHtml(ROLES_CLASSES[e] ?? ``)}</span>

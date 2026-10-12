@@ -2,6 +2,7 @@
 
 ## Version 1.3.0
 
+- **D10 (chargement différé)** : les portraits de classe et les Dofus du rack (`src/ui/commun.js`) reçoivent `loading="lazy"` et `decoding="async"` ; les listes Bestiaire, Armurerie, HDV, Butin, Forgemagie et Équipement avaient déjà `loading="lazy"`. Pas de chargement des données par monde (trop risqué).
 - **D10 (images)** : `public/assets` passe de 28,8 Mo à 10,4 Mo (dist : 34 Mo → 12,5 Mo) : PNG redimensionnés à environ 2x la taille affichée (classes 640 px, menu 640 px, logo 800 px) et recompressés (palette 8 bits quand la perte est invisible), mêmes noms et même format `.png`. Script rejouable : `node outils/images/optimiser.mjs` (`npm i --no-save sharp` d'abord, hors dépendances du projet).
 - **Idoles de départ** : style dans une vraie feuille CSS (`.idoles-depart`, `.idole-depart` dans `confort-meta.css`, cases de 44 px au moins, lisibles à 390 et 1280 px, plus de styles en ligne) et choix mémorisé d'une run à l'autre (réglage `idolesChoisies`, lecture tolérante : absent ou abîmé = aucune, idoles inconnues ignorées).
 - **E7** : sons synthétisés avec WebAudio (`src/son.js`, aucun fichier audio), coupés par défaut : option « Sons » dans Paramètres (`sons` dans les réglages, seul `true` l'active). Bruitages de clic, coup, soin, victoire et défaite, volume discret ; le contexte audio n'est créé qu'après un geste du joueur et tout est protégé par `try/catch` (iOS Safari).
