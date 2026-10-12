@@ -1,0 +1,16 @@
+# fichier: src/deroule/quetes.js
+12 e run
+12 t verification
+18 n quete
+24 n dofusAjoute
+25 e succes
+26 t idDofus
+27 r obtenu
+42 e run
+54 e run
+62 e perso
+64 e perso
+64 t emplacement
+67 e run
+68 e#1 idQuete
+68 e#2 quete

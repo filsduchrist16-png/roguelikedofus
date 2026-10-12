@@ -1,0 +1,13 @@
+# fichier: src/deroule/noeud.js
+46 e run
+46 n combatId
+46 r xpCombat
+47 o zoneId
+61 c numZone
+105 t pctSoin
+106 n effets
+107 r recrues
+108 i choix
+111 p perso
+194 t exclus
+195 n type

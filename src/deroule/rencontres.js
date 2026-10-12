@@ -45,23 +45,23 @@ import { ecranButin } from "../ui/ecrans/butin.js";
 import { EQUIPEMENTS, CLASSES } from "../data/index.js";
 
 // ---------- Rencontres (case « Rencontre » de la carte) ----------
-export async function jouerRencontre(e, zone) {
+export async function jouerRencontre(run, zone) {
   let toile = zone ? numeroZone(zone.id) : 1;
   let type = tirerRencontre(
     Math.random,
-    rencontresExclues(e, { mortDefinitive: !!effetsDifficulte(e.ascension).mortDefinitive }),
+    rencontresExclues(run, { mortDefinitive: !!effetsDifficulte(run.ascension).mortDefinitive }),
   );
   if (
-    (type === `idoles` && idoleZone(e, zone?.id)) ||
-    (type === `traque` && traqueActive(e, zone?.id))
+    (type === `idoles` && idoleZone(run, zone?.id)) ||
+    (type === `traque` && traqueActive(run, zone?.id))
   ) {
     type = `coffre`;
   }
-  e.stats.rencontres = (e.stats.rencontres ?? 0) + 1;
+  run.stats.rencontres = (run.stats.rencontres ?? 0) + 1;
   if (type === `sanctuaire`) {
-    let dieux = dieuxProposes(e, Math.random);
+    let dieux = dieuxProposes(run, Math.random);
     let choix = await ecranRencontre({
-      equipe: e.persos,
+      equipe: run.persos,
       titre: `⛩️ Sanctuaire des Douze`,
       texte: `Un autel dédié aux dieux du Krosmoz se dresse au bord du chemin. Une seule prière sera exaucée.`,
       choix: [
@@ -75,19 +75,21 @@ export async function jouerRencontre(e, zone) {
       ],
     });
     if (choix === `soin`) {
-      let gain = soignerAvecGain(e, 0.3);
+      let gain = soignerAvecGain(run, 0.3);
       afficherBandeau(`⛩️ Recueillement : +${gain} PV pour l'équipe`);
     } else {
-      (e.benedictions ??= []).push(choix);
-      let b = BENEDICTIONS[choix];
-      afficherBandeau(`✨ ${b.dieu} exauce ta prière : ${b.desc} jusqu'à la fin de la run`);
+      (run.benedictions ??= []).push(choix);
+      let benediction = BENEDICTIONS[choix];
+      afficherBandeau(
+        `✨ ${benediction.dieu} exauce ta prière : ${benediction.desc} jusqu'à la fin de la run`,
+      );
     }
     return;
   }
   if (type === `coffre`) {
-    let crochet = peutCrocheter(e);
+    let crochet = peutCrocheter(run);
     let choix = await ecranRencontre({
-      equipe: e.persos,
+      equipe: run.persos,
       titre: `🧰 Coffre abandonné`,
       img: `/assets/monstres/coffre_forgerons.png`,
       texte: `Un vieux coffre traîne au milieu du chemin. Trésor… ou piège ?`,
@@ -110,9 +112,9 @@ export async function jouerRencontre(e, zone) {
       return;
     }
     if (choix === `ouvrir` && Math.random() < 1 / 3) {
-      for (let p of e.persos) {
-        if (p.pvActuels > 0) {
-          p.pvActuels = Math.max(1, Math.round(p.pvActuels - pvMaxPerso(p) * 0.2));
+      for (let perso of run.persos) {
+        if (perso.pvActuels > 0) {
+          perso.pvActuels = Math.max(1, Math.round(perso.pvActuels - pvMaxPerso(perso) * 0.2));
         }
       }
       await ecranMessage(
@@ -122,27 +124,27 @@ export async function jouerRencontre(e, zone) {
       return;
     }
     let kamas = Math.round(gainBase(toile) * 1.5);
-    ajouterKamas(e, kamas);
+    ajouterKamas(run, kamas);
     let texte = `Le coffre contenait ${kamas} kamas.`;
     let objet = null;
     let butin = zone ? butinDeZone(zone.id) : null;
-    if (!e.cle && secretDuMonde(e.trancheId) && Math.random() < CHANCES_CLE.coffre) {
-      e.cle = true;
-      texte += ` Au fond, une clé : la ${nomCle(e.trancheId)} ! Elle ouvre le donjon secret du monde.`;
+    if (!run.cle && secretDuMonde(run.trancheId) && Math.random() < CHANCES_CLE.coffre) {
+      run.cle = true;
+      texte += ` Au fond, une clé : la ${nomCle(run.trancheId)} ! Elle ouvre le donjon secret du monde.`;
     } else if (butin?.normales.length && Math.random() < 0.45) {
       let obj = tirerObjet(
         butin.normales[Math.floor(Math.random() * butin.normales.length)],
         Math.random,
       );
       if (obj) {
-        e.inventaire.push(obj);
+        run.inventaire.push(obj);
         enregistrerCollection(meta, [obj]);
         objet = obj;
       }
     }
     if (objet) {
       // l'objet trouvé passe par l'écran de butin (à qui il sert, équipement immédiat)
-      await ecranButin([objet], e, `💰 ${texte} Et un objet !`);
+      await ecranButin([objet], run, `💰 ${texte} Et un objet !`);
     } else {
       await ecranMessage(`💰 Trésor`, texte);
     }
@@ -151,7 +153,7 @@ export async function jouerRencontre(e, zone) {
   if (type === `marchand`) {
     let prix = prixMarchand(toile);
     let achete = new Set();
-    let xp = calculerXpCombat(XP_PAR_COMBAT.combat_dur, toile, e.trancheId);
+    let xp = calculerXpCombat(XP_PAR_COMBAT.combat_dur, toile, run.trancheId);
     while (true) {
       let offre = (id, libelle, detail) => ({
         id,
@@ -160,24 +162,24 @@ export async function jouerRencontre(e, zone) {
         prix: prix[id],
         desactive: achete.has(id)
           ? `Déjà acheté.`
-          : e.kamas < prix[id]
+          : run.kamas < prix[id]
             ? `Pas assez de kamas.`
             : ``,
       });
       let choix = await ecranRencontre({
-        equipe: e.persos,
+        equipe: run.persos,
         titre: `🧳 Marchand ambulant`,
         img: `/assets/divers/potion_de_soin.png`,
         texte: `Kerubim Crépin, l'antiquaire de Bonta, est en vadrouille et déballe quelques trouvailles.`,
-        kamas: e.kamas,
+        kamas: run.kamas,
         choix: [
           offre(`potion`, `Potion de Soin`, `L'équipe récupère 40 % de ses PV max.`),
           // plus d'XP à gagner (niveau max du monde) : le Parchemin est inutile
-          ...(e.persos.some((p) => peutGagnerXp(p, e.trancheId))
+          ...(run.persos.some((perso) => peutGagnerXp(perso, run.trancheId))
             ? [offre(`parchemin`, `Parchemin d'expérience`, `${xp} XP pour chaque héros.`)]
             : []),
           // aucun archimonstre dans ce monde : le Philtre est inutile
-          ...(mondeSansArchimonstre(e.trancheId)
+          ...(mondeSansArchimonstre(run.trancheId)
             ? []
             : [
                 {
@@ -186,7 +188,7 @@ export async function jouerRencontre(e, zone) {
                     `Philtre d'Otomaï`,
                     `Les archimonstres apparaissent plus souvent pour le reste de la run.`,
                   ),
-                  ...((e.philtres ?? 0) >= CONFIG_ARCHI.philtresMax
+                  ...((run.philtres ?? 0) >= CONFIG_ARCHI.philtresMax
                     ? {
                         desactive: `Effet déjà au maximum (${CONFIG_ARCHI.philtresMax}/${CONFIG_ARCHI.philtresMax})`,
                       }
@@ -199,57 +201,57 @@ export async function jouerRencontre(e, zone) {
       if (choix === `partir`) {
         return;
       }
-      e.kamas -= prix[choix];
+      run.kamas -= prix[choix];
       achete.add(choix);
       if (choix === `potion`) {
-        soignerEquipe(e, 0.4);
+        soignerEquipe(run, 0.4);
       } else if (choix === `parchemin`) {
-        gagnerXpEquipe(e, xp);
+        gagnerXpEquipe(run, xp);
       } else {
-        e.philtres += 1;
+        run.philtres += 1;
       }
     }
   }
   if (type === `cle`) {
     let prix = prixMarchand(toile).cle;
-    let secret = secretDuMonde(e.trancheId);
+    let secret = secretDuMonde(run.trancheId);
     let choix = await ecranRencontre({
-      equipe: e.persos,
-      titre: `🗝️ ${nomCle(e.trancheId)}`,
+      equipe: run.persos,
+      titre: `🗝️ ${nomCle(run.trancheId)}`,
       img: `/assets/divers/cle_donjon.png`,
       texte: `Un contrebandier encapuchonné fait tinter une vieille clé : « Elle ouvre le ${secret.nom}. Pour qui ose y entrer… »`,
-      kamas: e.kamas,
+      kamas: run.kamas,
       choix: [
         {
           id: `acheter`,
           libelle: `Acheter la clé`,
           prix,
           detail: `Après le boss d'une zone, tu pourras entrer dans le donjon secret (2 objets épiques ou légendaires garantis).`,
-          desactive: e.kamas < prix ? `Pas assez de kamas.` : ``,
+          desactive: run.kamas < prix ? `Pas assez de kamas.` : ``,
         },
         {
           id: `des`,
           libelle: `La jouer aux dés`,
           detail: `Une chance sur deux : la clé gratuite. Sinon, tu perds ${Math.round(prix / 2)} kamas.`,
-          desactive: e.kamas < Math.round(prix / 2) ? `Pas assez de kamas pour la mise.` : ``,
+          desactive: run.kamas < Math.round(prix / 2) ? `Pas assez de kamas pour la mise.` : ``,
         },
         { id: `partir`, libelle: `Passer son chemin` },
       ],
     });
     if (choix === `acheter`) {
-      e.kamas -= prix;
-      e.cle = true;
-      afficherBandeau(`🗝️ La ${nomCle(e.trancheId)} est à toi`);
-    } else if (choix === `des` && e.kamas >= Math.round(prix / 2)) {
+      run.kamas -= prix;
+      run.cle = true;
+      afficherBandeau(`🗝️ La ${nomCle(run.trancheId)} est à toi`);
+    } else if (choix === `des` && run.kamas >= Math.round(prix / 2)) {
       if (Math.random() < 0.5) {
-        e.cle = true;
+        run.cle = true;
         await ecranMessage(
           `🎲 Gagné !`,
-          `Le contrebandier grommelle et te tend la ${nomCle(e.trancheId)}.`,
+          `Le contrebandier grommelle et te tend la ${nomCle(run.trancheId)}.`,
         );
       } else {
-        let perte = Math.min(e.kamas, Math.round(prix / 2));
-        e.kamas -= perte;
+        let perte = Math.min(run.kamas, Math.round(prix / 2));
+        run.kamas -= perte;
         await ecranMessage(
           `🎲 Perdu…`,
           `Le contrebandier empoche ${perte} kamas et disparaît dans la foule.`,
@@ -261,10 +263,10 @@ export async function jouerRencontre(e, zone) {
   if (type === `idoles`) {
     // plus d'XP à gagner : l'idole Nahuatl (bonus d'XP seul) n'a aucun intérêt
     let ids = idolesProposees(Math.random).filter(
-      (id) => id !== `nahuatl` || e.persos.some((p) => peutGagnerXp(p, e.trancheId)),
+      (id) => id !== `nahuatl` || run.persos.some((perso) => peutGagnerXp(perso, run.trancheId)),
     );
     let choix = await ecranRencontre({
-      equipe: e.persos,
+      equipe: run.persos,
       titre: `🗿 Autel des Idoles`,
       texte: `Des idoles anciennes promettent gloire et richesses à qui ose les porter… jusqu'à la fin de la zone.`,
       choix: [
@@ -277,7 +279,7 @@ export async function jouerRencontre(e, zone) {
       ],
     });
     if (choix !== `partir`) {
-      e.idole = { id: choix, zone: zone?.id };
+      run.idole = { id: choix, zone: zone?.id };
       afficherBandeau(
         `🗿 ${IDOLES[choix].nom} jusqu'à la fin de la zone : ${IDOLES[choix].malus} ; ${IDOLES[choix].bonus}`,
       );
@@ -285,64 +287,66 @@ export async function jouerRencontre(e, zone) {
     return;
   }
   if (type === `forgemage`) {
-    let objets = objetsForgeables(e);
+    let objets = objetsForgeables(run);
     let choix = await ecranRencontre({
-      equipe: e.persos,
+      equipe: run.persos,
       titre: `🔨 Forgemage itinérant`,
       texte: `Un forgemage au tablier brûlé propose de monter un objet d'un palier de rareté, gratuitement et sans risque. Une seule fois.`,
       choix: [
-        ...objets.map((o, i) => ({
-          id: `o${i}`,
-          img: `/assets/items/${o.id}.png`,
-          libelle: `${EQUIPEMENTS[o.id]?.nom ?? o.id} (${RARETES_INFO[o.rarete].nom})`,
-          detail: `Passe en ${RARETES_INFO[rareteSuivante(o)].nom}.`,
+        ...objets.map((objet, indice) => ({
+          id: `o${indice}`,
+          img: `/assets/items/${objet.id}.png`,
+          libelle: `${EQUIPEMENTS[objet.id]?.nom ?? objet.id} (${RARETES_INFO[objet.rarete].nom})`,
+          detail: `Passe en ${RARETES_INFO[rareteSuivante(objet)].nom}.`,
         })),
         { id: `partir`, libelle: `Passer son chemin` },
       ],
     });
-    let o = objets[Number(choix.slice(1))];
-    if (choix !== `partir` && o) {
-      let nom = EQUIPEMENTS[o.id]?.nom ?? o.id;
-      forgerGratuit(o);
-      for (let p of e.persos) {
-        p.pvActuels = Math.min(p.pvActuels, pvMaxPerso(p));
+    let objetChoisi = objets[Number(choix.slice(1))];
+    if (choix !== `partir` && objetChoisi) {
+      let nom = EQUIPEMENTS[objetChoisi.id]?.nom ?? objetChoisi.id;
+      forgerGratuit(objetChoisi);
+      for (let perso of run.persos) {
+        perso.pvActuels = Math.min(perso.pvActuels, pvMaxPerso(perso));
       }
-      enregistrerCollection(meta, [o]);
-      afficherBandeau(`🔨 ${nom} → ${RARETES_INFO[o.rarete].nom}`);
+      enregistrerCollection(meta, [objetChoisi]);
+      afficherBandeau(`🔨 ${nom} → ${RARETES_INFO[objetChoisi.rarete].nom}`);
     }
     return;
   }
   if (type === `temple`) {
     let prix = prixTemple(toile);
-    let ko = herosKO(e);
+    let ko = herosKO(run);
     let choix = await ecranRencontre({
-      equipe: e.persos,
+      equipe: run.persos,
       titre: `⛪ Temple de résurrection`,
       texte: `Des prêtres veillent sur un autel de lumière : contre une offrande, ils relèvent un héros tombé avec ${Math.round(PV_TEMPLE * 100)} % de ses PV max.`,
-      kamas: e.kamas,
+      kamas: run.kamas,
       choix: [
-        ...ko.map((p) => ({
-          id: p.classeId,
-          img: `/assets/class_symbol/${p.classeId}.png`,
-          libelle: `Relever ${CLASSES[p.classeId]?.nom ?? p.classeId}`,
+        ...ko.map((perso) => ({
+          id: perso.classeId,
+          img: `/assets/class_symbol/${perso.classeId}.png`,
+          libelle: `Relever ${CLASSES[perso.classeId]?.nom ?? perso.classeId}`,
           prix,
-          desactive: e.kamas < prix ? `Pas assez de kamas.` : ``,
+          desactive: run.kamas < prix ? `Pas assez de kamas.` : ``,
         })),
         { id: `partir`, libelle: `Repartir` },
       ],
     });
-    let h = ko.find((p) => p.classeId === choix);
-    if (h && e.kamas >= prix) {
-      e.kamas -= prix;
-      releverHeros(h);
-      afficherBandeau(`⛪ ${CLASSES[h.classeId]?.nom ?? h.classeId} est relevé (−${prix} kamas)`);
+    let heros = ko.find((perso) => perso.classeId === choix);
+    if (heros && run.kamas >= prix) {
+      run.kamas -= prix;
+      releverHeros(heros);
+      afficherBandeau(
+        `⛪ ${CLASSES[heros.classeId]?.nom ?? heros.classeId} est relevé (−${prix} kamas)`,
+      );
     }
     return;
   }
   // avis de recherche : traque d'un archimonstre, ou prime si la zone n'en a pas
   let archi = zone ? zoneAArchis(zone) : false;
-  let choix = await ecranRencontre({
-    equipe: e.persos,
+  let choixAvis = await ecranRencontre({
+    equipe: run.persos,
     titre: `📜 Avis de recherche`,
     img: `/assets/divers/avis_de_recherche.png`,
     texte: archi
@@ -359,7 +363,7 @@ export async function jouerRencontre(e, zone) {
       { id: `partir`, libelle: `Décliner` },
     ],
   });
-  if (choix === `accepter`) {
-    e.traque = { zone: zone?.id, archi };
+  if (choixAvis === `accepter`) {
+    run.traque = { zone: zone?.id, archi };
   }
 }

@@ -1,0 +1,14 @@
+# fichier: src/deroule/rencontres.js
+48 e run
+82 b benediction
+113 p perso
+176 p perso
+264 p perso
+294 o objet
+294 i indice
+303 o objetChoisi
+307 p perso
+324 p perso
+334 h heros
+334 p perso
+344 choix choixAvis

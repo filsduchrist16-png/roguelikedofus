@@ -17,62 +17,68 @@ import { gainKamas, ajouterKamas } from "../jeu/economie.js";
 
 // Renvoie l'XP donnée à chaque héros (0 si tous sont au niveau max du monde)
 // et le nombre de héros qui ont gagné au moins un niveau.
-export function gagnerXpEquipe(e, t) {
+export function gagnerXpEquipe(run, xp) {
   let niveaux = 0;
-  const profite = e.persos.some((p) => peutGagnerXp(p, e.trancheId));
-  for (let n of e.persos) {
-    if (gagnerXpPerso(n, t, e.trancheId) > 0) {
-      n.flashNiveau = true;
+  const profite = run.persos.some((perso) => peutGagnerXp(perso, run.trancheId));
+  for (let perso of run.persos) {
+    if (gagnerXpPerso(perso, xp, run.trancheId) > 0) {
+      perso.flashNiveau = true;
       niveaux += 1;
     }
   }
-  return { xp: profite ? t : 0, niveaux };
+  return { xp: profite ? xp : 0, niveaux };
 }
-export async function capturerArchis(e) {
-  let t = [];
-  for (let n of e) {
-    if (n.camp === `ennemi` && n.archi && n.monstreId && capturerArchi(meta, n.monstreId)) {
-      t.push(MONSTRES[n.monstreId]?.nom ?? n.monstreId);
+export async function capturerArchis(combattants) {
+  let noms = [];
+  for (let combattant of combattants) {
+    if (
+      combattant.camp === `ennemi` &&
+      combattant.archi &&
+      combattant.monstreId &&
+      capturerArchi(meta, combattant.monstreId)
+    ) {
+      noms.push(MONSTRES[combattant.monstreId]?.nom ?? combattant.monstreId);
     }
   }
-  if (t.length) {
-    await ecranCaptureArchi(t);
+  if (noms.length) {
+    await ecranCaptureArchi(noms);
   }
-  return t.length;
+  return noms.length;
 }
 // bilan : texte XP / kamas du combat, en sous-titre du butin (ou en bandeau s'il n'y a rien).
-export async function distribuerButin(e, t, n, r, bilan) {
-  if (!t) {
+export async function distribuerButin(run, zoneId, type, typeTaux, bilan) {
+  if (!zoneId) {
     if (bilan) {
       afficherBandeau(`Victoire : ${bilan}`);
     }
     return;
   }
-  let prospection = bonusEquipeRun(meta, e).prospection + (idoleActive(e, t)?.prospection ?? 0);
-  let a = tirerButin(e, t, n, Math.random, r, prospection);
-  enregistrerCollection(meta, a);
-  e.stats.objets += a.length;
-  noterObjetsObtenus(e.stats, a);
-  if (a.length) {
-    await ecranButin(a, e, bilan);
+  let prospection =
+    bonusEquipeRun(meta, run).prospection + (idoleActive(run, zoneId)?.prospection ?? 0);
+  let objets = tirerButin(run, zoneId, type, Math.random, typeTaux, prospection);
+  enregistrerCollection(meta, objets);
+  run.stats.objets += objets.length;
+  noterObjetsObtenus(run.stats, objets);
+  if (objets.length) {
+    await ecranButin(objets, run, bilan);
   } else if (bilan) {
     afficherBandeau(`Victoire : ${bilan}`);
   }
 }
 // Renvoie le montant ajouté à la bourse.
-export function distribuerKamas(e, t, n, mult = 1) {
+export function distribuerKamas(run, type, numZone, mult = 1) {
   let montant = Math.round(
-    gainKamas(t, n, Math.random) *
-      multiplicateurKamas(e) *
-      bonusEquipeRun(meta, e).multKamas *
+    gainKamas(type, numZone, Math.random) *
+      multiplicateurKamas(run) *
+      bonusEquipeRun(meta, run).multKamas *
       mult,
   );
-  ajouterKamas(e, montant);
+  ajouterKamas(run, montant);
   return montant;
 }
 // Soigne l'équipe et renvoie le total de PV rendus.
-export function soignerAvecGain(e, pct) {
-  let avant = e.persos.reduce((s, p) => s + Math.max(0, p.pvActuels), 0);
-  soignerEquipe(e, pct);
-  return e.persos.reduce((s, p) => s + Math.max(0, p.pvActuels), 0) - avant;
+export function soignerAvecGain(run, pct) {
+  let avant = run.persos.reduce((somme, perso) => somme + Math.max(0, perso.pvActuels), 0);
+  soignerEquipe(run, pct);
+  return run.persos.reduce((somme, perso) => somme + Math.max(0, perso.pvActuels), 0) - avant;
 }

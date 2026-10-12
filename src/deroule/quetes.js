@@ -9,37 +9,37 @@ import { decrireQuete } from "../jeu/obtention.js";
 import { verifierQuetesMeta, trouverQuete } from "../jeu/quetes.js";
 import { EMPLACEMENTS } from "../jeu/emplacements.js";
 
-export async function traiterQuetes(e, t) {
+export async function traiterQuetes(run, verification) {
   sauverMeta(meta);
-  if (!t.quetes.length) {
-    await donnerDofusEnAttente(e);
+  if (!verification.quetes.length) {
+    await donnerDofusEnAttente(run);
     return;
   }
-  for (let n of t.quetes) {
-    afficherBandeauQuete(decrireQuete(n).titre);
-    if (e) {
-      (e.stats.quetes ??= []).push(n.id);
+  for (let quete of verification.quetes) {
+    afficherBandeauQuete(decrireQuete(quete).titre);
+    if (run) {
+      (run.stats.quetes ??= []).push(quete.id);
     }
   }
-  let n = false;
-  for (let e of t.succes) {
-    let t = dofusAGagner(meta, e.def);
-    let r = t !== undefined;
-    if (r) {
-      ajouterDofus(meta, t);
-      n = true;
+  let dofusAjoute = false;
+  for (let succes of verification.succes) {
+    let idDofus = dofusAGagner(meta, succes.def);
+    let obtenu = idDofus !== undefined;
+    if (obtenu) {
+      ajouterDofus(meta, idDofus);
+      dofusAjoute = true;
     }
-    await ecranSuccesObtenu(e.def, r, meta);
+    await ecranSuccesObtenu(succes.def, obtenu, meta);
   }
   sauverMeta(meta);
-  if (n) {
-    await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta()));
+  if (dofusAjoute) {
+    await traiterQuetes(run, verifierQuetesMeta(quetesMeta(), ctxMeta()));
   } else {
-    await donnerDofusEnAttente(e);
+    await donnerDofusEnAttente(run);
   }
 }
 // Dofus dont le succès est terminé mais pas encore remis (anciennes sauvegardes), en cascade.
-export async function donnerDofusEnAttente(e) {
+export async function donnerDofusEnAttente(run) {
   let ids = dofusDebloquables(meta);
   if (!ids.length) {
     return;
@@ -49,20 +49,25 @@ export async function donnerDofusEnAttente(e) {
     await ecranDofusDebloque(id);
   }
   sauverMeta(meta);
-  await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta()));
+  await traiterQuetes(run, verifierQuetesMeta(quetesMeta(), ctxMeta()));
 }
-export function contexteRun(e, trancheId, victoire) {
+export function contexteRun(run, trancheId, victoire) {
   return {
     trancheId,
     victoire,
-    ascension: e.ascension,
-    tavernes: e.stats.tavernes ?? 0,
-    recrutements: e.stats.recrutements ?? 0,
-    tailleEquipe: e.persos.length,
-    classes: e.persos.map((e) => e.classeId),
+    ascension: run.ascension,
+    tavernes: run.stats.tavernes ?? 0,
+    recrutements: run.stats.recrutements ?? 0,
+    tailleEquipe: run.persos.length,
+    classes: run.persos.map((perso) => perso.classeId),
     quatreHerosEquipes:
-      e.persos.length === 4 && e.persos.every((e) => EMPLACEMENTS.every((t) => e.equipement[t])),
+      run.persos.length === 4 &&
+      run.persos.every((perso) =>
+        EMPLACEMENTS.every((emplacement) => perso.equipement[emplacement]),
+      ),
   };
 }
-export const quetesDeLaRun = (e) =>
-  (e.stats.quetes ?? []).map((e) => trouverQuete(e)).filter((e) => e !== undefined);
+export const quetesDeLaRun = (run) =>
+  (run.stats.quetes ?? [])
+    .map((idQuete) => trouverQuete(idQuete))
+    .filter((quete) => quete !== undefined);

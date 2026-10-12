@@ -86,8 +86,10 @@ function estModule(scope) {
   return scope.type === `module` || scope.type === `global`;
 }
 
-// Variables candidates : une lettre, ou ombrant un nom d'une portée englobante.
-export function candidats(manager, exportes) {
+// Variables renommables : toutes celles déclarées dans le fichier (hors imports, noms exportés,
+// `arguments` et `catch` sans usage). `candidate` : une lettre, ou ombrant un nom d'une portée
+// englobante : ce sont celles que `lister` signale et que l'on veut traiter.
+export function variables(manager, exportes) {
   const res = [];
   for (const scope of manager.scopes) {
     if (scope.type === `global`) continue;
@@ -104,11 +106,13 @@ export function candidats(manager, exportes) {
           break;
         }
       }
-      if (v.name.length === 1 || ombre) res.push({ v, scope, ombre });
+      res.push({ v, scope, ombre, candidate: v.name.length === 1 || ombre });
     }
   }
   return res;
 }
+export const candidats = (manager, exportes) =>
+  variables(manager, exportes).filter((c) => c.candidate);
 
 function ligneDe(source, pos) {
   let n = 1;
@@ -128,7 +132,8 @@ export function lireTable(texte) {
       continue;
     }
     if (l.startsWith(`#`)) continue;
-    const m = /^(\d+)(?:-(\d+))?\s+([A-Za-z_$][\w$]*)(?:#(\d+))?\s+([A-Za-z_$][\w$]*)\s*(?:#.*)?$/.exec(l);
+    const m =
+      /^(\d+)(?:-(\d+))?\s+([A-Za-z_$][\w$]*)(?:#(\d+))?\s+([A-Za-z_$][\w$]*)\s*(?:#.*)?$/.exec(l);
     if (!m) throw new Error(`Ligne de table illisible : ${brut}`);
     const debut = Number(m[1]);
     regles.push({
@@ -146,7 +151,7 @@ export function lireTable(texte) {
 export function renommerSource(source, regles) {
   const { ast, manager } = analyser(source);
   const { raccourcies, reductibles, exportes } = inspecter(ast);
-  const cands = candidats(manager, exportes);
+  const cands = variables(manager, exportes);
 
   // numérote les déclarations d'une même lettre sur une même ligne (gauche -> droite)
   const infos = cands.map((c) => {
@@ -165,21 +170,42 @@ export function renommerSource(source, regles) {
   const restants = [];
   for (const i of infos) {
     const bons = regles.filter(
-      (r) => r.ancien === i.v.name && r.debut <= i.ligne && i.ligne <= r.fin && (r.rang === null || r.rang === i.rang),
+      (r) =>
+        r.ancien === i.v.name &&
+        r.debut <= i.ligne &&
+        i.ligne <= r.fin &&
+        (r.rang === null || r.rang === i.rang),
     );
     // la règle la plus précise l'emporte : rang explicite, puis plage la plus étroite
-    bons.sort((a, b) => (b.rang !== null) - (a.rang !== null) || a.fin - a.debut - (b.fin - b.debut));
+    bons.sort(
+      (a, b) => (b.rang !== null) - (a.rang !== null) || a.fin - a.debut - (b.fin - b.debut),
+    );
     const r = bons[0];
     if (r) {
       utilisees.add(r);
       if (r.nouveau !== i.v.name) final.set(i.v, r.nouveau);
-    } else restants.push(i);
+    } else if (i.candidate) {
+      // une ombre disparaît si la variable ombrée a été renommée entre-temps (jugé plus bas)
+      restants.push(i);
+    }
+  }
+  const nomApres = (v) => final.get(v) ?? v.name;
+  for (let k = restants.length - 1; k >= 0; k--) {
+    const i = restants[k];
+    if (i.v.name.length === 1) continue;
+    let toujoursOmbre = false;
+    for (let s = i.scope.upper; s && !toujoursOmbre; s = s.upper) {
+      if (s.type === `global`) break;
+      toujoursOmbre = s.variables.some((w) => nomApres(w) === i.v.name);
+    }
+    if (!toujoursOmbre) restants.splice(k, 1);
   }
   const inutilisees = regles.filter((r) => !utilisees.has(r));
 
   const erreurs = [];
   for (const nom of new Set(final.values())) {
-    if (!NOM_VALIDE.test(nom) || RESERVES.has(nom)) erreurs.push(`nom invalide ou réservé : ${nom}`);
+    if (!NOM_VALIDE.test(nom) || RESERVES.has(nom))
+      erreurs.push(`nom invalide ou réservé : ${nom}`);
   }
   const nomFinal = (v) => final.get(v) ?? v.name;
 
@@ -189,7 +215,9 @@ export function renommerSource(source, regles) {
     for (const v of scope.variables) {
       const n = nomFinal(v);
       if (vus.has(n) && vus.get(n) !== v)
-        erreurs.push(`collision dans une même portée (ligne ${ligneDe(source, v.identifiers[0]?.start ?? 0)}) : ${n}`);
+        erreurs.push(
+          `collision dans une même portée (ligne ${ligneDe(source, v.identifiers[0]?.start ?? 0)}) : ${n}`,
+        );
       vus.set(n, v);
     }
   }
@@ -215,7 +243,9 @@ export function renommerSource(source, regles) {
         }
       }
       if ((r.resolved ?? null) !== trouve) {
-        erreurs.push(`capture/collision ligne ${ligneDe(source, r.identifier.start)} : ${r.identifier.name} -> ${cible}`);
+        erreurs.push(
+          `capture/collision ligne ${ligneDe(source, r.identifier.start)} : ${r.identifier.name} -> ${cible}`,
+        );
       }
     }
   }
@@ -233,7 +263,8 @@ export function renommerSource(source, regles) {
       faits.add(debut);
       const prop = reductibles.get(debut);
       if (raccourcies.has(debut)) ms.overwrite(n.start, n.end, `${n.name}: ${nouveau}`);
-      else if (prop && prop.key.name === nouveau) ms.overwrite(prop.key.start, n.end, nouveau); // `a: a` -> `a`
+      else if (prop && prop.key.name === nouveau)
+        ms.overwrite(prop.key.start, n.end, nouveau); // `a: a` -> `a`
       else ms.overwrite(n.start, n.end, nouveau);
     }
     nb++;
@@ -256,18 +287,23 @@ function principal() {
     for (const f of liste) {
       const source = fs.readFileSync(f, `utf8`);
       const { ast, manager } = analyser(source);
-      const cs = candidats(manager, inspecter(ast).exportes);
+      const tous = variables(manager, inspecter(ast).exportes);
+      const cs = tous.filter((c) => c.candidate);
       total += cs.length;
       console.log(`${String(cs.length).padStart(5)}  ${f}`);
       if (detail) {
-        const infos = cs.map((c) => ({ ...c, noeud: c.v.defs[0].name, ligne: ligneDe(source, c.v.defs[0].name.start) }));
+        const infos = tous.map((c) => ({
+          ...c,
+          noeud: c.v.defs[0].name,
+          ligne: ligneDe(source, c.v.defs[0].name.start),
+        }));
         infos.sort((a, b) => a.noeud.start - b.noeud.start);
         const rang = new Map();
         for (const i of infos) {
           const cle = `${i.ligne}:${i.v.name}`;
           i.rang = (rang.get(cle) ?? 0) + 1;
           rang.set(cle, i.rang);
-          console.log(`   ${decrire(i, source)}`);
+          if (i.candidate) console.log(`   ${decrire(i, source)}`);
         }
       }
     }
@@ -287,11 +323,14 @@ function principal() {
         code = 1;
         continue;
       }
-      for (const r of res.inutilisees) console.warn(`${fichier} : règle sans effet : ${r.ligneTable.trim()}`);
+      for (const r of res.inutilisees)
+        console.warn(`${fichier} : règle sans effet : ${r.ligneTable.trim()}`);
       if (!aBlanc) fs.writeFileSync(fichier, res.code);
       const analyse = analyser(source);
       void analyse;
-      console.log(`${fichier} : ${res.nb} variables renommées, ${res.restants.length} candidates restantes`);
+      console.log(
+        `${fichier} : ${res.nb} variables renommées, ${res.restants.length} candidates restantes`,
+      );
       for (const i of res.restants) console.log(`   reste ${decrire(i, source)}`);
     }
     process.exitCode = code;
@@ -301,4 +340,5 @@ function principal() {
   process.exitCode = 2;
 }
 
-if (path.resolve(process.argv[1] ?? ``) === path.resolve(new URL(import.meta.url).pathname)) principal();
+if (path.resolve(process.argv[1] ?? ``) === path.resolve(new URL(import.meta.url).pathname))
+  principal();
