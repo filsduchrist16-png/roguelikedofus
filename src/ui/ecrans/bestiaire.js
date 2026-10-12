@@ -3,6 +3,7 @@ import {
   MONSTRES_RARES,
   bossDeZone,
   monstresDeZone,
+  bonusRelique,
   reliquesDuMonde,
   zonesDuMonde,
   zoneSecrete,
@@ -18,9 +19,11 @@ import {
   echapperHtml,
   racine,
 } from "../commun.js";
+import { equiperRelique } from "../../sauvegarde/meta.js";
 import { pastilleReliques, rendreEnGardantScroll } from "../collection.js";
 const ECRAN_ETROIT = `(max-width: 760px)`;
 export function ecranBestiaire(e) {
+  const meta = e;
   return new Promise((resolve) => {
     let n = e.reliques ?? [];
     let r = MONDES.filter((e) => e.zones.length > 0);
@@ -68,7 +71,13 @@ export function ecranBestiaire(e) {
             <span class="best-relique-halo"><img src="${cheminAsset(`/assets/reliques/${e}.png`)}" alt="" onerror="this.remove()" /></span>
             <span><em class="best-tag">${i ? `Relique obtenue` : `Relique`}</em>
               <b>${i ? echapperHtml(r.nom) : `???`}</b>
-              <small>Lâchée rarement par ${echapperHtml(t.nom)}</small></span>
+              <small>Lâchée rarement par ${echapperHtml(t.nom)}</small>
+              ${
+                i
+                  ? `<small class="best-relique-bonus">${echapperHtml(bonusRelique(e)?.desc ?? ``)} (relique équipée)</small>
+              <button type="button" class="secondaire" data-relique="${e}" aria-pressed="${e === meta.reliqueEquipee}">${e === meta.reliqueEquipee ? `Retirer` : `Équiper`}</button>`
+                  : `<small class="muet">Obtenue, elle donnera ${echapperHtml(bonusRelique(e)?.desc ?? ``)} une fois équipée.</small>`
+              }</span>
           </div>`
               : ``
           }
@@ -156,6 +165,15 @@ export function ecranBestiaire(e) {
               .querySelector(`.best-detail`)
               ?.scrollIntoView({ block: `start`, behavior: comportementDefilement() });
           }
+        }),
+      );
+      racine.querySelectorAll(`[data-relique]`).forEach((b) =>
+        b.addEventListener(`click`, () => {
+          equiperRelique(
+            meta,
+            meta.reliqueEquipee === b.dataset.relique ? null : b.dataset.relique,
+          );
+          rendreEnGardantScroll(m, true);
         }),
       );
       racine.querySelector(`.best-vers-zones`)?.addEventListener(`click`, () => {

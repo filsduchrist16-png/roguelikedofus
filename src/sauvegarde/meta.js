@@ -1,7 +1,7 @@
 import { signalerEchecSauvegarde } from "./echec.js";
 import { signalerChangement } from "./nuage.js";
 import { CONFIG_RELIQUES, DOFUS, MONDES, RELIQUES, SUCCES } from "../data/index.js";
-import { DIFFICULTES, RARETES, getMonde } from "../jeu/config.js";
+import { DIFFICULTES, RARETES, bonusRelique, getMonde } from "../jeu/config.js";
 import { dofusDeSucces, nouvelEtatQuetes, progressionSucces } from "../jeu/quetes.js";
 import { ajouterResistanceTous, effetsDifficulte, prospectionEquipe } from "../jeu/run.js";
 import { idolesDepartValides } from "../jeu/idolesDepart.js";
@@ -88,6 +88,11 @@ export function chargerMeta() {
         secrets: Array.isArray(t.secrets) ? t.secrets : [],
         jaugeArchi: Number.isFinite(t.jaugeArchi) ? Math.max(0, t.jaugeArchi) : 0,
         records: normaliserRecords(t.records),
+        // relique équipée (E2) : absente = aucune
+        reliqueEquipee:
+          typeof t.reliqueEquipee === `string` && RELIQUES[t.reliqueEquipee]
+            ? t.reliqueEquipee
+            : undefined,
       };
     }
   } catch {
@@ -326,6 +331,15 @@ export function mondeJouable(e, t) {
   let n = getMonde(t);
   return mondePrecedentTermine(e, t) && n.zones.length > 0 && !n.enChantier;
 }
+/** Équipe une relique obtenue (ou la retire avec null). Renvoie false si on ne la possède pas. */
+export function equiperRelique(meta, id) {
+  if (id !== null && !(meta.reliques ?? []).includes(id)) {
+    return false;
+  }
+  meta.reliqueEquipee = id ?? undefined;
+  sauverMeta(meta);
+  return true;
+}
 export function dofusPossedes(e) {
   return new Set(e.dofus.map((e) => e.id));
 }
@@ -402,6 +416,19 @@ export function bonusDofus(e) {
       t.esquiveBonus += r.esquiveBonus ?? 0;
       t.soinPlat += r.soinPlat ?? 0;
     }
+  }
+  // relique équipée : seulement si on la possède
+  const relique =
+    e.reliqueEquipee && e.reliques?.includes(e.reliqueEquipee)
+      ? bonusRelique(e.reliqueEquipee)
+      : undefined;
+  if (relique) {
+    relique.degatsPct && (t.damageMult *= 1 + relique.degatsPct);
+    t.resAllBonus += relique.resAll ?? 0;
+    t.statsElementaires += relique.statsElementaires ?? 0;
+    t.critPlat += relique.critPlat ?? 0;
+    t.prospection += relique.prospectionPlat ?? 0;
+    t.pvPct += relique.pvPct ?? 0;
   }
   return t;
 }

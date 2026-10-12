@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## Version 1.3.0
+
+- **E2** : emplacement « relique » (un seul, `reliqueEquipee` dans la méta, absent = aucune) : une relique de boss obtenue s'équipe depuis le Bestiaire (Équiper / Retirer) et donne un petit bonus selon le monde de son boss (Monde 1 +2 % PV, 2 +5 prospection, 3 +2 % critique, 4 +3 aux quatre caractéristiques, 5 +2 % dégâts finaux), via les clés d'effet de `bonusDofus`. Choix simple : un bonus par monde plutôt que par relique.
+
 ## Version 1.2.0
 
 - **E3** : idoles de départ à l'accueil (Rage, Bastion, Fortune, Gloire ; cumulables, malus sur les monstres contre bonus d'XP, de kamas et de prospection pour toute la run ; `src/jeu/idolesDepart.js`, champ `idolesDepart` de la run, vide pour les anciennes sauvegardes) et score record par monde enregistré dans la méta (`records`, absent = aucun) et affiché sur l'accueil. `idoleActive` cumule désormais l'idole de la zone et celles du départ (`idoleZone` : l'autel seul).

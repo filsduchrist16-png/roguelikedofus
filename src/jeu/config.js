@@ -304,3 +304,18 @@ export function reliquesDuMonde(e) {
   }
   return n;
 }
+
+// Relique équipée (E2) : un seul emplacement, un petit bonus qui dépend du monde du boss. Les clés
+// sont celles des effets de Dofus, déjà gérées par `bonusDofus`.
+export const BONUS_RELIQUE_MONDE = {
+  t1: { pvPct: 0.02, desc: `+2 % de PV max` },
+  t2: { prospectionPlat: 5, desc: `+5 en prospection` },
+  t3: { critPlat: 2, desc: `+2 % de coups critiques` },
+  t4: { statsElementaires: 3, desc: `+3 en force, intelligence, agilité et chance` },
+  t5: { degatsPct: 0.02, desc: `+2 % de dégâts finaux` },
+};
+/** Bonus d'une relique de boss (selon le monde où se trouve ce boss), ou undefined. */
+export function bonusRelique(id) {
+  const monde = MONDES.find((m) => reliquesDuMonde(m.id).includes(id));
+  return monde ? BONUS_RELIQUE_MONDE[monde.id] : undefined;
+}
