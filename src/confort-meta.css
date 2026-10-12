@@ -77,24 +77,27 @@
   display: block;
   opacity: 0.8;
 }
-/* étoiles : une vraie zone tactile sur téléphone, l'icône reste petite */
+/* étoiles : une vraie zone tactile (44 × 44 px) sur téléphone. Cinq cibles de 44 px ne tiennent pas
+   dans la largeur d'une carte de monde (~150 px) : elles passent sur deux lignes (3 + 2). */
 @media (hover: none), (width<=700px) {
+  .monde-carte .monde-etoiles {
+    border-radius: 22px;
+    bottom: 8px;
+  }
   .monde-carte .asc-rangee {
+    flex-wrap: wrap;
+    width: 132px;
+    max-width: 100%;
     padding: 0;
   }
   .monde-carte .asc-etoile {
     position: relative;
-    width: 32px;
+    width: 44px;
     height: 44px;
   }
   .monde-carte .asc-etoile img {
     width: 42px;
     height: 34px;
-  }
-  .monde-carte .asc-etoile::before {
-    content: "";
-    position: absolute;
-    inset: 0 -4px;
   }
 }
 
