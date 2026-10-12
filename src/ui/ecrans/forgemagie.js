@@ -23,10 +23,10 @@ import {
 let equipesSeulement = false;
 const ELEMENTS = [`terre`, `feu`, `eau`, `air`];
 const moyenneArme = (inst) => {
-  const a = EQUIPEMENTS[inst.id]?.tiers?.[inst.rarete]?.attaque;
-  return a ? (a.baseMin + a.baseMax) / 2 : 0;
+  const attaque = EQUIPEMENTS[inst.id]?.tiers?.[inst.rarete]?.attaque;
+  return attaque ? (attaque.baseMin + attaque.baseMax) / 2 : 0;
 };
-const kamasTexte = (n) => `${n.toLocaleString(`fr-FR`)} k`;
+const kamasTexte = (montant) => `${montant.toLocaleString(`fr-FR`)} k`;
 // Ce que la forge change : seulement l'écart avec le palier suivant (stats, PA, résistances, arme).
 export function deltasForge(inst, apres) {
   const deltas = [];
@@ -37,8 +37,8 @@ export function deltasForge(inst, apres) {
   };
   ajouter(`adaptatif`, (apres.adaptatif ?? 0) - (inst.adaptatif ?? 0));
   const stats = new Set([...Object.keys(inst.stats ?? {}), ...Object.keys(apres.stats ?? {})]);
-  for (const k of stats) {
-    ajouter(k, (apres.stats?.[k] ?? 0) - (inst.stats?.[k] ?? 0));
+  for (const stat of stats) {
+    ajouter(stat, (apres.stats?.[stat] ?? 0) - (inst.stats?.[stat] ?? 0));
   }
   ajouter(`pa`, (apres.pa ?? 0) - (inst.pa ?? 0));
   for (const el of ELEMENTS) {
@@ -55,10 +55,11 @@ function htmlDeltasForge(deltas) {
     return `<span class="muet">mêmes stats</span>`;
   }
   return deltas
-    .map((d) => {
-      const v = Math.round(d.valeur * 10) / 10;
-      const libelle = d.cle === `adaptatif` ? ` aux 2 caracs d'élément ★` : libelleDelta(d.cle);
-      return `<span class="${v > 0 ? `delta-plus` : `delta-moins`}">${v > 0 ? `+` : `−`}${Math.abs(v)}${libelle}</span>`;
+    .map((delta) => {
+      const arrondi = Math.round(delta.valeur * 10) / 10;
+      const libelle =
+        delta.cle === `adaptatif` ? ` aux 2 caracs d'élément ★` : libelleDelta(delta.cle);
+      return `<span class="${arrondi > 0 ? `delta-plus` : `delta-moins`}">${arrondi > 0 ? `+` : `−`}${Math.abs(arrondi)}${libelle}</span>`;
     })
     .join(` `);
 }
@@ -68,48 +69,48 @@ function htmlBadgesApresForge(apercu, persos) {
   return heros.length
     ? `<span class="badges-heros" title="Amélioration nette pour ces héros, une fois l'objet forgé">${heros
         .map(
-          (p) =>
-            `<span class="badge-heros">▲ ${echapperHtml(CLASSES[p.classeId]?.nom ?? p.classeId)} après forge</span>`,
+          (perso) =>
+            `<span class="badge-heros">▲ ${echapperHtml(CLASSES[perso.classeId]?.nom ?? perso.classeId)} après forge</span>`,
         )
         .join(``)}</span>`
     : ``;
 }
-export function ecranForgemagie(e, t) {
+export function ecranForgemagie(run, meta) {
   return new Promise((resolve) => {
     // carte à faire clignoter après une forge : { inst, ok }
     let flash = null;
-    let a = () => {
-      const nomHeros = (p) => CLASSES[p.classeId]?.nom ?? p.classeId;
+    let afficher = () => {
+      const nomHeros = (perso) => CLASSES[perso.classeId]?.nom ?? perso.classeId;
       // d'abord les pièces portées, par héros ; puis l'inventaire regroupé (« ×N »)
-      const sections = e.persos.map((p) => ({
-        titre: echapperHtml(nomHeros(p)),
-        entrees: Object.values(p.equipement)
-          .filter((x) => !!x && rareteSuivante(x))
+      const sections = run.persos.map((perso) => ({
+        titre: echapperHtml(nomHeros(perso)),
+        entrees: Object.values(perso.equipement)
+          .filter((objet) => !!objet && rareteSuivante(objet))
           .map((inst) => ({ inst, insts: [inst], porte: true })),
       }));
-      const sac = grouperInventaire(e.inventaire)
-        .filter((g) => rareteSuivante(g.inst))
-        .map((g) => ({
-          inst: g.inst,
-          insts: g.indices.map((i) => e.inventaire[i]),
-          nb: g.indices.length,
+      const sac = grouperInventaire(run.inventaire)
+        .filter((groupe) => rareteSuivante(groupe.inst))
+        .map((groupe) => ({
+          inst: groupe.inst,
+          insts: groupe.indices.map((indice) => run.inventaire[indice]),
+          nb: groupe.indices.length,
           porte: false,
         }));
       if (!equipesSeulement) {
         sections.push({
-          titre: `Inventaire (${sac.reduce((x, g) => x + g.nb, 0)})`,
+          titre: `Inventaire (${sac.reduce((somme, groupe) => somme + groupe.nb, 0)})`,
           entrees: sac,
         });
       }
-      const o = sections.flatMap((s) => s.entrees);
+      const entrees = sections.flatMap((section) => section.entrees);
       let index = 0;
       // kamas manquants, écrits dans le bouton (comme à l'HDV) : un title ne s'affiche pas au toucher
       const manque = (prix) =>
-        e.kamas < prix
-          ? `<span class="hdv-manque">il manque ${htmlKamas(prix - e.kamas)}</span>`
+        run.kamas < prix
+          ? `<span class="hdv-manque">il manque ${htmlKamas(prix - run.kamas)}</span>`
           : ``;
       const htmlEntree = ({ inst, insts, nb, porte }) => {
-        const r = index++;
+        const numero = index++;
         const suivante = rareteSuivante(inst);
         const apercu = instancierObjet(inst.id, suivante);
         const prix = prixForge(inst);
@@ -117,19 +118,19 @@ export function ecranForgemagie(e, t) {
         // la carte forgée (ou son groupe « ×N ») clignote après re-rendu
         const classeFlash =
           flash && insts.includes(flash.inst) ? (flash.ok ? ` flash-ok` : ` flash-ko`) : ``;
-        return `<div class="item-carte forge-carte${classeRarete(inst)}${classeFlash}" data-carte="${r}"${attrTipObjet(inst.id)}>
+        return `<div class="item-carte forge-carte${classeRarete(inst)}${classeFlash}" data-carte="${numero}"${attrTipObjet(inst.id)}>
               <img src="${imgObjet(inst.id)}" alt="" loading="lazy" onerror="this.remove()" />
               <span class="item-nom">${htmlNomObjet(inst)}${nb > 1 ? ` <span class="item-qte">×${nb}</span>` : ``}<small><span class="ic-meta">${htmlMetaObjet(inst)}</span> ${htmlChipsObjet(inst)}</small>
                 <small class="forge-apercu">→ <span class="inom-${suivante}">${RARETES_INFO[suivante].nom}</span> : ${htmlDeltasForge(deltasForge(inst, apercu))}</small>
-                ${porte ? `` : htmlBadgesApresForge(apercu, e.persos)}
+                ${porte ? `` : htmlBadgesApresForge(apercu, run.persos)}
               </span>
               <span class="forge-boutons">
-                <button class="secondaire" data-forge="${r}" ${e.kamas < prix ? `disabled` : ``} title="Forge garantie"><small class="forge-lib">Forger · garanti</small>${htmlKamas(prix)}${manque(prix)}</button>
-                <button class="secondaire forge-temeraire" data-temeraire="${r}" ${e.kamas < prixTemeraire ? `disabled` : ``} title="Forgemagie téméraire : ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % d'échec (kamas perdus, objet intact)"><small class="forge-lib">🎲 Téméraire · ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % d'échec</small>${htmlKamas(prixTemeraire)}${manque(prixTemeraire)}</button>
+                <button class="secondaire" data-forge="${numero}" ${run.kamas < prix ? `disabled` : ``} title="Forge garantie"><small class="forge-lib">Forger · garanti</small>${htmlKamas(prix)}${manque(prix)}</button>
+                <button class="secondaire forge-temeraire" data-temeraire="${numero}" ${run.kamas < prixTemeraire ? `disabled` : ``} title="Forgemagie téméraire : ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % d'échec (kamas perdus, objet intact)"><small class="forge-lib">🎲 Téméraire · ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % d'échec</small>${htmlKamas(prixTemeraire)}${manque(prixTemeraire)}</button>
               </span>
             </div>`;
       };
-      let s = o.length
+      let htmlListe = entrees.length
         ? sections
             .filter((sec) => sec.entrees.length)
             .map(
@@ -141,9 +142,9 @@ export function ecranForgemagie(e, t) {
       afficherEnGardantScroll(`
         <h1>Forgemagie</h1>
         <p class="sous-titre">La Forgemagie monte un objet au palier de rareté supérieur, même équipé. Sa version téméraire fait moitié prix… mais rate ${Math.round(ECONOMIE.forgeTemeraire.pEchec * 100)} % des forges.</p>
-        <div class="hdv-solde forge-solde">${htmlKamas(e.kamas)}</div>
+        <div class="hdv-solde forge-solde">${htmlKamas(run.kamas)}</div>
         <div class="forge-filtres"><button id="forge-filtre" class="${equipesSeulement ? `primaire` : `secondaire`}" aria-pressed="${equipesSeulement}" title="${equipesSeulement ? `Afficher aussi l'inventaire` : `N'afficher que les objets équipés par l'équipe`}">⚔️ Équipés seulement</button></div>
-        <div class="equip-inv forge-liste">${s}</div>
+        <div class="equip-inv forge-liste">${htmlListe}</div>
         ${barreRetour(`forge-retour`, `Retour au plateau`)}
       `);
       if (flash) {
@@ -151,46 +152,50 @@ export function ecranForgemagie(e, t) {
         setTimeout(() => carte?.classList.remove(`flash-ok`, `flash-ko`), 1000);
         flash = null;
       }
-      let c = (n, temeraire) => {
-        let s = o[n]?.inst;
-        if (!s) {
+      let forger = (numeroCarte, temeraire) => {
+        let objet = entrees[numeroCarte]?.inst;
+        if (!objet) {
           return;
         }
-        const nom = EQUIPEMENTS[s.id]?.nom ?? s.id;
-        const prix = prixForge(s, temeraire);
-        let c = forgerObjet(e, s, temeraire, Math.random);
-        if (c === `forge`) {
+        const nom = EQUIPEMENTS[objet.id]?.nom ?? objet.id;
+        const prix = prixForge(objet, temeraire);
+        let issue = forgerObjet(run, objet, temeraire, Math.random);
+        if (issue === `forge`) {
           // un palier supérieur peut réduire la Vitalité : les PV actuels ne dépassent pas le nouveau max
-          for (const perso of e.persos) {
+          for (const perso of run.persos) {
             perso.pvActuels = Math.min(perso.pvActuels, pvMaxPerso(perso));
           }
           afficherBandeau(
-            `✨ ${nom} → ${RARETES_INFO[s.rarete].nom} (−${kamasTexte(prix)}, reste ${kamasTexte(e.kamas)})`,
+            `✨ ${nom} → ${RARETES_INFO[objet.rarete].nom} (−${kamasTexte(prix)}, reste ${kamasTexte(run.kamas)})`,
           );
-          if (t) {
-            enregistrerCollection(t, [s]);
+          if (meta) {
+            enregistrerCollection(meta, [objet]);
           }
-          flash = { inst: s, ok: true };
-        } else if (c === `echec`) {
+          flash = { inst: objet, ok: true };
+        } else if (issue === `echec`) {
           afficherBandeau(
-            `💥 Forge ratée : −${kamasTexte(prix)}, objet intact (reste ${kamasTexte(e.kamas)})`,
+            `💥 Forge ratée : −${kamasTexte(prix)}, objet intact (reste ${kamasTexte(run.kamas)})`,
           );
-          flash = { inst: s, ok: false };
+          flash = { inst: objet, ok: false };
         }
-        a();
+        afficher();
       };
       racine
         .querySelectorAll(`[data-forge]`)
-        .forEach((e) => e.addEventListener(`click`, () => c(Number(e.dataset.forge), false)));
+        .forEach((bouton) =>
+          bouton.addEventListener(`click`, () => forger(Number(bouton.dataset.forge), false)),
+        );
       racine
         .querySelectorAll(`[data-temeraire]`)
-        .forEach((e) => e.addEventListener(`click`, () => c(Number(e.dataset.temeraire), true)));
+        .forEach((bouton) =>
+          bouton.addEventListener(`click`, () => forger(Number(bouton.dataset.temeraire), true)),
+        );
       document.getElementById(`forge-filtre`)?.addEventListener(`click`, () => {
         equipesSeulement = !equipesSeulement;
-        a();
+        afficher();
       });
       document.getElementById(`forge-retour`)?.addEventListener(`click`, () => resolve());
     };
-    a();
+    afficher();
   });
 }

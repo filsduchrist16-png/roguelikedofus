@@ -1,117 +1,119 @@
 import { EQUIPEMENTS, RELIQUES, SECRETS } from "../data/index.js";
 import { butinDeZone, zonesDuMonde } from "../jeu/config.js";
 import { racine } from "./commun.js";
-export function pastilleReliques(e, t) {
-  let length = e.filter((e) => RELIQUES[e]).length;
-  if (length === 0) {
+export function pastilleReliques(ids, possedees) {
+  let nbReliques = ids.filter((id) => RELIQUES[id]).length;
+  if (nbReliques === 0) {
     return null;
   }
-  let length_1 = e.filter((e) => RELIQUES[e] && t.includes(e)).length;
-  if (length > 0 && length_1 === length) {
+  let nbPossedees = ids.filter((id) => RELIQUES[id] && possedees.includes(id)).length;
+  if (nbReliques > 0 && nbPossedees === nbReliques) {
     return {
       texte: `✓`,
       complete: true,
     };
   }
   return {
-    texte: length > 1 ? `${length_1}/${length}` : `?`,
+    texte: nbReliques > 1 ? `${nbPossedees}/${nbReliques}` : `?`,
     complete: false,
   };
 }
 // Butin d'une zone rangé pour l'Armurerie : ses panoplies (toutes leurs pièces, et où elles
 // tombent), puis les autres objets par catégorie de combat.
-export function butinParCategorie(e) {
+export function butinParCategorie(zoneId) {
   const vide = { panoplies: [], panoplie: null, combats: [], elites: [], boss: [] };
   const grouper = (listes) => {
     const noms = [];
     for (const [ids, ou] of listes) {
       for (const id of ids) {
         const nom = EQUIPEMENTS[id]?.panoplie;
-        if (nom && !noms.some((p) => p.nom === nom)) {
+        if (nom && !noms.some((entree) => entree.nom === nom)) {
           noms.push({ nom, ids: [], ou });
         }
-        noms.find((p) => p.nom === nom)?.ids.push(id);
+        noms.find((entree) => entree.nom === nom)?.ids.push(id);
       }
     }
     return noms;
   };
   // donjon secret : ses panoplies, et ses autres objets comme butin du boss
-  if (e.startsWith(`secret:`)) {
-    const ids = (SECRETS[e.slice(7)]?.butin ?? []).filter((id) => EQUIPEMENTS[id]);
-    const panoplies = grouper([[ids, `boss`]]);
+  if (zoneId.startsWith(`secret:`)) {
+    const ids = (SECRETS[zoneId.slice(7)]?.butin ?? []).filter((id) => EQUIPEMENTS[id]);
+    const panopliesSecret = grouper([[ids, `boss`]]);
     return {
       ...vide,
-      panoplies,
-      panoplie: panoplies[0] ?? null,
+      panoplies: panopliesSecret,
+      panoplie: panopliesSecret[0] ?? null,
       boss: ids.filter((id) => !EQUIPEMENTS[id].panoplie).map((id) => ({ id, aussiElite: false })),
     };
   }
-  const t = butinDeZone(e);
-  if (!t) {
+  const butin = butinDeZone(zoneId);
+  if (!butin) {
     return vide;
   }
-  const n = (l) => l.filter((id) => EQUIPEMENTS[id]);
+  const connus = (liste) => liste.filter((id) => EQUIPEMENTS[id]);
   const libre = (id) => !EQUIPEMENTS[id].panoplie;
-  const boss = n(t.boss);
+  const boss = connus(butin.boss);
   const panoplies = grouper([
-    [n(t.normales), `combats`],
-    [n(t.elites), `elites`],
+    [connus(butin.normales), `combats`],
+    [connus(butin.elites), `elites`],
     [boss, `boss`],
   ]);
   return {
     panoplies,
     panoplie: panoplies[0] ?? null,
-    combats: n(t.normales).filter(libre),
-    elites: n(t.elites).filter((id) => libre(id) && !boss.includes(id)),
+    combats: connus(butin.normales).filter(libre),
+    elites: connus(butin.elites).filter((id) => libre(id) && !boss.includes(id)),
     boss: boss.filter(libre).map((id) => ({
       id,
-      aussiElite: t.elites.includes(id),
+      aussiElite: butin.elites.includes(id),
     })),
   };
 }
-export function pastilleCollection(e, t) {
-  if (!e.length) {
+export function pastilleCollection(ids, collection) {
+  if (!ids.length) {
     return null;
   }
-  let length = e.filter((e) => t[e]).length;
-  if (length === e.length) {
+  let nbPossedes = ids.filter((id) => collection[id]).length;
+  if (nbPossedes === ids.length) {
     return {
       texte: `✓`,
       complete: true,
     };
   }
   return {
-    texte: `${length}/${e.length}`,
+    texte: `${nbPossedes}/${ids.length}`,
     complete: false,
   };
 }
-export function progressionArmurerie(e, t) {
-  let n = new Set();
-  for (let t of zonesDuMonde(e)) {
-    let e = butinDeZone(t.id);
-    for (let t of e ? [...e.normales, ...e.elites, ...e.boss] : []) {
-      if (EQUIPEMENTS[t]) {
-        n.add(t);
+export function progressionArmurerie(monde, collection) {
+  let ids = new Set();
+  for (let zone of zonesDuMonde(monde)) {
+    let butinZone = butinDeZone(zone.id);
+    for (let objetId of butinZone
+      ? [...butinZone.normales, ...butinZone.elites, ...butinZone.boss]
+      : []) {
+      if (EQUIPEMENTS[objetId]) {
+        ids.add(objetId);
       }
     }
   }
-  for (let id of SECRETS[e.id]?.butin ?? []) {
-    n.add(id);
+  for (let id of SECRETS[monde.id]?.butin ?? []) {
+    ids.add(id);
   }
-  let r = [...n].filter((e) => t[e]);
+  let possedes = [...ids].filter((id) => collection[id]);
   return {
-    fait: r.length,
-    sur: n.size,
-    legendaires: r.filter((e) => t[e] === `legendaire`).length,
+    fait: possedes.length,
+    sur: ids.size,
+    legendaires: possedes.filter((id) => collection[id] === `legendaire`).length,
   };
 }
-export function rendreEnGardantScroll(e, t) {
-  let n = t ? (racine.querySelector(`.best-zones`)?.scrollTop ?? 0) : 0;
-  let window_scrollY = window.scrollY;
-  e();
-  let i = racine.querySelector(`.best-zones`);
-  if (i) {
-    i.scrollTop = n;
+export function rendreEnGardantScroll(rendre, garderZones) {
+  let scrollZones = garderZones ? (racine.querySelector(`.best-zones`)?.scrollTop ?? 0) : 0;
+  let scrollPage = window.scrollY;
+  rendre();
+  let zones = racine.querySelector(`.best-zones`);
+  if (zones) {
+    zones.scrollTop = scrollZones;
   }
-  window.scrollTo(0, window_scrollY);
+  window.scrollTo(0, scrollPage);
 }

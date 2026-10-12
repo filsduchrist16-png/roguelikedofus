@@ -50,7 +50,7 @@ export function changerEtat(combattant, etat, ctx) {
   if (!ETATS_CLASSE[etat] || combattant.etatClasse === etat) {
     return false;
   }
-  combattant.effets = combattant.effets.filter((e) => e.source !== `etat`);
+  combattant.effets = combattant.effets.filter((effet) => effet.source !== `etat`);
   for (const effet of ETATS_CLASSE[etat].effets) {
     combattant.effets.push({ ...effet, toursRestants: 99, source: `etat` });
   }
@@ -66,12 +66,12 @@ export function sortSelonEtat(lanceur, sort) {
 }
 
 // ---------- infection (Sadida) ----------
-export const estInfecte = (c) => sommeEffets(c, `infection`) > 0;
+export const estInfecte = (combattant) => sommeEffets(combattant, `infection`) > 0;
 export function infecter(cible, tours, ctx) {
   if (cible.estLance || cible.estEgide) {
     return;
   }
-  const deja = cible.effets.find((e) => e.stat === `infection`);
+  const deja = cible.effets.find((effet) => effet.stat === `infection`);
   if (deja) {
     deja.toursRestants = Math.max(deja.toursRestants, tours);
   } else {
@@ -86,29 +86,29 @@ export const ICONES_MARQUES = { feu: `🔥`, eau: `💧`, terre: `🪨`, air: `�
 
 // ---------- multiplicateur de dégâts propre aux classes ----------
 export function multiplicateurClasse(lanceur, sort, cible, ctx) {
-  let m = 1;
+  let mult = 1;
   // Sacrieur : plus il est blessé, plus il frappe fort (jusqu'à +60 % à 0 PV)
   if (lanceur.souffrance && lanceur.pvMax > 0) {
-    m *= 1 + 0.6 * Math.max(0, 1 - lanceur.pvActuels / lanceur.pvMax);
+    mult *= 1 + 0.6 * Math.max(0, 1 - lanceur.pvActuels / lanceur.pvMax);
   }
   // Enutrof : Force de l'Âge, plus forte à chaque tour joué (plafonnée à 10 tours)
   if (sort.bonusParTourJoue) {
-    m *= 1 + sort.bonusParTourJoue * Math.min(10, Math.max(0, (lanceur.toursJoues ?? 1) - 1));
+    mult *= 1 + sort.bonusParTourJoue * Math.min(10, Math.max(0, (lanceur.toursJoues ?? 1) - 1));
   }
   // Sadida : Inoculation, plus forte par ennemi infecté
   if (sort.bonusParInfecte && ctx?.combatants) {
-    m *=
+    mult *=
       1 + sort.bonusParInfecte * ennemisVivants(lanceur, ctx.combatants).filter(estInfecte).length;
   }
   // Huppermage : Polarité consomme la marque de la cible pour frapper plus fort
   if (sort.bonusSiMarque && cible?.marqueElement) {
-    m *= 1 + sort.bonusSiMarque;
+    mult *= 1 + sort.bonusSiMarque;
   }
   // Pandawa / Zobal : variante d'un sort plus puissante dans un état donné
   if (sort.multEtat) {
-    m *= sort.multEtat;
+    mult *= sort.multEtat;
   }
-  return m;
+  return mult;
 }
 
 // ---------- effets à l'impact d'un sort sur chaque cible touchée ----------
@@ -119,11 +119,11 @@ export function effetsClasseSurCible(lanceur, sort, cible, coup, ctx) {
   if (sort.desenvouteCible && cible.pvActuels > 0) {
     const avant = cible.effets.length;
     cible.effets = cible.effets.filter(
-      (e) =>
-        e.source === `etat` ||
+      (effet) =>
+        effet.source === `etat` ||
         !(
-          [`esquive`, `reductionDegats`, `armure`, `resAll`, `hot`].includes(e.stat) ||
-          (e.stat === `degatsInfliges` && e.valeur > 0)
+          [`esquive`, `reductionDegats`, `armure`, `resAll`, `hot`].includes(effet.stat) ||
+          (effet.stat === `degatsInfliges` && effet.valeur > 0)
         ),
     );
     cible.bouclier = 0;
@@ -163,15 +163,17 @@ export function propagerInfection(lanceur, sort, cible, cs, ctx) {
   if (!sort.propageInfectes || !estInfecte(cible)) {
     return;
   }
-  const autres = ennemisVivants(lanceur, cs).filter((e) => e.ref !== cible.ref && estInfecte(e));
+  const autres = ennemisVivants(lanceur, cs).filter(
+    (ennemi) => ennemi.ref !== cible.ref && estInfecte(ennemi),
+  );
   if (autres.length) {
     ctx.log(`🌿 La contagion se propage à ${autres.length} ennemi(s) infecté(s).`);
   }
-  for (const e of autres) {
+  for (const ennemi of autres) {
     lancerAttaque(
       lanceur,
       { ...sort, propageInfectes: false },
-      e,
+      ennemi,
       { useMax: false, mult: 0.7, ctx },
       sort.nom,
     );
@@ -196,8 +198,8 @@ export function effetsClasseFinLancer(lanceur, sort, cs, ctx) {
   }
   if (sort.boostInvocations) {
     const creatures = creaturesDe(lanceur, cs);
-    for (const c of creatures) {
-      appliquerEffet(c, {
+    for (const creature of creatures) {
+      appliquerEffet(creature, {
         stat: `degatsInfliges`,
         valeur: sort.boostInvocations.valeur,
         duree: sort.boostInvocations.duree,
@@ -214,8 +216,8 @@ export function effetsClasseFinLancer(lanceur, sort, cs, ctx) {
 // ---------- effets des sorts de soutien (buffs, soins) ----------
 export function effetsClasseSoutien(sort, cible, lanceur, cs, ctx) {
   if (sort.basculeEtat) {
-    const [a, b] = sort.basculeEtat;
-    const suivant = lanceur.etatClasse === b ? a : b;
+    const [etatA, etatB] = sort.basculeEtat;
+    const suivant = lanceur.etatClasse === etatB ? etatA : etatB;
     changerEtat(lanceur, suivant, ctx);
     if (suivant === `sobre`) {
       lanceur.paActuels += 1;
@@ -264,11 +266,11 @@ export function effetsClasseSoutien(sort, cible, lanceur, cs, ctx) {
     }
   }
   if (sort.bouclierInvocationsPct && cible.ref === lanceur.ref) {
-    for (const c of creaturesDe(lanceur, cs)) {
-      const b = Math.round(c.pvMax * sort.bouclierInvocationsPct);
-      c.bouclier += b;
-      (c.boucliersTemporaires ??= []).push({ montant: b, tours: 2 });
-      ctx.log(`${c.nom} gagne un bouclier de ${b}.`);
+    for (const creature of creaturesDe(lanceur, cs)) {
+      const montant = Math.round(creature.pvMax * sort.bouclierInvocationsPct);
+      creature.bouclier += montant;
+      (creature.boucliersTemporaires ??= []).push({ montant, tours: 2 });
+      ctx.log(`${creature.nom} gagne un bouclier de ${montant}.`);
     }
   }
 }
@@ -279,12 +281,12 @@ export function effetsClasseApresSoin(lanceur, sort, cs, ctx) {
     const servis = ennemisVivants(lanceur, cs).filter(
       () => ctx.rng() < (sort.paEnnemisChance ?? 1),
     );
-    for (const e of servis) {
-      e.paBonusNextTurn += sort.paEnnemisProchainTour;
+    for (const ennemi of servis) {
+      ennemi.paBonusNextTurn += sort.paEnnemisProchainTour;
     }
     if (servis.length) {
       ctx.log(
-        `📦 La Boîte de Pandore s'ouvre : ${servis.map((e) => e.nom).join(`, `)} gagne${servis.length > 1 ? `nt` : ``} ${sort.paEnnemisProchainTour} PA.`,
+        `📦 La Boîte de Pandore s'ouvre : ${servis.map((ennemi) => ennemi.nom).join(`, `)} gagne${servis.length > 1 ? `nt` : ``} ${sort.paEnnemisProchainTour} PA.`,
       );
     }
   }
@@ -292,18 +294,18 @@ export function effetsClasseApresSoin(lanceur, sort, cs, ctx) {
 
 // ---------- créatures et tourelles (Osamodas, Steamer) ----------
 export const creaturesDe = (lanceur, cs) =>
-  vivants(cs).filter((c) => c.creature && c.invoquePar === lanceur.ref);
+  vivants(cs).filter((combattant) => combattant.creature && combattant.invoquePar === lanceur.ref);
 
 const refCreature = (type, lanceur) => `crea_${type}_${lanceur.ref}`;
 
 function caseLibre(camp, cs, preferArriere) {
   const prises = new Set(
     vivants(cs)
-      .filter((c) => c.camp === camp)
-      .map((c) => c.position),
+      .filter((combattant) => combattant.camp === camp)
+      .map((combattant) => combattant.position),
   );
   const ordre = preferArriere ? [4, 5, 6, 7, 0, 1, 2, 3] : [0, 1, 2, 3, 4, 5, 6, 7];
-  return ordre.find((p) => !prises.has(p)) ?? null;
+  return ordre.find((position) => !prises.has(position)) ?? null;
 }
 
 export function creatureBloquee(lanceur, sort, cs) {
@@ -311,7 +313,7 @@ export function creatureBloquee(lanceur, sort, cs) {
   if (!type) {
     return false;
   }
-  const dejaLa = vivants(cs).some((c) => c.ref === refCreature(type, lanceur));
+  const dejaLa = vivants(cs).some((combattant) => combattant.ref === refCreature(type, lanceur));
   return dejaLa || caseLibre(lanceur.camp, cs, CREATURES[type]?.arriere) === null;
 }
 
@@ -319,18 +321,18 @@ export function invoquerCreature(lanceur, type, cs, ctx) {
   const def = CREATURES[type];
   const ref = refCreature(type, lanceur);
   const position = caseLibre(lanceur.camp, cs, def.arriere);
-  if (!def || position === null || vivants(cs).some((c) => c.ref === ref)) {
+  if (!def || position === null || vivants(cs).some((combattant) => combattant.ref === ref)) {
     ctx.log(`L'invocation de ${lanceur.nom} échoue (plus de place).`);
     return;
   }
-  const index = cs.findIndex((c) => c.ref === ref);
+  const index = cs.findIndex((combattant) => combattant.ref === ref);
   if (index >= 0) {
     cs.splice(index, 1);
   }
   const pv = Math.max(10, Math.round(lanceur.pvMax * def.pvPct));
   const stats = {};
-  for (const [k, v] of Object.entries(lanceur.stats)) {
-    stats[k] = Math.round((v ?? 0) * def.statsPct);
+  for (const [stat, valeur] of Object.entries(lanceur.stats)) {
+    stats[stat] = Math.round((valeur ?? 0) * def.statsPct);
   }
   cs.push({
     ref,
@@ -362,7 +364,7 @@ export function invoquerCreature(lanceur, type, cs, ctx) {
 }
 
 // La Gardienne soigne mieux après une Évolution.
-export const multiplicateurSoinCreature = (c) => c.multSoinCreature ?? 1;
+export const multiplicateurSoinCreature = (combattant) => combattant.multSoinCreature ?? 1;
 
 // Cibles valides : règles propres aux nouvelles classes.
 export function sortIndisponible(lanceur, sort, cs) {
@@ -370,7 +372,7 @@ export function sortIndisponible(lanceur, sort, cs) {
 }
 export function filtrerCiblesClasse(lanceur, sort, cibles) {
   if (sort.transfertPvPct) {
-    return cibles.filter((c) => c.ref !== lanceur.ref);
+    return cibles.filter((combattant) => combattant.ref !== lanceur.ref);
   }
   return cibles;
 }

@@ -29,13 +29,13 @@ const STATS_ELEMENTAIRES_SET = new Set([`force`, `intelligence`, `agilite`, `cha
 const STATS_AFFICHEES = [`force`, `intelligence`, `agilite`, `chance`, `vitalite`];
 const ELEMENT_DE_STAT = { force: `terre`, intelligence: `feu`, agilite: `air`, chance: `eau` };
 const NOMS_ELEMENTS = { terre: `Terre`, feu: `Feu`, eau: `Eau`, air: `Air` };
-const pct = (x) =>
-  `${String(Math.round(x * 1000) / 10)
+const pct = (ratio) =>
+  `${String(Math.round(ratio * 1000) / 10)
     .replace(`.`, `,`)
     .replace(`-`, `−`)} %`;
 // −10 avec le vrai signe moins
-const signeNombre = (n) => (n < 0 ? `−${Math.abs(n)}` : String(n));
-const plusPct = (x) => (x < 0 ? pct(x) : `+${pct(x)}`);
+const signeNombre = (nombre) => (nombre < 0 ? `−${Math.abs(nombre)}` : String(nombre));
+const plusPct = (ratio) => (ratio < 0 ? pct(ratio) : `+${pct(ratio)}`);
 // Ce que la valeur actuelle de chaque caractéristique apporte concrètement.
 function effetsStat(stat, valeur, base, classe, combattant) {
   const element = ELEMENT_DE_STAT[stat];
@@ -68,39 +68,43 @@ function effetsStat(stat, valeur, base, classe, combattant) {
   }
   return effets.join(` · `);
 }
-function htmlCombatPerso(c) {
-  const res = Object.entries(c.resistances ?? {}).filter(([, v]) => v);
+function htmlCombatPerso(combattant) {
+  const res = Object.entries(combattant.resistances ?? {}).filter(([, valeur]) => valeur);
   const puces = [
-    [`★ PA`, c.paMax, `Points d'action par tour : chaque sort en coûte.`],
-    [`Initiative`, c.initiative, `Plus elle est haute, plus le héros joue tôt dans la ronde.`],
+    [`★ PA`, combattant.paMax, `Points d'action par tour : chaque sort en coûte.`],
+    [
+      `Initiative`,
+      combattant.initiative,
+      `Plus elle est haute, plus le héros joue tôt dans la ronde.`,
+    ],
     [
       `Critique`,
-      pct(chanceCritique(statsEffectives(c))),
+      pct(chanceCritique(statsEffectives(combattant))),
       `Chance de coup critique : 5 % + 0,1 % par Agilité + bonus de critique.`,
     ],
     [
       `Dégâts crit.`,
-      `+${pct(bonusDegatsCritiques(statsEffectives(c)))}`,
+      `+${pct(bonusDegatsCritiques(statsEffectives(combattant)))}`,
       `Bonus de dégâts d'un coup critique : 25 % + 0,1 % par Agilité.`,
     ],
     [
       `Esquive`,
-      pct(Math.max(0, chanceEsquive(c))),
+      pct(Math.max(0, chanceEsquive(combattant))),
       `Chance d'éviter une attaque : 0,2 % par Agilité (+ bonus d'équipement), 50 % au plus.`,
     ],
     [
       `Soins`,
-      plusPct(multiplicateurSoinDe(c) - 1),
+      plusPct(multiplicateurSoinDe(combattant) - 1),
       `Bonus aux soins donnés : 0,5 % par point de Soin et de l'élément principal, 50 % au plus.`,
     ],
     [
       `Prospection`,
-      c.stats.prospection ?? 0,
+      combattant.stats.prospection ?? 0,
       `Chance de butin : la prospection de toute l'équipe s'additionne.`,
     ],
-    ...res.map(([el, v]) => [
+    ...res.map(([el, valeur]) => [
       `Rés. ${NOMS_ELEMENTS[el] ?? el}`,
-      pct(v),
+      pct(valeur),
       `Dégâts ${NOMS_ELEMENTS[el] ?? el} subis réduits d'autant.`,
     ]),
   ];
@@ -108,116 +112,121 @@ function htmlCombatPerso(c) {
     ${puces.map(([nom, val, aide]) => `<span class="stat-puce" data-tip="${echapperHtml(aide)}"><small>${nom}</small><b>${val}</b></span>`).join(``)}
   </div>`;
 }
-function htmlFichePerso(e, meta) {
-  let t = CLASSES[e.classeId];
-  let e_progression = e.progression;
-  let r = statsDeNiveau(t, e_progression);
-  let i = bonusEquipement(e);
-  let a = pvMaxPerso(e);
-  let o = xpPourNiveau(e_progression.niveau);
-  let s = Math.min(100, Math.round((e_progression.xp / o) * 100));
-  let combattant = creerCombattantPerso(e);
+function htmlFichePerso(perso, meta) {
+  let def = CLASSES[perso.classeId];
+  let progression = perso.progression;
+  let statsBase = statsDeNiveau(def, progression);
+  let bonusEquip = bonusEquipement(perso);
+  let pvMax = pvMaxPerso(perso);
+  let xpNiveau = xpPourNiveau(progression.niveau);
+  let pctXp = Math.min(100, Math.round((progression.xp / xpNiveau) * 100));
+  let combattant = creerCombattantPerso(perso);
   if (meta) {
     appliquerBonusDofus([combattant], bonusDofus(meta));
   }
-  let classe = t;
-  let c = STATS_AFFICHEES.map((e) => {
-    let t = i.stats[e] ?? 0;
-    let n = (r[e] ?? 0) + t;
-    let total = e === `vitalite` ? n : (combattant.stats[e] ?? n);
+  let classe = def;
+  let htmlStats = STATS_AFFICHEES.map((stat) => {
+    let bonusStat = bonusEquip.stats[stat] ?? 0;
+    let totalBase = (statsBase[stat] ?? 0) + bonusStat;
+    let total = stat === `vitalite` ? totalBase : (combattant.stats[stat] ?? totalBase);
     // le total réel (Dofus compris), puis ce qui vient de l'équipement et des Dofus
-    let dofus = total - n;
-    let parts = [t ? `${signeNombre(t)} équip.` : ``, dofus ? `${signeNombre(dofus)} Dofus` : ``]
+    let dofus = total - totalBase;
+    let parts = [
+      bonusStat ? `${signeNombre(bonusStat)} équip.` : ``,
+      dofus ? `${signeNombre(dofus)} Dofus` : ``,
+    ]
       .filter(Boolean)
       .join(`, `);
     return `
       <div class="stat-ligne">
-        <span class="stat-nom" tabindex="0">${NOMS_STATS[e]}<span class="stat-info">ⓘ</span><span class="stat-aide">${AIDE_STATS[e]}${STATS_ELEMENTAIRES_SET.has(e) ? AIDE_NOTE_ELEMENT : ``}</span></span>
-        <span class="stat-val"><b class="stat-total stat-c-${e}">${signeNombre(total)}</b>${parts ? ` <small class="stat-part-equip" title="Niveau : ${signeNombre(total - t - dofus)}">dont ${parts}</small>` : ``}</span>
-        <span class="stat-effet">${effetsStat(e, total, r[e] ?? 0, classe, combattant)}</span>
+        <span class="stat-nom" tabindex="0">${NOMS_STATS[stat]}<span class="stat-info">ⓘ</span><span class="stat-aide">${AIDE_STATS[stat]}${STATS_ELEMENTAIRES_SET.has(stat) ? AIDE_NOTE_ELEMENT : ``}</span></span>
+        <span class="stat-val"><b class="stat-total stat-c-${stat}">${signeNombre(total)}</b>${parts ? ` <small class="stat-part-equip" title="Niveau : ${signeNombre(total - bonusStat - dofus)}">dont ${parts}</small>` : ``}</span>
+        <span class="stat-effet">${effetsStat(stat, total, statsBase[stat] ?? 0, classe, combattant)}</span>
       </div>`;
   }).join(``);
   return `
     <div class="carte-prog">
       <div class="prog-tete">
-        <span class="prog-nom">${echapperHtml(t.nom)}</span>
-        <span class="prog-niv">Niv. ${e_progression.niveau}</span>
+        <span class="prog-nom">${echapperHtml(def.nom)}</span>
+        <span class="prog-niv">Niv. ${progression.niveau}</span>
       </div>
-      <div class="prog-archetype muet">${NOMS_ARCHETYPES[t.archetype]} · ${pastillesElementsPerso(e)}</div>
-      <div class="barre-xp"><div class="barre-xp-rempli" style="width:${s}%"></div>
-        <span class="xp-txt">XP ${e_progression.xp} / ${o}</span>
+      <div class="prog-archetype muet">${NOMS_ARCHETYPES[def.archetype]} · ${pastillesElementsPerso(perso)}</div>
+      <div class="barre-xp"><div class="barre-xp-rempli" style="width:${pctXp}%"></div>
+        <span class="xp-txt">XP ${progression.xp} / ${xpNiveau}</span>
       </div>
-      <div class="prog-pv">PV max : <b>${a}</b> · PV actuels : ${Math.max(0, Math.round(e.pvActuels))}</div>
-      <div class="stats-grille">${c}</div>
+      <div class="prog-pv">PV max : <b>${pvMax}</b> · PV actuels : ${Math.max(0, Math.round(perso.pvActuels))}</div>
+      <div class="stats-grille">${htmlStats}</div>
       <h4 class="stats-combat-titre">En combat${meta ? ` <small>(Dofus compris)</small>` : ``}</h4>
       ${htmlCombatPerso(combattant)}
     </div>`;
 }
-function resumeBonusDofus(e) {
-  if (!e) {
+function resumeBonusDofus(meta) {
+  if (!meta) {
     return ``;
   }
-  let t = bonusDofus(e);
-  let n = [];
-  let r = Math.round((t.damageMult - 1) * 100);
-  if (r) {
-    n.push(`+${r} % dégâts`);
+  let bonus = bonusDofus(meta);
+  let puces = [];
+  let pctDegats = Math.round((bonus.damageMult - 1) * 100);
+  if (pctDegats) {
+    puces.push(`+${pctDegats} % dégâts`);
   }
-  if (t.paBonus) {
-    n.push(`+${t.paBonus} PA`);
+  if (bonus.paBonus) {
+    puces.push(`+${bonus.paBonus} PA`);
   }
-  if (t.pvBonus) {
-    n.push(`+${t.pvBonus} PV max`);
+  if (bonus.pvBonus) {
+    puces.push(`+${bonus.pvBonus} PV max`);
   }
-  if (t.resAllBonus) {
-    n.push(`+${Math.round(t.resAllBonus * 100)} % résistances`);
+  if (bonus.resAllBonus) {
+    puces.push(`+${Math.round(bonus.resAllBonus * 100)} % résistances`);
   }
-  if (t.statsElementaires) {
-    n.push(`+${t.statsElementaires} force/intel./agi./chance`);
+  if (bonus.statsElementaires) {
+    puces.push(`+${bonus.statsElementaires} force/intel./agi./chance`);
   }
-  if (t.critPlat) {
-    n.push(`+${t.critPlat} % critique`);
+  if (bonus.critPlat) {
+    puces.push(`+${bonus.critPlat} % critique`);
   }
-  if (t.perceResistances) {
-    n.push(`${Math.round(t.perceResistances * 100)} % de résistances ennemies ignorées`);
+  if (bonus.perceResistances) {
+    puces.push(`${Math.round(bonus.perceResistances * 100)} % de résistances ennemies ignorées`);
   }
-  if (t.prospection) {
-    n.push(`+${t.prospection} prospection`);
+  if (bonus.prospection) {
+    puces.push(`+${bonus.prospection} prospection`);
   }
-  if (n.length) {
+  if (puces.length) {
     return `<div class="bonus-dofus">
     <span class="bonus-dofus-titre">🐉 Bonus de Dofus : toute l'équipe</span>
-    <div class="bonus-dofus-liste">${n.map((e) => `<span class="bonus-dofus-chip">${e}</span>`).join(``)}</div>
+    <div class="bonus-dofus-liste">${puces.map((puce) => `<span class="bonus-dofus-chip">${puce}</span>`).join(``)}</div>
   </div>`;
   }
   return ``;
 }
 export function ecranCaracteristiques(
-  e,
-  t = `Caractéristiques`,
-  n = `Les caractéristiques montent seules, selon l'archétype de chaque classe.`,
-  r = false,
-  i = null,
+  persos,
+  titre = `Caractéristiques`,
+  sousTitre = `Les caractéristiques montent seules, selon l'archétype de chaque classe.`,
+  retourPlateau = false,
+  meta = null,
 ) {
   return new Promise((resolve) => {
     afficherEcran(`
-      <h1>${echapperHtml(t)}</h1>
-      <p class="sous-titre">${echapperHtml(n)}</p>
-      ${resumeBonusDofus(i)}
-      ${e.length > 1 ? `<div class="prog-onglets" role="group" aria-label="Héros">${e.map((perso, k) => `<button type="button" class="prog-onglet${k === 0 ? ` sel` : ``}" data-k="${k}" aria-pressed="${k === 0}">${echapperHtml(CLASSES[perso.classeId]?.nom ?? perso.classeId)}</button>`).join(``)}</div>` : ``}
-      <div class="prog-grille">${e.map((perso) => htmlFichePerso(perso, i)).join(``)}</div>
-      <div class="boutons-ecran">${r ? boutonRetour(`prog-fermer`, `Retour au plateau`) : boutonContinuer(`prog-fermer`)}</div>
+      <h1>${echapperHtml(titre)}</h1>
+      <p class="sous-titre">${echapperHtml(sousTitre)}</p>
+      ${resumeBonusDofus(meta)}
+      ${persos.length > 1 ? `<div class="prog-onglets" role="group" aria-label="Héros">${persos.map((perso, indice) => `<button type="button" class="prog-onglet${indice === 0 ? ` sel` : ``}" data-k="${indice}" aria-pressed="${indice === 0}">${echapperHtml(CLASSES[perso.classeId]?.nom ?? perso.classeId)}</button>`).join(``)}</div>` : ``}
+      <div class="prog-grille">${persos.map((perso) => htmlFichePerso(perso, meta)).join(``)}</div>
+      <div class="boutons-ecran">${retourPlateau ? boutonRetour(`prog-fermer`, `Retour au plateau`) : boutonContinuer(`prog-fermer`)}</div>
     `);
     // téléphone : un héros à la fois (les onglets remplacent la longue liste)
     const fiches = [...document.querySelectorAll(`.prog-grille .carte-prog`)];
     fiches[0]?.classList.add(`sel`);
-    document.querySelectorAll(`.prog-onglet`).forEach((b) =>
-      b.addEventListener(`click`, () => {
-        document.querySelectorAll(`.prog-onglet`).forEach((x) => {
-          x.classList.toggle(`sel`, x === b);
-          x.setAttribute(`aria-pressed`, String(x === b));
+    document.querySelectorAll(`.prog-onglet`).forEach((onglet) =>
+      onglet.addEventListener(`click`, () => {
+        document.querySelectorAll(`.prog-onglet`).forEach((autreOnglet) => {
+          autreOnglet.classList.toggle(`sel`, autreOnglet === onglet);
+          autreOnglet.setAttribute(`aria-pressed`, String(autreOnglet === onglet));
         });
-        fiches.forEach((f, k) => f.classList.toggle(`sel`, k === Number(b.dataset.k)));
+        fiches.forEach((fiche, indice) =>
+          fiche.classList.toggle(`sel`, indice === Number(onglet.dataset.k)),
+        );
       }),
     );
     document.getElementById(`prog-fermer`)?.addEventListener(`click`, () => resolve());

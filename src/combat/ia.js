@@ -1,61 +1,66 @@
 import { SORTS } from "../data/index.js";
 import { alliesVivants, ciblesValides, coutPA } from "./stats.js";
 import { peutInvoquer } from "./effets.js";
-function iaAgressive(e, t) {
-  let n = e.sorts
-    .map((e) => SORTS[e])
+function iaAgressive(acteur, combattants) {
+  let sortInvocation = acteur.sorts
+    .map((idSort) => SORTS[idSort])
     .find(
-      (n) =>
-        n.type === `invocation` &&
-        e.paActuels >= coutPA(n, e) &&
-        ciblesValides(e, n, t).length > 0 &&
-        peutInvoquer(e, n, t),
+      (sort) =>
+        sort.type === `invocation` &&
+        acteur.paActuels >= coutPA(sort, acteur) &&
+        ciblesValides(acteur, sort, combattants).length > 0 &&
+        peutInvoquer(acteur, sort, combattants),
     );
-  if (n) {
+  if (sortInvocation) {
     return {
-      sort: n,
-      cibleRef: e.ref,
+      sort: sortInvocation,
+      cibleRef: acteur.ref,
     };
   }
-  let r = e.sorts
-    .map((e) => SORTS[e])
-    .filter((t) => t.type === `degats` && e.paActuels >= coutPA(t, e))
-    .sort((t, n) => coutPA(n, e) - coutPA(t, e));
-  for (let n of r) {
-    let r = ciblesValides(e, n, t).sort((e, t) => e.pvActuels - t.pvActuels);
-    if (r.length) {
+  let sortsDegats = acteur.sorts
+    .map((idSort) => SORTS[idSort])
+    .filter((sort) => sort.type === `degats` && acteur.paActuels >= coutPA(sort, acteur))
+    .sort((premier, second) => coutPA(second, acteur) - coutPA(premier, acteur));
+  for (let sort of sortsDegats) {
+    let cibles = ciblesValides(acteur, sort, combattants).sort(
+      (premier, second) => premier.pvActuels - second.pvActuels,
+    );
+    if (cibles.length) {
       return {
-        sort: n,
-        cibleRef: r[0].ref,
+        sort,
+        cibleRef: cibles[0].ref,
       };
     }
   }
   return null;
 }
-function iaSoutien(e, t) {
+function iaSoutien(acteur, combattants) {
   // un soin lançable (PA, rechargement, limites) qui a au moins une cible
-  let n = e.sorts
-    .map((e) => SORTS[e])
+  let sortSoin = acteur.sorts
+    .map((idSort) => SORTS[idSort])
     .find(
-      (n) => n.type === `soin` && e.paActuels >= coutPA(n, e) && ciblesValides(e, n, t).length > 0,
+      (sort) =>
+        sort.type === `soin` &&
+        acteur.paActuels >= coutPA(sort, acteur) &&
+        ciblesValides(acteur, sort, combattants).length > 0,
     );
-  if (n) {
-    let valides = new Set(ciblesValides(e, n, t).map((c) => c.ref));
-    let r = alliesVivants(e, t)
-      .filter((e) => valides.has(e.ref) && e.pvActuels < e.pvMax)
-      .sort((e, t) => e.pvActuels - t.pvActuels);
-    if (r.length) {
+  if (sortSoin) {
+    let valides = new Set(ciblesValides(acteur, sortSoin, combattants).map((cible) => cible.ref));
+    let blesses = alliesVivants(acteur, combattants)
+      .filter((allie) => valides.has(allie.ref) && allie.pvActuels < allie.pvMax)
+      .sort((premier, second) => premier.pvActuels - second.pvActuels);
+    if (blesses.length) {
       return {
-        sort: n,
-        cibleRef: r[0].ref,
+        sort: sortSoin,
+        cibleRef: blesses[0].ref,
       };
     }
   }
-  return iaAgressive(e, t);
+  return iaAgressive(acteur, combattants);
 }
-export const choisirActionIA = (e, t) => {
-  if (e.ia === `soutien`) {
-    return iaSoutien(e, t);
+export const choisirActionIA = (acteur, combattants) => {
+  if (acteur.ia === `soutien`) {
+    return iaSoutien(acteur, combattants);
   }
-  return iaAgressive(e, t);
+  return iaAgressive(acteur, combattants);
 };
