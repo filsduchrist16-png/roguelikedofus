@@ -27,8 +27,8 @@ import {
 } from "../sauvegarde/parametres.js";
 import { herosAmeliores } from "../jeu/inventaire.js";
 export let racine;
-export function definirRacine(e) {
-  racine = e;
+export function definirRacine(element) {
+  racine = element;
 }
 export const parametres = chargerParametres();
 // `auto` ou `smooth` pour scrollIntoView / scrollBy : instantané si les animations sont réduites.
@@ -39,29 +39,29 @@ export function comportementDefilement() {
   } catch {}
   return choisirDefilement(parametres.reduireAnimations, systeme);
 }
-export function echapperHtml(e) {
-  return String(e).replace(
+export function echapperHtml(valeur) {
+  return String(valeur).replace(
     /[&<>"']/g,
-    (e) =>
+    (caractere) =>
       ({
         "&": `&amp;`,
         "<": `&lt;`,
         ">": `&gt;`,
         '"': `&quot;`,
         "'": `&#39;`,
-      })[e],
+      })[caractere],
   );
 }
 export const elementsAMasquer = [];
 export function masquerElements() {
-  for (let e of elementsAMasquer) {
-    e.style.display = `none`;
+  for (let element of elementsAMasquer) {
+    element.style.display = `none`;
   }
 }
-function definirFond(e) {
-  if (e) {
+function definirFond(url) {
+  if (url) {
     document.body.classList.add(`avec-fond`);
-    document.body.style.setProperty(`--fond-run`, `url("${e}")`);
+    document.body.style.setProperty(`--fond-run`, `url("${url}")`);
   } else {
     document.body.classList.remove(`avec-fond`);
     document.body.style.removeProperty(`--fond-run`);
@@ -70,14 +70,14 @@ function definirFond(e) {
 // Dernier écran affiché (élément + classe et titre) : un nouvel écran repart en haut avec le focus
 // sur son titre ; le même écran réaffiché (choix d'équipe, HDV, paramètres…) garde défilement et focus.
 let dernierEcran = { el: null, cle: `` };
-export function afficherEcran(e, t = ``) {
+export function afficherEcran(html, classeEcran = ``) {
   masquerElements();
   // le combat remplace la racine sans passer par ici : l'écran d'avant n'est alors plus affiché
   const dejaAffiche = !!dernierEcran.el && racine.firstElementChild === dernierEcran.el;
-  racine.innerHTML = `<div class="ecran${t ? ` ${t}` : ``}">${e}</div>`;
+  racine.innerHTML = `<div class="ecran${classeEcran ? ` ${classeEcran}` : ``}">${html}</div>`;
   const el = racine.firstElementChild;
   const titre = el?.querySelector(`h1`);
-  const cle = `${t}|${titre?.textContent.trim() ?? ``}`;
+  const cle = `${classeEcran}|${titre?.textContent.trim() ?? ``}`;
   const nouveau = !dejaAffiche || cle !== dernierEcran.cle;
   dernierEcran = { el, cle };
   if (nouveau) {
@@ -168,18 +168,18 @@ export function demanderConfirmation(message, libelleOk = `Confirmer`) {
       fond.remove();
       resolve(ok);
     };
-    const clavier = (e) => {
-      if (e.key === `Escape`) {
-        e.preventDefault();
-        e.stopPropagation();
+    const clavier = (evenement) => {
+      if (evenement.key === `Escape`) {
+        evenement.preventDefault();
+        evenement.stopPropagation();
         fermer(false);
       }
     };
-    fond.addEventListener(`click`, (e) => {
-      const r = e.target.closest?.(`[data-reponse]`)?.dataset.reponse;
-      if (r) {
-        fermer(r === `oui`);
-      } else if (e.target === fond) {
+    fond.addEventListener(`click`, (evenement) => {
+      const reponse = evenement.target.closest?.(`[data-reponse]`)?.dataset.reponse;
+      if (reponse) {
+        fermer(reponse === `oui`);
+      } else if (evenement.target === fond) {
         fermer(false);
       }
     });
@@ -206,8 +206,14 @@ function champDeSaisie(el) {
   );
 }
 function installerToucheEntree() {
-  document.addEventListener(`keydown`, (e) => {
-    if (e.defaultPrevented || e.repeat || e.ctrlKey || e.metaKey || e.altKey) {
+  document.addEventListener(`keydown`, (evenement) => {
+    if (
+      evenement.defaultPrevented ||
+      evenement.repeat ||
+      evenement.ctrlKey ||
+      evenement.metaKey ||
+      evenement.altKey
+    ) {
       return;
     }
     const actif = document.activeElement;
@@ -219,26 +225,26 @@ function installerToucheEntree() {
     ) {
       return;
     }
-    if (e.key === `Enter`) {
+    if (evenement.key === `Enter`) {
       // un bouton, un lien ou une carte focalisés réagissent déjà à Entrée
       if (actif?.closest?.(`button, [role="button"], a[href], summary`)) {
         return;
       }
       for (const sel of ACTIONS_PRINCIPALES) {
-        const b = racine.querySelector(sel);
-        if (b && !b.disabled) {
-          e.preventDefault();
-          b.click();
+        const bouton = racine.querySelector(sel);
+        if (bouton && !bouton.disabled) {
+          evenement.preventDefault();
+          bouton.click();
           return;
         }
       }
       return;
     }
-    const chiffre = /^(?:Digit|Numpad)([1-4])$/.exec(e.code)?.[1];
+    const chiffre = /^(?:Digit|Numpad)([1-4])$/.exec(evenement.code)?.[1];
     if (chiffre) {
       const option = racine.querySelectorAll(`.ecran [data-choix]`)[Number(chiffre) - 1];
       if (option && !option.disabled) {
-        e.preventDefault();
+        evenement.preventDefault();
         option.click();
       }
     }
@@ -246,23 +252,23 @@ function installerToucheEntree() {
 }
 export function installerToucheEchap() {
   installerToucheEntree();
-  document.addEventListener(`keydown`, (e) => {
-    if (e.key !== `Escape` || e.defaultPrevented) {
+  document.addEventListener(`keydown`, (evenement) => {
+    if (evenement.key !== `Escape` || evenement.defaultPrevented) {
       return;
     }
     if (champDeSaisie(document.activeElement)) {
       return;
     }
-    let n = racine?.querySelector(`.ecran .boutons-ecran .btn-retour`);
-    if (!(!n || n.disabled)) {
-      e.preventDefault();
-      n.click();
+    let retour = racine?.querySelector(`.ecran .boutons-ecran .btn-retour`);
+    if (!(!retour || retour.disabled)) {
+      evenement.preventDefault();
+      retour.click();
     }
   });
 }
-export const cheminAsset = (e) => `/` + e.replace(/^\/+/, ``);
-export const iconeSort = (e) =>
-  cheminAsset(`/assets/spells/${DOSSIER_ICONE_SORT[e] ?? `monstres`}/${e}.png`);
+export const cheminAsset = (chemin) => `/` + chemin.replace(/^\/+/, ``);
+export const iconeSort = (sortId) =>
+  cheminAsset(`/assets/spells/${DOSSIER_ICONE_SORT[sortId] ?? `monstres`}/${sortId}.png`);
 export const IMG_ETOILE = cheminAsset(`/assets/divers/etoile.png`);
 export const IMG_COEUR = cheminAsset(`/assets/divers/coeur_base.png`);
 export const IMG_LOGO = cheminAsset(`/assets/divers/Roguefus_lite.png`);
@@ -282,10 +288,10 @@ export const IMG_MENU = cheminAsset(`/assets/menu/Menu.png`);
 export const IMG_RECOMMENCER = cheminAsset(`/assets/menu/Recommencer.png`);
 export const IMG_DEPART = cheminAsset(`/assets/menu/Depart.png`);
 export const IMG_RECOMMENCER_AVEC_PERSO = cheminAsset(`/assets/menu/Recommencer_avec_perso.png`);
-export const imgMonde = (e) => cheminAsset(`/assets/menu/Monde_${e}.png`);
+export const imgMonde = (monde) => cheminAsset(`/assets/menu/Monde_${monde}.png`);
 export const IMG_DOFUS = cheminAsset(`/assets/menu/dofus.png`);
 const IMG_KAMAS = cheminAsset(`/assets/divers/kamas.png`);
-export const imgElement = (e) => cheminAsset(`/assets/elements/${e}.png`);
+export const imgElement = (element) => cheminAsset(`/assets/elements/${element}.png`);
 const imgArchetype = (archetype) =>
   cheminAsset(`/assets/elements/${archetype === `melee` ? `dmgMelee` : `dmgDistance`}.png`);
 const FONDS_MONDE = {
@@ -303,27 +309,32 @@ export const IMGS_RESISTANCE = {
   eau: cheminAsset(`/assets/elements/resEau.png`),
   air: cheminAsset(`/assets/elements/resAir.png`),
 };
-export const imgClasse = (e) => cheminAsset(CLASSES[e]?.img ?? `/assets/classes/${e}.png`);
-export const imgObjet = (e) => cheminAsset(`/assets/items/${e}.png`);
-export function boutonRetour(e, t = `Retour`) {
-  return `<button id="${e}" class="btn-retour" title="${echapperHtml(t)}"><img src="${IMG_RETOUR}" alt="Retour" onerror="this.remove()" /></button>`;
+export const imgClasse = (classeId) =>
+  cheminAsset(CLASSES[classeId]?.img ?? `/assets/classes/${classeId}.png`);
+export const imgObjet = (objetId) => cheminAsset(`/assets/items/${objetId}.png`);
+export function boutonRetour(id, libelle = `Retour`) {
+  return `<button id="${id}" class="btn-retour" title="${echapperHtml(libelle)}"><img src="${IMG_RETOUR}" alt="Retour" onerror="this.remove()" /></button>`;
 }
 // Réaffiche un écran en gardant la position des listes et de la page (HDV, forgemagie…).
 export function afficherEnGardantScroll(html) {
-  const listes = [...racine.querySelectorAll(`.equip-inv`)].map((e) => e.scrollTop);
-  const y = scrollY;
+  const listes = [...racine.querySelectorAll(`.equip-inv`)].map((liste) => liste.scrollTop);
+  const defilement = scrollY;
   afficherEcran(html);
-  racine.querySelectorAll(`.equip-inv`).forEach((e, k) => {
-    e.scrollTop = listes[k] ?? 0;
+  racine.querySelectorAll(`.equip-inv`).forEach((liste, indice) => {
+    liste.scrollTop = listes[indice] ?? 0;
   });
-  window.scrollTo(0, y);
+  window.scrollTo(0, defilement);
 }
 // Photo de l'équipement (inventaire, objets portés, PV) avant une opération en lot comme
 // « Équiper le meilleur » : elle permet de tout remettre comme avant (bouton Annuler).
 export function photoEquipement(run) {
   return {
     inventaire: run.inventaire.slice(),
-    persos: run.persos.map((p) => ({ perso: p, equipement: { ...p.equipement }, pv: p.pvActuels })),
+    persos: run.persos.map((perso) => ({
+      perso,
+      equipement: { ...perso.equipement },
+      pv: perso.pvActuels,
+    })),
   };
 }
 // Remet l'équipement tel qu'il était sur la photo (l'inventaire est modifié en place).
@@ -331,29 +342,29 @@ export function restaurerEquipement(run, photo) {
   run.inventaire.length = 0;
   run.inventaire.push(...photo.inventaire);
   for (const { perso, equipement, pv } of photo.persos) {
-    for (const k of Object.keys(perso.equipement)) {
-      delete perso.equipement[k];
+    for (const emplacement of Object.keys(perso.equipement)) {
+      delete perso.equipement[emplacement];
     }
     Object.assign(perso.equipement, equipement);
     perso.pvActuels = pv;
   }
 }
-export function barreRetour(e, t = `Retour`) {
-  return `<div class="boutons-ecran">${boutonRetour(e, t)}</div>`;
+export function barreRetour(id, libelle = `Retour`) {
+  return `<div class="boutons-ecran">${boutonRetour(id, libelle)}</div>`;
 }
-export function boutonContinuer(e) {
+export function boutonContinuer(id) {
   const kbd = ecranTactile() ? `` : `<kbd class="kbd-entree" aria-hidden="true">Entrée</kbd>`;
-  return `<button id="${e}" class="btn-continuer" title="Continuer"><img src="${IMG_CONTINUER}" alt="Continuer" onerror="this.remove()" />${kbd}</button>`;
+  return `<button id="${id}" class="btn-continuer" title="Continuer"><img src="${IMG_CONTINUER}" alt="Continuer" onerror="this.remove()" />${kbd}</button>`;
 }
-export function barreContinuer(e) {
-  return `<div class="boutons-ecran">${boutonContinuer(e)}</div>`;
+export function barreContinuer(id) {
+  return `<div class="boutons-ecran">${boutonContinuer(id)}</div>`;
 }
-export function etoilesDifficulte(e) {
-  let t = Math.max(0, Math.min(Math.trunc(e) || 0, DIFFICULTE_MAX)) + 1;
-  return `★`.repeat(t) + `☆`.repeat(DIFFICULTES.length - t);
+export function etoilesDifficulte(cran) {
+  let nbEtoiles = Math.max(0, Math.min(Math.trunc(cran) || 0, DIFFICULTE_MAX)) + 1;
+  return `★`.repeat(nbEtoiles) + `☆`.repeat(DIFFICULTES.length - nbEtoiles);
 }
-export function fondDuMonde(e) {
-  definirFond((e ? FONDS_MONDE[e] : null) ?? FOND_ACCUEIL);
+export function fondDuMonde(mondeId) {
+  definirFond((mondeId ? FONDS_MONDE[mondeId] : null) ?? FOND_ACCUEIL);
 }
 // Élément frappé par un sort de dégâts (null pour un soin, un buff, une invocation…).
 export const sortDeDegats = (sort) =>
@@ -390,60 +401,62 @@ function texteElement(sort, lanceur) {
   }
   const els = elementsUtilisables(lanceur);
   const meilleur = meilleurElement(lanceur);
-  const autres = els.filter((x) => x !== meilleur).map((x) => NOMS_ELEMENTS[x]);
+  const autres = els
+    .filter((element) => element !== meilleur)
+    .map((element) => NOMS_ELEMENTS[element]);
   if (sort.elementPire) {
     return `dans l'élément le <b>moins</b> efficace contre la cible`;
   }
   return `en <b>${NOMS_ELEMENTS[meilleur]}</b>${autres.length ? ` (ou ${autres.join(` / `)} si la cible y résiste moins)` : ``}`;
 }
-export function infobulleSort(e, t) {
-  let n = ``;
-  if (t) {
-    let r = statsEffectives(t);
-    if (e.type === `soin`) {
-      if (e.soinComplet) {
-        n = `<span class="tip-val soin">♥ Soin complet</span>`;
-      } else if (e.baseMax > 0) {
-        let i = multiplicateurSoin(r, statElement(r, meilleurElement(t)));
-        n = `<span class="tip-val soin">♥ ${Math.round(e.baseMin * i)} – ${Math.round(e.baseMax * i)}</span><span class="tip-unite">PV rendus</span>`;
+export function infobulleSort(sort, lanceur) {
+  let valeurHtml = ``;
+  if (lanceur) {
+    let stats = statsEffectives(lanceur);
+    if (sort.type === `soin`) {
+      if (sort.soinComplet) {
+        valeurHtml = `<span class="tip-val soin">♥ Soin complet</span>`;
+      } else if (sort.baseMax > 0) {
+        let mult = multiplicateurSoin(stats, statElement(stats, meilleurElement(lanceur)));
+        valeurHtml = `<span class="tip-val soin">♥ ${Math.round(sort.baseMin * mult)} – ${Math.round(sort.baseMax * mult)}</span><span class="tip-unite">PV rendus</span>`;
       }
-    } else if (e.type === `degats` && e.baseMax > 0) {
-      let i =
-        multiplicateurStat(statElement(r, meilleurElement(t))) *
-        bonusDegatsIntelligence(r) *
-        multiplicateurRelance(e, t);
-      n = `<span class="tip-val dgt">⚔ ${Math.round(e.baseMin * i)} – ${Math.round(e.baseMax * i)}</span><span class="tip-el">${texteElement(e, t)}</span>`;
+    } else if (sort.type === `degats` && sort.baseMax > 0) {
+      let mult =
+        multiplicateurStat(statElement(stats, meilleurElement(lanceur))) *
+        bonusDegatsIntelligence(stats) *
+        multiplicateurRelance(sort, lanceur);
+      valeurHtml = `<span class="tip-val dgt">⚔ ${Math.round(sort.baseMin * mult)} – ${Math.round(sort.baseMax * mult)}</span><span class="tip-el">${texteElement(sort, lanceur)}</span>`;
     }
   } else {
-    if (e.baseMax > 0) {
-      n =
-        e.type === `soin`
-          ? `<span class="tip-val soin">♥ ${e.baseMin} – ${e.baseMax}</span><span class="tip-unite">PV rendus (base)</span>`
-          : `<span class="tip-val dgt">⚔ ${e.baseMin} – ${e.baseMax}</span><span class="tip-unite">base · élément selon la cible</span>`;
+    if (sort.baseMax > 0) {
+      valeurHtml =
+        sort.type === `soin`
+          ? `<span class="tip-val soin">♥ ${sort.baseMin} – ${sort.baseMax}</span><span class="tip-unite">PV rendus (base)</span>`
+          : `<span class="tip-val dgt">⚔ ${sort.baseMin} – ${sort.baseMax}</span><span class="tip-unite">base · élément selon la cible</span>`;
     }
   }
-  let r = [];
-  if (e.cooldownTours) {
-    r.push(`⏳ recharge ${e.cooldownTours} tour${e.cooldownTours > 1 ? `s` : ``}`);
+  let details = [];
+  if (sort.cooldownTours) {
+    details.push(`⏳ recharge ${sort.cooldownTours} tour${sort.cooldownTours > 1 ? `s` : ``}`);
   }
-  if (e.cooldown) {
-    r.push(`⏳ recharge ${e.cooldown} tour${e.cooldown > 1 ? `s` : ``} par cible`);
+  if (sort.cooldown) {
+    details.push(`⏳ recharge ${sort.cooldown} tour${sort.cooldown > 1 ? `s` : ``} par cible`);
   }
-  if (e.maxParTour) {
-    r.push(`${e.maxParTour}×/tour`);
+  if (sort.maxParTour) {
+    details.push(`${sort.maxParTour}×/tour`);
   }
-  if (e.maxParCibleParTour) {
-    r.push(`${e.maxParCibleParTour}×/cible/tour`);
+  if (sort.maxParCibleParTour) {
+    details.push(`${sort.maxParCibleParTour}×/cible/tour`);
   }
-  let i = t?.cooldowns[e.id] ?? 0;
-  if (i > 0) {
-    r.push(`<b class="tip-cd-actif">en recharge (${i}t)</b>`);
+  let recharge = lanceur?.cooldowns[sort.id] ?? 0;
+  if (recharge > 0) {
+    details.push(`<b class="tip-cd-actif">en recharge (${recharge}t)</b>`);
   }
   return [
-    `<div class="tip-nom">${echapperHtml(e.nom)}<span class="tip-pa">${t ? coutPA(e, t) : e.coutPA} PA</span></div>`,
-    n ? `<div class="tip-stat">${n}</div>` : ``,
-    e.desc ? `<div class="tip-effet">${echapperHtml(e.desc)}</div>` : ``,
-    `<div class="tip-cible">🎯 ${LIBELLES_CIBLE[e.cible] ?? e.cible}${r.length ? ` · ${r.join(` · `)}` : ``}</div>`,
+    `<div class="tip-nom">${echapperHtml(sort.nom)}<span class="tip-pa">${lanceur ? coutPA(sort, lanceur) : sort.coutPA} PA</span></div>`,
+    valeurHtml ? `<div class="tip-stat">${valeurHtml}</div>` : ``,
+    sort.desc ? `<div class="tip-effet">${echapperHtml(sort.desc)}</div>` : ``,
+    `<div class="tip-cible">🎯 ${LIBELLES_CIBLE[sort.cible] ?? sort.cible}${details.length ? ` · ${details.join(` · `)}` : ``}</div>`,
   ]
     .filter(Boolean)
     .join(``);
@@ -468,16 +481,16 @@ function creerBulle(classe, id) {
     cible = el;
     el.setAttribute(`aria-describedby`, id);
     bulle.style.display = `block`;
-    const a = el.getBoundingClientRect();
-    const o = bulle.getBoundingClientRect();
-    let x = a.left + a.width / 2 - o.width / 2;
-    x = Math.max(8, Math.min(x, window.innerWidth - o.width - 8));
-    let y = a.top - o.height - 10;
-    if (y < 8) {
-      y = a.bottom + 10;
+    const cadre = el.getBoundingClientRect();
+    const cadreBulle = bulle.getBoundingClientRect();
+    let gauche = cadre.left + cadre.width / 2 - cadreBulle.width / 2;
+    gauche = Math.max(8, Math.min(gauche, window.innerWidth - cadreBulle.width - 8));
+    let haut = cadre.top - cadreBulle.height - 10;
+    if (haut < 8) {
+      haut = cadre.bottom + 10;
     }
-    bulle.style.left = `${x}px`;
-    bulle.style.top = `${y}px`;
+    bulle.style.left = `${gauche}px`;
+    bulle.style.top = `${haut}px`;
   };
   const masquer = () => {
     bulle.style.display = `none`;
@@ -543,14 +556,14 @@ function ouvrirAuToucher(selecteur, montrer, masquer) {
 }
 export function installerInfobulleDofus() {
   const { bulle, placer, masquer } = creerBulle(`dofus-tip`, `dofus-tip`);
-  const montrer = (t) => {
-    const etat = t.dataset.possede
+  const montrer = (element) => {
+    const etat = element.dataset.possede
       ? `<div class="tip-muet">✓ Obtenu</div>`
-      : `<div class="tip-muet">🔒 ${echapperHtml(t.dataset.obtention ?? ``)}</div>`;
+      : `<div class="tip-muet">🔒 ${echapperHtml(element.dataset.obtention ?? ``)}</div>`;
     bulle.innerHTML =
-      `<div class="tip-nom">${echapperHtml(t.dataset.nom ?? ``)}</div><div class="tip-effet">${echapperHtml(t.dataset.effet ?? ``)}</div>` +
+      `<div class="tip-nom">${echapperHtml(element.dataset.nom ?? ``)}</div><div class="tip-effet">${echapperHtml(element.dataset.effet ?? ``)}</div>` +
       etat;
-    placer(t);
+    placer(element);
   };
   brancherBulle(`.dofus-slot`, montrer, masquer);
 }
@@ -565,13 +578,13 @@ const LIBELLES_CIBLE = {
 };
 export function installerInfobulleAide() {
   const { bulle, placer, masquer } = creerBulle(`aide-tip`, `aide-tip`);
-  const montrer = (t) => {
-    const tip = t.dataset.tip;
+  const montrer = (element) => {
+    const tip = element.dataset.tip;
     if (!tip) {
       return;
     }
     bulle.textContent = tip;
-    placer(t);
+    placer(element);
   };
   brancherBulle(`[data-tip]`, montrer, masquer);
 }
@@ -581,21 +594,21 @@ export const NOMS_ELEMENTS = {
   eau: `Eau`,
   air: `Air`,
 };
-export const htmlKamas = (e) =>
-  `<span class="kamas"><img src="${IMG_KAMAS}" alt="k" onerror="this.remove()" />${e.toLocaleString(`fr-FR`)}</span>`;
-function elementsDuPerso(e) {
-  return CLASSES[e.classeId].elements;
+export const htmlKamas = (nombre) =>
+  `<span class="kamas"><img src="${IMG_KAMAS}" alt="k" onerror="this.remove()" />${nombre.toLocaleString(`fr-FR`)}</span>`;
+function elementsDuPerso(perso) {
+  return CLASSES[perso.classeId].elements;
 }
-export function pastillesElementsPerso(e) {
-  return `<span class="el-pastilles">${(Object.values(e.equipement).some(
-    (e) => e && EQUIPEMENTS[e.id]?.elementLibre,
+export function pastillesElementsPerso(perso) {
+  return `<span class="el-pastilles">${(Object.values(perso.equipement).some(
+    (objet) => objet && EQUIPEMENTS[objet.id]?.elementLibre,
   )
     ? [`terre`, `feu`, `eau`, `air`]
-    : elementsDuPerso(e)
+    : elementsDuPerso(perso)
   )
     .map(
-      (e) =>
-        `<img class="el-pastille" src="${imgElement(e)}" alt="" title="Élément : ${NOMS_ELEMENTS[e]}" onerror="this.remove()" />`,
+      (element) =>
+        `<img class="el-pastille" src="${imgElement(element)}" alt="" title="Élément : ${NOMS_ELEMENTS[element]}" onerror="this.remove()" />`,
     )
     .join(``)}</span>`;
 }
@@ -603,34 +616,35 @@ export const NOMS_ARCHETYPES = {
   melee: `Mêlée`,
   distance: `Distance`,
 };
-export function htmlElementsClasse(e, t = {}) {
-  let n = CLASSES[e];
-  let r = GAINS_ARCHETYPE[n.archetype];
-  let i = `${NOMS_ARCHETYPES[n.archetype]} : +${r.parElement} dans chacun de ses 2 éléments et +${r.vitalite} en Vitalité par niveau`;
+export function htmlElementsClasse(classeId, options = {}) {
+  let classe = CLASSES[classeId];
+  let gains = GAINS_ARCHETYPE[classe.archetype];
+  let texteArchetype = `${NOMS_ARCHETYPES[classe.archetype]} : +${gains.parElement} dans chacun de ses 2 éléments et +${gains.vitalite} en Vitalité par niveau`;
   return `<span class="classe-elems">
-    ${t.icone && !ecranTactile() ? `<img class="archetype-icone" src="${imgArchetype(n.archetype)}" alt="${NOMS_ARCHETYPES[n.archetype]}" data-tip="${echapperHtml(i)}" onerror="const s=document.createElement('span');s.className='classe-archetype';s.textContent=this.alt;s.dataset.tip=this.dataset.tip;this.replaceWith(s)" />` : `<span class="classe-archetype" data-tip="${echapperHtml(i)}">${NOMS_ARCHETYPES[n.archetype]}</span>`}
-    <span class="el-pastilles">${n.elements.map((e) => `<img class="el-pastille" src="${imgElement(e)}" alt="" title="Élément de la classe : ${NOMS_ELEMENTS[e]}" onerror="this.remove()" />`).join(``)}</span>
+    ${options.icone && !ecranTactile() ? `<img class="archetype-icone" src="${imgArchetype(classe.archetype)}" alt="${NOMS_ARCHETYPES[classe.archetype]}" data-tip="${echapperHtml(texteArchetype)}" onerror="const s=document.createElement('span');s.className='classe-archetype';s.textContent=this.alt;s.dataset.tip=this.dataset.tip;this.replaceWith(s)" />` : `<span class="classe-archetype" data-tip="${echapperHtml(texteArchetype)}">${NOMS_ARCHETYPES[classe.archetype]}</span>`}
+    <span class="el-pastilles">${classe.elements.map((element) => `<img class="el-pastille" src="${imgElement(element)}" alt="" title="Élément de la classe : ${NOMS_ELEMENTS[element]}" onerror="this.remove()" />`).join(``)}</span>
   </span>`;
 }
-export const imgSymboleClasse = (e) => cheminAsset(`/assets/class_symbol/${e}.png`);
-export const pctCritique = (e) => Math.round(chanceCritique(e) * 100);
-export const pctDegatsCritiques = (e) => Math.round(bonusDegatsCritiques(e) * 100);
-export const pctSoin = (e, t) => Math.round((multiplicateurSoin(e, t) - 1) * 100);
-export const pctPuissanceIntel = (e) => Math.round((bonusDegatsIntelligence(e) - 1) * 100);
-export function htmlRackDofus(e, t = false) {
-  let n = Object.values(DOFUS)
-    .map((t) => {
-      let length = e.dofus.filter((e) => e.id === t.id).length;
-      let r = length > 0;
-      let i = t.id === `dofus_ocre` ? `data-ocre="1"` : ``;
+export const imgSymboleClasse = (classeId) => cheminAsset(`/assets/class_symbol/${classeId}.png`);
+export const pctCritique = (stats) => Math.round(chanceCritique(stats) * 100);
+export const pctDegatsCritiques = (stats) => Math.round(bonusDegatsCritiques(stats) * 100);
+export const pctSoin = (stats, pointsElement) =>
+  Math.round((multiplicateurSoin(stats, pointsElement) - 1) * 100);
+export const pctPuissanceIntel = (stats) => Math.round((bonusDegatsIntelligence(stats) - 1) * 100);
+export function htmlRackDofus(meta, compact = false) {
+  let html = Object.values(DOFUS)
+    .map((dofus) => {
+      let nbExemplaires = meta.dofus.filter((exemplaire) => exemplaire.id === dofus.id).length;
+      let possede = nbExemplaires > 0;
+      let attrOcre = dofus.id === `dofus_ocre` ? `data-ocre="1"` : ``;
       return `
-        <div class="dofus-slot ${r ? `` : `locked`}" data-nom="${echapperHtml(t.nom)}" data-effet="${echapperHtml(t.desc)}" data-obtention="${echapperHtml(texteObtentionDofus(t.id))}" data-possede="${r ? 1 : ``}" ${i}>
-          ${t.img ? `<img src="${cheminAsset(t.img)}" alt="${echapperHtml(t.nom)}" loading="lazy" decoding="async" onerror="this.remove()" />` : ``}
-          ${length > 1 ? `<span class="dofus-count">×${length}</span>` : ``}
+        <div class="dofus-slot ${possede ? `` : `locked`}" data-nom="${echapperHtml(dofus.nom)}" data-effet="${echapperHtml(dofus.desc)}" data-obtention="${echapperHtml(texteObtentionDofus(dofus.id))}" data-possede="${possede ? 1 : ``}" ${attrOcre}>
+          ${dofus.img ? `<img src="${cheminAsset(dofus.img)}" alt="${echapperHtml(dofus.nom)}" loading="lazy" decoding="async" onerror="this.remove()" />` : ``}
+          ${nbExemplaires > 1 ? `<span class="dofus-count">×${nbExemplaires}</span>` : ``}
         </div>`;
     })
     .join(``);
-  return `<div class="dofus-rack ${t ? `compact` : ``}">${n}</div>`;
+  return `<div class="dofus-rack ${compact ? `compact` : ``}">${html}</div>`;
 }
 export const ROLES_CLASSES = {
   iop: `Bourrin, frappe de plus en plus fort à mesure qu'il enchaîne`,
@@ -653,13 +667,13 @@ export const ROLES_CLASSES = {
   eliotrope: `Portailleur, ses portails dopent toute sa rangée`,
   forgelance: `Lancier, plante sa lance et balaye tout autour d'elle`,
 };
-export function htmlCarteClasse(e, t, n) {
-  let r = CLASSES[e];
-  return `<button class="classe-carte ${t ? `sel` : ``}" ${n}="${e}">
-    <img class="classe-portrait" src="${imgClasse(e)}" alt="" loading="lazy" decoding="async" onerror="this.remove()" />
-    <span class="classe-nom">${echapperHtml(r.nom)}</span>
-    ${htmlElementsClasse(e)}
-    <span class="classe-role">${echapperHtml(ROLES_CLASSES[e] ?? ``)}</span>
+export function htmlCarteClasse(classeId, selectionnee, attribut) {
+  let classe = CLASSES[classeId];
+  return `<button class="classe-carte ${selectionnee ? `sel` : ``}" ${attribut}="${classeId}">
+    <img class="classe-portrait" src="${imgClasse(classeId)}" alt="" loading="lazy" decoding="async" onerror="this.remove()" />
+    <span class="classe-nom">${echapperHtml(classe.nom)}</span>
+    ${htmlElementsClasse(classeId)}
+    <span class="classe-role">${echapperHtml(ROLES_CLASSES[classeId] ?? ``)}</span>
   </button>`;
 }
 // Types d'objets (filtres, tri) et emplacements d'un héros (deux anneaux).
@@ -696,9 +710,9 @@ const ROLE_STATS = {
   prospection: `plus de chances de butin`,
   crit: `chance de coup critique en plus`,
 };
-export const classeRarete = (e) => {
-  if (e?.rarete) {
-    return ` rarete-${e.rarete}`;
+export const classeRarete = (objet) => {
+  if (objet?.rarete) {
+    return ` rarete-${objet.rarete}`;
   }
   return ``;
 };
@@ -709,185 +723,185 @@ export function htmlMetaObjet(inst) {
   const def = EQUIPEMENTS[inst.id];
   return `<b class="ic-tier" data-tip="Tier : numéro de la zone où l'objet tombe, compté depuis le Monde 1. Plus il est haut, plus l'objet est puissant.">T${numeroZoneObjet(inst.id)}</b> · ${NOMS_SLOTS[def.slot]}${inst.rarete ? ` · <span class="inom-${inst.rarete}">${RARETES_INFO[inst.rarete].nom}</span>` : ``}`;
 }
-export function htmlNomObjet(e) {
-  let t = EQUIPEMENTS[e.id];
-  let n = echapperHtml(t?.nom ?? e.id);
-  if (e.rarete) {
-    return `<span class="inom-${e.rarete}" title="${RARETES_INFO[e.rarete].nom}">${n}</span>`;
+export function htmlNomObjet(objet) {
+  let def = EQUIPEMENTS[objet.id];
+  let nom = echapperHtml(def?.nom ?? objet.id);
+  if (objet.rarete) {
+    return `<span class="inom-${objet.rarete}" title="${RARETES_INFO[objet.rarete].nom}">${nom}</span>`;
   }
-  return n;
+  return nom;
 }
 // classeId (facultatif) : la classe du porteur, pour dire où va la stat adaptative.
-export function htmlChipsObjet(e, classeId) {
-  let t = EQUIPEMENTS[e.id];
-  let n = [];
-  let r = (e, t, titre) =>
-    n.push(
-      `<span class="ichip ${e}"${titre ? ` data-tip="${echapperHtml(titre)}"` : ``}>${t}</span>`,
+export function htmlChipsObjet(objet, classeId) {
+  let def = EQUIPEMENTS[objet.id];
+  let pastilles = [];
+  let ajouter = (classes, texte, titre) =>
+    pastilles.push(
+      `<span class="ichip ${classes}"${titre ? ` data-tip="${echapperHtml(titre)}"` : ``}>${texte}</span>`,
     );
-  let i = (e) => {
-    if (e > 0) {
-      return `+${e}`;
+  let signe = (nombre) => {
+    if (nombre > 0) {
+      return `+${nombre}`;
     }
-    return `${e}`;
+    return `${nombre}`;
   };
-  if (e.adaptatif) {
+  if (objet.adaptatif) {
     let elements = CLASSES[classeId]?.elements;
     if (elements) {
       for (let el of elements) {
         let stat = STAT_PAR_ELEMENT[el];
-        n.push(
-          `<span class="ichip ichip-${stat}${e.adaptatif < 0 ? ` malus` : ``}" data-tip="Stat adaptative : s'applique aux 2 caractéristiques d'élément de ta classe">${i(e.adaptatif)} ${ABREV_STATS[stat]} ★</span>`,
+        pastilles.push(
+          `<span class="ichip ichip-${stat}${objet.adaptatif < 0 ? ` malus` : ``}" data-tip="Stat adaptative : s'applique aux 2 caractéristiques d'élément de ta classe">${signe(objet.adaptatif)} ${ABREV_STATS[stat]} ★</span>`,
         );
       }
     } else {
-      n.push(
-        `<span class="ichip ichip-adapt${e.adaptatif < 0 ? ` malus` : ``}" data-tip="Stat adaptative : s'applique aux 2 caractéristiques d'élément du porteur (ex. Force et Chance pour un Feca)">${i(e.adaptatif)} aux 2 caracs d'élément ★</span>`,
+      pastilles.push(
+        `<span class="ichip ichip-adapt${objet.adaptatif < 0 ? ` malus` : ``}" data-tip="Stat adaptative : s'applique aux 2 caractéristiques d'élément du porteur (ex. Force et Chance pour un Feca)">${signe(objet.adaptatif)} aux 2 caracs d'élément ★</span>`,
       );
     }
   }
-  if (t?.pvBonus) {
-    r(`ichip-vitalite`, `+${t.pvBonus} PV`);
+  if (def?.pvBonus) {
+    ajouter(`ichip-vitalite`, `+${def.pvBonus} PV`);
   }
-  for (let t of Object.keys(e.stats)) {
-    let n = e.stats[t];
-    if (n) {
-      r(
-        `ichip-${t}${n < 0 ? ` malus` : ``}`,
-        `${i(n)} ${ABREV_STATS[t] ?? t}`,
-        ROLE_STATS[t] && `${ABREV_STATS[t]} : ${ROLE_STATS[t]}`,
+  for (let stat of Object.keys(objet.stats)) {
+    let valeur = objet.stats[stat];
+    if (valeur) {
+      ajouter(
+        `ichip-${stat}${valeur < 0 ? ` malus` : ``}`,
+        `${signe(valeur)} ${ABREV_STATS[stat] ?? stat}`,
+        ROLE_STATS[stat] && `${ABREV_STATS[stat]} : ${ROLE_STATS[stat]}`,
       );
     }
   }
-  if (e.pa) {
-    r(`ichip-pa`, `+${e.pa} PA`);
+  if (objet.pa) {
+    ajouter(`ichip-pa`, `+${objet.pa} PA`);
   }
-  let a = {
-    ...(t?.resistances ?? {}),
-    ...(e.resistances ?? {}),
+  let resistances = {
+    ...(def?.resistances ?? {}),
+    ...(objet.resistances ?? {}),
   };
-  for (let e of Object.keys(a)) {
-    let t = a[e];
-    if (t) {
-      r(
-        `ichip-res elem-${e}${t < 0 ? ` malus` : ``}`,
-        `${i(Math.round(t * 100))}% ${NOMS_ELEMENTS[e]}`,
+  for (let element of Object.keys(resistances)) {
+    let valeur = resistances[element];
+    if (valeur) {
+      ajouter(
+        `ichip-res elem-${element}${valeur < 0 ? ` malus` : ``}`,
+        `${signe(Math.round(valeur * 100))}% ${NOMS_ELEMENTS[element]}`,
       );
     }
   }
-  let o = e.rarete ? t?.tiers?.[e.rarete]?.attaque : undefined;
-  if (o) {
-    r(
+  let attaque = objet.rarete ? def?.tiers?.[objet.rarete]?.attaque : undefined;
+  if (attaque) {
+    ajouter(
       `ichip-arme`,
-      `⚔ Attaque d'arme : ${o.baseMin}–${o.baseMax} dégâts, ${o.coutPA} PA${o.cible === `ennemi_tous` ? ` · atteint la ligne arrière` : ``}${o.vampirisme ? ` · rend ${Math.round(o.vampirisme * 100)} % en PV` : ``}`,
+      `⚔ Attaque d'arme : ${attaque.baseMin}–${attaque.baseMax} dégâts, ${attaque.coutPA} PA${attaque.cible === `ennemi_tous` ? ` · atteint la ligne arrière` : ``}${attaque.vampirisme ? ` · rend ${Math.round(attaque.vampirisme * 100)} % en PV` : ``}`,
     );
   }
-  if (t?.paGamble) {
-    n.push(
-      `<span class="ichip ichip-pa" data-tip="À chaque tour : ${Math.round(t.paGamble.pPlus * 100)} % de gagner +${t.paGamble.plus} PA, sinon −${t.paGamble.moins} PA">🎲 ${Math.round(t.paGamble.pPlus * 100)} % +${t.paGamble.plus} PA / −${t.paGamble.moins}</span>`,
+  if (def?.paGamble) {
+    pastilles.push(
+      `<span class="ichip ichip-pa" data-tip="À chaque tour : ${Math.round(def.paGamble.pPlus * 100)} % de gagner +${def.paGamble.plus} PA, sinon −${def.paGamble.moins} PA">🎲 ${Math.round(def.paGamble.pPlus * 100)} % +${def.paGamble.plus} PA / −${def.paGamble.moins}</span>`,
     );
   }
-  if (t?.ligneAvant) {
-    n.push(
+  if (def?.ligneAvant) {
+    pastilles.push(
       `<span class="ichip malus" data-tip="Équipable uniquement sur un personnage de la ligne avant">Ligne avant uniqt</span>`,
     );
   }
-  if (t?.riposteAvant) {
-    n.push(
-      `<span class="ichip ichip-force" data-tip="Quand le porteur est frappé en ligne avant : ${Math.round(t.riposteAvant * 100)} % de chance de contre-attaquer">↩ ${Math.round(t.riposteAvant * 100)} % riposte (avant)</span>`,
+  if (def?.riposteAvant) {
+    pastilles.push(
+      `<span class="ichip ichip-force" data-tip="Quand le porteur est frappé en ligne avant : ${Math.round(def.riposteAvant * 100)} % de chance de contre-attaquer">↩ ${Math.round(def.riposteAvant * 100)} % riposte (avant)</span>`,
     );
   }
-  if (t?.esquiveArriere) {
-    n.push(
-      `<span class="ichip ichip-agilite" data-tip="Quand le porteur est en ligne arrière : +${Math.round(t.esquiveArriere * 100)} % d'esquive">💨 +${Math.round(t.esquiveArriere * 100)} % esquive (arrière)</span>`,
+  if (def?.esquiveArriere) {
+    pastilles.push(
+      `<span class="ichip ichip-agilite" data-tip="Quand le porteur est en ligne arrière : +${Math.round(def.esquiveArriere * 100)} % d'esquive">💨 +${Math.round(def.esquiveArriere * 100)} % esquive (arrière)</span>`,
     );
   }
-  if (t?.soinDegatsRecus) {
-    n.push(
-      `<span class="ichip ichip-soin" data-tip="À chaque coup encaissé, le porteur récupère ${Math.round(t.soinDegatsRecus * 100)} % des dégâts subis">♥ récup. ${Math.round(t.soinDegatsRecus * 100)} % des dégâts subis</span>`,
+  if (def?.soinDegatsRecus) {
+    pastilles.push(
+      `<span class="ichip ichip-soin" data-tip="À chaque coup encaissé, le porteur récupère ${Math.round(def.soinDegatsRecus * 100)} % des dégâts subis">♥ récup. ${Math.round(def.soinDegatsRecus * 100)} % des dégâts subis</span>`,
     );
   }
-  if (t?.changeLigne) {
-    n.push(
-      `<span class="ichip ichip-pa" data-tip="Confère le sort « Changer de ligne » : bascule avant ↔ arrière en combat pour ${t.changeLigne} PA">↕ change de ligne (${t.changeLigne} PA)</span>`,
+  if (def?.changeLigne) {
+    pastilles.push(
+      `<span class="ichip ichip-pa" data-tip="Confère le sort « Changer de ligne » : bascule avant ↔ arrière en combat pour ${def.changeLigne} PA">↕ change de ligne (${def.changeLigne} PA)</span>`,
     );
   }
-  if (t?.perceResistances) {
-    n.push(
-      `<span class="ichip ichip-force" data-tip="L'attaque de cette arme ignore ${Math.round(t.perceResistances * 100)} % des résistances de la cible">⚡ perce ${Math.round(t.perceResistances * 100)} % des rés.</span>`,
+  if (def?.perceResistances) {
+    pastilles.push(
+      `<span class="ichip ichip-force" data-tip="L'attaque de cette arme ignore ${Math.round(def.perceResistances * 100)} % des résistances de la cible">⚡ perce ${Math.round(def.perceResistances * 100)} % des rés.</span>`,
     );
   }
-  if (t?.frappeDerriere) {
-    n.push(
+  if (def?.frappeDerriere) {
+    pastilles.push(
       `<span class="ichip ichip-force" data-tip="L'attaque touche aussi l'ennemi juste derrière la cible">⤈ frappe aussi derrière</span>`,
     );
   }
-  if (t?.prospParPvManquant) {
-    n.push(
-      `<span class="ichip ichip-prospection" data-tip="Au moment du butin : +${t.prospParPvManquant} prospection par PV manquant du porteur">📦 +${t.prospParPvManquant} PP / PV manquant</span>`,
+  if (def?.prospParPvManquant) {
+    pastilles.push(
+      `<span class="ichip ichip-prospection" data-tip="Au moment du butin : +${def.prospParPvManquant} prospection par PV manquant du porteur">📦 +${def.prospParPvManquant} PP / PV manquant</span>`,
     );
   }
-  if (t?.multKamas) {
-    n.push(
-      `<span class="ichip ichip-adapt" data-tip="Les kamas gagnés en combat sont multipliés par ${t.multKamas}">🪙 kamas ×${t.multKamas}</span>`,
+  if (def?.multKamas) {
+    pastilles.push(
+      `<span class="ichip ichip-adapt" data-tip="Les kamas gagnés en combat sont multipliés par ${def.multKamas}">🪙 kamas ×${def.multKamas}</span>`,
     );
   }
-  if (t?.bouclierDebut) {
-    n.push(
-      `<span class="ichip ichip-vitalite" data-tip="Commence chaque combat avec un bouclier de ${Math.round(t.bouclierDebut * 100)} % des PV max">🛡 bouclier de départ ${Math.round(t.bouclierDebut * 100)} %</span>`,
+  if (def?.bouclierDebut) {
+    pastilles.push(
+      `<span class="ichip ichip-vitalite" data-tip="Commence chaque combat avec un bouclier de ${Math.round(def.bouclierDebut * 100)} % des PV max">🛡 bouclier de départ ${Math.round(def.bouclierDebut * 100)} %</span>`,
     );
   }
-  if (t?.poisonArme) {
-    n.push(
-      `<span class="ichip malus" data-tip="L'attaque de cette arme empoisonne la cible (${t.poisonArme.degats} dégâts pendant ${t.poisonArme.duree} tours)">☠ empoisonne (${t.poisonArme.degats}/t · ${t.poisonArme.duree} t)</span>`,
+  if (def?.poisonArme) {
+    pastilles.push(
+      `<span class="ichip malus" data-tip="L'attaque de cette arme empoisonne la cible (${def.poisonArme.degats} dégâts pendant ${def.poisonArme.duree} tours)">☠ empoisonne (${def.poisonArme.degats}/t · ${def.poisonArme.duree} t)</span>`,
     );
   }
-  if (t?.soinAllieBlesse) {
-    n.push(
-      `<span class="ichip ichip-soin" data-tip="L'attaque soigne l'allié le plus blessé de ${Math.round(t.soinAllieBlesse * 100)} % des dégâts infligés">♥ soigne l'allié blessé (${Math.round(t.soinAllieBlesse * 100)} %)</span>`,
+  if (def?.soinAllieBlesse) {
+    pastilles.push(
+      `<span class="ichip ichip-soin" data-tip="L'attaque soigne l'allié le plus blessé de ${Math.round(def.soinAllieBlesse * 100)} % des dégâts infligés">♥ soigne l'allié blessé (${Math.round(def.soinAllieBlesse * 100)} %)</span>`,
     );
   }
-  if (t?.retraitPA) {
-    n.push(
-      `<span class="ichip ichip-pa" data-tip="L'attaque a 30 % de chance de retirer ${t.retraitPA} PA à la cible">⛓ retrait ${t.retraitPA} PA (30 %)</span>`,
+  if (def?.retraitPA) {
+    pastilles.push(
+      `<span class="ichip ichip-pa" data-tip="L'attaque a 30 % de chance de retirer ${def.retraitPA} PA à la cible">⛓ retrait ${def.retraitPA} PA (30 %)</span>`,
     );
   }
-  if (t?.assome) {
-    n.push(
-      `<span class="ichip malus" data-tip="L'attaque de cette arme a ${Math.round(t.assome * 100)} % de chance d'assommer la cible : elle passe son prochain tour">💫 assomme (${Math.round(t.assome * 100)} %)</span>`,
+  if (def?.assome) {
+    pastilles.push(
+      `<span class="ichip malus" data-tip="L'attaque de cette arme a ${Math.round(def.assome * 100)} % de chance d'assommer la cible : elle passe son prochain tour">💫 assomme (${Math.round(def.assome * 100)} %)</span>`,
     );
   }
-  if (t?.recupPASort) {
-    n.push(
-      `<span class="ichip ichip-pa" data-tip="Après chaque sort lancé par le porteur : ${Math.round(t.recupPASort.chance * 100)} % de chance de récupérer ${t.recupPASort.pa} PA immédiatement">↺ ${Math.round(t.recupPASort.chance * 100)} % récup. ${t.recupPASort.pa} PA</span>`,
+  if (def?.recupPASort) {
+    pastilles.push(
+      `<span class="ichip ichip-pa" data-tip="Après chaque sort lancé par le porteur : ${Math.round(def.recupPASort.chance * 100)} % de chance de récupérer ${def.recupPASort.pa} PA immédiatement">↺ ${Math.round(def.recupPASort.chance * 100)} % récup. ${def.recupPASort.pa} PA</span>`,
     );
   }
-  if (t?.esquiveBonus) {
-    n.push(
-      `<span class="ichip ichip-agilite" data-tip="+${Math.round(t.esquiveBonus * 100)} % d'esquive pour le porteur, quelle que soit sa ligne">💨 +${Math.round(t.esquiveBonus * 100)} % esquive</span>`,
+  if (def?.esquiveBonus) {
+    pastilles.push(
+      `<span class="ichip ichip-agilite" data-tip="+${Math.round(def.esquiveBonus * 100)} % d'esquive pour le porteur, quelle que soit sa ligne">💨 +${Math.round(def.esquiveBonus * 100)} % esquive</span>`,
     );
   }
-  if (t?.esquiveParPiece) {
-    n.push(
-      `<span class="ichip ichip-agilite" data-tip="Bonus de panoplie : +${Math.round(t.esquiveParPiece * 1000) / 10} % d'esquive par pièce de sa panoplie équipée (s'ajoute aux bonus de panoplie)">💨 +${Math.round(t.esquiveParPiece * 1000) / 10} % esquive / pièce</span>`,
+  if (def?.esquiveParPiece) {
+    pastilles.push(
+      `<span class="ichip ichip-agilite" data-tip="Bonus de panoplie : +${Math.round(def.esquiveParPiece * 1000) / 10} % d'esquive par pièce de sa panoplie équipée (s'ajoute aux bonus de panoplie)">💨 +${Math.round(def.esquiveParPiece * 1000) / 10} % esquive / pièce</span>`,
     );
   }
-  if (t?.elementLibre) {
-    n.push(
+  if (def?.elementLibre) {
+    pastilles.push(
       `<span class="ichip ichip-adapt" data-tip="Le porteur peut frapper dans N'IMPORTE quel élément (plus limité à sa paire déclarée)">🌈 élément libre</span>`,
     );
   }
-  if (t?.renaissance) {
-    n.push(
-      `<span class="ichip ichip-adapt" data-tip="À la mort du porteur : renaît UNE fois par combat à ${Math.round(t.renaissance * 100)} % de ses PV">🥚 renaissance (${Math.round(t.renaissance * 100)} % PV)</span>`,
+  if (def?.renaissance) {
+    pastilles.push(
+      `<span class="ichip ichip-adapt" data-tip="À la mort du porteur : renaît UNE fois par combat à ${Math.round(def.renaissance * 100)} % de ses PV">🥚 renaissance (${Math.round(def.renaissance * 100)} % PV)</span>`,
     );
   }
-  if (t?.panoplie) {
-    n.push(
-      `<span class="ichip ichip-pano" data-tip="${echapperHtml(`${t.panoplie} (pièces portées par le même héros) : ${descriptionPanoplie(t.panoplie)}`)}">⬡ ${echapperHtml(t.panoplie)}</span>`,
+  if (def?.panoplie) {
+    pastilles.push(
+      `<span class="ichip ichip-pano" data-tip="${echapperHtml(`${def.panoplie} (pièces portées par le même héros) : ${descriptionPanoplie(def.panoplie)}`)}">⬡ ${echapperHtml(def.panoplie)}</span>`,
     );
   }
-  return `<span class="ichips">${n.join(``)}</span>`;
+  return `<span class="ichips">${pastilles.join(``)}</span>`;
 }
 export const NOMS_STATS = {
   force: `Force`,
@@ -905,7 +919,7 @@ const STATS_NULLES = {
   agilite: 0,
   vitalite: 0,
 };
-const arrondiPct = (e) => String(Math.round(e * 1000) / 10).replace(`.`, `,`);
+const arrondiPct = (ratio) => String(Math.round(ratio * 1000) / 10).replace(`.`, `,`);
 const PCT_INTEL_PAR_POINT = arrondiPct(
   bonusDegatsIntelligence({
     ...STATS_NULLES,
@@ -969,8 +983,8 @@ export function libelleDelta(cle) {
 export function htmlDeltas(deltas) {
   return deltas
     .map(
-      (d) =>
-        `<span class="${d.valeur > 0 ? `delta-plus` : `delta-moins`}${d.utile ? `` : ` delta-inutile`}"${d.utile ? `` : ` data-tip="Peu utile pour cette classe (élément non utilisé)"`}>${d.valeur > 0 ? `+` : `−`}${Math.abs(Math.round(d.valeur * 10) / 10)}${libelleDelta(d.cle)}</span>`,
+      (delta) =>
+        `<span class="${delta.valeur > 0 ? `delta-plus` : `delta-moins`}${delta.utile ? `` : ` delta-inutile`}"${delta.utile ? `` : ` data-tip="Peu utile pour cette classe (élément non utilisé)"`}>${delta.valeur > 0 ? `+` : `−`}${Math.abs(Math.round(delta.valeur * 10) / 10)}${libelleDelta(delta.cle)}</span>`,
     )
     .join(` `);
 }
@@ -983,14 +997,14 @@ export const VERDICTS = {
 };
 // Petites pastilles « ▲ Iop » : les héros pour qui l'objet est une amélioration.
 export function htmlBadgesHeros(inst, persos, sauf) {
-  const heros = herosAmeliores(inst, persos).filter((p) => p !== sauf);
+  const heros = herosAmeliores(inst, persos).filter((perso) => perso !== sauf);
   if (!heros.length) {
     return ``;
   }
   return `<span class="badges-heros" data-tip="Amélioration nette pour ces héros">${heros
     .map(
-      (p) =>
-        `<span class="badge-heros">▲ ${echapperHtml(CLASSES[p.classeId]?.nom ?? p.classeId)}</span>`,
+      (perso) =>
+        `<span class="badge-heros">▲ ${echapperHtml(CLASSES[perso.classeId]?.nom ?? perso.classeId)}</span>`,
     )
     .join(``)}</span>`;
 }
