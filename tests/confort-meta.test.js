@@ -111,7 +111,8 @@ describe(`sauvegarde en ligne : résumé dans l'en-tête`, () => {
 
 describe(`accueil : condition d'une difficulté verrouillée`, () => {
   it(`nomme le palier juste en dessous et rappelle par où commencer`, async () => {
-    globalThis.localStorage = globalThis.localStorage ?? stockage();
+    vi.resetModules();
+    globalThis.localStorage = stockage();
     const { conditionVerrou } = await import(`../src/ui/ecrans/accueil.js`);
     const { DIFFICULTES } = await import(`../src/jeu/config.js`);
     const proche = conditionVerrou(`t1`, 1, 2);

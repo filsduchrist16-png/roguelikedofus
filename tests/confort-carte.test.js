@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { niveauMaxDeZone, ordreRaccourcis, texteCase } from "../src/ui/ecrans/carte.js";
 import { COMBATS, MONDES, MONSTRES, ZONES } from "../src/data/index.js";
+import { genererCarte, noeudsAtteignables, trouverNoeud } from "../src/carte/generation.js";
 
 describe("texteCase", () => {
   it("décrit un combat : nom du groupe, nombre et noms des monstres", () => {
@@ -62,5 +63,46 @@ describe("niveauMaxDeZone", () => {
 
   it("renvoie null pour une zone inconnue", () => {
     expect(niveauMaxDeZone(`Zone qui n'existe pas`)).toBeNull();
+  });
+});
+
+// Générateur pseudo-aléatoire à graine (mulberry32) : les 200 cartes sont les mêmes à chaque passage.
+const rngGraine = (graine) => {
+  let a = graine >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+};
+
+describe("génération de la carte", () => {
+  it("le donjon est atteignable depuis le départ, pour 200 graines et chaque zone", () => {
+    for (const zone of ZONES) {
+      for (let graine = 1; graine <= 200; graine++) {
+        const carte = genererCarte(rngGraine(graine), zone.pools, [], {
+          premiereZone: graine % 2 === 0,
+        });
+        const vus = new Set();
+        const pile = [...carte.depart];
+        while (pile.length) {
+          const id = pile.pop();
+          if (vus.has(id)) {
+            continue;
+          }
+          vus.add(id);
+          pile.push(...trouverNoeud(carte, id).suivants);
+        }
+        const donjons = carte.noeuds.filter((n) => n.type === `donjon`);
+        expect(donjons.length, `${zone.id} graine ${graine}`).toBeGreaterThan(0);
+        expect(
+          donjons.every((n) => vus.has(n.id)),
+          `${zone.id} graine ${graine}`,
+        ).toBe(true);
+        expect(noeudsAtteignables(carte).length).toBeGreaterThan(0);
+      }
+    }
   });
 });

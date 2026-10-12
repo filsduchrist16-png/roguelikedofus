@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Base de l'artefact simulée (partagée entre « appareils ») et localStorage propre à chaque appareil.
 const base = new Map();
@@ -34,6 +34,7 @@ async function appareil(agent) {
 
 describe(`sauvegarde en ligne`, () => {
   beforeEach(() => base.clear());
+  afterEach(() => vi.useRealTimers());
 
   it(`le PC envoie, le mobile récupère la même partie`, async () => {
     const pc = await appareil(`Windows`);
@@ -68,7 +69,6 @@ describe(`sauvegarde en ligne`, () => {
     vi.useFakeTimers();
     mobile.signalerChangement();
     await vi.advanceTimersByTimeAsync(20_000);
-    vi.useRealTimers();
     expect(base.get(`data/users/u1/sauvegarde`).version).toBe(enLigne);
   });
 
