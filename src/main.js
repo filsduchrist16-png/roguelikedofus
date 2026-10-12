@@ -1,3 +1,11 @@
+import {
+  attendre,
+  choixAleatoireMath,
+  ctxMeta,
+  etatRun,
+  meta,
+  quetesMeta,
+} from "./deroule/etat.js";
 import { decrireQuete } from "./jeu/obtention.js";
 import { CLASSES, COMBATS, DOFUS, EQUIPEMENTS, MONSTRES, SORTS } from "./data/index.js";
 import {
@@ -13,8 +21,6 @@ import { executerCombat } from "./combat/moteur.js";
 import { choisirActionIA } from "./combat/ia.js";
 import { genererCarte, tirerTypeZaap } from "./carte/generation.js";
 import {
-  contexteMeta,
-  nouvelEtatQuetes,
   trouverQuete,
   verifierQuetesCombat,
   verifierQuetesMeta,
@@ -70,10 +76,8 @@ import {
 import {
   ajouterDofus,
   appliquerBonusDofus,
-  bonusDofus,
   capturerArchi,
   chanceRelique,
-  chargerMeta,
   dofusAGagner,
   dofusDebloquables,
   dofusPossedes,
@@ -192,21 +196,16 @@ function initialiserInterface(elementApp) {
   installerRetourTelephone();
   installerSons(parametres.sons);
 }
-const attendre = (e) => new Promise((resolve) => setTimeout(resolve, e));
-const choixAleatoireMath = (e) => e[Math.floor(Math.random() * e.length)];
 const elementApp = document.getElementById(`app`);
 if (!elementApp) {
   throw Error(`#app introuvable`);
 }
 initialiserInterface(elementApp);
-const meta = chargerMeta();
 // astuces de première partie : un joueur qui a déjà fini une run (ancienne sauvegarde) ne les revoit pas
 if (parametres.vuTuto === null) {
   parametres.vuTuto = Object.fromEntries(CLES_TUTO.map((k) => [k, meta.runs > 0]));
   sauverParametres(parametres);
 }
-const quetesMeta = () => (meta.quetes ??= nouvelEtatQuetes());
-const ctxMeta = () => contexteMeta(meta);
 async function traiterQuetes(e, t) {
   sauverMeta(meta);
   if (!t.quetes.length) {
@@ -1115,20 +1114,18 @@ async function resoudreZaap(pools, t) {
     xp: 0,
   };
 }
-// Run en cours (zone + run) : sert à la sauvegarde quand la page passe en arrière-plan.
-let runActive = null;
 // Hors combat seulement : en plein combat l'état est partiel, la run reprend au dernier nœud.
 document.addEventListener(`visibilitychange`, () => {
   if (
     document.visibilityState === `hidden` &&
-    runActive &&
+    etatRun.active &&
     !document.querySelector(`#app .combat`)
   ) {
-    sauverRun(runActive.zoneIdx, runActive.run);
+    sauverRun(etatRun.active.zoneIdx, etatRun.active.run);
   }
 });
 async function jouerZone(e, t, n) {
-  runActive = { zoneIdx: n, run: e };
+  etatRun.active = { zoneIdx: n, run: e };
   enregistrerToileMax(meta, e.trancheId, n + 1);
   sauverMeta(meta);
   if (!e.carte) {
@@ -1252,12 +1249,12 @@ async function jouerRun(e, t, n = 0, r = `t1`, idoles = [], jour = false) {
     for (let e = s; e < a.length; e++) {
       let t = a[e];
       let n = await jouerZone(o, t, e);
-      runActive = null;
+      etatRun.active = null;
       if (n === `accueil`) {
         return null;
       }
       if (n === `recommencer-memes` || n === `recommencer-choix`) {
-        runActive = null;
+        etatRun.active = null;
         effacerRun();
         enregistrerRun(meta, false);
         await traiterQuetes(o, verifierQuetesMeta(quetesMeta(), ctxMeta()));
@@ -1272,7 +1269,7 @@ async function jouerRun(e, t, n = 0, r = `t1`, idoles = [], jour = false) {
         };
       }
       if (n === `wipe`) {
-        runActive = null;
+        etatRun.active = null;
         effacerRun();
         enregistrerRun(meta, false);
         noterRecord(o, i.id, o.stats.zones, false);
@@ -1291,14 +1288,14 @@ async function jouerRun(e, t, n = 0, r = `t1`, idoles = [], jour = false) {
       o.carte = null;
       if (e < a.length - 1) {
         sauverRun(e + 1, o);
-        runActive = { zoneIdx: e + 1, run: o };
+        etatRun.active = { zoneIdx: e + 1, run: o };
         await ecranMessage(
           `${t.nom} — vaincu !`,
           `Équipe soignée à 100 %. Zone ${e + 2}/${a.length} : tu pénètres dans ${a[e + 1].nom}.`,
         );
       }
     }
-    runActive = null;
+    etatRun.active = null;
     effacerRun();
     enregistrerRun(meta, true, i.id);
     let avant = etatDeblocage(meta, i.id);
@@ -1309,7 +1306,7 @@ async function jouerRun(e, t, n = 0, r = `t1`, idoles = [], jour = false) {
     await traiterQuetes(o, verifierQuetesMeta(quetesMeta(), ctxMeta()));
     return relance(await ecranRecap(o, true, quetesDeLaRun(o), debloques));
   } finally {
-    runActive = null;
+    etatRun.active = null;
     fondDuMonde(null);
   }
 }
