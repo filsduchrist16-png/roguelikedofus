@@ -62,244 +62,265 @@ import {
   soigner,
   soignerPlusBlesse,
 } from "./effets.js";
-export function lancerAttaque(e, t, n, r, i) {
-  let a = calculerDegatsDetail(e, t, n, r);
-  if (a.esquive) {
+export function lancerAttaque(lanceur, sort, cible, options, libelle) {
+  let detail = calculerDegatsDetail(lanceur, sort, cible, options);
+  if (detail.esquive) {
     return (
-      r.ctx.log(`${n.nom} esquive ${i} !`),
-      r.ctx.fx?.({
+      options.ctx.log(`${cible.nom} esquive ${libelle} !`),
+      options.ctx.fx?.({
         type: `esquive`,
-        ref: n.ref,
+        ref: cible.ref,
       }),
       0
     );
   }
   return (
-    a.crit &&
-      r.ctx.fx?.({
+    detail.crit &&
+      options.ctx.fx?.({
         type: `crit`,
-        ref: n.ref,
+        ref: cible.ref,
       }),
-    infligerDegats(n, a.dmg, e, r.ctx, undefined, undefined, a.element),
-    n.estLance ||
+    infligerDegats(cible, detail.dmg, lanceur, options.ctx, undefined, undefined, detail.element),
+    cible.estLance ||
       logDegats(
-        r.ctx,
-        `${e.nom} → ${i} sur ${n.nom} : `,
-        a.dmg,
-        a.element,
-        `${a.crit ? ` (CRIT)` : ``}.${n.pvActuels <= 0 ? ` ${n.nom} est K.O. !` : ``}`,
+        options.ctx,
+        `${lanceur.nom} → ${libelle} sur ${cible.nom} : `,
+        detail.dmg,
+        detail.element,
+        `${detail.crit ? ` (CRIT)` : ``}.${cible.pvActuels <= 0 ? ` ${cible.nom} est K.O. !` : ``}`,
       ),
-    a.dmg
+    detail.dmg
   );
 }
-export function declencherPiege(e, t, n) {
-  let r = null;
-  for (let poseur_1 of t) {
-    if (!poseur_1.pieges?.length) {
+export function declencherPiege(cible, combattants, contexte) {
+  let trouve = null;
+  for (let poseurCandidat of combattants) {
+    if (!poseurCandidat.pieges?.length) {
       continue;
     }
-    let index_1 = poseur_1.pieges.findIndex(
-      (t) => t.camp === e.camp && t.avant === enLigneAvant(e),
+    let indexCandidat = poseurCandidat.pieges.findIndex(
+      (piege) => piege.camp === cible.camp && piege.avant === enLigneAvant(cible),
     );
-    if (index_1 >= 0) {
-      r = {
-        poseur: poseur_1,
-        index: index_1,
+    if (indexCandidat >= 0) {
+      trouve = {
+        poseur: poseurCandidat,
+        index: indexCandidat,
       };
       break;
     }
   }
-  if (!r) {
+  if (!trouve) {
     return;
   }
-  let { poseur, index } = r;
-  let o = SORTS[poseur.pieges[index].sortId];
-  if (!o) {
+  let { poseur, index } = trouve;
+  let sortPiege = SORTS[poseur.pieges[index].sortId];
+  if (!sortPiege) {
     return;
   }
   poseur.pieges.splice(index, 1);
-  n.log(`💥 Le piège de ${poseur.nom} se déclenche sur ${e.nom} !`);
-  let s =
-    bonusPortails(poseur, t) *
-    bonusConjuration(poseur, e, t) *
+  contexte.log(`💥 Le piège de ${poseur.nom} se déclenche sur ${cible.nom} !`);
+  let mult =
+    bonusPortails(poseur, combattants) *
+    bonusConjuration(poseur, cible, combattants) *
     (1 + sommeEffets(poseur, `bonusPieges`));
-  if (o.bonusParEnnemiLigneCible) {
-    s *=
+  if (sortPiege.bonusParEnnemiLigneCible) {
+    mult *=
       1 +
-      o.bonusParEnnemiLigneCible *
-        ennemisVivants(poseur, t).filter(
-          (t) => t.ref !== e.ref && !t.estLance && enLigneAvant(t) === enLigneAvant(e),
+      sortPiege.bonusParEnnemiLigneCible *
+        ennemisVivants(poseur, combattants).filter(
+          (ennemi) =>
+            ennemi.ref !== cible.ref &&
+            !ennemi.estLance &&
+            enLigneAvant(ennemi) === enLigneAvant(cible),
         ).length;
   }
-  let c = ciblesTouchees(poseur, o, e, t);
-  for (let t of c) {
-    let r = !!o.ratioLigne && t.ref !== e.ref;
-    let a = r ? o.ratioLigne : 1;
-    let c = r ? `${o.nom} (piège, éclaboussure)` : `${o.nom} (piège)`;
+  let touchees = ciblesTouchees(poseur, sortPiege, cible, combattants);
+  for (let touchee of touchees) {
+    let eclaboussure = !!sortPiege.ratioLigne && touchee.ref !== cible.ref;
+    let ratio = eclaboussure ? sortPiege.ratioLigne : 1;
+    let libelle = eclaboussure
+      ? `${sortPiege.nom} (piège, éclaboussure)`
+      : `${sortPiege.nom} (piège)`;
     lancerAttaque(
       poseur,
-      o,
-      t,
+      sortPiege,
+      touchee,
       {
         useMax: false,
-        mult: s * a,
-        ctx: n,
+        mult: mult * ratio,
+        ctx: contexte,
       },
-      c,
+      libelle,
     );
   }
   poseur.chausseTrappe = Math.min(5, (poseur.chausseTrappe ?? 0) + 1);
 }
-function declencherKaboom(lanceur, sort, n, ctx) {
-  let i = new Set();
-  let a = bonusPortails(lanceur, n);
-  for (let o of ennemisVivants(lanceur, n).filter((e) => (e.bombes ?? 0) > 0)) {
-    let s = o.bombes ?? 0;
-    let c = ennemisVivants(lanceur, n).filter(
-      (e) => e.ref !== o.ref && enLigneAvant(e) === enLigneAvant(o),
+function declencherKaboom(lanceur, sort, combattants, ctx) {
+  let victimes = new Set();
+  let mult = bonusPortails(lanceur, combattants);
+  for (let cible of ennemisVivants(lanceur, combattants).filter(
+    (ennemi) => (ennemi.bombes ?? 0) > 0,
+  )) {
+    let nbBombes = cible.bombes ?? 0;
+    let voisins = ennemisVivants(lanceur, combattants).filter(
+      (ennemi) => ennemi.ref !== cible.ref && enLigneAvant(ennemi) === enLigneAvant(cible),
     );
-    for (let l = 0; l < s && o.pvActuels > 0; l++) {
+    for (let indiceBombe = 0; indiceBombe < nbBombes && cible.pvActuels > 0; indiceBombe++) {
       if (
         lancerAttaque(
           lanceur,
           sort,
-          o,
+          cible,
           {
             useMax: false,
-            mult: a * bonusConjuration(lanceur, o, n),
+            mult: mult * bonusConjuration(lanceur, cible, combattants),
             ctx,
           },
           sort.nom,
         ) > 0 &&
-        !o.estLance
+        !cible.estLance
       ) {
-        i.add(o.ref);
+        victimes.add(cible.ref);
       }
-      for (let o of c) {
-        o.pvActuels <= 0 ||
+      for (let voisin of voisins) {
+        voisin.pvActuels <= 0 ||
           (lancerAttaque(
             lanceur,
             sort,
-            o,
+            voisin,
             {
               useMax: false,
-              mult: 0.5 * a * bonusConjuration(lanceur, o, n),
+              mult: 0.5 * mult * bonusConjuration(lanceur, voisin, combattants),
               ctx,
             },
             sort.nom,
           ) > 0 &&
-            !o.estLance &&
-            i.add(o.ref));
+            !voisin.estLance &&
+            victimes.add(voisin.ref));
       }
     }
   }
   if (lanceur.resquilleActive) {
-    for (let t of i) {
-      let i = trouverParRef(n, t);
-      if (i && i.pvActuels > 0) {
-        retirerPA(i, lanceur.resquilleActive, ctx);
+    for (let ref of victimes) {
+      let victime = trouverParRef(combattants, ref);
+      if (victime && victime.pvActuels > 0) {
+        retirerPA(victime, lanceur.resquilleActive, ctx);
       }
     }
   }
   lanceur.resquilleActive = undefined;
-  for (let e of n) {
-    e.bombes = 0;
+  for (let combattant of combattants) {
+    combattant.bombes = 0;
   }
 }
-function resoudreFlecheEnflammee(lanceur, sort, n, r, ctx, paAvant) {
+function resoudreFlecheEnflammee(lanceur, sort, cible, combattants, ctx, paAvant) {
   ctx.log(`${lanceur.nom} lance ${sort.nom}.`);
-  let o = {
+  let attaque = {
     baseMin: sort.baseMin,
     baseMax: sort.baseMax,
   };
-  let s = bonusPortails(lanceur, r);
-  let c = {
+  let mult = bonusPortails(lanceur, combattants);
+  let options = {
     useMax: false,
-    mult: s * bonusConjuration(lanceur, n, r),
+    mult: mult * bonusConjuration(lanceur, cible, combattants),
     ctx,
     paAvant,
   };
-  lancerAttaque(lanceur, o, n, c, sort.nom);
-  if (enLigneAvant(n)) {
-    let i = ennemisVivants(lanceur, r).filter((e) => !enLigneAvant(e));
-    for (let a of plusProches(n, i, 2)) {
+  lancerAttaque(lanceur, attaque, cible, options, sort.nom);
+  if (enLigneAvant(cible)) {
+    let arriere = ennemisVivants(lanceur, combattants).filter((ennemi) => !enLigneAvant(ennemi));
+    for (let victime of plusProches(cible, arriere, 2)) {
       lancerAttaque(
         lanceur,
-        o,
-        a,
+        attaque,
+        victime,
         {
-          ...c,
-          mult: 0.5 * s * bonusConjuration(lanceur, a, r),
+          ...options,
+          mult: 0.5 * mult * bonusConjuration(lanceur, victime, combattants),
         },
         `${sort.nom} (éclaboussure)`,
       );
     }
   } else {
-    let i = ennemisVivants(lanceur, r).filter((e) => e.ref !== n.ref && !enLigneAvant(e));
-    for (let a of plusProches(n, i, 2)) {
+    let autres = ennemisVivants(lanceur, combattants).filter(
+      (ennemi) => ennemi.ref !== cible.ref && !enLigneAvant(ennemi),
+    );
+    for (let victime of plusProches(cible, autres, 2)) {
       lancerAttaque(
         lanceur,
-        o,
-        a,
+        attaque,
+        victime,
         {
-          ...c,
-          mult: s * bonusConjuration(lanceur, a, r),
+          ...options,
+          mult: mult * bonusConjuration(lanceur, victime, combattants),
         },
         `${sort.nom} (éclaboussure)`,
       );
     }
   }
 }
-function resoudreDegatsPoussee(lanceur, sort, n, r, ctx, paAvant) {
+function resoudreDegatsPoussee(lanceur, sort, cible, combattants, ctx, paAvant) {
   ctx.log(`${lanceur.nom} lance ${sort.nom}.`);
-  let o = {
+  let attaque = {
     baseMin: sort.baseMin,
     baseMax: sort.baseMax,
     ignoreResistances: true,
   };
-  let s = bonusPortails(lanceur, r);
-  let c = (t) => ({
+  let mult = bonusPortails(lanceur, combattants);
+  let options = (cibleVisee) => ({
     useMax: false,
-    mult: s * bonusConjuration(lanceur, t, r),
+    mult: mult * bonusConjuration(lanceur, cibleVisee, combattants),
     ctx,
     paAvant,
   });
-  let l = vivants(r).filter(
-    (e) => e.camp === n.camp && e.ref !== n.ref && enLigneAvant(e) === enLigneAvant(n),
+  let voisins = vivants(combattants).filter(
+    (combattant) =>
+      combattant.camp === cible.camp &&
+      combattant.ref !== cible.ref &&
+      enLigneAvant(combattant) === enLigneAvant(cible),
   );
-  if (l.length > 0) {
-    let r = plusProches(n, l, 1)[0];
-    lancerAttaque(lanceur, o, n, c(n), `${sort.nom} (bousculade)`);
-    lancerAttaque(lanceur, o, r, c(r), `${sort.nom} (bousculade)`);
+  if (voisins.length > 0) {
+    let voisin = plusProches(cible, voisins, 1)[0];
+    lancerAttaque(lanceur, attaque, cible, options(cible), `${sort.nom} (bousculade)`);
+    lancerAttaque(lanceur, attaque, voisin, options(voisin), `${sort.nom} (bousculade)`);
     return;
   }
-  let u = vivants(r).filter((e) => e.camp === n.camp && e.ref !== n.ref && !enLigneAvant(e));
-  let n_position = n.position;
-  repousser(n, `arriere`, r, ctx);
-  if (n.position === n_position || n.pvActuels <= 0) {
+  let derriere = vivants(combattants).filter(
+    (combattant) =>
+      combattant.camp === cible.camp && combattant.ref !== cible.ref && !enLigneAvant(combattant),
+  );
+  let n_position = cible.position;
+  repousser(cible, `arriere`, combattants, ctx);
+  if (cible.position === n_position || cible.pvActuels <= 0) {
     return;
   }
-  let f = plusProches(n, u, 1)[0];
-  if (f) {
-    lancerAttaque(lanceur, o, n, c(n), `${sort.nom} (bousculade)`);
-    lancerAttaque(lanceur, o, f, c(f), `${sort.nom} (bousculade)`);
+  let voisinArriere = plusProches(cible, derriere, 1)[0];
+  if (voisinArriere) {
+    lancerAttaque(lanceur, attaque, cible, options(cible), `${sort.nom} (bousculade)`);
+    lancerAttaque(
+      lanceur,
+      attaque,
+      voisinArriere,
+      options(voisinArriere),
+      `${sort.nom} (bousculade)`,
+    );
   }
 }
-function preparerLancer(lanceur, sort, cibleRef, cs, i) {
-  i.combatants = cs;
+function preparerLancer(lanceur, sort, cibleRef, cs, contexte) {
+  contexte.combatants = cs;
   let paAvant = lanceur.paActuels + coutPA(sort, lanceur);
   let cible = trouverParRef(cs, cibleRef);
   let multEscalade = multiplicateurRelance(sort, lanceur);
   if (sort.maxParTour || sort.maxParCibleParTour || sort.bonusParRelanceCeTour) {
-    let r = (lanceur.lancersCeTour ??= {});
-    r[sort.id] = (r[sort.id] ?? 0) + 1;
+    let lancers = (lanceur.lancersCeTour ??= {});
+    lancers[sort.id] = (lancers[sort.id] ?? 0) + 1;
     if (cibleRef) {
-      r[`${sort.id}:${cibleRef}`] = (r[`${sort.id}:${cibleRef}`] ?? 0) + 1;
+      lancers[`${sort.id}:${cibleRef}`] = (lancers[`${sort.id}:${cibleRef}`] ?? 0) + 1;
     }
   }
   if (sort.bonusParLancerCombat) {
-    let n = (lanceur.lancersCombat ??= {});
-    n[sort.id] = (n[sort.id] ?? 0) + 1;
+    let lancersCombat = (lanceur.lancersCombat ??= {});
+    lancersCombat[sort.id] = (lancersCombat[sort.id] ?? 0) + 1;
   }
   return {
     lanceur,
@@ -307,165 +328,168 @@ function preparerLancer(lanceur, sort, cibleRef, cs, i) {
     cibleRef,
     cible,
     cs,
-    ctx: i,
+    ctx: contexte,
     paAvant,
     multEscalade,
-    poseCooldown: (n) => {
-      let r = (t, n) => {
-        lanceur.cooldowns[t] = n;
-        (lanceur.cooldownsPosesCeTour ??= new Set()).add(t);
+    poseCooldown: (cibleTouchee) => {
+      let poser = (cle, duree) => {
+        lanceur.cooldowns[cle] = duree;
+        (lanceur.cooldownsPosesCeTour ??= new Set()).add(cle);
       };
       if (sort.cooldown) {
-        r(`${sort.id}:${n.ref}`, sort.cooldown);
+        poser(`${sort.id}:${cibleTouchee.ref}`, sort.cooldown);
       }
       if (sort.cooldownTours) {
-        r(sort.id, sort.cooldownTours);
+        poser(sort.id, sort.cooldownTours);
       }
     },
   };
 }
-function echecCritique(e) {
-  let t = sommeEffets(e.lanceur, `echecCritique`);
-  if (t > 0 && e.ctx.rng() < t) {
-    return (e.ctx.log(`${e.lanceur.nom} subit un échec critique : ${e.sort.nom} échoue !`), true);
+function echecCritique(lancer) {
+  let chance = sommeEffets(lancer.lanceur, `echecCritique`);
+  if (chance > 0 && lancer.ctx.rng() < chance) {
+    return (
+      lancer.ctx.log(`${lancer.lanceur.nom} subit un échec critique : ${lancer.sort.nom} échoue !`),
+      true
+    );
   }
   return false;
 }
-const aUneCible = (e) => e.cible !== undefined;
+const aUneCible = (lancer) => lancer.cible !== undefined;
 const RESOLVEURS_SORTS = [
   {
     nom: `poseBombe`,
-    declencheur: (e) => !!e.poseBombe,
+    declencheur: (sort) => !!sort.poseBombe,
     garde: aUneCible,
-    resoudre: (e) => {
-      let { ctx, poseCooldown } = e;
-      let e_cible = e.cible;
-      if (!poserBombe(e_cible, ctx)) {
-        ctx.log(`La bombe glisse : ${e_cible.nom} est déjà chargé au maximum.`);
+    resoudre: (lancer) => {
+      let { ctx, poseCooldown } = lancer;
+      let cible = lancer.cible;
+      if (!poserBombe(cible, ctx)) {
+        ctx.log(`La bombe glisse : ${cible.nom} est déjà chargé au maximum.`);
       }
-      poseCooldown(e_cible);
+      poseCooldown(cible);
     },
   },
   {
     nom: `posePiege`,
-    declencheur: (e) => !!e.posePiege,
+    declencheur: (sort) => !!sort.posePiege,
     garde: aUneCible,
-    resoudre: (e) => {
-      let { lanceur, sort, ctx, poseCooldown } = e;
-      let e_cible = e.cible;
-      let o = (lanceur.pieges ??= []);
-      if (o.length >= 4) {
-        o.shift();
+    resoudre: (lancer) => {
+      let { lanceur, sort, ctx, poseCooldown } = lancer;
+      let cible = lancer.cible;
+      let pieges = (lanceur.pieges ??= []);
+      if (pieges.length >= 4) {
+        pieges.shift();
       }
-      o.push({
+      pieges.push({
         sortId: sort.id,
-        camp: e_cible.camp,
-        avant: enLigneAvant(e_cible),
+        camp: cible.camp,
+        avant: enLigneAvant(cible),
       });
       ctx.log(
-        `${lanceur.nom} pose un piège sur la rangée ${enLigneAvant(e_cible) ? `avant` : `arrière`} de ${e_cible.nom}.`,
+        `${lanceur.nom} pose un piège sur la rangée ${enLigneAvant(cible) ? `avant` : `arrière`} de ${cible.nom}.`,
       );
-      poseCooldown(e_cible);
+      poseCooldown(cible);
     },
   },
   {
     nom: `kaboom`,
-    declencheur: (e) => !!e.kaboom,
+    declencheur: (sort) => !!sort.kaboom,
     resoudre: ({ lanceur, sort, cs, ctx }) => {
       declencherKaboom(lanceur, sort, cs, ctx);
     },
   },
   {
     nom: `boomerang`,
-    declencheur: (e) => !!e.boomerang,
+    declencheur: (sort) => !!sort.boomerang,
     garde: aUneCible,
-    resoudre: (e) => {
-      let { lanceur, sort, cs, ctx, poseCooldown } = e;
-      let e_cible = e.cible;
+    resoudre: (lancer) => {
+      let { lanceur, sort, cs, ctx, poseCooldown } = lancer;
+      let cible = lancer.cible;
       ctx.log(`${lanceur.nom} lance ${sort.nom}.`);
-      let s = bonusPortails(lanceur, cs);
+      let mult = bonusPortails(lanceur, cs);
       lancerAttaque(
         lanceur,
         sort,
-        e_cible,
+        cible,
         {
           useMax: false,
-          mult: s * bonusConjuration(lanceur, e_cible, cs),
+          mult: mult * bonusConjuration(lanceur, cible, cs),
           ctx,
         },
         sort.nom,
       );
-      let c = allieDerriere(e_cible, cs);
-      if (c && c.pvActuels > 0) {
+      let derriere = allieDerriere(cible, cs);
+      if (derriere && derriere.pvActuels > 0) {
         lancerAttaque(
           lanceur,
           sort,
-          c,
+          derriere,
           {
             useMax: false,
-            mult: s * bonusConjuration(lanceur, c, cs),
+            mult: mult * bonusConjuration(lanceur, derriere, cs),
             ctx,
           },
           sort.nom,
         );
-        if (e_cible.pvActuels > 0) {
+        if (cible.pvActuels > 0) {
           lancerAttaque(
             lanceur,
             sort,
-            e_cible,
+            cible,
             {
               useMax: false,
-              mult: s * bonusConjuration(lanceur, e_cible, cs),
+              mult: mult * bonusConjuration(lanceur, cible, cs),
               ctx,
             },
             sort.nom,
           );
         }
       }
-      poseCooldown(e_cible);
+      poseCooldown(cible);
     },
   },
   {
     nom: `enflammee`,
-    declencheur: (e) => !!e.enflammee,
+    declencheur: (sort) => !!sort.enflammee,
     garde: aUneCible,
-    resoudre: (e) => {
-      let { lanceur, sort, cs, ctx, paAvant, poseCooldown } = e;
-      let e_cible = e.cible;
-      resoudreFlecheEnflammee(lanceur, sort, e_cible, cs, ctx, paAvant);
-      poseCooldown(e_cible);
+    resoudre: (lancer) => {
+      let { lanceur, sort, cs, ctx, paAvant, poseCooldown } = lancer;
+      let cible = lancer.cible;
+      resoudreFlecheEnflammee(lanceur, sort, cible, cs, ctx, paAvant);
+      poseCooldown(cible);
     },
   },
   {
     nom: `degatsPoussee`,
-    declencheur: (e) => !!e.degatsPoussee,
+    declencheur: (sort) => !!sort.degatsPoussee,
     garde: aUneCible,
-    resoudre: (e) => {
-      let { lanceur, sort, cs, ctx, paAvant, poseCooldown } = e;
-      let e_cible = e.cible;
-      resoudreDegatsPoussee(lanceur, sort, e_cible, cs, ctx, paAvant);
-      poseCooldown(e_cible);
+    resoudre: (lancer) => {
+      let { lanceur, sort, cs, ctx, paAvant, poseCooldown } = lancer;
+      let cible = lancer.cible;
+      resoudreDegatsPoussee(lanceur, sort, cible, cs, ctx, paAvant);
+      poseCooldown(cible);
     },
   },
   {
     nom: `mixteAllie`,
-    declencheur: (e) => e.cible === `mixte` && !!e.mixte,
-    garde: (e) => e.cible !== undefined && e.cible.camp === e.lanceur.camp,
+    declencheur: (sort) => sort.cible === `mixte` && !!sort.mixte,
+    garde: (lancer) => lancer.cible !== undefined && lancer.cible.camp === lancer.lanceur.camp,
     repliSurDegats: true,
-    resoudre: (e) => {
-      let { lanceur, sort, ctx, poseCooldown } = e;
-      let e_cible = e.cible;
-      ctx.log(`${lanceur.nom} lance ${sort.nom} sur ${e_cible.nom}.`);
+    resoudre: (lancer) => {
+      let { lanceur, sort, ctx, poseCooldown } = lancer;
+      let cible = lancer.cible;
+      ctx.log(`${lanceur.nom} lance ${sort.nom} sur ${cible.nom}.`);
       let surAllie = sort.mixte.surAllie;
       if (surAllie.effet) {
         if (surAllie.nonCumulable) {
-          e_cible.effets = e_cible.effets.filter((e) => e.stat !== surAllie.effet.stat);
+          cible.effets = cible.effets.filter((effet) => effet.stat !== surAllie.effet.stat);
         }
-        appliquerEffet(e_cible, surAllie.effet);
+        appliquerEffet(cible, surAllie.effet);
       }
       if (surAllie.soin) {
         soigner(
-          e_cible,
+          cible,
           Math.round(
             tirageEntier(surAllie.soin.min, surAllie.soin.max, ctx.rng) *
               multiplicateurSoinDe(lanceur),
@@ -473,12 +497,12 @@ const RESOLVEURS_SORTS = [
           ctx,
         );
       }
-      poseCooldown(e_cible);
+      poseCooldown(cible);
     },
   },
   {
     nom: `invocation`,
-    declencheur: (e) => e.type === `invocation`,
+    declencheur: (sort) => sort.type === `invocation`,
     resoudre: ({ lanceur, sort, cs, ctx, poseCooldown }) => {
       if (sort.invocation) {
         invoquerPoupee(lanceur, sort.invocation, cs, ctx);
@@ -497,30 +521,30 @@ const RESOLVEURS_SORTS = [
   },
   {
     nom: `consommeRage`,
-    declencheur: (e) => !!e.consommeRage,
+    declencheur: (sort) => !!sort.consommeRage,
     resoudre: ({ lanceur, sort, ctx, poseCooldown }) => {
-      let a = lanceur.rage ?? 0;
-      if (a <= 0) {
+      let rage = lanceur.rage ?? 0;
+      if (rage <= 0) {
         return;
       }
       lanceur.rage = 0;
-      let o = Math.round(
-        tirageEntier(sort.baseMin, sort.baseMax, ctx.rng) * a * multiplicateurSoinDe(lanceur),
+      let soin = Math.round(
+        tirageEntier(sort.baseMin, sort.baseMax, ctx.rng) * rage * multiplicateurSoinDe(lanceur),
       );
-      ctx.log(`${lanceur.nom} lance ${sort.nom} : ${a} Rage consommée${a > 1 ? `s` : ``}.`);
-      soigner(lanceur, o, ctx);
+      ctx.log(`${lanceur.nom} lance ${sort.nom} : ${rage} Rage consommée${rage > 1 ? `s` : ``}.`);
+      soigner(lanceur, soin, ctx);
       poseCooldown(lanceur);
     },
   },
   {
     nom: `changeLigne`,
-    declencheur: (e) => !!e.changeLigne,
+    declencheur: (sort) => !!sort.changeLigne,
     resoudre: ({ lanceur, cs, ctx, poseCooldown }) => {
-      let a = caseOpposeeLibre(lanceur, cs);
-      if (a !== null) {
-        lanceur.position = a;
+      let positionLibre = caseOpposeeLibre(lanceur, cs);
+      if (positionLibre !== null) {
+        lanceur.position = positionLibre;
         ctx.log(
-          `${lanceur.nom} se glisse en ligne ${a < 4 ? `AVANT` : `ARRIÈRE`} (Dagues Eurfolles).`,
+          `${lanceur.nom} se glisse en ligne ${positionLibre < 4 ? `AVANT` : `ARRIÈRE`} (Dagues Eurfolles).`,
         );
         poseCooldown(lanceur);
       }
@@ -528,7 +552,7 @@ const RESOLVEURS_SORTS = [
   },
   {
     nom: `invoqueLance`,
-    declencheur: (e) => !!e.invoqueLance,
+    declencheur: (sort) => !!sort.invoqueLance,
     resoudre: ({ lanceur, cible, cs, ctx, poseCooldown }) => {
       if (cible) {
         planterLance(lanceur, cible, cs, ctx);
@@ -538,7 +562,7 @@ const RESOLVEURS_SORTS = [
   },
   {
     nom: `invoqueEgide`,
-    declencheur: (e) => !!e.invoqueEgide,
+    declencheur: (sort) => !!sort.invoqueEgide,
     resoudre: ({ lanceur, sort, cible, cs, ctx, poseCooldown }) => {
       if (cible) {
         invoquerEgide(lanceur, cible, sort.invoqueEgide.tours, cs, ctx);
@@ -548,21 +572,21 @@ const RESOLVEURS_SORTS = [
   },
   {
     nom: `rappelleLance`,
-    declencheur: (e) => !!e.rappelleLance,
+    declencheur: (sort) => !!sort.rappelleLance,
     resoudre: ({ lanceur, sort, cs, ctx, poseCooldown }) => {
-      let o = cs.find((e) => e.ref === `lance_${lanceur.ref}` && e.pvActuels > 0);
-      if (!o) {
+      let lance = cs.find(
+        (combattant) => combattant.ref === `lance_${lanceur.ref}` && combattant.pvActuels > 0,
+      );
+      if (!lance) {
         return;
       }
-      let o_pvActuels = o.pvActuels;
-      for (ctx.log(`${lanceur.nom} rappelle sa lance (Vajra).`); o.pvActuels > 0;) {
-        infligerDegats(o, 1, undefined, ctx);
+      let pvLance = lance.pvActuels;
+      for (ctx.log(`${lanceur.nom} rappelle sa lance (Vajra).`); lance.pvActuels > 0;) {
+        infligerDegats(lance, 1, undefined, ctx);
       }
       soigner(
         lanceur,
-        Math.round(
-          sort.rappelleLance.soinParDurabilite * o_pvActuels * multiplicateurSoinDe(lanceur),
-        ),
+        Math.round(sort.rappelleLance.soinParDurabilite * pvLance * multiplicateurSoinDe(lanceur)),
         ctx,
       );
       poseCooldown(lanceur);
@@ -570,7 +594,7 @@ const RESOLVEURS_SORTS = [
   },
   {
     nom: `redirigeArriere`,
-    declencheur: (e) => !!e.redirigeArriere,
+    declencheur: (sort) => !!sort.redirigeArriere,
     resoudre: ({ lanceur, sort, ctx, poseCooldown }) => {
       lanceur.redirection = {
         ratio: sort.redirigeArriere.ratio,
@@ -583,14 +607,14 @@ const RESOLVEURS_SORTS = [
   },
   {
     nom: `soin`,
-    declencheur: (e) => e.type === `soin`,
+    declencheur: (sort) => sort.type === `soin`,
     resoudre: ({ lanceur, sort, cible, cs, ctx, poseCooldown }) => {
       ctx.log(`${lanceur.nom} lance ${sort.nom}.`);
-      for (let e of ciblesSoutien(sort, lanceur, cible, cs)) {
+      for (let soutenu of ciblesSoutien(sort, lanceur, cible, cs)) {
         soigner(
-          e,
+          soutenu,
           sort.soinComplet
-            ? e.pvMax - e.pvActuels
+            ? soutenu.pvMax - soutenu.pvActuels
             : Math.round(
                 tirageEntier(sort.baseMin, sort.baseMax, ctx.rng) *
                   multiplicateurSoinDe(lanceur) *
@@ -598,57 +622,59 @@ const RESOLVEURS_SORTS = [
               ),
           ctx,
         );
-        poseCooldown(e);
+        poseCooldown(soutenu);
       }
       effetsClasseApresSoin(lanceur, sort, cs, ctx);
     },
   },
   {
     nom: `marqueProie`,
-    declencheur: (e) => !!e.marqueProie,
+    declencheur: (sort) => !!sort.marqueProie,
     garde: aUneCible,
-    resoudre: (e) => {
-      let { lanceur, sort, cs, ctx, poseCooldown } = e;
-      let e_cible = e.cible;
-      for (let e of cs) {
-        e.effets = e.effets.filter((e) => e.stat !== `proie`);
+    resoudre: (lancer) => {
+      let { lanceur, sort, cs, ctx, poseCooldown } = lancer;
+      let cible = lancer.cible;
+      for (let combattant of cs) {
+        combattant.effets = combattant.effets.filter((effet) => effet.stat !== `proie`);
       }
-      e_cible.effets.push({
+      cible.effets.push({
         stat: `proie`,
         valeur: sort.marqueProie,
         toursRestants: 99,
       });
       ctx.log(
-        `🎯 ${lanceur.nom} désigne ${e_cible.nom} comme Proie : l'équipe vole ${Math.round(sort.marqueProie * 100)} % des dégâts qu'elle lui inflige.`,
+        `🎯 ${lanceur.nom} désigne ${cible.nom} comme Proie : l'équipe vole ${Math.round(sort.marqueProie * 100)} % des dégâts qu'elle lui inflige.`,
       );
-      poseCooldown(e_cible);
+      poseCooldown(cible);
     },
   },
   {
     nom: `paParTourLigne`,
-    declencheur: (e) => !!e.paParTourLigne,
+    declencheur: (sort) => !!sort.paParTourLigne,
     garde: aUneCible,
-    resoudre: (e) => {
-      let { lanceur, sort, cs, ctx, poseCooldown } = e;
-      let sort_paParTourLigne = sort.paParTourLigne;
-      let e_cible = e.cible;
-      let c = alliesVivants(lanceur, cs).filter((e) => enLigneAvant(e) === enLigneAvant(e_cible));
-      for (let e of c) {
-        appliquerEffet(e, {
+    resoudre: (lancer) => {
+      let { lanceur, sort, cs, ctx, poseCooldown } = lancer;
+      let paParTour = sort.paParTourLigne;
+      let cible = lancer.cible;
+      let ligne = alliesVivants(lanceur, cs).filter(
+        (allie) => enLigneAvant(allie) === enLigneAvant(cible),
+      );
+      for (let allie of ligne) {
+        appliquerEffet(allie, {
           stat: `paParTour`,
-          valeur: sort_paParTourLigne.valeur,
-          duree: sort_paParTourLigne.duree,
+          valeur: paParTour.valeur,
+          duree: paParTour.duree,
         });
       }
       ctx.log(
-        `${lanceur.nom} lance ${sort.nom} : la ligne de ${e_cible.nom} gagne +${sort_paParTourLigne.valeur} PA/tour.`,
+        `${lanceur.nom} lance ${sort.nom} : la ligne de ${cible.nom} gagne +${paParTour.valeur} PA/tour.`,
       );
-      poseCooldown(e_cible);
+      poseCooldown(cible);
     },
   },
   {
     nom: `posePortail`,
-    declencheur: (e) => !!e.posePortail,
+    declencheur: (sort) => !!sort.posePortail,
     resoudre: ({ lanceur, ctx, poseCooldown }) => {
       ouvrirPortail(lanceur, ctx);
       poseCooldown(lanceur);
@@ -656,43 +682,45 @@ const RESOLVEURS_SORTS = [
   },
   {
     nom: `paProchainTourLigne`,
-    declencheur: (e) => !!e.paProchainTourLigne,
+    declencheur: (sort) => !!sort.paProchainTourLigne,
     resoudre: ({ lanceur, sort, cs, ctx, poseCooldown }) => {
-      let sort_paProchainTourLigne = sort.paProchainTourLigne;
-      let s =
-        (lanceur.portails ?? 0) >= sort_paProchainTourLigne.seuil
-          ? sort_paProchainTourLigne.valeurSeuil
-          : sort_paProchainTourLigne.valeur;
-      let c = alliesVivants(lanceur, cs).filter((e) => enLigneAvant(e) === enLigneAvant(lanceur));
-      for (let e of c) {
-        e.paBonusNextTurn += s;
+      let paProchainTour = sort.paProchainTourLigne;
+      let pa =
+        (lanceur.portails ?? 0) >= paProchainTour.seuil
+          ? paProchainTour.valeurSeuil
+          : paProchainTour.valeur;
+      let ligne = alliesVivants(lanceur, cs).filter(
+        (allie) => enLigneAvant(allie) === enLigneAvant(lanceur),
+      );
+      for (let allie of ligne) {
+        allie.paBonusNextTurn += pa;
       }
-      ctx.log(`${lanceur.nom} lance ${sort.nom} : sa rangée gagne +${s} PA au prochain tour.`);
+      ctx.log(`${lanceur.nom} lance ${sort.nom} : sa rangée gagne +${pa} PA au prochain tour.`);
       poseCooldown(lanceur);
     },
   },
   {
     nom: `facesAleatoires`,
-    declencheur: (e) => !!e.facesAleatoires,
+    declencheur: (sort) => !!sort.facesAleatoires,
     resoudre: ({ lanceur, sort, cs, ctx, poseCooldown }) => {
-      let sort_facesAleatoires = sort.facesAleatoires;
+      let faces = sort.facesAleatoires;
       ctx.log(`${lanceur.nom} lance ${sort.nom}.`);
-      let s =
+      let nbTirages =
         aBonusSiCrit(sort) &&
         ctx.rng() < chanceCritique(statsEffectives(lanceur)) &&
         sort.tiragesSiCrit
           ? sort.tiragesSiCrit
           : 1;
-      for (let e = 0; e < s; e++) {
-        let e = sort_facesAleatoires[Math.floor(ctx.rng() * sort_facesAleatoires.length)];
-        ctx.log(`${lanceur.nom} tire : ${descriptionBuff(e)}.`);
-        for (let n of ciblesBouclierGroupe(lanceur, cs, e.portee)) {
-          if (e.effet) {
-            appliquerEffet(n, e.effet);
+      for (let tirage = 0; tirage < nbTirages; tirage++) {
+        let face = faces[Math.floor(ctx.rng() * faces.length)];
+        ctx.log(`${lanceur.nom} tire : ${descriptionBuff(face)}.`);
+        for (let cibleGroupe of ciblesBouclierGroupe(lanceur, cs, face.portee)) {
+          if (face.effet) {
+            appliquerEffet(cibleGroupe, face.effet);
           }
         }
-        if (e.bouclierPct) {
-          bouclierGroupe(lanceur, cs, e.portee, e.bouclierPct, e.duree, ctx);
+        if (face.bouclierPct) {
+          bouclierGroupe(lanceur, cs, face.portee, face.bouclierPct, face.duree, ctx);
         }
       }
       poseCooldown(lanceur);
@@ -700,14 +728,14 @@ const RESOLVEURS_SORTS = [
   },
   {
     nom: `soutien`,
-    declencheur: (e) => e.type === `buff` || e.type === `debuff`,
+    declencheur: (sort) => sort.type === `buff` || sort.type === `debuff`,
     resoudre: ({ lanceur, sort, cible, cs, ctx, poseCooldown }) => {
       ctx.log(`${lanceur.nom} lance ${sort.nom}.`);
-      let s = aBonusSiCrit(sort) && ctx.rng() < chanceCritique(statsEffectives(lanceur));
-      for (let e of ciblesSoutien(sort, lanceur, cible, cs)) {
-        appliquerSoutien(sort, e, lanceur, ctx, s);
-        effetsClasseSoutien(sort, e, lanceur, cs, ctx);
-        poseCooldown(e);
+      let critique = aBonusSiCrit(sort) && ctx.rng() < chanceCritique(statsEffectives(lanceur));
+      for (let soutenu of ciblesSoutien(sort, lanceur, cible, cs)) {
+        appliquerSoutien(sort, soutenu, lanceur, ctx, critique);
+        effetsClasseSoutien(sort, soutenu, lanceur, cs, ctx);
+        poseCooldown(soutenu);
       }
       if (sort.effetRangeeAlliee) {
         buffRangee(lanceur, sort.effetRangeeAlliee, cs, ctx);
@@ -722,29 +750,35 @@ const RESOLVEURS_SORTS = [
     },
   },
 ];
-function trouverResolveur(e) {
-  return RESOLVEURS_SORTS.find((t) => t.declencheur(e.sort) && (t.garde?.(e) ?? true));
+function trouverResolveur(lancer) {
+  return RESOLVEURS_SORTS.find(
+    (resolveur) => resolveur.declencheur(lancer.sort) && (resolveur.garde?.(lancer) ?? true),
+  );
 }
-function resoudreDegats(e) {
-  let { cible } = e;
+function resoudreDegats(lancer) {
+  let { cible } = lancer;
   if (!cible) {
     return;
   }
-  let n = {
-    ...e,
+  let lancerCible = {
+    ...lancer,
     cible,
   };
-  let r = multiplicateursLancer(n);
-  if (n.sort.soinLigneAvantRatio) {
-    resoudreSoinLigneAvant(n, r);
+  let mults = multiplicateursLancer(lancerCible);
+  if (lancerCible.sort.soinLigneAvantRatio) {
+    resoudreSoinLigneAvant(lancerCible, mults);
     return;
   }
-  let i = appliquerDegatsSort(n, r);
-  propagerInfection(n.lanceur, n.sort, cible, n.cs, n.ctx);
-  effetsApresDegats(n, i);
-  soinsApresDegats(n, i, i.totalDmg + degatsToucheDerriere(n, r));
-  effetsFinLancer(n, i);
-  n.poseCooldown(cible);
+  let resultat = appliquerDegatsSort(lancerCible, mults);
+  propagerInfection(lancerCible.lanceur, lancerCible.sort, cible, lancerCible.cs, lancerCible.ctx);
+  effetsApresDegats(lancerCible, resultat);
+  soinsApresDegats(
+    lancerCible,
+    resultat,
+    resultat.totalDmg + degatsToucheDerriere(lancerCible, mults),
+  );
+  effetsFinLancer(lancerCible, resultat);
+  lancerCible.poseCooldown(cible);
 }
 function multiplicateursLancer({ lanceur, sort, cible, cs }) {
   let useMax = consommerMaxRoll(lanceur);
@@ -754,7 +788,7 @@ function multiplicateursLancer({ lanceur, sort, cible, cs }) {
     1 +
     (lanceur.bonusParAllieLigne ?? 0) *
       alliesVivants(lanceur, cs).filter(
-        (e) => e.ref !== lanceur.ref && enLigneAvant(e) === enLigneAvant(lanceur),
+        (allie) => allie.ref !== lanceur.ref && enLigneAvant(allie) === enLigneAvant(lanceur),
       ).length;
   multLigne *= bonusPortails(lanceur, cs);
   multLigne *= bonusConjuration(lanceur, cible, cs);
@@ -763,15 +797,20 @@ function multiplicateursLancer({ lanceur, sort, cible, cs }) {
       1 +
       sort.bonusParEnnemiLigneCible *
         ennemisVivants(lanceur, cs).filter(
-          (e) => e.ref !== cible.ref && !e.estLance && enLigneAvant(e) === enLigneAvant(cible),
+          (ennemi) =>
+            ennemi.ref !== cible.ref &&
+            !ennemi.estLance &&
+            enLigneAvant(ennemi) === enLigneAvant(cible),
         ).length;
   }
   let multChausse = sort.bonusParChausseTrappe
     ? 1 + sort.bonusParChausseTrappe * Math.min(lanceur.chausseTrappe ?? 0, 5)
     : 1;
   if (sort.bonusParEnnemiToucheZone) {
-    let e = ciblesTouchees(lanceur, sort, cible, cs).filter((e) => !e.estLance).length;
-    multLigne *= 1 + sort.bonusParEnnemiToucheZone * e;
+    let nbTouches = ciblesTouchees(lanceur, sort, cible, cs).filter(
+      (touche) => !touche.estLance,
+    ).length;
+    multLigne *= 1 + sort.bonusParEnnemiToucheZone * nbTouches;
   }
   return {
     useMax,
@@ -785,12 +824,12 @@ function resoudreSoinLigneAvant(
   { useMax, bonusVigueur, multLigne },
 ) {
   ctx.log(`${lanceur.nom} lance ${sort.nom}.`);
-  let f = 0;
-  for (let e of ciblesTouchees(lanceur, sort, cible, cs)) {
-    let t = lancerAttaque(
+  let totalDegats = 0;
+  for (let touche of ciblesTouchees(lanceur, sort, cible, cs)) {
+    let degats = lancerAttaque(
       lanceur,
       sort,
-      e,
+      touche,
       {
         useMax,
         mult: (1 + bonusVigueur) * multLigne,
@@ -799,80 +838,92 @@ function resoudreSoinLigneAvant(
       },
       sort.nom,
     );
-    if (!e.estLance) {
-      f += t;
+    if (!touche.estLance) {
+      totalDegats += degats;
     }
   }
-  let p = alliesVivants(lanceur, cs).filter(enLigneAvant);
-  if (f > 0 && p.length) {
-    let e = Math.round(((f * sort.soinLigneAvantRatio) / p.length) * multiplicateurSoinDe(lanceur));
-    for (let t of p) {
-      soigner(t, e, ctx);
+  let alliesAvant = alliesVivants(lanceur, cs).filter(enLigneAvant);
+  if (totalDegats > 0 && alliesAvant.length) {
+    let soin = Math.round(
+      ((totalDegats * sort.soinLigneAvantRatio) / alliesAvant.length) *
+        multiplicateurSoinDe(lanceur),
+    );
+    for (let allie of alliesAvant) {
+      soigner(allie, soin, ctx);
     }
   }
   poseCooldown(cible);
 }
-function multiplicateurCible(sort, ref, n, r) {
+function multiplicateurCible(sort, ref, touche, rangSaut) {
   return (
-    (sort.rebond ? 1 + sort.rebond.bonusParSaut * r : 1) *
-    (sort.ratioLigne && n.ref !== ref ? sort.ratioLigne : 1)
+    (sort.rebond ? 1 + sort.rebond.bonusParSaut * rangSaut : 1) *
+    (sort.ratioLigne && touche.ref !== ref ? sort.ratioLigne : 1)
   );
 }
-function appliquerDegatsSort(e, t) {
-  let { lanceur, sort, cible, cs, ctx, paAvant, multEscalade } = e;
-  let { useMax, bonusVigueur, multLigne, multChausse } = t;
+function appliquerDegatsSort(lancer, mults) {
+  let { lanceur, sort, cible, cs, ctx, paAvant, multEscalade } = lancer;
+  let { useMax, bonusVigueur, multLigne, multChausse } = mults;
   let totalDmg = 0;
   let touchees = ciblesTouchees(lanceur, sort, cible, cs);
-  let h = sort.baseMax === 0 && (!!sort.deplaceCible || !!sort.conjuration);
+  let sansDegats = sort.baseMax === 0 && (!!sort.deplaceCible || !!sort.conjuration);
   let nonEsquivees = new Set();
   let unCritique = false;
-  touchees.forEach((a, m) => {
-    if (h) {
+  touchees.forEach((touche, indice) => {
+    if (sansDegats) {
       return;
     }
-    let v = sort.ratioLigne && a.ref !== cible?.ref ? `${sort.nom} (éclaboussure)` : sort.nom;
+    let libelle =
+      sort.ratioLigne && touche.ref !== cible?.ref ? `${sort.nom} (éclaboussure)` : sort.nom;
     let mult =
-      multiplicateurCible(sort, cible.ref, a, m) *
+      multiplicateurCible(sort, cible.ref, touche, indice) *
       (1 + bonusVigueur) *
       multLigne *
       multEscalade *
       multChausse;
-    let y = calculerDegats(lanceur, sort, a, {
+    let detail = calculerDegats(lanceur, sort, touche, {
       useMax,
       mult,
       ctx,
       paAvant,
     });
-    if (y.esquive) {
-      ctx.log(`${a.nom} esquive ${v} !`);
+    if (detail.esquive) {
+      ctx.log(`${touche.nom} esquive ${libelle} !`);
       ctx.fx?.({
         type: `esquive`,
-        ref: a.ref,
+        ref: touche.ref,
       });
     } else {
-      if (y.crit) {
+      if (detail.crit) {
         ctx.fx?.({
           type: `crit`,
-          ref: a.ref,
+          ref: touche.ref,
         });
         unCritique = true;
       }
-      infligerDegats(a, y.dmg, lanceur, ctx, sort.ignoreBouclier, undefined, y.element);
-      nonEsquivees.add(a.ref);
-      if (!a.estLance) {
-        totalDmg += y.dmg;
+      infligerDegats(
+        touche,
+        detail.dmg,
+        lanceur,
+        ctx,
+        sort.ignoreBouclier,
+        undefined,
+        detail.element,
+      );
+      nonEsquivees.add(touche.ref);
+      if (!touche.estLance) {
+        totalDmg += detail.dmg;
       }
-      if (!a.estLance) {
+      if (!touche.estLance) {
         logDegats(
           ctx,
-          `${lanceur.nom} → ${v} sur ${a.nom} : `,
-          y.dmg,
-          y.element,
-          `${y.crit ? ` (CRIT)` : ``}.${a.pvActuels <= 0 ? ` ${a.nom} est K.O. !` : ``}`,
+          `${lanceur.nom} → ${libelle} sur ${touche.nom} : `,
+          detail.dmg,
+          detail.element,
+          `${detail.crit ? ` (CRIT)` : ``}.${touche.pvActuels <= 0 ? ` ${touche.nom} est K.O. !` : ``}`,
         );
       }
-      if (a.pvActuels > 0) {
-        totalDmg += effetsSurCibleTouchee(e, a, y, mult, t);
+      if (touche.pvActuels > 0) {
+        totalDmg += effetsSurCibleTouchee(lancer, touche, detail, mult, mults);
       }
     }
   });
@@ -883,25 +934,25 @@ function appliquerDegatsSort(e, t) {
     unCritique,
   };
 }
-function effetsSurCibleTouchee({ lanceur, sort, ctx, paAvant }, t, n, mult, { useMax }) {
-  let u = 0;
-  effetsClasseSurCible(lanceur, sort, t, n, ctx);
-  if (n.crit && n.dmg > 0 && reliquesActivesDe(lanceur, ctx).has(`dofus_forgelave`)) {
-    appliquerPoison(t, { degats: Math.max(1, Math.round(n.dmg * 0.15)), duree: 2 });
-    ctx.log(`🔥 Le Dofus Forgelave embrase ${t.nom}.`);
+function effetsSurCibleTouchee({ lanceur, sort, ctx, paAvant }, cible, detail, mult, { useMax }) {
+  let total = 0;
+  effetsClasseSurCible(lanceur, sort, cible, detail, ctx);
+  if (detail.crit && detail.dmg > 0 && reliquesActivesDe(lanceur, ctx).has(`dofus_forgelave`)) {
+    appliquerPoison(cible, { degats: Math.max(1, Math.round(detail.dmg * 0.15)), duree: 2 });
+    ctx.log(`🔥 Le Dofus Forgelave embrase ${cible.nom}.`);
   }
   if (sort.poison) {
-    appliquerPoison(t, sort.poison);
+    appliquerPoison(cible, sort.poison);
   }
   if (sort.poisonSiPortails && (lanceur.portails ?? 0) >= sort.poisonSiPortails.seuil) {
-    appliquerPoison(t, {
-      degats: Math.round(n.dmg * sort.poisonSiPortails.ratio),
+    appliquerPoison(cible, {
+      degats: Math.round(detail.dmg * sort.poisonSiPortails.ratio),
       duree: sort.poisonSiPortails.duree,
     });
   }
   if (sort.effet) {
     appliquerEffet(
-      t,
+      cible,
       sort.effetSiPortails && (lanceur.portails ?? 0) >= sort.effetSiPortails.seuil
         ? {
             ...sort.effet,
@@ -911,37 +962,37 @@ function effetsSurCibleTouchee({ lanceur, sort, ctx, paAvant }, t, n, mult, { us
     );
   }
   if (sort.retraitPAProchainTour) {
-    t.paBonusNextTurn -= sort.retraitPAProchainTour;
+    cible.paBonusNextTurn -= sort.retraitPAProchainTour;
     ctx.log(
-      `${t.nom} commencera son prochain tour amputé de ${sort.retraitPAProchainTour} PA (Tétanie).`,
+      `${cible.nom} commencera son prochain tour amputé de ${sort.retraitPAProchainTour} PA (Tétanie).`,
     );
   }
-  if (sort.assome && !t.estLance && ctx.rng() < sort.assome) {
-    appliquerEffet(t, {
+  if (sort.assome && !cible.estLance && ctx.rng() < sort.assome) {
+    appliquerEffet(cible, {
       stat: `assome`,
       valeur: 1,
       duree: 1,
     });
-    ctx.log(`💫 ${t.nom} est assommé : il passera son prochain tour !`);
+    ctx.log(`💫 ${cible.nom} est assommé : il passera son prochain tour !`);
   }
   if (sort.procAleatoire && sort.procAleatoire.length) {
-    let e = sort.procAleatoire[Math.floor(ctx.rng() * sort.procAleatoire.length)];
-    if (e.dissipePositifs) {
-      desenvouter(t, ctx);
+    let proc = sort.procAleatoire[Math.floor(ctx.rng() * sort.procAleatoire.length)];
+    if (proc.dissipePositifs) {
+      desenvouter(cible, ctx);
     }
-    if (e.effet) {
-      appliquerEffet(t, e.effet);
+    if (proc.effet) {
+      appliquerEffet(cible, proc.effet);
     }
   }
-  if (sort.secondCoupSiCrit && n.crit) {
-    let e = lancerAttaque(
+  if (sort.secondCoupSiCrit && detail.crit) {
+    let secondCoup = lancerAttaque(
       lanceur,
       {
         ...sort,
         elementPire: false,
         sansEsquiveNiCrit: true,
       },
-      t,
+      cible,
       {
         useMax,
         mult,
@@ -950,11 +1001,11 @@ function effetsSurCibleTouchee({ lanceur, sort, ctx, paAvant }, t, n, mult, { us
       },
       `${sort.nom} (retour)`,
     );
-    if (!t.estLance) {
-      u += e;
+    if (!cible.estLance) {
+      total += secondCoup;
     }
   }
-  return u;
+  return total;
 }
 function effetsApresDegats({ lanceur, sort, cible, cs, ctx }, { nonEsquivees, totalDmg }) {
   if (totalDmg > 0) {
@@ -964,15 +1015,16 @@ function effetsApresDegats({ lanceur, sort, cible, cs, ctx }, { nonEsquivees, to
     lanceur.chausseTrappe = 0;
   }
   if (sort.effetLigneCible && nonEsquivees.has(cible.ref)) {
-    let e = vivants(cs).filter(
-      (e) => e.camp === cible.camp && enLigneAvant(e) === enLigneAvant(cible),
+    let ligne = vivants(cs).filter(
+      (combattant) =>
+        combattant.camp === cible.camp && enLigneAvant(combattant) === enLigneAvant(cible),
     );
-    for (let t of e) {
-      let e = t.effets.find((e) => e.stat === sort.effetLigneCible.stat);
-      if (e) {
-        e.toursRestants = sort.effetLigneCible.duree;
+    for (let membre of ligne) {
+      let existant = membre.effets.find((effet) => effet.stat === sort.effetLigneCible.stat);
+      if (existant) {
+        existant.toursRestants = sort.effetLigneCible.duree;
       } else {
-        appliquerEffet(t, sort.effetLigneCible);
+        appliquerEffet(membre, sort.effetLigneCible);
       }
     }
     ctx.log(
@@ -1001,65 +1053,75 @@ function effetsApresDegats({ lanceur, sort, cible, cs, ctx }, { nonEsquivees, to
     );
   }
 }
-function degatsToucheDerriere({ lanceur, sort, cible, cs, ctx }, t) {
+function degatsToucheDerriere({ lanceur, sort, cible, cs, ctx }, mults) {
   if (!sort.toucheDerriere) {
     return 0;
   }
-  let s = allieDerriere(cible, cs);
-  if (!s || s.pvActuels <= 0) {
+  let derriere = allieDerriere(cible, cs);
+  if (!derriere || derriere.pvActuels <= 0) {
     return 0;
   }
-  let c = lancerAttaque(
+  let degats = lancerAttaque(
     lanceur,
     sort,
-    s,
+    derriere,
     {
-      useMax: t.useMax,
-      mult: (1 + t.bonusVigueur) * t.multLigne,
+      useMax: mults.useMax,
+      mult: (1 + mults.bonusVigueur) * mults.multLigne,
       ctx,
     },
     sort.nom,
   );
-  if (s.estLance) {
+  if (derriere.estLance) {
     return 0;
   }
-  return c;
+  return degats;
 }
-function soinsApresDegats({ lanceur, sort, cs, ctx }, { touchees, nonEsquivees }, n) {
-  if (sort.soinAllieBlesseRatio && n > 0) {
-    soignerPlusBlesse(alliesVivants(lanceur, cs), sort.soinAllieBlesseRatio, n, lanceur, ctx);
-  }
-  if (sort.soinAvantBlesseRatio && n > 0) {
+function soinsApresDegats({ lanceur, sort, cs, ctx }, { touchees, nonEsquivees }, degatsTotal) {
+  if (sort.soinAllieBlesseRatio && degatsTotal > 0) {
     soignerPlusBlesse(
-      alliesVivants(lanceur, cs).filter(enLigneAvant),
-      sort.soinAvantBlesseRatio,
-      n,
+      alliesVivants(lanceur, cs),
+      sort.soinAllieBlesseRatio,
+      degatsTotal,
       lanceur,
       ctx,
     );
   }
-  if (sort.soinEquipeRatio && n > 0) {
-    let e = Math.round(n * sort.soinEquipeRatio * multiplicateurSoinDe(lanceur));
-    for (let t of alliesVivants(lanceur, cs)) {
-      soigner(t, e, ctx);
-    }
-    ctx.log(`${lanceur.nom} draine ${e} PV pour l'équipe.`);
+  if (sort.soinAvantBlesseRatio && degatsTotal > 0) {
+    soignerPlusBlesse(
+      alliesVivants(lanceur, cs).filter(enLigneAvant),
+      sort.soinAvantBlesseRatio,
+      degatsTotal,
+      lanceur,
+      ctx,
+    );
   }
-  if (sort.bouclierRatioDegats && n > 0) {
-    let e = Math.round(n * sort.bouclierRatioDegats);
-    lanceur.bouclier += e;
-    ctx.log(`${lanceur.nom} gagne un bouclier de ${e}.`);
+  if (sort.soinEquipeRatio && degatsTotal > 0) {
+    let soin = Math.round(degatsTotal * sort.soinEquipeRatio * multiplicateurSoinDe(lanceur));
+    for (let allie of alliesVivants(lanceur, cs)) {
+      soigner(allie, soin, ctx);
+    }
+    ctx.log(`${lanceur.nom} draine ${soin} PV pour l'équipe.`);
+  }
+  if (sort.bouclierRatioDegats && degatsTotal > 0) {
+    let bouclier = Math.round(degatsTotal * sort.bouclierRatioDegats);
+    lanceur.bouclier += bouclier;
+    ctx.log(`${lanceur.nom} gagne un bouclier de ${bouclier}.`);
   }
   if (sort.bouclierParEnnemiTouche) {
-    let e = touchees.filter((e) => !e.estLance && nonEsquivees.has(e.ref)).length;
-    if (e > 0) {
-      let t = sort.bouclierParEnnemiTouche * e;
-      lanceur.bouclier += t;
-      ctx.log(`${lanceur.nom} gagne un bouclier de ${t} (Hydra).`);
+    let nb = touchees.filter((touche) => !touche.estLance && nonEsquivees.has(touche.ref)).length;
+    if (nb > 0) {
+      let bouclier = sort.bouclierParEnnemiTouche * nb;
+      lanceur.bouclier += bouclier;
+      ctx.log(`${lanceur.nom} gagne un bouclier de ${bouclier} (Hydra).`);
     }
   }
-  if (sort.vampirismeRatio && n > 0) {
-    soigner(lanceur, Math.round(n * sort.vampirismeRatio * multiplicateurSoinDe(lanceur)), ctx);
+  if (sort.vampirismeRatio && degatsTotal > 0) {
+    soigner(
+      lanceur,
+      Math.round(degatsTotal * sort.vampirismeRatio * multiplicateurSoinDe(lanceur)),
+      ctx,
+    );
   }
 }
 function effetsFinLancer(
@@ -1067,31 +1129,43 @@ function effetsFinLancer(
   { touchees, nonEsquivees, unCritique },
 ) {
   if (sort.retraitPA) {
-    for (let e of touchees) {
-      e.pvActuels <= 0 ||
-        e.estLance ||
-        !nonEsquivees.has(e.ref) ||
-        (ctx.rng() < (sort.retraitPAChance ?? 0.3) && retirerPA(e, sort.retraitPA, ctx));
+    for (let touche of touchees) {
+      touche.pvActuels <= 0 ||
+        touche.estLance ||
+        !nonEsquivees.has(touche.ref) ||
+        (ctx.rng() < (sort.retraitPAChance ?? 0.3) && retirerPA(touche, sort.retraitPA, ctx));
     }
   }
   if (sort.deplaceCible && cible.pvActuels > 0) {
-    let e = sort.telefragSiOccupee
-      ? vivants(cs).some((e) => e.camp === cible.camp && enLigneAvant(e) !== enLigneAvant(cible))
+    let doitTelefrag = sort.telefragSiOccupee
+      ? vivants(cs).some(
+          (combattant) =>
+            combattant.camp === cible.camp && enLigneAvant(combattant) !== enLigneAvant(cible),
+        )
       : false;
-    let t = cible.position;
+    let positionAvant = cible.position;
     repousser(cible, sort.deplaceCible, cs, ctx);
-    if (sort.telefragSiOccupee && e && cible.position !== t && cible.pvActuels > 0) {
+    if (
+      sort.telefragSiOccupee &&
+      doitTelefrag &&
+      cible.position !== positionAvant &&
+      cible.pvActuels > 0
+    ) {
       poserTelefrag(cible, cs, ctx, lanceur);
-      let e = vivants(cs)
+      let voisin = vivants(cs)
         .filter(
-          (e) =>
-            e.camp === cible.camp && e.ref !== cible.ref && enLigneAvant(e) === enLigneAvant(cible),
+          (combattant) =>
+            combattant.camp === cible.camp &&
+            combattant.ref !== cible.ref &&
+            enLigneAvant(combattant) === enLigneAvant(cible),
         )
         .sort(
-          (e, t) => Math.abs(e.position - cible.position) - Math.abs(t.position - cible.position),
+          (premier, second) =>
+            Math.abs(premier.position - cible.position) -
+            Math.abs(second.position - cible.position),
         )[0];
-      if (e) {
-        poserTelefrag(e, cs, ctx, lanceur);
+      if (voisin) {
+        poserTelefrag(voisin, cs, ctx, lanceur);
       }
     }
   }
@@ -1100,11 +1174,13 @@ function effetsFinLancer(
   }
   if (sort.reduitCoutSiCrit && unCritique) {
     lanceur.remisesCout ??= {};
-    let e = coutPA(sort, lanceur);
+    let coutAvant = coutPA(sort, lanceur);
     lanceur.remisesCout[sort.id] = (lanceur.remisesCout[sort.id] ?? 0) + sort.reduitCoutSiCrit;
-    let t = coutPA(sort, lanceur);
-    if (t < e) {
-      ctx.log(`${lanceur.nom} réduit le coût de son prochain ${sort.nom} de ${e - t} PA.`);
+    let coutApres = coutPA(sort, lanceur);
+    if (coutApres < coutAvant) {
+      ctx.log(
+        `${lanceur.nom} réduit le coût de son prochain ${sort.nom} de ${coutAvant - coutApres} PA.`,
+      );
     }
   }
   if (sort.rage) {
@@ -1112,16 +1188,16 @@ function effetsFinLancer(
   }
   effetsClasseFinLancer(lanceur, sort, cs, ctx);
 }
-export function lancerSort(e, t, n, r, i) {
-  t = sortSelonEtat(e, t);
-  let a = preparerLancer(e, t, n, r, i);
-  if (echecCritique(a)) {
+export function lancerSort(lanceur, sort, cibleRef, combattants, contexte) {
+  sort = sortSelonEtat(lanceur, sort);
+  let lancer = preparerLancer(lanceur, sort, cibleRef, combattants, contexte);
+  if (echecCritique(lancer)) {
     return;
   }
-  let o = trouverResolveur(a);
-  if (o) {
-    o.resoudre(a);
+  let resolveur = trouverResolveur(lancer);
+  if (resolveur) {
+    resolveur.resoudre(lancer);
   } else {
-    resoudreDegats(a);
+    resoudreDegats(lancer);
   }
 }
