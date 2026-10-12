@@ -1,0 +1,7 @@
+# fichier: src/ui/ecrans/recompenses.js
+3 e noms
+5 n pluriel
+14 e ids
+16 n pluriel
+17 r html
+19 e id

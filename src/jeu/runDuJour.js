@@ -3,29 +3,29 @@
 import { BENEDICTIONS } from "./rencontres.js";
 
 /** Date locale au format AAAA-MM-JJ (le jour change à minuit, heure de l'appareil). */
-export function dateDuJour(d = new Date()) {
-  const deux = (n) => String(n).padStart(2, `0`);
-  return `${d.getFullYear()}-${deux(d.getMonth() + 1)}-${deux(d.getDate())}`;
+export function dateDuJour(date = new Date()) {
+  const deux = (nombre) => String(nombre).padStart(2, `0`);
+  return `${date.getFullYear()}-${deux(date.getMonth() + 1)}-${deux(date.getDate())}`;
 }
 
 /** Graine entière 32 bits tirée d'un texte (FNV-1a). */
 export function graineDeTexte(texte) {
-  let h = 0x811c9dc5;
-  for (const c of String(texte)) {
-    h = Math.imul(h ^ c.codePointAt(0), 0x01000193) >>> 0;
+  let hash = 0x811c9dc5;
+  for (const caractere of String(texte)) {
+    hash = Math.imul(hash ^ caractere.codePointAt(0), 0x01000193) >>> 0;
   }
-  return h;
+  return hash;
 }
 
 /** Générateur pseudo-aléatoire déterministe (mulberry32), même contrat que `Math.random`. */
 export function rngGraine(graine) {
-  let a = graine >>> 0;
+  let etat = graine >>> 0;
   return () => {
-    a = (a + 0x6d2b79f5) >>> 0;
-    let t = a;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    etat = (etat + 0x6d2b79f5) >>> 0;
+    let valeur = etat;
+    valeur = Math.imul(valeur ^ (valeur >>> 15), valeur | 1);
+    valeur ^= valeur + Math.imul(valeur ^ (valeur >>> 7), valeur | 61);
+    return ((valeur ^ (valeur >>> 14)) >>> 0) / 4294967296;
   };
 }
 

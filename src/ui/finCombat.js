@@ -43,13 +43,13 @@ export function afficherFinCombat(gagne, ligneDefi = ``) {
       clearTimeout(minuteur);
       document.removeEventListener(`keydown`, clavier, true);
       voile.remove();
-      document.querySelectorAll(`.fx-layer`).forEach((c) => c.replaceChildren());
+      document.querySelectorAll(`.fx-layer`).forEach((couche) => couche.replaceChildren());
       resolve();
     };
-    const clavier = (e) => {
-      if (e.key === `Enter` || e.key === ` `) {
-        e.preventDefault();
-        e.stopPropagation();
+    const clavier = (evenement) => {
+      if (evenement.key === `Enter` || evenement.key === ` `) {
+        evenement.preventDefault();
+        evenement.stopPropagation();
         fermer();
       }
     };

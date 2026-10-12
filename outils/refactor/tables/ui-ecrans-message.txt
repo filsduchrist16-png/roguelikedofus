@@ -1,0 +1,3 @@
+# fichier: src/ui/ecrans/message.js
+2 e titre
+2 t texte

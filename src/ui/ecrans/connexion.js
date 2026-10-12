@@ -21,11 +21,13 @@ export function ecranConnexion() {
         <p class="connexion-version muet">Version ${VERSION}</p>
       </div>
     `);
-    const msg = (t) => {
-      document.getElementById(`cx-msg`).textContent = t;
+    const msg = (texte) => {
+      document.getElementById(`cx-msg`).textContent = texte;
     };
     const boutons = (inactifs) =>
-      document.querySelectorAll(`#cx-form button`).forEach((b) => (b.disabled = inactifs));
+      document
+        .querySelectorAll(`#cx-form button`)
+        .forEach((bouton) => (bouton.disabled = inactifs));
     async function entrer(creer) {
       const email = document.getElementById(`cx-email`).value;
       const mdp = document.getElementById(`cx-mdp`).value;
@@ -37,8 +39,8 @@ export function ecranConnexion() {
       msg(creer ? `Création du compte…` : `Connexion…`);
       try {
         if (creer) {
-          const r = await creerCompte(email, mdp);
-          if (!r.connecte) {
+          const compte = await creerCompte(email, mdp);
+          if (!compte.connecte) {
             msg(
               `Compte créé. Ouvre le courriel de confirmation reçu, puis touche « Se connecter ».`,
             );
@@ -50,8 +52,8 @@ export function ecranConnexion() {
         }
         msg(`✓ Connecté, chargement…`);
         setTimeout(() => location.reload(), 300);
-      } catch (e) {
-        msg(`✗ ${e.message}`);
+      } catch (erreur) {
+        msg(`✗ ${erreur.message}`);
         boutons(false);
       }
     }

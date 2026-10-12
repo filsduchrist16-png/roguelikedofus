@@ -1,0 +1,7 @@
+# fichier: src/jeu/runDuJour.js
+6 d date
+7 n nombre
+13 h hash
+14 c caractere
+22 a etat
+25 t valeur

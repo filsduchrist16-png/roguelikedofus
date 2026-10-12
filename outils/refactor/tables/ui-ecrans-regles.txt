@@ -1,0 +1,5 @@
+# fichier: src/ui/ecrans/regles.js
+112 e section
+112 k indice
+119 d section
+120 d section

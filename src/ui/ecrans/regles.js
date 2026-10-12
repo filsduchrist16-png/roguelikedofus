@@ -109,15 +109,15 @@ export function ecranRegles() {
       <h1>Règles</h1>
       <p class="regles-outils"><button type="button" id="regles-tout" class="secondaire petit">Tout déplier</button></p>
       <div class="regles">
-        ${SECTIONS_REGLES.map((e, k) => `<details class="regles-section"${k === 0 ? ` open` : ``}><summary><h2>${e.titre}</h2></summary>${e.corps}</details>`).join(``)}
+        ${SECTIONS_REGLES.map((section, indice) => `<details class="regles-section"${indice === 0 ? ` open` : ``}><summary><h2>${section.titre}</h2></summary>${section.corps}</details>`).join(``)}
       </div>
       ${barreRetour(`retour`)}
     `);
     const sections = [...racine.querySelectorAll(`.regles-section`)];
     const bouton = racine.querySelector(`#regles-tout`);
     bouton?.addEventListener(`click`, () => {
-      const deplier = sections.some((d) => !d.open);
-      sections.forEach((d) => (d.open = deplier));
+      const deplier = sections.some((section) => !section.open);
+      sections.forEach((section) => (section.open = deplier));
       bouton.textContent = deplier ? `Tout replier` : `Tout déplier`;
     });
     racine.querySelector(`#retour`)?.addEventListener(`click`, () => resolve());

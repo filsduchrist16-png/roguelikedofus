@@ -1,0 +1,9 @@
+# fichier: src/ui/ecrans/choixEquipe.js
+13 t copie
+14 i indice
+29 t selection
+30 c classe
+32 n afficher
+37 e classe
+44 c classe
+50 e carte

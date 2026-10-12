@@ -1,0 +1,4 @@
+# fichier: src/ui/ecrans/rencontre.js
+10 r rencontre
+22 c choix
+34 b bouton

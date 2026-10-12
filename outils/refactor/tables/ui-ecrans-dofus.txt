@@ -1,0 +1,7 @@
+# fichier: src/ui/ecrans/dofus.js
+15 d dofus
+16 x dofusMeta
+19 p avancement
+27 e meta
+29 e dofus
+44 k cle

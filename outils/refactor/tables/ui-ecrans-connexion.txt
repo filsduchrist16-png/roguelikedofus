@@ -1,0 +1,5 @@
+# fichier: src/ui/ecrans/connexion.js
+24 t texte
+28 b bouton
+40 r compte
+53 e erreur
