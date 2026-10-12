@@ -52,9 +52,9 @@ export const nouvellesStatsRun = () => ({
   reliques: [],
 });
 const EQUIPE_DEFAUT = [`iop`, `cra`, `eniripsa`, `ecaflip`];
-const niveauMaxMonde = (e) => getMonde(e).niveaux[1];
-export function gagnerXpPerso(e, t, n) {
-  return gagnerXp(e.progression, t, niveauMaxMonde(n));
+const niveauMaxMonde = (mondeId) => getMonde(mondeId).niveaux[1];
+export function gagnerXpPerso(perso, xp, mondeId) {
+  return gagnerXp(perso.progression, xp, niveauMaxMonde(mondeId));
 }
 // Vrai si le héros est encore sous le niveau maximum du monde (il peut donc gagner de l'XP).
 export function peutGagnerXp(perso, trancheId) {
@@ -62,67 +62,69 @@ export function peutGagnerXp(perso, trancheId) {
 }
 const CLASSES_DESACTIVEES = new Set();
 export const classesJouables = () =>
-  Object.keys(CLASSES).filter((e) => !CLASSES_DESACTIVEES.has(e));
-function positionParDefaut(e, t) {
-  let n = chargerParametres().formation[e] === `arriere` ? `arriere` : `avant`;
-  let r = (e) => {
-    let [n, r] = e === `avant` ? [0, 4] : [4, 8];
-    for (let e = n; e < r; e++) {
-      if (!t.has(e)) {
-        return e;
+  Object.keys(CLASSES).filter((classeId) => !CLASSES_DESACTIVEES.has(classeId));
+function positionParDefaut(classeId, prises) {
+  let rangee = chargerParametres().formation[classeId] === `arriere` ? `arriere` : `avant`;
+  let premierLibre = (ligne) => {
+    let [debut, fin] = ligne === `avant` ? [0, 4] : [4, 8];
+    for (let position = debut; position < fin; position++) {
+      if (!prises.has(position)) {
+        return position;
       }
     }
   };
-  return r(n) ?? r(n === `avant` ? `arriere` : `avant`);
+  return premierLibre(rangee) ?? premierLibre(rangee === `avant` ? `arriere` : `avant`);
 }
-function positionsInitiales(e) {
-  let t = {};
-  let n = new Set();
-  for (let r of e) {
-    let e = positionParDefaut(r, n);
-    t[r] = e;
-    n.add(e);
+function positionsInitiales(classes) {
+  let positions = {};
+  let prises = new Set();
+  for (let classeId of classes) {
+    let position = positionParDefaut(classeId, prises);
+    positions[classeId] = position;
+    prises.add(position);
   }
-  return t;
+  return positions;
 }
-function creerPerso(classeId, t, n) {
+function creerPerso(classeId, niveau, position) {
   let progression = nouvelleProgression();
-  progression.niveau = t;
+  progression.niveau = niveau;
   return {
     classeId,
     progression,
     pvActuels: pvMaxDeNiveau(CLASSES[classeId], progression),
-    position: n,
+    position,
     equipement: {},
   };
 }
-function trierParOrdre(e, ordre) {
-  return [...e].sort((e, n) => rangOrdre(ordre, e.classeId) - rangOrdre(ordre, n.classeId));
+function trierParOrdre(persos, ordre) {
+  return [...persos].sort(
+    (premier, second) => rangOrdre(ordre, premier.classeId) - rangOrdre(ordre, second.classeId),
+  );
 }
-function insererSelonOrdre(persos, t, ordre) {
-  let r = rangOrdre(ordre, t.classeId);
-  let i = persos.findIndex((e) => rangOrdre(ordre, e.classeId) > r);
-  if (i < 0) {
-    persos.push(t);
+function insererSelonOrdre(persos, perso, ordre) {
+  let rang = rangOrdre(ordre, perso.classeId);
+  let indice = persos.findIndex((existant) => rangOrdre(ordre, existant.classeId) > rang);
+  if (indice < 0) {
+    persos.push(perso);
   } else {
-    persos.splice(i, 0, t);
+    persos.splice(indice, 0, perso);
   }
 }
 export function nouvelleRun(
-  e = EQUIPE_DEFAUT,
+  classes = EQUIPE_DEFAUT,
   ascension = 0,
   trancheId = `t1`,
   idolesDepart = [],
   jour = null,
 ) {
-  let r = positionsInitiales(e);
-  let i = getMonde(trancheId).niveaux[0];
+  let positions = positionsInitiales(classes);
+  let niveau = getMonde(trancheId).niveaux[0];
   return {
     persos: trierParOrdre(
-      e.map((e) => {
-        let t = creerPerso(e, i, r[e]);
-        t.pvActuels = pvMaxPerso(t);
-        return t;
+      classes.map((classeId) => {
+        let perso = creerPerso(classeId, niveau, positions[classeId]);
+        perso.pvActuels = pvMaxPerso(perso);
+        return perso;
       }),
       chargerParametres().ordre,
     ),
@@ -130,7 +132,7 @@ export function nouvelleRun(
     inventaire: [],
     stats: nouvellesStatsRun(),
     kamas: 0,
-    choixDepart: [...e],
+    choixDepart: [...classes],
     ascension,
     philtres: 0,
     trancheId,
@@ -140,7 +142,7 @@ export function nouvelleRun(
   };
 }
 // Héros encore debout (les tombés de la mort définitive ne comptent pas pour l'équipe « pleine »).
-export const herosVivants = (e) => e.persos.filter((p) => p.pvActuels > 0).length;
+export const herosVivants = (run) => run.persos.filter((perso) => perso.pvActuels > 0).length;
 // Aucune espèce du monde n'a d'archimonstre (Monde 5) : Otomai et le Philtre n'ont aucun effet.
 export function mondeSansArchimonstre(trancheId) {
   const monde = getMonde(trancheId);
@@ -148,69 +150,73 @@ export function mondeSansArchimonstre(trancheId) {
     return false;
   }
   return !zonesDuMonde(monde).some(
-    (z) => z && monstresDeZone(z).some((id) => MONSTRES[id]?.archiNom),
+    (zone) => zone && monstresDeZone(zone).some((id) => MONSTRES[id]?.archiNom),
   );
 }
-export function noeudsExclus(e, t) {
-  let n = [...(t.sansNoeuds ?? [])];
+export function noeudsExclus(run, zone) {
+  let exclus = [...(zone.sansNoeuds ?? [])];
   if (
-    effetsDifficulte(e.ascension).tavernesCoupeesAPlein &&
-    herosVivants(e) >= 4 &&
-    !n.includes(`taverne`)
+    effetsDifficulte(run.ascension).tavernesCoupeesAPlein &&
+    herosVivants(run) >= 4 &&
+    !exclus.includes(`taverne`)
   ) {
-    n.push(`taverne`);
+    exclus.push(`taverne`);
   }
   // philtres d'Otomai plafonnés : plus d'Otomai une fois le maximum atteint
   // pas d'Otomai non plus dans un monde sans archimonstre
   if (
-    ((e.philtres ?? 0) >= CONFIG_ARCHI.philtresMax || mondeSansArchimonstre(e.trancheId)) &&
-    !n.includes(`otomai`)
+    ((run.philtres ?? 0) >= CONFIG_ARCHI.philtresMax || mondeSansArchimonstre(run.trancheId)) &&
+    !exclus.includes(`otomai`)
   ) {
-    n.push(`otomai`);
+    exclus.push(`otomai`);
   }
-  return n;
+  return exclus;
 }
-export function niveauMoyen(e) {
-  if (e.persos.length) {
+export function niveauMoyen(run) {
+  if (run.persos.length) {
     return Math.max(
       1,
       Math.round(
-        e.persos.reduce((acc, perso) => acc + perso.progression.niveau, 0) / e.persos.length,
+        run.persos.reduce((acc, perso) => acc + perso.progression.niveau, 0) / run.persos.length,
       ),
     );
   }
   return 1;
 }
-function classesRecrutables(e) {
-  let t = new Set(e.persos.map((e) => e.classeId));
-  return classesJouables().filter((e) => !t.has(e));
+function classesRecrutables(run) {
+  let presentes = new Set(run.persos.map((perso) => perso.classeId));
+  return classesJouables().filter((classeId) => !presentes.has(classeId));
 }
-export function tirerRecrues(e, t) {
-  let n = classesRecrutables(e);
-  let r = [];
-  for (let e = 0; e < 2 && n.length; e++) {
-    r.push(n.splice(Math.floor(t() * n.length), 1)[0]);
+export function tirerRecrues(run, rng) {
+  let recrutables = classesRecrutables(run);
+  let recrues = [];
+  for (let tirage = 0; tirage < 2 && recrutables.length; tirage++) {
+    recrues.push(recrutables.splice(Math.floor(rng() * recrutables.length), 1)[0]);
   }
-  return r;
+  return recrues;
 }
-function creerRecrue(e, t, n) {
-  return creerPerso(t, niveauMoyen(e), n);
+function creerRecrue(run, classeId, position) {
+  return creerPerso(classeId, niveauMoyen(run), position);
 }
-export function recruter(e, t, n) {
-  if (n) {
-    let r = e.persos.findIndex((e) => e.classeId === n);
-    if (r >= 0) {
-      for (let t of Object.values(e.persos[r].equipement)) {
-        if (t) {
-          e.inventaire.push(t);
+export function recruter(run, classeId, remplace) {
+  if (remplace) {
+    let indice = run.persos.findIndex((perso) => perso.classeId === remplace);
+    if (indice >= 0) {
+      for (let objet of Object.values(run.persos[indice].equipement)) {
+        if (objet) {
+          run.inventaire.push(objet);
         }
       }
-      e.persos[r] = creerRecrue(e, t, e.persos[r].position);
+      run.persos[indice] = creerRecrue(run, classeId, run.persos[indice].position);
       return;
     }
   }
-  let r = creerRecrue(e, t, positionParDefaut(t, new Set(e.persos.map((e) => e.position))));
-  insererSelonOrdre(e.persos, r, chargerParametres().ordre);
+  let recrue = creerRecrue(
+    run,
+    classeId,
+    positionParDefaut(classeId, new Set(run.persos.map((perso) => perso.position))),
+  );
+  insererSelonOrdre(run.persos, recrue, chargerParametres().ordre);
 }
 const statsVides = () => ({
   force: 0,
@@ -224,343 +230,361 @@ const statsVides = () => ({
 // additionne clé par clé les valeurs de `bonus` dans `cible` (stats, résistances…)
 function additionner(cible, bonus) {
   if (bonus) {
-    for (let n of Object.keys(bonus)) {
-      cible[n] = (cible[n] ?? 0) + (bonus[n] ?? 0);
+    for (let cle of Object.keys(bonus)) {
+      cible[cle] = (cible[cle] ?? 0) + (bonus[cle] ?? 0);
     }
   }
 }
 // Plusieurs objets portant le même effet : le plus fort l'emporte (valeurs numériques) ; pour un
 // effet composé (objet), le premier trouvé est gardé.
-function proprieteEquipement(equipement, t) {
+function proprieteEquipement(equipement, propriete) {
   const valeurs = Object.values(equipement)
-    .map((e) => e && EQUIPEMENTS[e.id]?.[t])
+    .map((objet) => objet && EQUIPEMENTS[objet.id]?.[propriete])
     .filter(Boolean);
-  if (valeurs.length && valeurs.every((v) => typeof v === `number`)) {
+  if (valeurs.length && valeurs.every((valeur) => typeof valeur === `number`)) {
     return Math.max(...valeurs);
   }
   return valeurs[0];
 }
 const ELEMENTS_RES = [`terre`, `feu`, `eau`, `air`];
-export function ajouterResistanceTous(e, t) {
-  for (let n of ELEMENTS_RES) {
-    e.resistances[n] = (e.resistances[n] ?? 0) + t;
+export function ajouterResistanceTous(combattant, valeur) {
+  for (let element of ELEMENTS_RES) {
+    combattant.resistances[element] = (combattant.resistances[element] ?? 0) + valeur;
   }
 }
-function multiplierPv(e, pvMult) {
-  e.pvMax = Math.round(e.pvMax * pvMult);
-  e.pvBase = e.pvMax;
-  e.pvActuels = e.pvMax;
+function multiplierPv(combattant, pvMult) {
+  combattant.pvMax = Math.round(combattant.pvMax * pvMult);
+  combattant.pvBase = combattant.pvMax;
+  combattant.pvActuels = combattant.pvMax;
 }
-export function bonusEquipement(e) {
-  let t = statsVides();
+export function bonusEquipement(perso) {
+  let stats = statsVides();
   let pvBonus = 0;
   let paBonus = 0;
   let resistances = {};
-  for (let a of Object.keys(e.equipement)) {
-    let o = e.equipement[a];
-    let s = o ? EQUIPEMENTS[o.id] : undefined;
-    if (!(!o || !s)) {
-      additionner(t, o.stats);
-      if (o.adaptatif) {
-        for (let n of CLASSES[e.classeId].elements) {
-          let e = STAT_PAR_ELEMENT[n];
-          t[e] = (t[e] ?? 0) + o.adaptatif;
+  for (let emplacement of Object.keys(perso.equipement)) {
+    let objet = perso.equipement[emplacement];
+    let def = objet ? EQUIPEMENTS[objet.id] : undefined;
+    if (!(!objet || !def)) {
+      additionner(stats, objet.stats);
+      if (objet.adaptatif) {
+        for (let element of CLASSES[perso.classeId].elements) {
+          let stat = STAT_PAR_ELEMENT[element];
+          stats[stat] = (stats[stat] ?? 0) + objet.adaptatif;
         }
       }
-      pvBonus += s.pvBonus ?? 0;
-      paBonus += o.pa ?? 0;
-      additionner(resistances, s.resistances);
-      additionner(resistances, o.resistances);
+      pvBonus += def.pvBonus ?? 0;
+      paBonus += objet.pa ?? 0;
+      additionner(resistances, def.resistances);
+      additionner(resistances, objet.resistances);
     }
   }
   // bonus de panoplie (palier atteint) ; leurs PA ne se cumulent pas
   let paPanoplies = 0;
-  for (let [nom, nb] of Object.entries(compterPanoplies(e))) {
-    let b = bonusPanoplie(nom, nb);
-    if (!b) {
+  for (let [nom, nb] of Object.entries(compterPanoplies(perso))) {
+    let bonusPano = bonusPanoplie(nom, nb);
+    if (!bonusPano) {
       continue;
     }
-    additionner(t, b.stats);
-    if (b.adaptatif) {
-      for (let el of CLASSES[e.classeId].elements) {
+    additionner(stats, bonusPano.stats);
+    if (bonusPano.adaptatif) {
+      for (let el of CLASSES[perso.classeId].elements) {
         let st = STAT_PAR_ELEMENT[el];
-        t[st] = (t[st] ?? 0) + b.adaptatif;
+        stats[st] = (stats[st] ?? 0) + bonusPano.adaptatif;
       }
     }
-    additionner(resistances, b.resistances);
-    paPanoplies += b.pa ?? 0;
+    additionner(resistances, bonusPano.resistances);
+    paPanoplies += bonusPano.pa ?? 0;
   }
   paBonus = Math.min(PA_MAX_EQUIPEMENT, paBonus + Math.min(PA_MAX_PANOPLIES, paPanoplies));
   return {
-    stats: t,
+    stats,
     pvBonus,
     resistances,
     paBonus,
   };
 }
-export function pvMaxPerso(e) {
-  let t = bonusEquipement(e);
+export function pvMaxPerso(perso) {
+  let bonus = bonusEquipement(perso);
   return (
-    pvMaxDeNiveau(CLASSES[e.classeId], e.progression) + t.pvBonus + (t.stats.vitalite ?? 0) * 1
+    pvMaxDeNiveau(CLASSES[perso.classeId], perso.progression) +
+    bonus.pvBonus +
+    (bonus.stats.vitalite ?? 0) * 1
   );
 }
-export function creerCombattantPerso(e) {
-  let t = CLASSES[e.classeId];
-  let n = bonusEquipement(e);
-  let r = statsDeNiveau(t, e.progression);
-  additionner(r, n.stats);
-  let i = pvMaxPerso(e);
-  let arme = e.equipement.arme;
-  let o = arme ? EQUIPEMENTS[arme.id] : undefined;
-  let s = arme?.rarete ? o?.tiers?.[arme.rarete]?.attaque : undefined;
+export function creerCombattantPerso(perso) {
+  let classe = CLASSES[perso.classeId];
+  let bonusEquip = bonusEquipement(perso);
+  let stats = statsDeNiveau(classe, perso.progression);
+  additionner(stats, bonusEquip.stats);
+  let pvMax = pvMaxPerso(perso);
+  let arme = perso.equipement.arme;
+  let defArme = arme ? EQUIPEMENTS[arme.id] : undefined;
+  let attaque = arme?.rarete ? defArme?.tiers?.[arme.rarete]?.attaque : undefined;
   let armeSort =
-    o && s
+    defArme && attaque
       ? {
           id: `arme_attaque`,
-          nom: o.nom,
+          nom: defArme.nom,
           type: `degats`,
-          cible: s.cible ?? `ennemi_ligne`,
-          coutPA: s.coutPA,
-          baseMin: s.baseMin,
-          baseMax: s.baseMax,
-          ...(s.vampirisme
+          cible: attaque.cible ?? `ennemi_ligne`,
+          coutPA: attaque.coutPA,
+          baseMin: attaque.baseMin,
+          baseMax: attaque.baseMax,
+          ...(attaque.vampirisme
             ? {
-                vampirismeRatio: s.vampirisme,
+                vampirismeRatio: attaque.vampirisme,
               }
             : {}),
-          ...(o.perceResistances
+          ...(defArme.perceResistances
             ? {
-                perceResistances: o.perceResistances,
+                perceResistances: defArme.perceResistances,
               }
             : {}),
-          ...(o.frappeDerriere
+          ...(defArme.frappeDerriere
             ? {
                 toucheDerriere: true,
               }
             : {}),
-          ...(o.poisonArme
+          ...(defArme.poisonArme
             ? {
-                poison: o.poisonArme,
+                poison: defArme.poisonArme,
               }
             : {}),
-          ...(o.soinAllieBlesse
+          ...(defArme.soinAllieBlesse
             ? {
-                soinAllieBlesseRatio: o.soinAllieBlesse,
+                soinAllieBlesseRatio: defArme.soinAllieBlesse,
               }
             : {}),
-          ...(o.retraitPA
+          ...(defArme.retraitPA
             ? {
-                retraitPA: o.retraitPA,
+                retraitPA: defArme.retraitPA,
               }
             : {}),
-          ...(o.assome
+          ...(defArme.assome
             ? {
-                assome: o.assome,
+                assome: defArme.assome,
               }
             : {}),
-          img: `/assets/items/${o.id}.png`,
+          img: `/assets/items/${defArme.id}.png`,
           desc:
-            s.cible === `ennemi_tous`
+            attaque.cible === `ennemi_tous`
               ? `Attaque d'arme — atteint la ligne arrière.`
-              : s.vampirisme
-                ? `Attaque d'arme — rend ${Math.round(s.vampirisme * 100)} % des dégâts en PV.`
+              : attaque.vampirisme
+                ? `Attaque d'arme — rend ${Math.round(attaque.vampirisme * 100)} % des dégâts en PV.`
                 : `Attaque d'arme.`,
         }
       : undefined;
-  let l = (t) => proprieteEquipement(e.equipement, t);
-  let d = l(`changeLigne`) ? [`changer_ligne`] : [];
-  let renaissance = l(`renaissance`);
-  let p = compterPanoplies(e);
-  let m = {};
-  for (let t of Object.values(e.equipement)) {
-    let e = t && EQUIPEMENTS[t.id];
-    if (e?.panoplie && e.esquiveParPiece) {
-      m[e.panoplie] = Math.max(m[e.panoplie] ?? 0, e.esquiveParPiece);
+  let propriete = (cle) => proprieteEquipement(perso.equipement, cle);
+  let sortsPlus = propriete(`changeLigne`) ? [`changer_ligne`] : [];
+  let renaissance = propriete(`renaissance`);
+  let panoplies = compterPanoplies(perso);
+  let esquiveParPano = {};
+  for (let objet of Object.values(perso.equipement)) {
+    let def = objet && EQUIPEMENTS[objet.id];
+    if (def?.panoplie && def.esquiveParPiece) {
+      esquiveParPano[def.panoplie] = Math.max(
+        esquiveParPano[def.panoplie] ?? 0,
+        def.esquiveParPiece,
+      );
     }
   }
-  let h =
-    (l(`esquiveBonus`) ?? 0) + Object.entries(m).reduce((acc, [t, n]) => acc + n * (p[t] ?? 0), 0);
+  let esquive =
+    (propriete(`esquiveBonus`) ?? 0) +
+    Object.entries(esquiveParPano).reduce(
+      (acc, [panoplie, valeur]) => acc + valeur * (panoplies[panoplie] ?? 0),
+      0,
+    );
   return {
     armeSort,
-    paGamble: l(`paGamble`),
-    recupPASort: l(`recupPASort`),
-    riposteAvant: l(`riposteAvant`),
-    esquiveArriere: l(`esquiveArriere`),
-    esquiveBonus: h || undefined,
-    soinDegatsRecus: l(`soinDegatsRecus`),
-    elementLibre: l(`elementLibre`),
+    paGamble: propriete(`paGamble`),
+    recupPASort: propriete(`recupPASort`),
+    riposteAvant: propriete(`riposteAvant`),
+    esquiveArriere: propriete(`esquiveArriere`),
+    esquiveBonus: esquive || undefined,
+    soinDegatsRecus: propriete(`soinDegatsRecus`),
+    elementLibre: propriete(`elementLibre`),
     renaissance,
     renaissancesRestantes: +!!renaissance,
     // passifs et état de départ des classes (Sacrieur, Pandawa…)
-    souffrance: t.souffrance,
-    etatClasse: t.etatInitial,
-    ref: `j_${e.classeId}`,
-    nom: t.nom,
-    pvBase: i,
-    pvMax: i,
-    pvActuels: Math.min(e.pvActuels, i),
-    stats: r,
-    paMax: t.pa + n.paBonus,
-    paActuels: t.pa + n.paBonus,
-    initiative: t.initiative,
-    resistances: n.resistances,
-    sorts: [...t.sorts, ...d],
+    souffrance: classe.souffrance,
+    etatClasse: classe.etatInitial,
+    ref: `j_${perso.classeId}`,
+    nom: classe.nom,
+    pvBase: pvMax,
+    pvMax,
+    pvActuels: Math.min(perso.pvActuels, pvMax),
+    stats,
+    paMax: classe.pa + bonusEquip.paBonus,
+    paActuels: classe.pa + bonusEquip.paBonus,
+    initiative: classe.initiative,
+    resistances: bonusEquip.resistances,
+    sorts: [...classe.sorts, ...sortsPlus],
     camp: `joueur`,
-    position: e.position,
-    niveau: e.progression.niveau,
-    elements: t.elements,
-    img: t.img,
+    position: perso.position,
+    niveau: perso.progression.niveau,
+    elements: classe.elements,
+    img: classe.img,
     ...etatCombatInitial(),
-    bouclier: Math.round(i * (l(`bouclierDebut`) ?? 0)),
+    bouclier: Math.round(pvMax * (propriete(`bouclierDebut`) ?? 0)),
   };
 }
-export function combattantsEquipe(e) {
-  return e.persos.map((e) => creerCombattantPerso(e));
+export function combattantsEquipe(run) {
+  return run.persos.map((perso) => creerCombattantPerso(perso));
 }
-export function synchroniserPv(e, t) {
-  for (let n of e.persos) {
-    let e = t.find((e) => e.ref === `j_${n.classeId}`);
-    if (e) {
-      n.pvActuels = e.pvActuels;
+export function synchroniserPv(run, combattants) {
+  for (let perso of run.persos) {
+    let combattant = combattants.find((candidat) => candidat.ref === `j_${perso.classeId}`);
+    if (combattant) {
+      perso.pvActuels = combattant.pvActuels;
     }
   }
 }
 // Aperçu d'un soin de taverne : PV rendus au total et héros K.O. relevés (même calcul que soignerEquipe).
-export function apercuSoin(persos, t, mortDefinitive = false) {
+export function apercuSoin(persos, pct, mortDefinitive = false) {
   let total = 0;
   let releves = [];
-  for (let p of persos) {
-    if (mortDefinitive && p.pvActuels <= 0) {
+  for (let perso of persos) {
+    if (mortDefinitive && perso.pvActuels <= 0) {
       continue;
     }
-    let max = pvMaxPerso(p);
-    let gain = Math.min(max, p.pvActuels + Math.round(max * t)) - p.pvActuels;
+    let max = pvMaxPerso(perso);
+    let gain = Math.min(max, perso.pvActuels + Math.round(max * pct)) - perso.pvActuels;
     if (gain > 0) {
       total += gain;
-      if (p.pvActuels <= 0) {
-        releves.push(p.classeId);
+      if (perso.pvActuels <= 0) {
+        releves.push(perso.classeId);
       }
     }
   }
   return { total, releves };
 }
-export function soignerEquipe(e, t) {
-  let n = !!effetsDifficulte(e.ascension).mortDefinitive;
-  for (let r of e.persos) {
-    if (n && r.pvActuels <= 0) {
+export function soignerEquipe(run, pct) {
+  let mortDefinitive = !!effetsDifficulte(run.ascension).mortDefinitive;
+  for (let perso of run.persos) {
+    if (mortDefinitive && perso.pvActuels <= 0) {
       continue;
     }
-    let e = pvMaxPerso(r);
-    r.pvActuels = Math.min(e, r.pvActuels + Math.round(e * t));
+    let max = pvMaxPerso(perso);
+    perso.pvActuels = Math.min(max, perso.pvActuels + Math.round(max * pct));
   }
 }
 // Récupération après une victoire : seuls les héros debout en profitent.
-export function recupererApresVictoire(e) {
-  for (let p of e.persos) {
-    if (p.pvActuels > 0) {
-      let max = pvMaxPerso(p);
-      p.pvActuels = Math.min(max, p.pvActuels + Math.round(max * RECUPERATION.victoire));
+export function recupererApresVictoire(run) {
+  for (let perso of run.persos) {
+    if (perso.pvActuels > 0) {
+      let max = pvMaxPerso(perso);
+      perso.pvActuels = Math.min(max, perso.pvActuels + Math.round(max * RECUPERATION.victoire));
     }
   }
 }
-function tirerRarete(e, t = RARETES) {
-  let n = t.reduce((acc, item) => acc + RARETES_INFO[item].poids, 0);
-  let r = e() * n;
-  for (let e of t) {
-    r -= RARETES_INFO[e].poids;
-    if (r < 0) {
-      return e;
+function tirerRarete(rng, raretes = RARETES) {
+  let total = raretes.reduce((acc, item) => acc + RARETES_INFO[item].poids, 0);
+  let tirage = rng() * total;
+  for (let rarete of raretes) {
+    tirage -= RARETES_INFO[rarete].poids;
+    if (tirage < 0) {
+      return rarete;
     }
   }
-  return t[0];
+  return raretes[0];
 }
 export function instancierObjet(id, rarete) {
-  let n = EQUIPEMENTS[id]?.tiers?.[rarete];
-  if (n) {
+  let tier = EQUIPEMENTS[id]?.tiers?.[rarete];
+  if (tier) {
     return {
       id,
       rarete,
       stats: {
-        ...n.stats,
+        ...tier.stats,
       },
-      adaptatif: n.adaptatif,
-      resistances: n.resistances,
-      pa: n.pa,
+      adaptatif: tier.adaptatif,
+      resistances: tier.resistances,
+      pa: tier.pa,
     };
   }
   return null;
 }
-export function tirerObjet(e, t, n = RARETES) {
-  let r = EQUIPEMENTS[e]?.tiers;
-  if (!r) {
+export function tirerObjet(id, rng, raretes = RARETES) {
+  let tiers = EQUIPEMENTS[id]?.tiers;
+  if (!tiers) {
     return null;
   }
-  let i = n.filter((e) => r[e]);
-  if (i.length) {
-    return instancierObjet(e, tirerRarete(t, i));
+  let possibles = raretes.filter((rarete) => tiers[rarete]);
+  if (possibles.length) {
+    return instancierObjet(id, tirerRarete(rng, possibles));
   }
   return null;
 }
-function tirerObjetButin(e, t) {
-  return tirerObjet(e, t);
+function tirerObjetButin(id, rng) {
+  return tirerObjet(id, rng);
 }
-export function prospectionEquipe(e) {
-  return e.persos.reduce((acc, perso) => {
-    let n = statsDeNiveau(CLASSES[perso.classeId], perso.progression).prospection ?? 0;
-    let r = proprieteEquipement(perso.equipement, `prospParPvManquant`);
-    let i = r ? Math.round(r * Math.max(0, pvMaxPerso(perso) - perso.pvActuels)) : 0;
-    return acc + n + (bonusEquipement(perso).stats.prospection ?? 0) + i;
+export function prospectionEquipe(run) {
+  return run.persos.reduce((acc, perso) => {
+    let prospection = statsDeNiveau(CLASSES[perso.classeId], perso.progression).prospection ?? 0;
+    let prospParPv = proprieteEquipement(perso.equipement, `prospParPvManquant`);
+    let bonusPv = prospParPv
+      ? Math.round(prospParPv * Math.max(0, pvMaxPerso(perso) - perso.pvActuels))
+      : 0;
+    return acc + prospection + (bonusEquipement(perso).stats.prospection ?? 0) + bonusPv;
   }, 0);
 }
-export function multiplicateurKamas(e) {
-  return e.persos.reduce((acc, perso) => {
+export function multiplicateurKamas(run) {
+  return run.persos.reduce((acc, perso) => {
     // passif de classe (Enutrof)
     acc *= CLASSES[perso.classeId]?.multKamas ?? 1;
-    for (let n of Object.values(perso.equipement)) {
-      let t = n && EQUIPEMENTS[n.id]?.multKamas;
-      if (t) {
-        acc *= t;
+    for (let objet of Object.values(perso.equipement)) {
+      let mult = objet && EQUIPEMENTS[objet.id]?.multKamas;
+      if (mult) {
+        acc *= mult;
       }
     }
     return acc;
   }, 1);
 }
-export function tirerButin(e, t, n, r, i = n, a = 0) {
-  let o = TAUX_BUTIN.taux[i] ?? 0;
-  if (o <= 0) {
+export function tirerButin(run, zoneId, type, rng, typeTaux = type, prospection = 0) {
+  let taux = TAUX_BUTIN.taux[typeTaux] ?? 0;
+  if (taux <= 0) {
     return [];
   }
-  let s =
-    o *
+  let chance =
+    taux *
     (1 +
-      Math.min(TAUX_BUTIN.capProspection, (prospectionEquipe(e) + a) * TAUX_BUTIN.coefProspection));
-  let c = [];
-  let l = butinDeZone(t);
-  if (!l) {
+      Math.min(
+        TAUX_BUTIN.capProspection,
+        (prospectionEquipe(run) + prospection) * TAUX_BUTIN.coefProspection,
+      ));
+  let butin = [];
+  let butinZone = butinDeZone(zoneId);
+  if (!butinZone) {
     return [];
   }
-  let l_normales = l.normales;
-  for (let t = 0; t < Math.min(Math.max(l_normales.length, 1), TAUX_BUTIN.tiragesMax); t++) {
-    if (r() < s) {
-      let i = l_normales;
-      t === 0 &&
-        (n === `donjon` && l.boss.length
-          ? (i = l.boss)
-          : n === `combat_dur` && l.elites.length && (i = l.elites));
-      if (!i.length) {
+  let normales = butinZone.normales;
+  for (
+    let tirage = 0;
+    tirage < Math.min(Math.max(normales.length, 1), TAUX_BUTIN.tiragesMax);
+    tirage++
+  ) {
+    if (rng() < chance) {
+      let source = normales;
+      tirage === 0 &&
+        (type === `donjon` && butinZone.boss.length
+          ? (source = butinZone.boss)
+          : type === `combat_dur` && butinZone.elites.length && (source = butinZone.elites));
+      if (!source.length) {
         continue;
       }
-      let a = i[Math.floor(r() * i.length)];
-      let o = tirerObjetButin(a, r);
-      e.inventaire.push(o);
-      c.push(o);
+      let id = source[Math.floor(rng() * source.length)];
+      let objet = tirerObjetButin(id, rng);
+      run.inventaire.push(objet);
+      butin.push(objet);
     }
   }
-  return c;
+  return butin;
 }
-export function peutEquiper(e, t) {
-  let n = EQUIPEMENTS[t];
-  return !(!n || (n.ligneAvant && e.position >= 4));
+export function peutEquiper(perso, objetId) {
+  let def = EQUIPEMENTS[objetId];
+  return !(!def || (def.ligneAvant && perso.position >= 4));
 }
 /**
  * Emplacement où irait l'objet `inst` sur `perso` : celui de son type, ou pour un anneau, un
@@ -574,22 +598,25 @@ export function emplacementCible(perso, inst) {
     return choix[0];
   }
   if (def.panoplie) {
-    const double = choix.find((k) => perso.equipement[k]?.id === inst.id);
+    const double = choix.find((emplacement) => perso.equipement[emplacement]?.id === inst.id);
     if (double) {
       return double;
     }
   }
-  const libre = choix.find((k) => !perso.equipement[k]);
+  const libre = choix.find((emplacement) => !perso.equipement[emplacement]);
   if (libre) {
     return libre;
   }
   let meilleur = choix[0];
   let max = -Infinity;
-  for (const k of choix) {
-    const v = valeurEquipement({ ...perso, equipement: { ...perso.equipement, [k]: inst } });
-    if (v > max) {
-      max = v;
-      meilleur = k;
+  for (const emplacement of choix) {
+    const valeur = valeurEquipement({
+      ...perso,
+      equipement: { ...perso.equipement, [emplacement]: inst },
+    });
+    if (valeur > max) {
+      max = valeur;
+      meilleur = emplacement;
     }
   }
   return meilleur;
@@ -604,196 +631,206 @@ export function emplacementPossible(perso, inst, emplacement) {
   return !(
     def.panoplie &&
     emplacementsDuType(def.slot).some(
-      (k) => k !== emplacement && perso.equipement[k]?.id === inst.id,
+      (autre) => autre !== emplacement && perso.equipement[autre]?.id === inst.id,
     )
   );
 }
-export function equiperObjet(e, t, n, emplacement) {
-  let r = e[n];
-  let i = r ? EQUIPEMENTS[r.id] : undefined;
-  if (!r || !i || !peutEquiper(t, r.id)) {
+export function equiperObjet(inventaire, perso, indice, emplacement) {
+  let objet = inventaire[indice];
+  let def = objet ? EQUIPEMENTS[objet.id] : undefined;
+  if (!objet || !def || !peutEquiper(perso, objet.id)) {
     return;
   }
-  let k = emplacement ?? emplacementCible(t, r);
-  if (!k || !emplacementPossible(t, r, k)) {
+  let slot = emplacement ?? emplacementCible(perso, objet);
+  if (!slot || !emplacementPossible(perso, objet, slot)) {
     return;
   }
-  e.splice(n, 1);
-  let a = t.equipement[k];
-  if (a) {
-    e.push(a);
+  inventaire.splice(indice, 1);
+  let ancien = perso.equipement[slot];
+  if (ancien) {
+    inventaire.push(ancien);
   }
-  t.equipement[k] = r;
-  t.pvActuels = Math.min(t.pvActuels, pvMaxPerso(t));
+  perso.equipement[slot] = objet;
+  perso.pvActuels = Math.min(perso.pvActuels, pvMaxPerso(perso));
 }
-export function desequiper(e, t, n) {
-  let r = t.equipement[n];
-  if (r) {
-    delete t.equipement[n];
-    e.push(r);
-    t.pvActuels = Math.min(t.pvActuels, pvMaxPerso(t));
+export function desequiper(inventaire, perso, emplacement) {
+  let objet = perso.equipement[emplacement];
+  if (objet) {
+    delete perso.equipement[emplacement];
+    inventaire.push(objet);
+    perso.pvActuels = Math.min(perso.pvActuels, pvMaxPerso(perso));
   }
 }
-function creerMonstre(e, ref, n) {
+function creerMonstre(def, ref, position) {
   return {
     ref,
-    nom: e.nom,
-    pvBase: e.pv,
-    pvMax: e.pv,
-    pvActuels: e.pv,
+    nom: def.nom,
+    pvBase: def.pv,
+    pvMax: def.pv,
+    pvActuels: def.pv,
     stats: {
-      ...e.stats,
+      ...def.stats,
     },
-    paMax: e.pa,
-    paActuels: e.pa,
-    initiative: e.initiative,
+    paMax: def.pa,
+    paActuels: def.pa,
+    initiative: def.initiative,
     resistances: {
-      ...e.resistances,
+      ...def.resistances,
     },
-    sorts: [...e.sorts],
+    sorts: [...def.sorts],
     camp: `ennemi`,
-    position: n,
+    position,
     niveau: 1,
-    monstreId: e.id,
-    archiNom: e.archiNom,
-    ia: e.ia,
-    mueElementaire: e.mueElementaire,
-    bonusParAllieLigne: e.bonusParAllieLigne,
-    armure: e.armure,
-    nullifieParTour: e.nullifieParTour,
-    coupsAnnulesRestants: e.nullifieParTour,
-    img: e.img,
+    monstreId: def.id,
+    archiNom: def.archiNom,
+    ia: def.ia,
+    mueElementaire: def.mueElementaire,
+    bonusParAllieLigne: def.bonusParAllieLigne,
+    armure: def.armure,
+    nullifieParTour: def.nullifieParTour,
+    coupsAnnulesRestants: def.nullifieParTour,
+    img: def.img,
     ...etatCombatInitial(),
   };
 }
-export function monstresDuCombat(e) {
-  return COMBATS[e].ennemis.map((e, t) =>
-    creerMonstre(MONSTRES[e.monstre], `e${t}_${e.monstre}`, e.position),
+export function monstresDuCombat(combatId) {
+  return COMBATS[combatId].ennemis.map((ennemi, indice) =>
+    creerMonstre(MONSTRES[ennemi.monstre], `e${indice}_${ennemi.monstre}`, ennemi.position),
   );
 }
-function appliquerAffixe(e, t, n) {
-  let r =
-    AFFIXES_GROUPE.find((e) => e.id === n) ??
-    AFFIXES_GROUPE[Math.floor(t() * AFFIXES_GROUPE.length)];
-  for (let t of e) {
-    if (r.statMult) {
-      let e = t.stats;
-      t.stats = {
-        ...e,
-        force: Math.round(e.force * r.statMult),
-        intelligence: Math.round(e.intelligence * r.statMult),
-        agilite: Math.round(e.agilite * r.statMult),
-        chance: Math.round((e.chance ?? 0) * r.statMult),
+function appliquerAffixe(monstres, rng, affixeId) {
+  let affixe =
+    AFFIXES_GROUPE.find((candidat) => candidat.id === affixeId) ??
+    AFFIXES_GROUPE[Math.floor(rng() * AFFIXES_GROUPE.length)];
+  for (let monstre of monstres) {
+    if (affixe.statMult) {
+      let stats = monstre.stats;
+      monstre.stats = {
+        ...stats,
+        force: Math.round(stats.force * affixe.statMult),
+        intelligence: Math.round(stats.intelligence * affixe.statMult),
+        agilite: Math.round(stats.agilite * affixe.statMult),
+        chance: Math.round((stats.chance ?? 0) * affixe.statMult),
       };
     }
-    if (r.pvMult) {
-      multiplierPv(t, r.pvMult);
+    if (affixe.pvMult) {
+      multiplierPv(monstre, affixe.pvMult);
     }
-    if (r.resAll) {
-      ajouterResistanceTous(t, r.resAll);
+    if (affixe.resAll) {
+      ajouterResistanceTous(monstre, affixe.resAll);
     }
-    if (r.initBonus) {
-      t.initiative += r.initBonus;
+    if (affixe.initBonus) {
+      monstre.initiative += affixe.initBonus;
     }
-    if (r.paBonus) {
-      t.paMax += r.paBonus;
-      t.paActuels = t.paMax;
-    }
-  }
-  return r;
-}
-export function appliquerAffixesElite(e, t, n) {
-  let r =
-    (n ?? []).map((e) => AFFIXES_GROUPE.find((t) => t.id === e)).find((e) => e !== undefined) ??
-    AFFIXES_GROUPE[Math.floor(t() * AFFIXES_GROUPE.length)];
-  appliquerAffixe(e, t, r.id);
-  return [r];
-}
-export function especesNormalesZone(e) {
-  let t = new Set();
-  for (let n of e.pools.normales) {
-    for (let e of COMBATS[n]?.ennemis ?? []) {
-      t.add(e.monstre);
+    if (affixe.paBonus) {
+      monstre.paMax += affixe.paBonus;
+      monstre.paActuels = monstre.paMax;
     }
   }
-  return [...t];
+  return affixe;
 }
-export function appliquerDifficulteMonstres(e, t, n) {
-  let r = n.type === `combat` || n.type === `combat_dur`;
-  if (t.renfortAvant && r && n.especesZone?.length) {
-    let t = new Set(e.map((e) => e.position));
-    let r = [0, 1, 2, 3].find((e) => !t.has(e));
-    if (r !== undefined) {
-      let t = n.especesZone[Math.floor(n.rng() * n.especesZone.length)];
-      e.push(creerMonstre(MONSTRES[t], `asc_${t}`, r));
+export function appliquerAffixesElite(monstres, rng, idsAffixes) {
+  let affixeChoisi =
+    (idsAffixes ?? [])
+      .map((id) => AFFIXES_GROUPE.find((candidat) => candidat.id === id))
+      .find((trouve) => trouve !== undefined) ??
+    AFFIXES_GROUPE[Math.floor(rng() * AFFIXES_GROUPE.length)];
+  appliquerAffixe(monstres, rng, affixeChoisi.id);
+  return [affixeChoisi];
+}
+export function especesNormalesZone(zone) {
+  let especes = new Set();
+  for (let combatId of zone.pools.normales) {
+    for (let ennemi of COMBATS[combatId]?.ennemis ?? []) {
+      especes.add(ennemi.monstre);
     }
   }
-  if (t.pvMult) {
-    for (let n of e) {
-      multiplierPv(n, t.pvMult);
+  return [...especes];
+}
+export function appliquerDifficulteMonstres(monstres, effets, options) {
+  let normal = options.type === `combat` || options.type === `combat_dur`;
+  if (effets.renfortAvant && normal && options.especesZone?.length) {
+    let occupees = new Set(monstres.map((monstre) => monstre.position));
+    let positionLibre = [0, 1, 2, 3].find((position) => !occupees.has(position));
+    if (positionLibre !== undefined) {
+      let espece = options.especesZone[Math.floor(options.rng() * options.especesZone.length)];
+      monstres.push(creerMonstre(MONSTRES[espece], `asc_${espece}`, positionLibre));
+    }
+  }
+  if (effets.pvMult) {
+    for (let monstre of monstres) {
+      multiplierPv(monstre, effets.pvMult);
     }
   }
 }
 // Puissance des monstres d'une zone (src/data/ajustementsZones.json, réglée par simulation) : PV et
 // dégâts multipliés par le même facteur.
 function facteurTypeZone(type, zoneId) {
-  const t = trouverZoneDansMonde(zoneId);
-  let f = facteurType(type, t?.index ?? 0, t?.tranche.zones.length ?? 12);
+  const trouve = trouverZoneDansMonde(zoneId);
+  let facteur = facteurType(type, trouve?.index ?? 0, trouve?.tranche.zones.length ?? 12);
   if (type === `donjon`) {
-    f *= AJUSTEMENTS_DONJONS[zoneId] ?? 1;
+    facteur *= AJUSTEMENTS_DONJONS[zoneId] ?? 1;
   }
-  return f;
+  return facteur;
 }
 export const puissanceZone = (zoneId) => AJUSTEMENTS_ZONES[zoneId] ?? 1;
 export function appliquerPuissanceZone(monstres, zoneId, type) {
   // facteur de la zone × facteur du type de combat (normal / difficile / donjon)
-  let f = puissanceZone(zoneId) * facteurTypeZone(type, zoneId);
-  if (f === 1) {
+  let facteur = puissanceZone(zoneId) * facteurTypeZone(type, zoneId);
+  if (facteur === 1) {
     return;
   }
-  for (let m of monstres) {
-    multiplierPv(m, f);
+  for (let monstre of monstres) {
+    multiplierPv(monstre, facteur);
     for (let st of [`force`, `intelligence`, `agilite`, `chance`]) {
-      if (m.stats[st] !== undefined) {
+      if (monstre.stats[st] !== undefined) {
         // dégâts ∝ (1 + 0,03 × stat) : on multiplie ce terme par f
-        m.stats[st] = Math.max(0, Math.round(((1 + 0.03 * m.stats[st]) * f - 1) / 0.03));
+        monstre.stats[st] = Math.max(
+          0,
+          Math.round(((1 + 0.03 * monstre.stats[st]) * facteur - 1) / 0.03),
+        );
       }
     }
   }
 }
-export function effetsDifficulte(e) {
-  return DIFFICULTES[Math.max(0, Math.min(Math.trunc(e) || 0, DIFFICULTES.length - 1))].effets;
+export function effetsDifficulte(ascension) {
+  return DIFFICULTES[Math.max(0, Math.min(Math.trunc(ascension) || 0, DIFFICULTES.length - 1))]
+    .effets;
 }
-export function chanceArchi(e) {
+export function chanceArchi(run) {
   return (
-    CONFIG_ARCHI.chance + CONFIG_ARCHI.philtre * Math.min(e.philtres ?? 0, CONFIG_ARCHI.philtresMax)
+    CONFIG_ARCHI.chance +
+    CONFIG_ARCHI.philtre * Math.min(run.philtres ?? 0, CONFIG_ARCHI.philtresMax)
   );
 }
 // Bonus de la jauge de traque après `n` combats sans archimonstre inédit.
-export const bonusJaugeArchi = (n) =>
-  Math.min(CONFIG_ARCHI.bonusSansNouveauMax, CONFIG_ARCHI.bonusParCombatSansNouveau * (n ?? 0));
+export const bonusJaugeArchi = (combatsSansNouveau) =>
+  Math.min(
+    CONFIG_ARCHI.bonusSansNouveauMax,
+    CONFIG_ARCHI.bonusParCombatSansNouveau * (combatsSansNouveau ?? 0),
+  );
 // Chance qu'un archimonstre encore jamais capturé apparaisse : bien plus haute, et grandit à chaque
 // combat sans nouvel archi (jauge de traque, gardée d'une run à l'autre).
-export function chanceArchiNouveau(e, combatsSansNouveau = 0) {
+export function chanceArchiNouveau(run, combatsSansNouveau = 0) {
   return Math.min(
     0.6,
-    chanceArchi(e) * CONFIG_ARCHI.multNouveau + bonusJaugeArchi(combatsSansNouveau),
+    chanceArchi(run) * CONFIG_ARCHI.multNouveau + bonusJaugeArchi(combatsSansNouveau),
   );
 }
-function transformerEnArchi(e) {
-  if (e.archi || !e.archiNom) {
+function transformerEnArchi(monstre) {
+  if (monstre.archi || !monstre.archiNom) {
     return;
   }
-  e.archi = true;
-  e.nom = e.archiNom;
-  multiplierPv(e, CONFIG_ARCHI.pvMult);
-  let e_stats = e.stats;
-  e.stats = {
-    force: Math.round(e_stats.force * CONFIG_ARCHI.statMult),
-    intelligence: Math.round(e_stats.intelligence * CONFIG_ARCHI.statMult),
-    agilite: Math.round(e_stats.agilite * CONFIG_ARCHI.statMult),
-    vitalite: Math.round(e_stats.vitalite * CONFIG_ARCHI.statMult),
-    chance: Math.round((e_stats.chance ?? 0) * CONFIG_ARCHI.statMult),
+  monstre.archi = true;
+  monstre.nom = monstre.archiNom;
+  multiplierPv(monstre, CONFIG_ARCHI.pvMult);
+  let base = monstre.stats;
+  monstre.stats = {
+    force: Math.round(base.force * CONFIG_ARCHI.statMult),
+    intelligence: Math.round(base.intelligence * CONFIG_ARCHI.statMult),
+    agilite: Math.round(base.agilite * CONFIG_ARCHI.statMult),
+    vitalite: Math.round(base.vitalite * CONFIG_ARCHI.statMult),
+    chance: Math.round((base.chance ?? 0) * CONFIG_ARCHI.statMult),
   };
 }
 /**
@@ -801,36 +838,42 @@ function transformerEnArchi(e) {
  * capturées ; les autres utilisent `chanceNouveau`. Renvoie true si un archi encore jamais capturé
  * est apparu.
  */
-export function tirerArchis(e, t, n = CONFIG_ARCHI.chance, captures, chanceNouveau = n) {
+export function tirerArchis(
+  monstres,
+  rng,
+  chance = CONFIG_ARCHI.chance,
+  captures,
+  chanceNouveau = chance,
+) {
   let nouveau = false;
-  for (let r of e) {
-    if (!r.archiNom) {
+  for (let monstre of monstres) {
+    if (!monstre.archiNom) {
       continue;
     }
-    const inedit = captures !== undefined && !captures.has(r.monstreId);
-    if (t() < (inedit ? chanceNouveau : n)) {
-      transformerEnArchi(r);
+    const inedit = captures !== undefined && !captures.has(monstre.monstreId);
+    if (rng() < (inedit ? chanceNouveau : chance)) {
+      transformerEnArchi(monstre);
       nouveau ||= inedit;
     }
   }
   return nouveau;
 }
-export function tirerMonstreRare(e, t, n) {
-  if (n.type !== `combat`) {
+export function tirerMonstreRare(monstres, rng, options) {
+  if (options.type !== `combat`) {
     return;
   }
-  let r = MONSTRES_RARES[n.tranche];
-  if (!r?.especes.length || t() >= r.chance) {
+  let rare = MONSTRES_RARES[options.tranche];
+  if (!rare?.especes.length || rng() >= rare.chance) {
     return;
   }
-  let i = new Set(e.map((e) => e.position));
-  let a = [0, 1, 2, 3, 4, 5, 6, 7].find((e) => !i.has(e));
-  if (a === undefined) {
+  let occupees = new Set(monstres.map((monstre) => monstre.position));
+  let position = [0, 1, 2, 3, 4, 5, 6, 7].find((place) => !occupees.has(place));
+  if (position === undefined) {
     return;
   }
-  let o = r.especes[Math.floor(t() * r.especes.length)];
-  let s = creerMonstre(MONSTRES[o], `err_${o}`, a);
-  transformerEnArchi(s);
-  e.push(s);
-  return s.nom;
+  let espece = rare.especes[Math.floor(rng() * rare.especes.length)];
+  let monstre = creerMonstre(MONSTRES[espece], `err_${espece}`, position);
+  transformerEnArchi(monstre);
+  monstres.push(monstre);
+  return monstre.nom;
 }
