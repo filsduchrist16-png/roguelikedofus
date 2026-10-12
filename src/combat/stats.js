@@ -9,164 +9,194 @@ import {
 } from "../jeu/progression.js";
 import { caseLibreSurLigne, caseOpposeeLibre, membresRangee } from "./effets.js";
 import { lancerAttaque } from "./sorts.js";
-export const tirageEntier = (e, t, n) => e + Math.floor(n() * (t - e + 1));
-export const vivants = (e) => e.filter((e) => e.pvActuels > 0);
-export const trouverParRef = (e, t) => e.find((e) => e.ref === t);
-export const reliquesActivesDe = (e, t) => {
-  if (e.camp === `joueur`) {
-    return t.reliquesActives ?? new Set();
+export const tirageEntier = (min, max, rng) => min + Math.floor(rng() * (max - min + 1));
+export const vivants = (combattants) =>
+  combattants.filter((combattant) => combattant.pvActuels > 0);
+export const trouverParRef = (combattants, ref) =>
+  combattants.find((combattant) => combattant.ref === ref);
+export const reliquesActivesDe = (combattant, contexte) => {
+  if (combattant.camp === `joueur`) {
+    return contexte.reliquesActives ?? new Set();
   }
   return new Set();
 };
-export const ennemisVivants = (e, t) => vivants(t).filter((t) => t.camp !== e.camp);
-export const alliesVivants = (e, t) =>
-  vivants(t).filter((t) => t.camp === e.camp && !t.estLance && !t.estInvocation);
+export const ennemisVivants = (combattant, combattants) =>
+  vivants(combattants).filter((autre) => autre.camp !== combattant.camp);
+export const alliesVivants = (combattant, combattants) =>
+  vivants(combattants).filter(
+    (autre) => autre.camp === combattant.camp && !autre.estLance && !autre.estInvocation,
+  );
 export const ELEMENTS = [`terre`, `feu`, `eau`, `air`];
-export const sommeEffets = (e, t) =>
-  e.effets.filter((e) => e.stat === t).reduce((acc, item) => acc + item.valeur, 0);
+export const sommeEffets = (combattant, stat) =>
+  combattant.effets
+    .filter((effet) => effet.stat === stat)
+    .reduce((acc, item) => acc + item.valeur, 0);
 const STATS_ELEMENTAIRES = [`force`, `intelligence`, `agilite`, `chance`];
-export function statsEffectives(e) {
-  let t = {
-    ...e.stats,
+export function statsEffectives(combattant) {
+  let stats = {
+    ...combattant.stats,
   };
-  for (let n of STATS_ELEMENTAIRES) {
-    let r = sommeEffets(e, n);
-    if (r) {
-      t[n] = (t[n] ?? 0) + r;
+  for (let stat of STATS_ELEMENTAIRES) {
+    let somme = sommeEffets(combattant, stat);
+    if (somme) {
+      stats[stat] = (stats[stat] ?? 0) + somme;
     }
   }
-  let n = sommeEffets(e, `crit`);
-  if (n) {
-    t.crit = (t.crit ?? 0) + n;
+  let bonusCrit = sommeEffets(combattant, `crit`);
+  if (bonusCrit) {
+    stats.crit = (stats.crit ?? 0) + bonusCrit;
   }
-  return t;
+  return stats;
 }
-function elementsDominants(e) {
-  if (e.elements) {
-    return e.elements;
+function elementsDominants(combattant) {
+  if (combattant.elements) {
+    return combattant.elements;
   }
-  let t = statsEffectives(e);
-  let n = ELEMENTS.map((e) => [e, statElement(t, e)]).sort((e, t) => t[1] - e[1]);
-  return [n[0][0], n[1][0]];
+  let stats = statsEffectives(combattant);
+  let paires = ELEMENTS.map((element) => [element, statElement(stats, element)]).sort(
+    (premier, second) => second[1] - premier[1],
+  );
+  return [paires[0][0], paires[1][0]];
 }
-export function elementsUtilisables(e) {
-  if (e.elementLibre) {
+export function elementsUtilisables(combattant) {
+  if (combattant.elementLibre) {
     return ELEMENTS;
   }
-  return elementsDominants(e);
+  return elementsDominants(combattant);
 }
-export function meilleurElement(e) {
-  let t = statsEffectives(e);
-  return elementsUtilisables(e).reduce((acc, item) => {
-    if (statElement(t, item) > statElement(t, acc)) {
+export function meilleurElement(combattant) {
+  let stats = statsEffectives(combattant);
+  return elementsUtilisables(combattant).reduce((acc, item) => {
+    if (statElement(stats, item) > statElement(stats, acc)) {
       return item;
     }
     return acc;
   });
 }
-export const multiplicateurSoinDe = (e) =>
-  multiplicateurSoin(e.stats, statElement(statsEffectives(e), meilleurElement(e)));
-export const enLigneAvant = (e) => e.position < 4;
-export function chanceEsquive(e, t) {
-  let n = statsEffectives(e);
-  let r = t?.sansBonusPosition
+export const multiplicateurSoinDe = (combattant) =>
+  multiplicateurSoin(
+    combattant.stats,
+    statElement(statsEffectives(combattant), meilleurElement(combattant)),
+  );
+export const enLigneAvant = (combattant) => combattant.position < 4;
+export function chanceEsquive(combattant, options) {
+  let stats = statsEffectives(combattant);
+  let bonusPosition = options?.sansBonusPosition
     ? 0
-    : (e.esquiveBonus ?? 0) + (enLigneAvant(e) ? 0 : (e.esquiveArriere ?? 0));
-  let i = e.effets
-    .filter((e) => e.stat === `esquive` && !(t?.sansViaBrume && e.viaBrume))
+    : (combattant.esquiveBonus ?? 0) +
+      (enLigneAvant(combattant) ? 0 : (combattant.esquiveArriere ?? 0));
+  let bonusEffets = combattant.effets
+    .filter((effet) => effet.stat === `esquive` && !(options?.sansViaBrume && effet.viaBrume))
     .reduce((acc, item) => acc + item.valeur, 0);
   // rendement décroissant : l'Agilité seule plafonne à 35 % (les bonus d'effets s'ajoutent avant)
-  let ag = Math.max(0, n.agilite ?? 0);
-  let a = ag / (ag + 400) + i + r;
-  if (t?.sansPlafond) {
-    return a;
+  let ag = Math.max(0, stats.agilite ?? 0);
+  let total = ag / (ag + 400) + bonusEffets + bonusPosition;
+  if (options?.sansPlafond) {
+    return total;
   }
-  return Math.min(0.35, a);
+  return Math.min(0.35, total);
 }
-export function coutPA(e, t) {
-  let n = t.remisesCout?.[e.id] ?? 0;
-  if (n > 0) {
-    return Math.max(1, e.coutPA - n);
+export function coutPA(sort, combattant) {
+  let remise = combattant.remisesCout?.[sort.id] ?? 0;
+  if (remise > 0) {
+    return Math.max(1, sort.coutPA - remise);
   }
-  return e.coutPA;
+  return sort.coutPA;
 }
-function filtrerLigneAvant(e) {
-  let t = e.filter(enLigneAvant);
-  if (t.length) {
-    return t;
+function filtrerLigneAvant(combattants) {
+  let avant = combattants.filter(enLigneAvant);
+  if (avant.length) {
+    return avant;
   }
-  return e;
+  return combattants;
 }
-const enCooldownSurCible = (e, t, ref) => (e.cooldowns[`${t.id}:${ref}`] ?? 0) > 0;
-const enCooldown = (e, t) => !!t.cooldownTours && (e.cooldowns[t.id] ?? 0) > 0;
-export function ciblesValides(e, t, n) {
-  let r = n.filter((e) => !e.estEgide);
-  let i;
-  switch (t.cible) {
+const enCooldownSurCible = (combattant, sort, ref) =>
+  (combattant.cooldowns[`${sort.id}:${ref}`] ?? 0) > 0;
+const enCooldown = (combattant, sort) =>
+  !!sort.cooldownTours && (combattant.cooldowns[sort.id] ?? 0) > 0;
+export function ciblesValides(lanceur, sort, combattants) {
+  let visibles = combattants.filter((combattant) => !combattant.estEgide);
+  let cibles;
+  switch (sort.cible) {
     case `soi`:
-      i = [e];
+      cibles = [lanceur];
       break;
     case `allie`:
     case `allie_tous`:
-      i = alliesVivants(e, r);
+      cibles = alliesVivants(lanceur, visibles);
       break;
     case `ennemi_tous`:
-      i = ennemisVivants(e, r).filter((x) => !x.estLance);
+      cibles = ennemisVivants(lanceur, visibles).filter((ennemi) => !ennemi.estLance);
       break;
     case `ennemi_ligne`: {
       // la Lance du Forgelance n'est pas une cible (et ne masque pas la ligne arrière)
-      let t = ennemisVivants(e, r).filter((x) => !x.estLance);
-      i = sommeEffets(e, `ignoreLigne`) > 0 ? t : filtrerLigneAvant(t);
+      let ennemis = ennemisVivants(lanceur, visibles).filter((ennemi) => !ennemi.estLance);
+      cibles = sommeEffets(lanceur, `ignoreLigne`) > 0 ? ennemis : filtrerLigneAvant(ennemis);
       break;
     }
     case `mixte`:
-      i = vivants(r);
+      cibles = vivants(visibles);
       break;
   }
-  if (e.camp === `ennemi`) {
-    let e = i.filter((e) => e.camp === `joueur` && e.provoque && e.pvActuels > 0);
-    if (e.length) {
-      i = e;
+  if (lanceur.camp === `ennemi`) {
+    let provocateurs = cibles.filter(
+      (combattant) =>
+        combattant.camp === `joueur` && combattant.provoque && combattant.pvActuels > 0,
+    );
+    if (provocateurs.length) {
+      cibles = provocateurs;
     }
   }
-  if (t.zoneLance) {
-    let t = vivants(n).find((t) => t.estLance && t.lanceurRef === e.ref);
-    if (t && !i.some((e) => e.ref === t.ref)) {
-      i = [...i, t];
+  if (sort.zoneLance) {
+    let lance = vivants(combattants).find(
+      (candidat) => candidat.estLance && candidat.lanceurRef === lanceur.ref,
+    );
+    if (lance && !cibles.some((cible) => cible.ref === lance.ref)) {
+      cibles = [...cibles, lance];
     }
   }
   if (
-    (t.cible === `ennemi_tous` || t.cible === `ennemi_ligne` || t.cible === `mixte`) &&
-    sommeEffets(e, `tetanise`) > 0 &&
-    sommeEffets(e, `ignoreLigne`) <= 0
+    (sort.cible === `ennemi_tous` || sort.cible === `ennemi_ligne` || sort.cible === `mixte`) &&
+    sommeEffets(lanceur, `tetanise`) > 0 &&
+    sommeEffets(lanceur, `ignoreLigne`) <= 0
   ) {
-    i = i.filter((t) => t.camp === e.camp || enLigneAvant(t));
+    cibles = cibles.filter((cible) => cible.camp === lanceur.camp || enLigneAvant(cible));
   }
   if (
-    (t.type === `buff` &&
-      t.effetRangeeAlliee &&
-      !membresRangee(e, t.effetRangeeAlliee, n).length) ||
-    (t.consommeRage && !(e.rage ?? 0)) ||
-    (t.pasPremierTour && (e.toursJoues ?? 0) <= 1) ||
-    (t.posePortail && (e.portails ?? 0) >= 4) ||
-    (t.kaboom && !ennemisVivants(e, n).some((e) => (e.bombes ?? 0) > 0)) ||
-    (t.invoqueLance && vivants(n).some((t) => t.ref === `lance_${e.ref}`)) ||
-    (t.rappelleLance && !vivants(n).some((t) => t.ref === `lance_${e.ref}`)) ||
-    (t.invoqueEgide && vivants(n).some((t) => t.ref === `egide_${e.ref}`)) ||
-    (t.invoqueEgide &&
-      (i = i.filter((t) => caseLibreSurLigne(e.camp, enLigneAvant(t), n) !== null)),
-    t.changeLigne && caseOpposeeLibre(e, n) === null) ||
-    enCooldown(e, t) ||
-    sortIndisponible(e, t, n) ||
-    (t.cooldown && (i = i.filter((n) => !enCooldownSurCible(e, t, n.ref))),
-    t.maxParTour && (e.lancersCeTour?.[t.id] ?? 0) >= t.maxParTour)
+    (sort.type === `buff` &&
+      sort.effetRangeeAlliee &&
+      !membresRangee(lanceur, sort.effetRangeeAlliee, combattants).length) ||
+    (sort.consommeRage && !(lanceur.rage ?? 0)) ||
+    (sort.pasPremierTour && (lanceur.toursJoues ?? 0) <= 1) ||
+    (sort.posePortail && (lanceur.portails ?? 0) >= 4) ||
+    (sort.kaboom &&
+      !ennemisVivants(lanceur, combattants).some((ennemi) => (ennemi.bombes ?? 0) > 0)) ||
+    (sort.invoqueLance &&
+      vivants(combattants).some((combattant) => combattant.ref === `lance_${lanceur.ref}`)) ||
+    (sort.rappelleLance &&
+      !vivants(combattants).some((combattant) => combattant.ref === `lance_${lanceur.ref}`)) ||
+    (sort.invoqueEgide &&
+      vivants(combattants).some((combattant) => combattant.ref === `egide_${lanceur.ref}`)) ||
+    (sort.invoqueEgide &&
+      (cibles = cibles.filter(
+        (cible) => caseLibreSurLigne(lanceur.camp, enLigneAvant(cible), combattants) !== null,
+      )),
+    sort.changeLigne && caseOpposeeLibre(lanceur, combattants) === null) ||
+    enCooldown(lanceur, sort) ||
+    sortIndisponible(lanceur, sort, combattants) ||
+    (sort.cooldown &&
+      (cibles = cibles.filter((cible) => !enCooldownSurCible(lanceur, sort, cible.ref))),
+    sort.maxParTour && (lanceur.lancersCeTour?.[sort.id] ?? 0) >= sort.maxParTour)
   ) {
     return [];
   }
-  if (t.maxParCibleParTour) {
-    i = i.filter((n) => (e.lancersCeTour?.[`${t.id}:${n.ref}`] ?? 0) < t.maxParCibleParTour);
+  if (sort.maxParCibleParTour) {
+    cibles = cibles.filter(
+      (cible) =>
+        (lanceur.lancersCeTour?.[`${sort.id}:${cible.ref}`] ?? 0) < sort.maxParCibleParTour,
+    );
   }
-  return filtrerCiblesClasse(e, t, i);
+  return filtrerCiblesClasse(lanceur, sort, cibles);
 }
 // Pourquoi un sort ne peut pas être lancé maintenant : libellé court pour l'interface, ou null.
 // Reprend dans l'ordre le coût en PA, la recharge, puis les conditions de ciblesValides.
@@ -182,7 +212,7 @@ export function raisonIndisponible(lanceur, sort, combattants) {
   if (ciblesValides(lanceur, sort, combattants).length > 0) {
     return null;
   }
-  const lanceVivante = (ref) => vivants(combattants).some((c) => c.ref === ref);
+  const lanceVivante = (ref) => vivants(combattants).some((combattant) => combattant.ref === ref);
   const lances = lanceur.lancersCeTour?.[sort.id] ?? 0;
   if (sort.maxParTour && lances >= sort.maxParTour) {
     return `Déjà lancé ce tour (${lances}/${sort.maxParTour})`;
@@ -193,12 +223,15 @@ export function raisonIndisponible(lanceur, sort, combattants) {
   if (sort.consommeRage && !(lanceur.rage ?? 0)) {
     return `Il faut 1 Rage`;
   }
-  if (sort.kaboom && !ennemisVivants(lanceur, combattants).some((c) => (c.bombes ?? 0) > 0)) {
+  if (
+    sort.kaboom &&
+    !ennemisVivants(lanceur, combattants).some((ennemi) => (ennemi.bombes ?? 0) > 0)
+  ) {
     return `Aucune bombe posée`;
   }
   if (sort.invoqueCreature && sortIndisponible(lanceur, sort, combattants)) {
     const deja = vivants(combattants).some(
-      (c) => c.ref === `crea_${sort.invoqueCreature}_${lanceur.ref}`,
+      (combattant) => combattant.ref === `crea_${sort.invoqueCreature}_${lanceur.ref}`,
     );
     return deja ? `Créature déjà invoquée` : `Plus de place pour l'invoquer`;
   }
@@ -229,52 +262,58 @@ export function raisonIndisponible(lanceur, sort, combattants) {
   }
   return `Aucune cible`;
 }
-export function reinitialiserTour(e) {
-  e.lancersCeTour = {};
-  e.remisesCout = {};
-  e.veilleursRecuCeTour = false;
+export function reinitialiserTour(combattant) {
+  combattant.lancersCeTour = {};
+  combattant.remisesCout = {};
+  combattant.veilleursRecuCeTour = false;
 }
-export function multiplicateurRelance(e, t) {
-  if (t) {
+export function multiplicateurRelance(sort, lanceur) {
+  if (lanceur) {
     return (
-      (e.bonusParRelanceCeTour
-        ? 1 + e.bonusParRelanceCeTour * Math.max(0, t.lancersCeTour?.[e.id] ?? 0)
+      (sort.bonusParRelanceCeTour
+        ? 1 + sort.bonusParRelanceCeTour * Math.max(0, lanceur.lancersCeTour?.[sort.id] ?? 0)
         : 1) *
-      (e.bonusParLancerCombat
+      (sort.bonusParLancerCombat
         ? 1 +
           Math.min(
-            e.plafondBonusLancerCombat ?? Infinity,
-            e.bonusParLancerCombat * Math.max(0, t.lancersCombat?.[e.id] ?? 0),
+            sort.plafondBonusLancerCombat ?? Infinity,
+            sort.bonusParLancerCombat * Math.max(0, lanceur.lancersCombat?.[sort.id] ?? 0),
           )
         : 1)
     );
   }
   return 1;
 }
-export function ciblesTouchees(e, t, n, r) {
-  if (t.zoneLance) {
-    if (t.tousSiLanceArriere && n.estLance && !enLigneAvant(n)) {
-      return ennemisVivants(e, r);
+export function ciblesTouchees(lanceur, sort, cible, combattants) {
+  if (sort.zoneLance) {
+    if (sort.tousSiLanceArriere && cible.estLance && !enLigneAvant(cible)) {
+      return ennemisVivants(lanceur, combattants);
     }
-    let i = enLigneAvant(n);
-    return ennemisVivants(e, r).filter((e) => enLigneAvant(e) === i);
+    let devant = enLigneAvant(cible);
+    return ennemisVivants(lanceur, combattants).filter(
+      (combattant) => enLigneAvant(combattant) === devant,
+    );
   }
-  if (t.zoneLigne || t.ratioLigne) {
-    let t = enLigneAvant(n);
-    return ennemisVivants(e, r).filter((e) => enLigneAvant(e) === t);
+  if (sort.zoneLigne || sort.ratioLigne) {
+    let devant = enLigneAvant(cible);
+    return ennemisVivants(lanceur, combattants).filter(
+      (combattant) => enLigneAvant(combattant) === devant,
+    );
   }
-  let i = [n];
-  if (t.rebond) {
-    let a = ennemisVivants(e, r).sort((e, t) => e.position - t.position);
-    let o = a.findIndex((e) => e.ref === n.ref);
-    for (let e = 1; e <= t.rebond.sauts; e++) {
-      let t = a[o + e];
-      if (t) {
-        i.push(t);
+  let touchees = [cible];
+  if (sort.rebond) {
+    let ennemis = ennemisVivants(lanceur, combattants).sort(
+      (premier, second) => premier.position - second.position,
+    );
+    let indice = ennemis.findIndex((combattant) => combattant.ref === cible.ref);
+    for (let saut = 1; saut <= sort.rebond.sauts; saut++) {
+      let suivant = ennemis[indice + saut];
+      if (suivant) {
+        touchees.push(suivant);
       }
     }
   }
-  return i;
+  return touchees;
 }
 export function etatCombatInitial() {
   return {
@@ -286,44 +325,44 @@ export function etatCombatInitial() {
     bonusOffensifProchain: 0,
   };
 }
-export const logDegats = (e, t, n, element, i = ``) => {
-  let portion = `${n} dégâts`;
-  e.log(`${t}${portion}${i}`, {
+export const logDegats = (contexte, prefixe, montant, element, suffixe = ``) => {
+  let portion = `${montant} dégâts`;
+  contexte.log(`${prefixe}${portion}${suffixe}`, {
     element,
     portion,
   });
 };
 const BONUS_RAGE = 0.05;
-export function gagnerRage(e, t) {
-  let n = e.rage ?? 0;
-  e.rage = Math.min(3, n + 1);
-  if (e.rage > n) {
-    t.log(`🐺 ${e.nom} entre en Rage (×${e.rage}).`);
+export function gagnerRage(combattant, contexte) {
+  let avant = combattant.rage ?? 0;
+  combattant.rage = Math.min(3, avant + 1);
+  if (combattant.rage > avant) {
+    contexte.log(`🐺 ${combattant.nom} entre en Rage (×${combattant.rage}).`);
   }
 }
 const CRIT_PAR_AGILITE = 0.001;
-export function chanceCritique(e) {
-  return Math.min(1, 0.05 + e.agilite * CRIT_PAR_AGILITE + (e.crit ?? 0) / 100);
+export function chanceCritique(stats) {
+  return Math.min(1, 0.05 + stats.agilite * CRIT_PAR_AGILITE + (stats.crit ?? 0) / 100);
 }
-export function poserBombe(e, t) {
-  if (e.estLance || (e.bombes ?? 0) >= 5) {
+export function poserBombe(combattant, contexte) {
+  if (combattant.estLance || (combattant.bombes ?? 0) >= 5) {
     return false;
   }
   return (
-    (e.bombes = (e.bombes ?? 0) + 1),
-    t?.log(`💣 Une bombe colle à ${e.nom} (${e.bombes}/5).`),
+    (combattant.bombes = (combattant.bombes ?? 0) + 1),
+    contexte?.log(`💣 Une bombe colle à ${combattant.nom} (${combattant.bombes}/5).`),
     true
   );
 }
-export function poserTelefrag(e, t, ctx, r) {
-  if (!(e.estLance || (e.telefrags ?? 0) >= 4)) {
-    e.telefrags = (e.telefrags ?? 0) + 1;
-    ctx.log(`⏳ Téléfrag sur ${e.nom} (${e.telefrags}/4).`);
-    if (r && sommeEffets(e, `aiguille`) > 0) {
+export function poserTelefrag(combattant, sort, ctx, lanceur) {
+  if (!(combattant.estLance || (combattant.telefrags ?? 0) >= 4)) {
+    combattant.telefrags = (combattant.telefrags ?? 0) + 1;
+    ctx.log(`⏳ Téléfrag sur ${combattant.nom} (${combattant.telefrags}/4).`);
+    if (lanceur && sommeEffets(combattant, `aiguille`) > 0) {
       lancerAttaque(
-        r,
+        lanceur,
         SORTS.aiguille,
-        e,
+        combattant,
         {
           useMax: false,
           mult: 1,
@@ -334,177 +373,185 @@ export function poserTelefrag(e, t, ctx, r) {
     }
   }
 }
-export function ouvrirPortail(e, t) {
-  if (!((e.portails ?? 0) >= 4)) {
-    e.portails = (e.portails ?? 0) + 1;
-    t.log(`🌀 ${e.nom} ouvre un portail (${e.portails}/4).`);
+export function ouvrirPortail(combattant, contexte) {
+  if (!((combattant.portails ?? 0) >= 4)) {
+    combattant.portails = (combattant.portails ?? 0) + 1;
+    contexte.log(`🌀 ${combattant.nom} ouvre un portail (${combattant.portails}/4).`);
   }
 }
-export function bonusPortails(e, t) {
-  if (e.portails) {
-    return 1 + 0.02 * e.portails;
+export function bonusPortails(combattant, combattants) {
+  if (combattant.portails) {
+    return 1 + 0.02 * combattant.portails;
   }
   return (
     1 +
     0.01 *
       Math.max(
         0,
-        ...t
+        ...combattants
           .filter(
-            (t) =>
-              t.camp === e.camp &&
-              t.ref !== e.ref &&
-              t.pvActuels > 0 &&
-              (t.portails ?? 0) > 0 &&
-              enLigneAvant(t) === enLigneAvant(e),
+            (autre) =>
+              autre.camp === combattant.camp &&
+              autre.ref !== combattant.ref &&
+              autre.pvActuels > 0 &&
+              (autre.portails ?? 0) > 0 &&
+              enLigneAvant(autre) === enLigneAvant(combattant),
           )
-          .map((e) => e.portails ?? 0),
+          .map((autre) => autre.portails ?? 0),
       )
   );
 }
-export function bonusConjuration(e, t, n) {
-  if (!t.conjuration) {
+export function bonusConjuration(combattant, sort, combattants) {
+  if (!sort.conjuration) {
     return 1;
   }
-  let r = trouverParRef(n, t.conjuration.lanceurRef);
-  let i = !!r && r.pvActuels > 0 && r.camp === e.camp && enLigneAvant(r) === enLigneAvant(e);
-  if (e.ref === t.conjuration.lanceurRef || i) {
-    return 1 + t.conjuration.pct;
+  let lanceur = trouverParRef(combattants, sort.conjuration.lanceurRef);
+  let protege =
+    !!lanceur &&
+    lanceur.pvActuels > 0 &&
+    lanceur.camp === combattant.camp &&
+    enLigneAvant(lanceur) === enLigneAvant(combattant);
+  if (combattant.ref === sort.conjuration.lanceurRef || protege) {
+    return 1 + sort.conjuration.pct;
   }
   return 1;
 }
-export function bonusDegatsCritiques(e) {
-  return 0.25 + e.agilite * CRIT_PAR_AGILITE;
+export function bonusDegatsCritiques(stats) {
+  return 0.25 + stats.agilite * CRIT_PAR_AGILITE;
 }
-export function resistanceTotale(e, t) {
-  return (e.resistances[t] ?? 0) + sommeEffets(e, `resAll`);
+export function resistanceTotale(combattant, element) {
+  return (combattant.resistances[element] ?? 0) + sommeEffets(combattant, `resAll`);
 }
-function resistanceEffective(e, t, n, r) {
-  if (n.ignoreResistances) {
+function resistanceEffective(cible, element, sort, lanceur) {
+  if (sort.ignoreResistances) {
     return 0;
   }
-  let i = Math.min(1, (n.perceResistances ?? 0) + (r?.perceResistances ?? 0));
-  return resistanceTotale(e, t) * (1 - i);
+  let perce = Math.min(1, (sort.perceResistances ?? 0) + (lanceur?.perceResistances ?? 0));
+  return resistanceTotale(cible, element) * (1 - perce);
 }
-function elementsTries(e, t, n) {
-  let r = statsEffectives(e);
-  return elementsUtilisables(e)
-    .map((i) => [i, multiplicateurStat(statElement(r, i)) * (1 - resistanceEffective(t, i, n, e))])
-    .sort((e, t) => t[1] - e[1])
-    .map(([e]) => e);
+function elementsTries(lanceur, cible, sort) {
+  let stats = statsEffectives(lanceur);
+  return elementsUtilisables(lanceur)
+    .map((element) => [
+      element,
+      multiplicateurStat(statElement(stats, element)) *
+        (1 - resistanceEffective(cible, element, sort, lanceur)),
+    ])
+    .sort((premier, second) => second[1] - premier[1])
+    .map(([element]) => element);
 }
-export function choisirElement(e, t, n) {
-  if (n?.element) {
-    return n.element;
+export function choisirElement(lanceur, cible, sort) {
+  if (sort?.element) {
+    return sort.element;
   }
-  let r = elementsTries(e, t, {
-    baseMin: n?.baseMin ?? 0,
-    baseMax: n?.baseMax ?? 0,
-    ignoreResistances: n?.ignoreResistances,
-    perceResistances: n?.perceResistances,
+  let tries = elementsTries(lanceur, cible, {
+    baseMin: sort?.baseMin ?? 0,
+    baseMax: sort?.baseMax ?? 0,
+    ignoreResistances: sort?.ignoreResistances,
+    perceResistances: sort?.perceResistances,
   });
-  if (n?.elementPire) {
-    return r[r.length - 1];
+  if (sort?.elementPire) {
+    return tries[tries.length - 1];
   }
-  return r[0];
+  return tries[0];
 }
-export function calculerDegats(e, t, n, r) {
-  return calculerDegatsDetail(e, t, n, r);
+export function calculerDegats(lanceur, sort, cible, options) {
+  return calculerDegatsDetail(lanceur, sort, cible, options);
 }
-export function calculerDegatsDetail(e, t, n, r) {
-  let { ctx } = r;
-  let a = statsEffectives(e);
-  if (!t.sansEsquiveNiCrit && ctx.rng() < chanceEsquive(n)) {
+export function calculerDegatsDetail(lanceur, sort, cible, options) {
+  let { ctx } = options;
+  let stats = statsEffectives(lanceur);
+  if (!sort.sansEsquiveNiCrit && ctx.rng() < chanceEsquive(cible)) {
     return {
       dmg: 0,
       esquive: true,
       crit: false,
-      element: meilleurElement(e),
+      element: meilleurElement(lanceur),
     };
   }
-  let o = r.useMax ? t.baseMax : tirageEntier(t.baseMin, t.baseMax, ctx.rng);
-  let s = elementsTries(e, n, t);
+  let degats = options.useMax ? sort.baseMax : tirageEntier(sort.baseMin, sort.baseMax, ctx.rng);
+  let tries = elementsTries(lanceur, cible, sort);
   // un sort peut imposer son élément (sorts élémentaires de l'Huppermage)
-  let element = t.element ?? (t.elementPire ? s[s.length - 1] : s[0]);
-  o *= multiplicateurStat(statElement(a, element));
+  let element = sort.element ?? (sort.elementPire ? tries[tries.length - 1] : tries[0]);
+  degats *= multiplicateurStat(statElement(stats, element));
   let crit = false;
-  if (!t.sansEsquiveNiCrit && ctx.rng() < chanceCritique(a)) {
-    o *= 1 + bonusDegatsCritiques(a);
-    o *= 1 + sommeEffets(n, `degatsCritSubis`);
+  if (!sort.sansEsquiveNiCrit && ctx.rng() < chanceCritique(stats)) {
+    degats *= 1 + bonusDegatsCritiques(stats);
+    degats *= 1 + sommeEffets(cible, `degatsCritSubis`);
     crit = true;
   }
-  o *= 1 + sommeEffets(e, `degatsInfliges`);
-  if (e.rage) {
-    o *= 1 + BONUS_RAGE * Math.min(e.rage, 3);
+  degats *= 1 + sommeEffets(lanceur, `degatsInfliges`);
+  if (lanceur.rage) {
+    degats *= 1 + BONUS_RAGE * Math.min(lanceur.rage, 3);
   }
-  if (t.bonusParPADispo && r.paAvant !== undefined) {
-    o *= 1 + t.bonusParPADispo * r.paAvant;
+  if (sort.bonusParPADispo && options.paAvant !== undefined) {
+    degats *= 1 + sort.bonusParPADispo * options.paAvant;
   }
-  if (t.bonusParTelefrag) {
-    o *= 1 + t.bonusParTelefrag * (n.telefrags ?? 0);
+  if (sort.bonusParTelefrag) {
+    degats *= 1 + sort.bonusParTelefrag * (cible.telefrags ?? 0);
   }
-  o *= r.mult;
-  o *= multiplicateurClasse(e, t, n, ctx);
-  o *= multiplicateurDofusDegats(e, n, reliquesActivesDe(e, ctx));
-  if (!t.ignoreResistances) {
-    o *= 1 - resistanceEffective(n, element, t, e);
+  degats *= options.mult;
+  degats *= multiplicateurClasse(lanceur, sort, cible, ctx);
+  degats *= multiplicateurDofusDegats(lanceur, cible, reliquesActivesDe(lanceur, ctx));
+  if (!sort.ignoreResistances) {
+    degats *= 1 - resistanceEffective(cible, element, sort, lanceur);
   }
-  o *= 1 - Math.min(0.8, sommeEffets(n, `reductionDegats`));
-  o *= e.camp === `joueur` ? ctx.playerDamageBonus : (ctx.enemyDamageBonus ?? 1);
-  if (e.degatsPctDofus) {
-    o *= 1 + e.degatsPctDofus;
+  degats *= 1 - Math.min(0.8, sommeEffets(cible, `reductionDegats`));
+  degats *= lanceur.camp === `joueur` ? ctx.playerDamageBonus : (ctx.enemyDamageBonus ?? 1);
+  if (lanceur.degatsPctDofus) {
+    degats *= 1 + lanceur.degatsPctDofus;
   }
-  if (e.degatsPctPermanent) {
-    o *= 1 + e.degatsPctPermanent;
+  if (lanceur.degatsPctPermanent) {
+    degats *= 1 + lanceur.degatsPctPermanent;
   }
-  o *= bonusDegatsIntelligence(a);
-  o -= sommeEffets(n, `armure`) + (n.armure ?? 0);
+  degats *= bonusDegatsIntelligence(stats);
+  degats -= sommeEffets(cible, `armure`) + (cible.armure ?? 0);
   return {
-    dmg: Math.max(0, Math.round(o)),
+    dmg: Math.max(0, Math.round(degats)),
     esquive: false,
     crit,
     element,
   };
 }
-export function recalculerPvMax(e) {
-  let t = sommeEffets(e, `vitalite`);
-  let n = Math.round(e.pvBase * (1 + t));
-  let r = n - e.pvMax;
-  e.pvMax = n;
-  if (r > 0) {
-    e.pvActuels += r;
+export function recalculerPvMax(combattant) {
+  let bonus = sommeEffets(combattant, `vitalite`);
+  let pvMax = Math.round(combattant.pvBase * (1 + bonus));
+  let ecart = pvMax - combattant.pvMax;
+  combattant.pvMax = pvMax;
+  if (ecart > 0) {
+    combattant.pvActuels += ecart;
   } else {
-    e.pvActuels = Math.min(e.pvActuels, n);
+    combattant.pvActuels = Math.min(combattant.pvActuels, pvMax);
   }
 }
-export function appliquerEffet(e, t) {
-  if (t.stat === `maxRoll`) {
-    e.maxRollCharges += t.valeur;
+export function appliquerEffet(combattant, effet) {
+  if (effet.stat === `maxRoll`) {
+    combattant.maxRollCharges += effet.valeur;
     return;
   }
-  e.effets.push({
-    stat: t.stat,
-    valeur: t.valeur,
-    toursRestants: t.duree,
-    transmet: t.transmet,
+  combattant.effets.push({
+    stat: effet.stat,
+    valeur: effet.valeur,
+    toursRestants: effet.duree,
+    transmet: effet.transmet,
   });
-  if (t.stat === `vitalite`) {
-    recalculerPvMax(e);
+  if (effet.stat === `vitalite`) {
+    recalculerPvMax(combattant);
   }
 }
-export const aFriction = (e) => sommeEffets(e, `friction`) > 0;
-export function appliquerPoison(e, t) {
-  appliquerEffet(e, {
+export const aFriction = (combattant) => sommeEffets(combattant, `friction`) > 0;
+export function appliquerPoison(cible, poison) {
+  appliquerEffet(cible, {
     stat: `poison`,
-    valeur: t.degats,
-    duree: t.duree,
-    transmet: t.transmet,
+    valeur: poison.degats,
+    duree: poison.duree,
+    transmet: poison.transmet,
   });
 }
-export function desenvouter(e, t) {
-  e.bouclier = 0;
-  e.boucliersTemporaires = [];
-  let n = [
+export function desenvouter(combattant, contexte) {
+  combattant.bouclier = 0;
+  combattant.boucliersTemporaires = [];
+  let stats = [
     `hot`,
     `esquive`,
     `reductionDegats`,
@@ -516,14 +563,15 @@ export function desenvouter(e, t) {
     `agilite`,
     `chance`,
   ];
-  let length = e.effets.length;
+  let nbAvant = combattant.effets.length;
   // les effets d'un état de classe (Pandawa, Zobal…) restent : ils durent tant que l'état dure
-  e.effets = e.effets.filter(
-    (e) =>
-      e.source === `etat` || !(n.includes(e.stat) || (e.stat === `degatsInfliges` && e.valeur > 0)),
+  combattant.effets = combattant.effets.filter(
+    (effet) =>
+      effet.source === `etat` ||
+      !(stats.includes(effet.stat) || (effet.stat === `degatsInfliges` && effet.valeur > 0)),
   );
-  e.bonusOffensifProchain = 0;
-  if (e.effets.length < length) {
-    t.log(`${e.nom} est désenvoûté.`);
+  combattant.bonusOffensifProchain = 0;
+  if (combattant.effets.length < nbAvant) {
+    contexte.log(`${combattant.nom} est désenvoûté.`);
   }
 }
