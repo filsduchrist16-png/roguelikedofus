@@ -81,7 +81,7 @@ export function ecranBestiaire(e) {
         .map((t) => {
           let r = s(t);
           let i = reliquesDuMonde(t.id);
-          return `<button class="best-onglet${t.id === e?.id ? ` actif` : ``}" role="tab" aria-selected="${t.id === e?.id}" data-monde="${t.id}">
+          return `<button class="best-onglet${t.id === e?.id ? ` actif` : ``}" aria-pressed="${t.id === e?.id}" data-monde="${t.id}">
             <b>${echapperHtml(t.nom)}</b>
             <small>${r.sur ? `Archimonstres ${r.fait}/${r.sur}` : `Pas d'archimonstre`} · Reliques ${i.filter((e) => n.includes(e)).length}/${i.length}</small>
           </button>`;
@@ -123,8 +123,8 @@ export function ecranBestiaire(e) {
       }
       afficherEcran(`
         <h1>Bestiaire</h1>
-        <p class="best-jauge" title="Chaque combat sans archimonstre inédit remplit la jauge ; elle se vide quand un archi jamais capturé apparaît.">🎯 Jauge de traque : <b>+${Math.round(bonusJaugeArchi(e.jaugeArchi) * 100)} %</b> de chance d'archi inédit${e.jaugeArchi ? ` (${e.jaugeArchi} combat${e.jaugeArchi > 1 ? `s` : ``} sans nouvel archi)` : ``} · les archis jamais capturés apparaissent ${CONFIG_ARCHI.multNouveau}× plus souvent</p>
-        <div class="best-onglets" role="tablist">${g}</div>
+        <p class="best-jauge" data-tip="Chaque combat sans archimonstre inédit remplit la jauge ; elle se vide quand un archi jamais capturé apparaît.">🎯 Jauge de traque : <b>+${Math.round(bonusJaugeArchi(e.jaugeArchi) * 100)} %</b> de chance d'archi inédit${e.jaugeArchi ? ` (${e.jaugeArchi} combat${e.jaugeArchi > 1 ? `s` : ``} sans nouvel archi)` : ``} · les archis jamais capturés apparaissent ${CONFIG_ARCHI.multNouveau}× plus souvent</p>
+        <div class="best-onglets" role="group" aria-label="Mondes">${g}</div>
         <div class="best-vue">
           <nav class="best-zones" aria-label="Zones du monde">${_}</nav>
           <section class="best-detail"><button type="button" class="best-vers-zones secondaire">↑ Zones</button>${v}</section>

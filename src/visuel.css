@@ -168,7 +168,7 @@ body.avec-fond .map-zone {
 }
 .coin-menu .coin-param::after {
   content: attr(data-lbl);
-  font-size: 0.62rem;
+  font-size: max(11px, 0.62rem);
   font-weight: 800;
   color: var(--muet);
   white-space: nowrap;
@@ -226,7 +226,7 @@ body.avec-fond .map-zone {
     min-width: 50px;
   }
   .coin-menu .coin-param::after {
-    font-size: 0.56rem;
+    font-size: max(11px, 0.56rem);
   }
 }
 

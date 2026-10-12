@@ -30,7 +30,7 @@ export function ecranFormation(e) {
       let a = t
         ? `<img src="${imgSymboleClasse(t.classeId)}" alt="" onerror="this.remove()" /><span>${echapperHtml(CLASSES[t.classeId].nom)}</span>${pastillesElementsPerso(t)}`
         : `<span class="form-vide">+</span>`;
-      return `<button class="form-cell ${t ? `` : `vide`} ${r}" data-cell="${e}" ${t ? `draggable="true"` : ``}>${a}</button>`;
+      return `<button class="form-cell ${t ? `` : `vide`} ${r}" data-cell="${e}" aria-pressed="${n === e}"${t ? ` draggable="true"` : ` aria-label="Case libre"`}>${a}</button>`;
     };
     let s = (e) => e.map(o).join(``);
     let c = (e, t) =>
@@ -85,12 +85,12 @@ export function ecranFormation(e) {
           )}</div></div>
         </div>
         <h2 class="settings-titre">Ordre de jeu</h2>
-        <p class="muet settings-sous">Glisse-dépose pour choisir qui joue en premier. Le camp qui ouvre le combat reste décidé par la moyenne d'initiative des deux équipes : ton ordre ne la change pas.</p>
+        <p class="muet settings-sous">Glisse-dépose, ou touche deux jetons (le premier prend la place du second), pour choisir qui joue en premier. Le camp qui ouvre le combat reste décidé par la moyenne d'initiative des deux équipes : ton ordre ne la change pas.</p>
         <div class="ordre-bande">
           ${e
             .map(
               (e, t) => `
-            <button class="ordre-jeton ${r === t ? `sel` : ``}" data-ordre="${t}" draggable="true" title="${echapperHtml(CLASSES[e.classeId].nom)}, position ${t + 1}">
+            <button class="ordre-jeton ${r === t ? `sel` : ``}" data-ordre="${t}" aria-pressed="${r === t}" draggable="true" title="${echapperHtml(CLASSES[e.classeId].nom)}, position ${t + 1}">
               <span class="ordre-rang">${t + 1}</span>
               <img src="${imgSymboleClasse(e.classeId)}" alt="" onerror="this.remove()" />
               <span class="ordre-nom">${echapperHtml(CLASSES[e.classeId].nom)}</span>

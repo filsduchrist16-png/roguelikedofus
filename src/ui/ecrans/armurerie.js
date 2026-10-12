@@ -63,7 +63,7 @@ export function ecranArmurerie(e) {
       let p = i
         .map((t) => {
           let r = progressionArmurerie(t, n);
-          return `<button class="best-onglet${t.id === e?.id ? ` actif` : ``}" role="tab" aria-selected="${t.id === e?.id}" data-monde="${t.id}">
+          return `<button class="best-onglet${t.id === e?.id ? ` actif` : ``}" aria-pressed="${t.id === e?.id}" data-monde="${t.id}">
             <b>${echapperHtml(t.nom)}</b>
             <small>Objets ${r.fait}/${r.sur} · Légendaires ${r.legendaires}</small>
           </button>`;
@@ -123,7 +123,7 @@ export function ecranArmurerie(e) {
       }
       afficherEcran(`
         <h1>Armurerie</h1>
-        <div class="best-onglets" role="tablist">${p}</div>
+        <div class="best-onglets" role="group" aria-label="Mondes">${p}</div>
         <div class="best-vue">
           <nav class="best-zones" aria-label="Zones du monde">${m}</nav>
           <section class="best-detail"><button type="button" class="best-vers-zones secondaire">↑ Zones</button>${h}</section>

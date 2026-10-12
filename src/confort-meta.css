@@ -78,14 +78,14 @@
   opacity: 0.8;
 }
 /* étoiles : une vraie zone tactile sur téléphone, l'icône reste petite */
-@media (width<=700px) {
+@media (hover: none), (width<=700px) {
   .monde-carte .asc-rangee {
     padding: 0;
   }
   .monde-carte .asc-etoile {
     position: relative;
-    width: 28px;
-    height: 40px;
+    width: 32px;
+    height: 44px;
   }
   .monde-carte .asc-etoile img {
     width: 42px;
@@ -324,4 +324,79 @@
   border-radius: 10px;
   background: #fffaf0;
   color: #3a2402;
+}
+
+/* ---------- Utilitaire : texte pour lecteurs d'écran seulement ---------- */
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Cibles tactiles : au moins 44 px ---------- */
+@media (hover: none), (width<=700px) {
+  .form-el-btn,
+  .btn-regles,
+  .btn-discord {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+.setting-ligne .set-taille {
+  min-width: 56px;
+}
+#set-nuage-msg:empty {
+  margin: 0;
+}
+
+/* ---------- Couleurs adaptées : signes en plus des couleurs ---------- */
+body.couleurs-adaptees .equip-slot.rarete-commun .slot-nom::after {
+  content: " · C";
+}
+body.couleurs-adaptees .equip-slot.rarete-rare .slot-nom::after {
+  content: " · R";
+}
+body.couleurs-adaptees .equip-slot.rarete-epique .slot-nom::after {
+  content: " · É";
+}
+body.couleurs-adaptees .equip-slot.rarete-legendaire .slot-nom::after {
+  content: " · L";
+}
+body.couleurs-adaptees .combat .carte:not(.carte-joueur) .pv-barre:not(.ko) {
+  background-image:
+    repeating-linear-gradient(135deg, #ffffff55 0 3px, #0000 3px 8px),
+    linear-gradient(90deg, var(--pv-col) var(--pv-pct), #3a2a1f55 var(--pv-pct));
+}
+
+/* Bandeaux : le survol met le décompte en pause (voir afficherBandeau) */
+.bandeau-quete {
+  pointer-events: auto;
+}
+
+/* ---------- Cibles et textes : planchers de lisibilité ---------- */
+.pd-entete small,
+.pd-quetes small {
+  font-size: max(11px, 0.7rem);
+}
+.carte .pv-gem-aside .pv-num span,
+.pv-gem-aside .pv-num span {
+  font-size: max(11px, 0.675rem);
+}
+@media (hover: none), (width<=760px) {
+  .best-vers-zones,
+  .succes-vers-liste,
+  .regles-outils .petit {
+    min-height: 44px;
+  }
+  .regles-section > summary {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
 }

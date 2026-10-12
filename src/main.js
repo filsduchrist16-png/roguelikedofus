@@ -245,6 +245,7 @@ const controleurEnnemi = async (e, t) => {
 };
 async function jouerCombat(e, combatId, n) {
   let r = COMBATS[combatId]?.nom ?? `Combat`;
+  let affixes = [];
   let i = combattantsEquipe(e);
   let a = n.type === `secret` ? monstresSecrets(e.trancheId, n.zone) : monstresDuCombat(combatId);
   appliquerDifficulteMonstres(a, effetsDifficulte(e.ascension), {
@@ -255,8 +256,11 @@ async function jouerCombat(e, combatId, n) {
   // après le renfort d'ascension, pour qu'il soit aussi à la puissance de la zone
   appliquerPuissanceZone(a, n.zone?.id, n.type);
   if (n.elite) {
-    let e = appliquerAffixesElite(a, Math.random, n.eliteModifs);
-    r = `${r} · ${e.map((e) => `${e.nom} (${e.desc})`).join(` · `)}`;
+    // affixes en pastilles sous le titre (le titre reste court)
+    affixes = appliquerAffixesElite(a, Math.random, n.eliteModifs).map((x) => ({
+      nom: x.nom,
+      desc: x.desc,
+    }));
   }
   // idole de la zone et avis de recherche (rencontres)
   let idole = idoleActive(e, n.zone?.id);
@@ -320,6 +324,7 @@ async function jouerCombat(e, combatId, n) {
     playerDamageBonus: s.damageMult,
     enemyDamageBonus: (effetsDifficulte(e.ascension).degatsMult ?? 1) * (idole?.degatsMult ?? 1),
     reliquesActives: dofusPossedes(meta),
+    affixes,
   });
   afficherObjectifsCombat(
     objectifsDuCombat({

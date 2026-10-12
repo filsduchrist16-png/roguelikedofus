@@ -147,6 +147,28 @@
   height: 36px;
   padding: 0;
 }
+@media (hover: none), (width<=700px) {
+  .case-panneau .cp-fermer {
+    width: 44px;
+    height: 44px;
+  }
+  .case-panneau .cp-aller {
+    min-height: 44px;
+  }
+  /* légendes de la barre d'outils : jamais sous 11 px */
+  .topbar-actions .aside-lbl {
+    font-size: max(11px, 0.6rem);
+  }
+}
+
+/* Case lointaine : lisible au toucher (aria-disabled), sans action « y aller » */
+.map-node[aria-disabled="true"] {
+  cursor: default;
+}
+.map-node[aria-disabled="true"]:hover {
+  box-shadow: none;
+  transform: translate(-50%, -50%);
+}
 
 /* ---------- Barre d'équipe : héros K.O. et barre d'XP ---------- */
 .aside-niv[data-tip] {

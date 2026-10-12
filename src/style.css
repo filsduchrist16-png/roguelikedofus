@@ -1,18 +1,7 @@
+/* Nunito est une police variable : un seul fichier couvre toutes les graisses (vrais 700 et 900) */
 @font-face {
   font-family: Nunito;
-  font-weight: 400;
-  font-display: swap;
-  src: url(./assets/fonts/nunito-400.woff2) format("woff2");
-}
-@font-face {
-  font-family: Nunito;
-  font-weight: 700;
-  font-display: swap;
-  src: url(./assets/fonts/nunito-400.woff2) format("woff2");
-}
-@font-face {
-  font-family: Nunito;
-  font-weight: 900;
+  font-weight: 200 1000;
   font-display: swap;
   src: url(./assets/fonts/nunito-400.woff2) format("woff2");
 }

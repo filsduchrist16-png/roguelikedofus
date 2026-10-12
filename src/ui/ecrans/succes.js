@@ -83,7 +83,7 @@ export function ecranSucces(e, selection) {
         .filter(Boolean)
         .join(` `);
       let img = DOFUS[e].img;
-      return `<button class="${a}" data-sel="d:${e}">
+      return `<button class="${a}" data-sel="d:${e}" aria-pressed="${f === `d:${e}`}">
         <span class="succes-halo">${img ? `<img src="${cheminAsset(img)}" alt="" onerror="this.remove()" />` : ``}</span>
         <span class="succes-carte-nom">${echapperHtml(DOFUS[e].nom)}</span>
         ${r ? p(r.faites, r.total) : ``}
@@ -99,7 +99,7 @@ export function ecranSucces(e, selection) {
         t.complet ? `complet` : ``,
       ]
         .filter(Boolean)
-        .join(` `)}" data-sel="g:${e}">
+        .join(` `)}" data-sel="g:${e}" aria-pressed="${f === `g:${e}`}">
         <span class="succes-general-tete"><span>${echapperHtml(SUCCES[e].nom)}</span><b>${t.complet ? `✓` : `${t.faites}/${t.total}`}</b></span>
         ${p(t.faites, t.total)}
       </button>`;
@@ -116,7 +116,7 @@ export function ecranSucces(e, selection) {
             ? ``
             : `<span class="quete-aide">${d.lignes.map(([etiq, texte]) => `<span class="quete-ligne-aide"><b>${echapperHtml(etiq)}</b> ${echapperHtml(texte)}</span>`).join(``)}</span>`;
           return `<li class="quete-ligne${t.faite ? ` faite` : ``}">
-        <span class="quete-coche" aria-label="${t.faite ? `faite` : `à faire`}">${t.faite ? `✓` : ``}</span>
+        <span class="quete-coche" aria-hidden="true">${t.faite ? `✓` : ``}</span><span class="sr-only">${t.faite ? `Quête faite : ` : `Quête à faire : `}</span>
         <span class="quete-nom"><span class="quete-titre">${echapperHtml(d.titre)}</span>${d.lore ? `<em class="quete-lore">« ${echapperHtml(d.lore)} »</em>` : ``}${aide}</span>${i}
       </li>`;
         })
@@ -232,7 +232,10 @@ export function ecranDofusDebloque(id) {
     document.getElementById(`succes-ok`)?.addEventListener(`click`, () => resolve());
   });
 }
+// Durée d'affichage d'un bandeau (ms) : doublée quand le texte dépasse 60 caractères.
+export const dureeBandeau = (texte) => (String(texte ?? ``).length > 60 ? 8000 : 4000);
 // Bandeau temporaire (quête accomplie, défi…) : 3 au plus à l'écran, les plus anciens partent.
+// Le survol (ou le toucher maintenu) met le décompte en pause.
 export function afficherBandeau(texte) {
   let t = document.getElementById(`bandeaux-quete`);
   if (!t) {
@@ -248,8 +251,26 @@ export function afficherBandeau(texte) {
   while (t.children.length > 3) {
     t.firstElementChild.remove();
   }
-  setTimeout(() => n.classList.add(`sortie`), 3600);
-  setTimeout(() => n.remove(), 4000);
+  let reste = dureeBandeau(texte);
+  let debut = 0;
+  let minuteur = null;
+  const lancer = () => {
+    debut = Date.now();
+    minuteur = setTimeout(
+      () => {
+        n.classList.add(`sortie`);
+        minuteur = setTimeout(() => n.remove(), 400);
+      },
+      Math.max(0, reste - 400),
+    );
+  };
+  n.addEventListener(`pointerenter`, () => {
+    clearTimeout(minuteur);
+    reste = Math.max(1500, reste - (Date.now() - debut));
+    n.classList.remove(`sortie`);
+  });
+  n.addEventListener(`pointerleave`, lancer);
+  lancer();
 }
 export function afficherBandeauQuete(e) {
   afficherBandeau(`✓ Quête accomplie : ${e}`);
