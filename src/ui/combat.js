@@ -275,10 +275,8 @@ export function journaliser(msg, meta) {
     journalCombat.shift();
     // une ligne sort en tête : le journal affiché la perd aussi avant l'ajout
     document.getElementById(`journal`)?.firstElementChild?.remove();
-    rafraichirJournal(entree);
-  } else {
-    rafraichirJournal(entree);
   }
+  rafraichirJournal(entree);
 }
 // Défi du combat en cours (challenges façon DOFUS), avec son état en direct.
 let defiCombat = null;
@@ -308,7 +306,7 @@ function htmlDefi() {
   }
   const e = etatDefiCombat ?? { etat: `en_cours` };
   const [icone, libelle] = ETATS_DEFI[e.etat] ?? ETATS_DEFI.en_cours;
-  return `<div class="defi-combat defi-${e.etat}" title="Réussis le défi pour gagner +30 % d'XP et de kamas">
+  return `<div class="defi-combat defi-${e.etat}" data-tip="Réussis le défi pour gagner +30 % d'XP et de kamas">
     <span class="defi-nom">🎯 Défi ${echapperHtml(defiCombat.nom)}</span>
     <span class="defi-texte">${echapperHtml(defiCombat.texte)}</span>
     <span class="defi-etat">${icone ? `${icone} ` : ``}${libelle}${e.detail ? ` · ${echapperHtml(e.detail)}` : ``}</span>
@@ -541,7 +539,7 @@ function badgeArchi(e) {
     e.monstreId && resolveurAction?.archis.includes(e.monstreId)
       ? `Archimonstre (âme déjà capturée) : ${e.archiNom}`
       : `Archimonstre : vaincs-le pour capturer son âme : ${e.archiNom}`;
-  return `<img class="archi-badge capture" src="${cheminAsset(`/assets/divers/Archmonster.webp`)}" alt="" title="${echapperHtml(t)}" onerror="this.remove()" />`;
+  return `<img class="archi-badge capture" src="${cheminAsset(`/assets/divers/Archmonster.webp`)}" alt="" data-tip="${echapperHtml(t)}" onerror="this.remove()" />`;
 }
 function compterPieges(e, t) {
   let n = 0;
@@ -893,7 +891,7 @@ function htmlCarteCombattant(e, t) {
   let s = ELEMENTS.filter((t) => Math.round(resistanceTotale(e, t) * 100) !== 0 || t === o)
     .map((t) => {
       let n = Math.round(resistanceTotale(e, t) * 100);
-      return `<span class="res-chip ${n < 0 ? `faible` : n === 0 ? `zero` : `forte`}${t === o ? ` vise` : ``}" ${t === o ? `data-tip="Résistance ${NOMS_ELEMENTS[t]} · ton élément de frappe contre cette cible (celui qui lui fait le plus mal)"` : `title="Résistance ${NOMS_ELEMENTS[t]}"`}><img src="${IMGS_RESISTANCE[t]}" alt="" onerror="this.remove()" />${n > 0 ? `+` : ``}${n}%</span>`;
+      return `<span class="res-chip ${n < 0 ? `faible` : n === 0 ? `zero` : `forte`}${t === o ? ` vise` : ``}" ${t === o ? `data-tip="Résistance ${NOMS_ELEMENTS[t]} · ton élément de frappe contre cette cible (celui qui lui fait le plus mal)"` : `data-tip="Résistance ${NOMS_ELEMENTS[t]}"`}><img src="${IMGS_RESISTANCE[t]}" alt="" onerror="this.remove()" />${n > 0 ? `+` : ``}${n}%</span>`;
     })
     .join(``);
   let c = badgesCombattant(e);
@@ -913,7 +911,7 @@ function htmlCarteCombattant(e, t) {
         ` `,
       )}" data-ref="${e.ref}"${t ? ` tabindex="0" role="button" aria-label="${echapperHtml(libelleCible(e))}"` : ``}>
       <div class="carte-tete">
-        <span class="carte-nom">${defiCombat?.cible === e.ref ? `<span class="badge-defi" title="Cible du défi ${echapperHtml(defiCombat.nom)}">🎯</span>` : ``}${echapperHtml(e.nom)}</span>
+        <span class="carte-nom">${defiCombat?.cible === e.ref ? `<span class="badge-defi" data-tip="Cible du défi ${echapperHtml(defiCombat.nom)}">🎯</span>` : ``}${echapperHtml(e.nom)}</span>
         <span class="rang rang-${l}">${l === `avant` ? `AVANT` : `ARR.`}</span>
       </div>
       <div class="portrait-wrap">
@@ -937,11 +935,11 @@ function htmlCarteCombattant(e, t) {
         }
         let t = statsEffectives(e);
         return `<div class="mini-stats">
-        <span class="ms" title="Coup critique (Agilité)"><img src="${IMG_CRITIQUE}" alt="" onerror="this.remove()" />${pctCritique(t)}%</span>
-        <span class="ms" title="Dégâts critiques (Agilité)"><img src="${IMG_DMG_CRITIQUE}" alt="" onerror="this.remove()" />${pctDegatsCritiques(t)}%</span>
-        <span class="ms" title="Soins (Soin + élément de frappe)"><img src="${IMG_SOIN}" alt="" onerror="this.remove()" />${pctSoin(t, statElement(t, meilleurElement(e)))}%</span>
-        <span class="ms" title="Dégâts finaux (Intelligence)"><img src="${IMG_PUISSANCE}" alt="" onerror="this.remove()" />${pctPuissanceIntel(t)}%</span>
-        ${(e.armure ?? 0) > 0 ? `<span class="ms" title="Armure : retranchée de chaque frappe reçue">🪨 ${e.armure}</span>` : ``}
+        <span class="ms" data-tip="Coup critique (Agilité)"><img src="${IMG_CRITIQUE}" alt="" onerror="this.remove()" />${pctCritique(t)}%</span>
+        <span class="ms" data-tip="Dégâts critiques (Agilité)"><img src="${IMG_DMG_CRITIQUE}" alt="" onerror="this.remove()" />${pctDegatsCritiques(t)}%</span>
+        <span class="ms" data-tip="Soins (Soin + élément de frappe)"><img src="${IMG_SOIN}" alt="" onerror="this.remove()" />${pctSoin(t, statElement(t, meilleurElement(e)))}%</span>
+        <span class="ms" data-tip="Dégâts finaux (Intelligence)"><img src="${IMG_PUISSANCE}" alt="" onerror="this.remove()" />${pctPuissanceIntel(t)}%</span>
+        ${(e.armure ?? 0) > 0 ? `<span class="ms" data-tip="Armure : retranchée de chaque frappe reçue">🪨 ${e.armure}</span>` : ``}
       </div>`;
       })()}
       ${e.camp === `joueur` && !e.estEgide ? `<div class="pp-row" title="Prospection"><img src="${IMG_PP}" alt="" onerror="this.remove()" /><b>${e.stats.prospection ?? 0}</b></div>` : ``}
@@ -1063,7 +1061,7 @@ function rendreCombat() {
     let r = (n, r, i) => {
       let a = compterPieges(e, i);
       return `<div class="ligne-col">
-         <span class="ligne-label">${n}${a > 0 ? `<span class="piege-indicateur" title="${echapperHtml(AIDE_PIEGE)}">🪤 ×${a}</span>` : ``}</span>
+         <span class="ligne-label">${n}${a > 0 ? `<span class="piege-indicateur" tabindex="0" data-tip="${echapperHtml(AIDE_PIEGE)}">🪤 ×${a}</span>` : ``}</span>
          <div class="ligne-cards">${r.map((e) => htmlCarteCombattant(e, t(e))).join(``) || `<span class="ligne-vide">—</span>`}</div>
        </div>`;
     };
@@ -1079,7 +1077,9 @@ function rendreCombat() {
   combatEnCours ||=
     ((racine.innerHTML = `
       <div class="combat">
-        <h2 class="titre-combat">${echapperHtml(titreCombat)}</h2>
+        <h1 class="sr-only">Combat : ${echapperHtml(titreCombat)}</h1>
+        <h2 class="titre-combat" aria-hidden="true">${echapperHtml(titreCombat)}</h2>
+        <div class="affixes-combat">${(optionsVue.affixes ?? []).map((a) => `<span class="affixe-pastille" tabindex="0" data-tip="${echapperHtml(a.desc)}">⚔ ${echapperHtml(a.nom)}</span>`).join(``)}</div>
         <div id="cb-defi"></div>
         <div id="cb-timeline"></div>
         <div class="plateau">
@@ -1267,6 +1267,13 @@ function htmlBoutonSort(lanceur, sort, touche, icone, arme = false) {
         ${etiquette ? `<span class="sort-etiquette${raison ? `` : ` dispo`}">${echapperHtml(etiquette)}</span>` : ``}
       </button>`;
 }
+// Confirmation de « Fin du tour » sur tactile : valable pour ce héros et ce nombre de PA seulement.
+let finTourArme = null;
+let minuteurFinTour = null;
+const finTourConfirme = () =>
+  !!finTourArme &&
+  combattantActif?.ref === finTourArme.ref &&
+  combattantActif.paActuels === finTourArme.pa;
 function htmlBarreSorts() {
   if (!combattantActif) {
     // tour d'un monstre ou d'une créature : on montre qui joue, à la place des sorts
@@ -1314,7 +1321,30 @@ function htmlBarreSorts() {
         choisirSort(combattantActif.armeSort);
       }
     });
-    document.getElementById(`fin-tour`)?.addEventListener(`click`, () => terminerAction(null));
+    document.getElementById(`fin-tour`)?.addEventListener(`click`, () => {
+      // tactile : s'il reste des PA et un sort jouable, un 1er appui demande confirmation (3 s)
+      if (
+        ecranTactile() &&
+        !finTourConfirme() &&
+        combattantActif &&
+        peutEncoreJouer(combattantActif, combattants) &&
+        combattantActif.paActuels > 0
+      ) {
+        finTourArme = { ref: combattantActif.ref, pa: combattantActif.paActuels };
+        clearTimeout(minuteurFinTour);
+        minuteurFinTour = setTimeout(() => {
+          finTourArme = null;
+          if (racine && combatEnCours) {
+            rendreCombat();
+          }
+        }, 3000);
+        rendreCombat();
+        return;
+      }
+      clearTimeout(minuteurFinTour);
+      finTourArme = null;
+      terminerAction(null);
+    });
     document.getElementById(`vitesse-combat`)?.addEventListener(`click`, (ev) => {
       parametres.combatRapide = !parametres.combatRapide;
       sauverParametres(parametres);
@@ -1383,7 +1413,7 @@ function htmlBarreSorts() {
     <div class="equipe-mini" aria-hidden="true">${equipeMini}</div>
     <div class="sorts-rangee">
       <div class="sorts-zone"><div class="sorts-liste">${n}</div></div>
-      <div class="barre-actions-fin"><button id="vitesse-combat" class="secondaire vitesse-combat${parametres.combatRapide ? ` on` : ``}" title="Tours des monstres rapides (aussi dans les Paramètres)" aria-pressed="${!!parametres.combatRapide}">⏩</button><button id="fin-tour" class="fin-tour primaire" title="Terminer le tour"><span class="fin-tour-txt">Fin du tour</span> <kbd>${echapperHtml(nomTouche(parametres.toucheFinTour))}</kbd></button></div>
+      <div class="barre-actions-fin"><button id="vitesse-combat" class="secondaire vitesse-combat${parametres.combatRapide ? ` on` : ``}" title="Tours des monstres rapides (aussi dans les Paramètres)" aria-pressed="${!!parametres.combatRapide}">⏩</button><button id="fin-tour" class="fin-tour primaire${finTourConfirme() ? ` confirme` : ``}" title="Terminer le tour"><span class="fin-tour-txt">${finTourConfirme() ? `Encore ${e.paActuels} PA : confirmer` : `Fin du tour`}</span> <kbd>${echapperHtml(nomTouche(parametres.toucheFinTour))}</kbd></button></div>
     </div>
     ${r}`;
 }

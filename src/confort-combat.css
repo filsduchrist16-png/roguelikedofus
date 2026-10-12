@@ -519,3 +519,110 @@
   content: " · K.O.";
   color: #ffd2c8;
 }
+
+/* ---------- Lot C : lecteurs d'écran, affixes, tactile ---------- */
+.combat .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+/* affixes d'un combat dur : pastilles sous le titre (infobulle au toucher) */
+.affixes-combat {
+  justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 8px;
+}
+.affixes-combat:empty {
+  display: none;
+}
+.affixe-pastille {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #3a2c1a;
+  color: #f7e6c0;
+  font-size: max(11px, 0.78rem);
+  font-weight: 800;
+  cursor: help;
+}
+@media (width <= 700px) {
+  .combat .titre-combat,
+  .affixes-combat {
+    margin-right: 54px;
+  }
+}
+.fin-tour.confirme {
+  background: var(--danger);
+  color: #fff;
+}
+.piege-indicateur {
+  cursor: help;
+}
+/* étiquettes et badges : plancher de lisibilité */
+.sort-etiquette,
+.cc-protege,
+.combat .carte .badge {
+  font-size: max(11px, 0.68rem);
+}
+
+/* ---------- Cibles tactiles : 44 px ---------- */
+@media (hover: none), (width <= 700px) {
+  .combat .sorts-liste {
+    gap: 6px;
+  }
+  .combat .sort {
+    width: 44px;
+    height: 44px;
+  }
+  .combat .vitesse-combat,
+  .combat .aide-sort-tete .sort-info,
+  .combat .aide-sort-tete .secondaire,
+  .combat .sorts-rangee .fin-tour {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+@media (width <= 700px) {
+  /* visée : la barre se réduit, sorts sur une ligne défilante, journal masqué */
+  .combat.ciblage .zone-bas .journal {
+    display: none;
+  }
+  .combat.ciblage .sorts-liste {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .combat.ciblage .sorts-liste .sort {
+    flex: none;
+  }
+  /* « Fin du tour » et vitesse n'ont pas d'usage pendant la visée : Annuler suffit */
+  .combat.ciblage .sorts-rangee .barre-actions-fin {
+    display: none;
+  }
+  /* détails du sort repliés (ⓘ pour les lire) */
+  .combat.ciblage .aide-sort:not(.deplie) .aide-sort-detail {
+    display: none;
+  }
+  .combat.ciblage .zone-bas .barre-sorts {
+    max-height: 30dvh;
+  }
+}
+@media (width <= 700px) {
+  .combat .ligne-label,
+  .combat .aide-sort-detail .tip-el,
+  .combat .aide-sort-detail b {
+    font-size: max(11px, 0.7rem);
+  }
+  .combat #sort-lancer-cible,
+  .combat #sort-lancer {
+    min-height: 44px;
+  }
+}
