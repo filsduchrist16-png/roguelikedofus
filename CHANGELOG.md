@@ -1,5 +1,10 @@
 # Journal des modifications
 
+## Version 1.1.0
+
+- Le numéro de version s'affiche sur l'accueil (bas de page) et sur la page de connexion (`src/version.js`, identique à `package.json` : un test le vérifie).
+- Page de connexion en première page (hors claude.ai) : email + mot de passe, création de compte, ou « Jouer sans compte » (choix mémorisé ; se déconnecter la remet).
+
 ## Lot D (partiel)
 
 - **D1** : le plan « Équiper le meilleur » tient compte de la rareté d'un objet : il n'est plus périmé après une forgemagie.

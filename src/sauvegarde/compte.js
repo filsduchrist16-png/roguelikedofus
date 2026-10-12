@@ -114,6 +114,29 @@ export async function seConnecter(email, motDePasse) {
 
 export function seDeconnecter() {
   ecrireSession(null);
+  // à la prochaine ouverture, la page de connexion est de nouveau proposée
+  try {
+    localStorage.removeItem(CLE_SANS_COMPTE);
+  } catch {}
+}
+
+const CLE_SANS_COMPTE = `rld_sans_compte_v0`;
+/** Faut-il proposer la page de connexion ? Oui s'il y a un serveur, pas de compte connecté et que le joueur n'a pas choisi de jouer sans. */
+export function connexionRequise() {
+  if (!compteConfigure() || compteConnecte()) {
+    return false;
+  }
+  try {
+    return localStorage.getItem(CLE_SANS_COMPTE) !== `1`;
+  } catch {
+    return false;
+  }
+}
+/** Le joueur choisit de jouer sans compte (sauvegarde locale seulement) ; on ne le redemande plus. */
+export function jouerSansCompte() {
+  try {
+    localStorage.setItem(CLE_SANS_COMPTE, `1`);
+  } catch {}
 }
 
 // Jeton d'accès valide : renouvelé s'il expire dans moins d'une minute.

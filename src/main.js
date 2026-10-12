@@ -136,6 +136,8 @@ import { ecranAccueil } from "./ui/ecrans/accueil.js";
 import { ecranChoixEquipe } from "./ui/ecrans/choixEquipe.js";
 import { ecranTaverne } from "./ui/ecrans/taverne.js";
 import { ecranMessage } from "./ui/ecrans/message.js";
+import { ecranConnexion } from "./ui/ecrans/connexion.js";
+import { connexionRequise } from "./sauvegarde/compte.js";
 import { ecranCarte } from "./ui/ecrans/carte.js";
 import {
   deblocagesVictoire,
@@ -1172,6 +1174,10 @@ async function jouerRun(e, t, n = 0, r = `t1`) {
   }
 }
 async function boucleJeu() {
+  // page de connexion en première page (hors claude.ai, où le compte claude.ai suffit)
+  if (typeof globalThis.claude?.use !== `function` && connexionRequise()) {
+    await ecranConnexion();
+  }
   // anciennes versions : les Dofus mis de côté par l'ancien ordre strict reviennent
   let rendus = rendreDofusSuspendus(meta);
   if (rendus.length) {
