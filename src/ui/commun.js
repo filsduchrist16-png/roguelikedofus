@@ -81,12 +81,75 @@ export function afficherEcran(e, t = ``) {
   const nouveau = !dejaAffiche || cle !== dernierEcran.cle;
   dernierEcran = { el, cle };
   if (nouveau) {
+    poserSentinelle();
     window.scrollTo(0, 0);
     if (titre) {
       titre.tabIndex = -1;
       titre.focus({ preventScroll: true });
     }
   }
+}
+// Bouton et geste « retour » du téléphone : une entrée d'historique « sentinelle » reste devant
+// l'écran courant. Un retour la consomme (popstate) : on agit dans le jeu puis on la repose, au lieu
+// de quitter la page.
+let sentinelle = false;
+function poserSentinelle() {
+  if (sentinelle) {
+    return;
+  }
+  try {
+    history.pushState({ rld: true }, ``);
+    sentinelle = true;
+  } catch {}
+}
+// Que faire d'un « retour » ? Pure, pour les tests. `etat` : { confirmationOuverte, combat, retour,
+// quitterLibre } (accueil et connexion laissent quitter sans confirmation).
+export function actionRetour(etat) {
+  if (etat.confirmationOuverte) {
+    return `ignorer`;
+  }
+  if (etat.combat) {
+    return `confirmer`;
+  }
+  if (etat.retour) {
+    return `cliquer`;
+  }
+  return etat.quitterLibre ? `quitter` : `confirmer`;
+}
+export function installerRetourTelephone() {
+  poserSentinelle();
+  window.addEventListener(`popstate`, async () => {
+    sentinelle = false;
+    if (!racine) {
+      return;
+    }
+    const retour = racine.querySelector(`.btn-retour:not([disabled])`);
+    const combat = !!racine.querySelector(`.combat`);
+    const action = actionRetour({
+      confirmationOuverte: !!document.querySelector(`.confirm-fond`),
+      combat,
+      retour: !!retour,
+      quitterLibre: !!racine.querySelector(`.ecran-accueil, .connexion`),
+    });
+    if (action === `quitter`) {
+      return;
+    }
+    poserSentinelle();
+    if (action === `cliquer`) {
+      retour.click();
+    } else if (action === `confirmer`) {
+      const ok = await demanderConfirmation(
+        combat
+          ? `Quitter le jeu ? Le combat en cours sera perdu : la partie reprendra avant ce combat.`
+          : `Quitter le jeu ? Ta partie en cours est sauvegardée.`,
+        `Quitter`,
+      );
+      if (ok) {
+        // l'entrée sentinelle puis l'entrée d'origine : on sort de la page
+        history.go(-2);
+      }
+    }
+  });
 }
 // Boîte de confirmation (par-dessus l'écran courant). Résout true si le joueur confirme.
 export function demanderConfirmation(message, libelleOk = `Confirmer`) {

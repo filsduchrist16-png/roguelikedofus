@@ -87,6 +87,7 @@ import {
   fondDuMonde,
   installerInfobulleAide,
   installerInfobulleDofus,
+  installerRetourTelephone,
   installerToucheEchap,
   parametres,
 } from "./ui/commun.js";
@@ -169,6 +170,7 @@ function initialiserInterface(elementApp) {
   installerInfobulleAide();
   installerRaccourcisCombat();
   installerToucheEchap();
+  installerRetourTelephone();
 }
 const attendre = (e) => new Promise((resolve) => setTimeout(resolve, e));
 const choixAleatoireMath = (e) => e[Math.floor(Math.random() * e.length)];
@@ -1030,7 +1032,20 @@ async function resoudreZaap(pools, t) {
     xp: 0,
   };
 }
+// Run en cours (zone + run) : sert à la sauvegarde quand la page passe en arrière-plan.
+let runActive = null;
+// Hors combat seulement : en plein combat l'état est partiel, la run reprend au dernier nœud.
+document.addEventListener(`visibilitychange`, () => {
+  if (
+    document.visibilityState === `hidden` &&
+    runActive &&
+    !document.querySelector(`#app .combat`)
+  ) {
+    sauverRun(runActive.zoneIdx, runActive.run);
+  }
+});
 async function jouerZone(e, t, n) {
+  runActive = { zoneIdx: n, run: e };
   enregistrerToileMax(meta, e.trancheId, n + 1);
   sauverMeta(meta);
   if (!e.carte) {
@@ -1121,10 +1136,12 @@ async function jouerRun(e, t, n = 0, r = `t1`) {
     for (let e = s; e < a.length; e++) {
       let t = a[e];
       let n = await jouerZone(o, t, e);
+      runActive = null;
       if (n === `accueil`) {
         return null;
       }
       if (n === `recommencer-memes` || n === `recommencer-choix`) {
+        runActive = null;
         effacerRun();
         enregistrerRun(meta, false);
         await traiterQuetes(o, verifierQuetesMeta(quetesMeta(), ctxMeta()));
@@ -1138,6 +1155,7 @@ async function jouerRun(e, t, n = 0, r = `t1`) {
         };
       }
       if (n === `wipe`) {
+        runActive = null;
         effacerRun();
         enregistrerRun(meta, false);
         await traiterQuetes(o, verifierQuetesMeta(quetesMeta(), ctxMeta()));
@@ -1155,12 +1173,14 @@ async function jouerRun(e, t, n = 0, r = `t1`) {
       o.carte = null;
       if (e < a.length - 1) {
         sauverRun(e + 1, o);
+        runActive = { zoneIdx: e + 1, run: o };
         await ecranMessage(
           `${t.nom} — vaincu !`,
           `Équipe soignée à 100 %. Zone ${e + 2}/${a.length} : tu pénètres dans ${a[e + 1].nom}.`,
         );
       }
     }
+    runActive = null;
     effacerRun();
     enregistrerRun(meta, true, i.id);
     let avant = etatDeblocage(meta, i.id);
@@ -1170,6 +1190,7 @@ async function jouerRun(e, t, n = 0, r = `t1`) {
     await traiterQuetes(o, verifierQuetesMeta(quetesMeta(), ctxMeta()));
     return relance(await ecranRecap(o, true, quetesDeLaRun(o), debloques));
   } finally {
+    runActive = null;
     fondDuMonde(null);
   }
 }

@@ -3,6 +3,7 @@
 ## Version 1.2.0
 
 - **C10** : option « Réduire les animations » dans Paramètres (classe `reduire-animations` sur `body`, aussi suivie via la préférence du système) ; `comportementDefilement()` choisit `auto` ou `smooth` pour tous les défilements animés.
+- **C11** : le bouton et le geste « retour » du téléphone ne quittent plus le jeu : ils activent le bouton Retour de l'écran, ou demandent confirmation en combat et sur les écrans sans Retour (accueil et connexion laissent quitter) ; la run est sauvegardée quand la page passe en arrière-plan (hors combat).
 
 ## Version 1.1.0
 
