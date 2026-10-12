@@ -1,5 +1,5 @@
 import { choixAleatoireMath, ctxMeta, etatRun, meta, quetesMeta } from "./deroule/etat.js";
-import { CLASSES, DOFUS, MONSTRES } from "./data/index.js";
+import { CLASSES, DOFUS } from "./data/index.js";
 import {
   CONFIG_ARCHI,
   XP_PAR_COMBAT,
@@ -13,29 +13,19 @@ import {
   chanceArchi,
   effetsDifficulte,
   herosVivants,
-  multiplicateurKamas,
   noeudsExclus,
   nouvelleRun,
   recruter,
   recupererApresVictoire,
   soignerEquipe,
-  tirerObjet,
   tirerRecrues,
 } from "./jeu/run.js";
 import { chargerRun, effacerRun, sauverRun } from "./sauvegarde/run.js";
-import {
-  CHANCES_CLE,
-  nomCle,
-  recompensesSecret,
-  secretDuMonde,
-  tirerIdsButinSecret,
-  tirerRareteSecret,
-} from "./jeu/secret.js";
-import { ajouterKamas, genererStockHdv, numeroZone } from "./jeu/economie.js";
+import { CHANCES_CLE, nomCle, secretDuMonde } from "./jeu/secret.js";
+import { genererStockHdv, numeroZone } from "./jeu/economie.js";
 import {
   enregistrerAscension,
   enregistrerRecord,
-  enregistrerCollection,
   enregistrerRun,
   enregistrerToileMax,
   pctSoinTaverne,
@@ -53,12 +43,10 @@ import {
   parametres,
 } from "./ui/commun.js";
 import { installerInfobulleSorts, installerRaccourcisCombat } from "./ui/combat.js";
-import { ecranButin } from "./ui/ecrans/butin.js";
 import { BONUS_DEFI } from "./jeu/defis.js";
 import { scoreRun } from "./jeu/idolesDepart.js";
 import { benedictionDuJour, cleRecordJour, dateDuJour, rngCarteDuJour } from "./jeu/runDuJour.js";
-import { bonusEquipeRun, effetsEnCours, idoleActive } from "./jeu/rencontres.js";
-import { ecranRencontre } from "./ui/ecrans/rencontre.js";
+import { effetsEnCours, idoleActive } from "./jeu/rencontres.js";
 import { afficherBandeau } from "./ui/ecrans/succes.js";
 import { ecranAccueil } from "./ui/ecrans/accueil.js";
 import { ecranChoixEquipe } from "./ui/ecrans/choixEquipe.js";
@@ -67,12 +55,7 @@ import { ecranMessage } from "./ui/ecrans/message.js";
 import { ecranConnexion } from "./ui/ecrans/connexion.js";
 import { connexionRequise } from "./sauvegarde/compte.js";
 import { ecranCarte } from "./ui/ecrans/carte.js";
-import {
-  deblocagesVictoire,
-  ecranRecap,
-  etatDeblocage,
-  noterObjetsObtenus,
-} from "./ui/ecrans/recap.js";
+import { deblocagesVictoire, ecranRecap, etatDeblocage } from "./ui/ecrans/recap.js";
 import { texteBilan } from "./ui/finCombat.js";
 import { installerSons } from "./son.js";
 import { CLES_TUTO, appliquerAccessibilite, sauverParametres } from "./sauvegarde/parametres.js";
@@ -87,6 +70,7 @@ import {
 } from "./deroule/recompenses.js";
 import { jouerCombat } from "./deroule/combat.js";
 import { jouerRencontre } from "./deroule/rencontres.js";
+import { jouerDonjonSecret } from "./deroule/secret.js";
 import "./style.css";
 import "./interface.css";
 import "./visuel.css";
@@ -277,88 +261,6 @@ async function resoudreNoeud(e, type, n, r, zone, eliteModifs) {
     default:
       return `continue`;
   }
-}
-// ---------- Donjon secret (ouvert avec une clé, après le boss d'une zone) ----------
-async function jouerDonjonSecret(e, zone) {
-  let secret = secretDuMonde(e.trancheId);
-  if (!e.cle || !secret) {
-    return;
-  }
-  let toile = numeroZone(zone.id);
-  let r = recompensesSecret(toile);
-  let derniere = getMonde(e.trancheId).zones.at(-1) === zone.id;
-  let choix = await ecranRencontre({
-    equipe: e.persos,
-    titre: `🗝️ ${secret.nom}`,
-    img: MONSTRES[secret.bosses[0]]?.img,
-    texte: `${secret.texte} Ta ${nomCle(e.trancheId)} tourne dans la serrure… Tu y entres avec les PV qu'il te reste.`,
-    choix: [
-      {
-        id: `entrer`,
-        libelle: `Entrer dans le donjon secret`,
-        detail: `Plus fort que le donjon de la zone. Victoire : un objet du donjon (épique ou légendaire), ${r.kamas} kamas et de l'XP. Défaite : l'équipe est expulsée, la clé est perdue, mais la run continue.`,
-      },
-      derniere
-        ? {
-            id: `garder`,
-            libelle: `Ne pas entrer`,
-            detail: `La clé sera perdue à la fin de la run.`,
-          }
-        : {
-            id: `garder`,
-            libelle: `Garder la clé pour plus tard`,
-            detail: `Plus tard, le donjon secret sera plus dur, mais rapportera plus.`,
-          },
-    ],
-  });
-  if (choix !== `entrer`) {
-    return;
-  }
-  e.cle = false;
-  e.stats.secrets = (e.stats.secrets ?? 0) + 1;
-  let { gagne } = await jouerCombat(e, secret.combat, { type: `secret`, zone });
-  if (!gagne) {
-    let definitive = !!effetsDifficulte(e.ascension).mortDefinitive;
-    for (let p of e.persos) {
-      if (!(definitive && p.pvActuels <= 0)) {
-        p.pvActuels = Math.max(1, p.pvActuels);
-      }
-    }
-    await ecranMessage(
-      `🗝️ Expulsés !`,
-      `Les gardiens du ${secret.nom} ont repoussé l'équipe. La clé est perdue, mais l'aventure continue.`,
-    );
-    return;
-  }
-  // l'idole de la zone s'applique aussi au donjon secret
-  let idoleSecret = idoleActive(e, zone.id);
-  let kamas = Math.round(
-    r.kamas *
-      multiplicateurKamas(e) *
-      bonusEquipeRun(meta, e).multKamas *
-      (idoleSecret?.kamasMult ?? 1),
-  );
-  ajouterKamas(e, kamas);
-  let { xp, niveaux } = gagnerXpEquipe(
-    e,
-    Math.round(calculerXpCombat(r.xp, toile, e.trancheId) * (idoleSecret?.xpMult ?? 1)),
-  );
-  let bilan = texteBilan({ xp, kamas, niveaux });
-  let objets = tirerIdsButinSecret(secret, Math.random)
-    .map((id) => tirerObjet(id, Math.random, [tirerRareteSecret(Math.random)]))
-    .filter(Boolean);
-  if (objets.length) {
-    e.inventaire.push(...objets);
-    enregistrerCollection(meta, objets);
-    e.stats.objets += objets.length;
-    noterObjetsObtenus(e.stats, objets);
-    await ecranButin(objets, e, bilan);
-  } else {
-    afficherBandeau(`Victoire : ${bilan}`);
-  }
-  meta.secrets = [...new Set([...(meta.secrets ?? []), e.trancheId])];
-  sauverMeta(meta);
-  await traiterQuetes(e, verifierQuetesMeta(quetesMeta(), ctxMeta()));
 }
 async function resoudreZaap(pools, t) {
   let n = tirerTypeZaap(Math.random, t);
