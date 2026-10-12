@@ -23,7 +23,9 @@ function canonique(source) {
     if (Array.isArray(nd)) return nd.map(ser);
     if (!nd || typeof nd !== `object`) return nd;
     if (nd.type === `Identifier`) {
-      return numero.has(nd.start) ? { t: `Id`, v: numero.get(nd.start) } : { t: `Id`, nom: nd.name };
+      return numero.has(nd.start)
+        ? { t: `Id`, v: numero.get(nd.start) }
+        : { t: `Id`, nom: nd.name };
     }
     const sortie = {};
     for (const cle of Object.keys(nd).sort()) {
@@ -51,7 +53,11 @@ let identiques = 0;
 for (const f of liste) {
   let avant;
   try {
-    avant = execFileSync(`git`, [`show`, `${ref}:${f}`], { encoding: `utf8`, maxBuffer: 1 << 26, stdio: [`ignore`, `pipe`, `ignore`] });
+    avant = execFileSync(`git`, [`show`, `${ref}:${f}`], {
+      encoding: `utf8`,
+      maxBuffer: 1 << 26,
+      stdio: [`ignore`, `pipe`, `ignore`],
+    });
   } catch {
     console.log(`ABSENT dans ${ref} : ${f}`);
     continue;

@@ -329,10 +329,10 @@ function voisinSuivant(combattant, combattants) {
     .sort((premier, second) => premier.position - second.position)[0];
 }
 export function retirerPA(combattant, nombre, contexte) {
-  let e_paActuels = combattant.paActuels;
+  let paAvant = combattant.paActuels;
   combattant.paActuels = Math.max(0, combattant.paActuels - nombre);
-  if (combattant.paActuels < e_paActuels) {
-    contexte.log(`${combattant.nom} perd ${e_paActuels - combattant.paActuels} PA.`);
+  if (combattant.paActuels < paAvant) {
+    contexte.log(`${combattant.nom} perd ${paAvant - combattant.paActuels} PA.`);
   }
 }
 const EFFETS_DECOMPTES_DEBUT_TOUR = [`paParTour`, `hot`, `bonusPieges`];

@@ -1,0 +1,2 @@
+# fichier: src/combat/effets.js
+332 e_paActuels paAvant

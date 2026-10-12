@@ -163,7 +163,7 @@ function deplacerVisee(pas) {
   if (!cartes.length) {
     return;
   }
-  const indice = cartes.findIndex((carte) => carte.dataset.ref === refVisee);
+  const indice = cartes.findIndex((candidate) => candidate.dataset.ref === refVisee);
   refVisee = cartes[(indice + pas + cartes.length) % cartes.length].dataset.ref;
   marquerVisee();
   const carte = cartes.find((candidate) => candidate.dataset.ref === refVisee);
@@ -1111,8 +1111,8 @@ function montrerCibles() {
   const barre = document.getElementById(`cb-barre`)?.getBoundingClientRect();
   const bas = barre && barre.top > 0 && barre.top < innerHeight ? barre.top : innerHeight;
   const visible = (carte) => {
-    const cadre = carte.getBoundingClientRect();
-    return cadre.top >= 0 && cadre.bottom <= bas;
+    const cadreCarte = carte.getBoundingClientRect();
+    return cadreCarte.top >= 0 && cadreCarte.bottom <= bas;
   };
   if (cartes.some(visible)) {
     return;

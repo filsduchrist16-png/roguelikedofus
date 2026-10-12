@@ -166,17 +166,15 @@ export async function envoyerNuage() {
     try {
       resume = resumeSauvegarde(JSON.parse(texte));
     } catch {}
-    await acces.db
-      .doc(`${acces.base}/sauvegarde`)
-      .set({
-        version,
-        n: nbMorceaux,
-        slot,
-        taille: texte.length,
-        date,
-        appareil: appareil(),
-        resume,
-      });
+    await acces.db.doc(`${acces.base}/sauvegarde`).set({
+      version,
+      n: nbMorceaux,
+      slot,
+      taille: texte.length,
+      date,
+      appareil: appareil(),
+      resume,
+    });
     ecrireSync({ version, date });
     return { date };
   })();
