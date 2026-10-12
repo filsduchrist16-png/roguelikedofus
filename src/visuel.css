@@ -345,14 +345,6 @@ body.avec-fond .map-zone {
   color: #2f6e1a;
   font-weight: 700;
 }
-.drop-auto {
-  margin: 10px 0 0;
-  text-align: center;
-}
-.drop-auto .petit {
-  font-size: 0.85rem;
-  padding: 6px 14px;
-}
 .barre-actions-fin {
   gap: 6px;
 }

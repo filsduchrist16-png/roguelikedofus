@@ -644,14 +644,6 @@ button,
 }
 
 /* ---------- Indices de quêtes ---------- */
-.quete-indice {
-  display: block;
-  margin-top: 3px;
-  color: var(--muet);
-  font-size: 0.82rem;
-  font-weight: 600;
-  line-height: 1.35;
-}
 
 /* ---------- Objectifs de succès en combat ---------- */
 .objectifs-combat {
@@ -1790,15 +1782,6 @@ button,
 }
 
 /* ---------- Dofus : ordre d'obtention ---------- */
-.succes-prerequis {
-  margin: 6px 0;
-  padding: 6px 10px;
-  border-left: 3px solid var(--or);
-  border-radius: 6px;
-  background: #00000010;
-  font-size: 0.86rem;
-  font-weight: 600;
-}
 .succes-dofus-img {
   display: block;
   width: 88px;
@@ -2102,9 +2085,6 @@ button,
   color: var(--muet);
   font-weight: 700;
 }
-.equip-slot .slot-item.ic-corps {
-  gap: 2px;
-}
 .equip-inv {
   display: grid;
   gap: 8px;
@@ -2368,11 +2348,6 @@ button,
 .pd-quetes small {
   color: var(--muet);
   font-weight: 800;
-}
-.pd-attente {
-  margin: 4px 0 0;
-  font-size: 0.76rem;
-  color: var(--danger);
 }
 .prochain-dofus {
   display: grid;

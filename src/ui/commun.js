@@ -206,7 +206,6 @@ export const IMG_SUCCES = cheminAsset(`/assets/menu/succes.png`);
 export const IMG_ENCYCLOPEDIE = cheminAsset(`/assets/menu/encyclopedie.png`);
 export const IMG_MENU = cheminAsset(`/assets/menu/Menu.png`);
 export const IMG_RECOMMENCER = cheminAsset(`/assets/menu/Recommencer.png`);
-export const IMG_TERMINER = cheminAsset(`/assets/menu/Terminer.png`);
 export const IMG_DEPART = cheminAsset(`/assets/menu/Depart.png`);
 export const IMG_RECOMMENCER_AVEC_PERSO = cheminAsset(`/assets/menu/Recommencer_avec_perso.png`);
 export const imgMonde = (e) => cheminAsset(`/assets/menu/Monde_${e}.png`);
@@ -623,25 +622,6 @@ const ROLE_STATS = {
   prospection: `plus de chances de butin`,
   crit: `chance de coup critique en plus`,
 };
-export function resumeBonus(e, t = 0, n = {}) {
-  let r = [];
-  if (t) {
-    r.push(`+${t} PV`);
-  }
-  for (let t of Object.keys(e)) {
-    let n = e[t];
-    if (n) {
-      r.push(`+${n} ${ABREV_STATS[t] ?? t}`);
-    }
-  }
-  for (let e of Object.keys(n)) {
-    let t = n[e];
-    if (t) {
-      r.push(`+${Math.round(t * 100)} % rés ${NOMS_ELEMENTS[e]}`);
-    }
-  }
-  return r.join(` · `);
-}
 export const classeRarete = (e) => {
   if (e?.rarete) {
     return ` rarete-${e.rarete}`;
@@ -927,16 +907,6 @@ export const VERDICTS = {
   egal: { icone: `=`, texte: `Pareil` },
   impossible: { icone: `✕`, texte: `Pas équipable` },
 };
-export function htmlComparaisonObjet(inst, perso) {
-  const { actuel, deltas, verdict } = comparerObjet(inst, perso);
-  if (verdict === `impossible`) {
-    return `<span class="item-delta"><span class="delta-ref">Équipable seulement en ligne avant.</span></span>`;
-  }
-  const ref = actuel
-    ? `À la place de ${echapperHtml(EQUIPEMENTS[actuel.id]?.nom ?? actuel.id)} (T${numeroZoneObjet(actuel.id)})`
-    : `Emplacement vide`;
-  return `<span class="item-delta"><span class="delta-ref">${ref} :</span> ${htmlDeltas(deltas) || `<span class="muet">aucun changement de stats</span>`}</span>`;
-}
 // Petites pastilles « ▲ Iop » : les héros pour qui l'objet est une amélioration.
 export function htmlBadgesHeros(inst, persos, sauf) {
   const heros = herosAmeliores(inst, persos).filter((p) => p !== sauf);

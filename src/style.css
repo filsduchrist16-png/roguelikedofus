@@ -68,9 +68,6 @@ h3 {
 h1 {
   font-size: 1.9rem;
 }
-.tabnum {
-  font-variant-numeric: tabular-nums;
-}
 button {
   font: inherit;
   cursor: pointer;
@@ -332,12 +329,6 @@ button.item-carte:disabled {
 .inom-legendaire {
   color: var(--or-texte);
   font-weight: 800;
-}
-.drop-rarete {
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 0.75rem;
-  display: block;
 }
 .ichips {
   flex-wrap: wrap;
@@ -823,19 +814,6 @@ button.item-carte:disabled {
 .dofus-tip .tip-effet {
   color: var(--panel-solide);
   font-size: 0.8rem;
-}
-.dofus-tip .tip-boss {
-  color: var(--pv);
-  align-items: center;
-  gap: 6px;
-  margin-top: 5px;
-  font-size: 0.812rem;
-  display: flex;
-}
-.dofus-tip .tip-boss img {
-  object-fit: contain;
-  width: 26px;
-  height: 26px;
 }
 .dofus-tip .tip-muet {
   color: var(--muet);
@@ -1422,12 +1400,6 @@ kbd {
   font-size: 0.812rem;
   font-weight: 800;
 }
-.slot-img {
-  object-fit: contain;
-  width: 30px;
-  height: 30px;
-}
-.slot-item,
 .item-nom,
 .drop-nom {
   flex-direction: column;
@@ -1435,7 +1407,6 @@ kbd {
   font-weight: 800;
   display: flex;
 }
-.slot-item small,
 .item-nom small,
 .drop-nom small {
   color: var(--muet);
@@ -2220,10 +2191,6 @@ kbd {
 }
 .forge-temeraire {
   border-color: var(--danger);
-}
-.forge-message {
-  margin: 6px 0;
-  font-weight: 800;
 }
 .forge-filtres {
   margin: 8px 0 12px;

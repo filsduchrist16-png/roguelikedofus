@@ -1,7 +1,4 @@
 import { afficherEcran, barreContinuer, echapperHtml } from "../commun.js";
-export function ecranZaap(e) {
-  return ecranMessage(`🌀 Zaap`, `La rencontre se révèle : ${e}.`);
-}
 export function ecranMessage(e, t) {
   return new Promise((resolve) => {
     afficherEcran(`

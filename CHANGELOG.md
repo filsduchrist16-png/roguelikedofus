@@ -5,6 +5,7 @@
 - **D1** : le plan « Équiper le meilleur » tient compte de la rareté d'un objet : il n'est plus périmé après une forgemagie.
 - **D2** : une seule évaluation d'équipement (`src/jeu/evaluation.js`), utilisée par l'inventaire et par la run (choix de l'anneau remplacé).
 - **D3** : la barre des sorts du combat utilise un seul écouteur délégué (plus d'écouteurs en double si deux rendus se suivent) ; les boutons de l'alerte de synchro en ligne ne sont branchés qu'une fois. La capture de touche retirait déjà son écouteur.
+- **D4** : code mort retiré (`IMG_TERMINER`, `resumeBonus`, `htmlComparaisonObjet`, `ecranZaap`, 10 classes CSS inutilisées, images `carte_au_tresor.png` et `Terminer.png`).
 
 ## Lot A terminé (A4 à A9)
 
