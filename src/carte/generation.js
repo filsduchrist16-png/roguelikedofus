@@ -1,58 +1,58 @@
 import { AFFIXES_GROUPE, CONFIG_CARTE, XP_PAR_COMBAT } from "../jeu/config.js";
-const tirageEntierRng = (e, lignesMin, lignesMax) =>
-  lignesMin + Math.floor(e() * (lignesMax - lignesMin + 1));
-const choixAleatoire = (e, t) => t[Math.floor(e() * t.length)];
-function tirageSansRemise(e, AFFIXES_GROUPE, n) {
-  let r = [...AFFIXES_GROUPE];
-  let i = [];
-  while (i.length < n && r.length) {
-    i.push(r.splice(Math.floor(e() * r.length), 1)[0]);
+const tirageEntierRng = (rng, lignesMin, lignesMax) =>
+  lignesMin + Math.floor(rng() * (lignesMax - lignesMin + 1));
+const choixAleatoire = (rng, liste) => liste[Math.floor(rng() * liste.length)];
+function tirageSansRemise(rng, affixes, nombre) {
+  let reste = [...affixes];
+  let tires = [];
+  while (tires.length < nombre && reste.length) {
+    tires.push(reste.splice(Math.floor(rng() * reste.length), 1)[0]);
   }
-  return i;
+  return tires;
 }
-function tirageType(e, t) {
-  let n = Object.entries(t);
-  let r = n.reduce((acc, [, t]) => acc + t, 0);
-  let i = e() * r;
-  for (let [e, t] of n) {
-    i -= t;
-    if (i < 0) {
-      return e;
+function tirageType(rng, poids) {
+  let entrees = Object.entries(poids);
+  let total = entrees.reduce((acc, [, poids]) => acc + poids, 0);
+  let tirage = rng() * total;
+  for (let [type, poidsType] of entrees) {
+    tirage -= poidsType;
+    if (tirage < 0) {
+      return type;
     }
   }
   return `combat`;
 }
-function remplirNoeud(e, t, n) {
-  switch (t.type) {
+function remplirNoeud(rng, noeud, pools) {
+  switch (noeud.type) {
     case `combat`:
-      t.combatId = choixAleatoire(e, n.normales);
-      t.xp = XP_PAR_COMBAT.combat;
+      noeud.combatId = choixAleatoire(rng, pools.normales);
+      noeud.xp = XP_PAR_COMBAT.combat;
       break;
     case `combat_dur`:
-      t.combatId = choixAleatoire(e, n.elite);
-      t.xp = XP_PAR_COMBAT.combat_dur;
-      t.eliteModifs = tirageSansRemise(e, AFFIXES_GROUPE, 1).map((e) => e.id);
+      noeud.combatId = choixAleatoire(rng, pools.elite);
+      noeud.xp = XP_PAR_COMBAT.combat_dur;
+      noeud.eliteModifs = tirageSansRemise(rng, AFFIXES_GROUPE, 1).map((affixe) => affixe.id);
       break;
     case `donjon`:
-      t.combatId = choixAleatoire(e, n.boss);
+      noeud.combatId = choixAleatoire(rng, pools.boss);
       break;
   }
 }
-function largeursLignes(e) {
+function largeursLignes(rng) {
   let { lignesMin, lignesMax } = CONFIG_CARTE;
-  let r = tirageEntierRng(e, lignesMin, lignesMax);
-  if (r % 2 != 0) {
-    r += r < lignesMax ? 1 : -1;
+  let nbLignes = tirageEntierRng(rng, lignesMin, lignesMax);
+  if (nbLignes % 2 != 0) {
+    nbLignes += nbLignes < lignesMax ? 1 : -1;
   }
-  let i = [];
-  for (let e = 0; e < r - 1; e++) {
-    i.push(e % 2 == 0 ? 2 : 3);
+  let largeurs = [];
+  for (let indice = 0; indice < nbLignes - 1; indice++) {
+    largeurs.push(indice % 2 == 0 ? 2 : 3);
   }
-  i.push(1);
-  return i;
+  largeurs.push(1);
+  return largeurs;
 }
-const colonnesLigne = (e) => {
-  switch (e) {
+const colonnesLigne = (largeur) => {
+  switch (largeur) {
     case 2:
       return [-0.5, 0.5];
     case 3:
@@ -63,75 +63,81 @@ const colonnesLigne = (e) => {
 };
 // `premiereZone` : la rangée qui suit le premier combat d'un monde est une rangée de tavernes, pour
 // recruter un troisième héros (ou se soigner) avant d'aller plus loin.
-export function genererCarte(e, t, n = [], { premiereZone = false } = {}) {
-  let r = Object.fromEntries(Object.entries(CONFIG_CARTE.poids).filter(([e]) => !n.includes(e)));
-  let i = largeursLignes(e);
-  let i_length = i.length;
-  let o = [];
-  for (let ligne = 0; ligne < i_length; ligne++) {
-    let s = colonnesLigne(i[ligne]);
-    let c = [];
-    s.forEach((colonne, o) => {
+export function genererCarte(rng, pools, exclus = [], { premiereZone = false } = {}) {
+  let poids = Object.fromEntries(
+    Object.entries(CONFIG_CARTE.poids).filter(([type]) => !exclus.includes(type)),
+  );
+  let largeurs = largeursLignes(rng);
+  let nbLignes = largeurs.length;
+  let lignes = [];
+  for (let ligne = 0; ligne < nbLignes; ligne++) {
+    let colonnes = colonnesLigne(largeurs[ligne]);
+    let noeudsLigne = [];
+    colonnes.forEach((colonne, indice) => {
       let type =
         ligne === 0
           ? `combat`
-          : ligne === i_length - 1
+          : ligne === nbLignes - 1
             ? `donjon`
-            : ligne === 1 && premiereZone && !n.includes(`taverne`)
+            : ligne === 1 && premiereZone && !exclus.includes(`taverne`)
               ? `taverne`
-              : tirageType(e, r);
-      let l = {
-        id: `n${ligne}_${o}`,
+              : tirageType(rng, poids);
+      let noeud = {
+        id: `n${ligne}_${indice}`,
         type,
         ligne,
         colonne,
         suivants: [],
       };
-      remplirNoeud(e, l, t);
-      c.push(l);
+      remplirNoeud(rng, noeud, pools);
+      noeudsLigne.push(noeud);
     });
-    o.push(c);
+    lignes.push(noeudsLigne);
   }
-  for (let e = 0; e < i_length - 1; e++) {
-    for (let t of o[e]) {
-      t.suivants = o[e + 1].filter((e) => Math.abs(e.colonne - t.colonne) === 0.5).map((e) => e.id);
+  for (let indice = 0; indice < nbLignes - 1; indice++) {
+    for (let noeud of lignes[indice]) {
+      noeud.suivants = lignes[indice + 1]
+        .filter((candidat) => Math.abs(candidat.colonne - noeud.colonne) === 0.5)
+        .map((candidat) => candidat.id);
     }
   }
   return {
-    noeuds: o.flat(),
+    noeuds: lignes.flat(),
     courant: null,
-    depart: o[0].map((e) => e.id),
+    depart: lignes[0].map((noeud) => noeud.id),
   };
 }
-function typesZaap(e) {
+function typesZaap(exclus) {
   return Object.keys(CONFIG_CARTE.poids).filter(
-    (t) => t !== `zaap` && t !== `donjon` && !e.includes(t),
+    (type) => type !== `zaap` && type !== `donjon` && !exclus.includes(type),
   );
 }
-export function tirerTypeZaap(e, t) {
-  let n = typesZaap(t);
-  if (!n.length) {
+export function tirerTypeZaap(rng, exclus) {
+  let types = typesZaap(exclus);
+  if (!types.length) {
     throw Error(`tirerTypeZaap : aucun type de nœud disponible (tout est exclu)`);
   }
-  let r = n.reduce((acc, item) => acc + (CONFIG_CARTE.poids[item] ?? 0), 0);
-  let i = e() * r;
-  for (let e of n) {
-    i -= CONFIG_CARTE.poids[e] ?? 0;
-    if (i <= 0) {
-      return e;
+  let total = types.reduce((acc, item) => acc + (CONFIG_CARTE.poids[item] ?? 0), 0);
+  let tirage = rng() * total;
+  for (let type of types) {
+    tirage -= CONFIG_CARTE.poids[type] ?? 0;
+    if (tirage <= 0) {
+      return type;
     }
   }
-  return n[n.length - 1];
+  return types[types.length - 1];
 }
-export const trouverNoeud = (e, t) => e.noeuds.find((e) => e.id === t);
-export function cheminVisite(e, t, n) {
-  if (trouverNoeud(e, n)?.visite) {
-    return t === null || !!trouverNoeud(e, t)?.visite;
+export const trouverNoeud = (carte, id) => carte.noeuds.find((noeud) => noeud.id === id);
+export function cheminVisite(carte, depart, arrivee) {
+  if (trouverNoeud(carte, arrivee)?.visite) {
+    return depart === null || !!trouverNoeud(carte, depart)?.visite;
   }
   return false;
 }
-export function noeudsAtteignables(e) {
-  return (e.courant === null ? e.depart : (trouverNoeud(e, e.courant)?.suivants ?? []))
-    .map((t) => trouverNoeud(e, t))
-    .filter((e) => e !== undefined);
+export function noeudsAtteignables(carte) {
+  return (
+    carte.courant === null ? carte.depart : (trouverNoeud(carte, carte.courant)?.suivants ?? [])
+  )
+    .map((id) => trouverNoeud(carte, id))
+    .filter((noeud) => noeud !== undefined);
 }
