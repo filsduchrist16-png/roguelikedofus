@@ -866,7 +866,7 @@ export function tirerMonstreRare(monstres, rng, options) {
   if (!rare?.especes.length || rng() >= rare.chance) {
     return;
   }
-  let occupees = new Set(monstres.map((monstre) => monstre.position));
+  let occupees = new Set(monstres.map((existant) => existant.position));
   let position = [0, 1, 2, 3, 4, 5, 6, 7].find((place) => !occupees.has(place));
   if (position === undefined) {
     return;

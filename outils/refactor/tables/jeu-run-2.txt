@@ -1,0 +1,2 @@
+# fichier: src/jeu/run.js
+869 monstre existant

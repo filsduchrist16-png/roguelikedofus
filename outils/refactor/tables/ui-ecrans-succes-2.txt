@@ -1,0 +1,3 @@
+# fichier: src/ui/ecrans/succes.js
+144 succes succesDofus
+153 progression progressionDofus

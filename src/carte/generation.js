@@ -12,7 +12,7 @@ function tirageSansRemise(rng, affixes, nombre) {
 }
 function tirageType(rng, poids) {
   let entrees = Object.entries(poids);
-  let total = entrees.reduce((acc, [, poids]) => acc + poids, 0);
+  let total = entrees.reduce((acc, [, poidsType]) => acc + poidsType, 0);
   let tirage = rng() * total;
   for (let [type, poidsType] of entrees) {
     tirage -= poidsType;

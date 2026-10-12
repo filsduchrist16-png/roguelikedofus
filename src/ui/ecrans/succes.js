@@ -141,18 +141,18 @@ export function ecranSucces(meta, selection) {
         let dofusId = selectionCourante.slice(2);
         let dofus = DOFUS[dofusId];
         let succesId = succesDuDofus.get(dofusId);
-        let succes = succesId ? SUCCES[succesId] : undefined;
+        let succesDofus = succesId ? SUCCES[succesId] : undefined;
         let tete = `<div class="succes-panneau-tete">
-          ${dofus.img ? `<img class="${succes ? `` : `a-venir`}" src="${cheminAsset(dofus.img)}" alt="" onerror="this.remove()" />` : ``}
+          ${dofus.img ? `<img class="${succesDofus ? `` : `a-venir`}" src="${cheminAsset(dofus.img)}" alt="" onerror="this.remove()" />` : ``}
           <div><h2>${echapperHtml(dofus.nom)}</h2><p class="succes-effet">${echapperHtml(dofus.desc)}</p>
-          ${mondeDuDofus(dofusId) ? `<p class="succes-niveau">Niveau ${dofus.niveau} dans Dofus · s'obtient dans le ${echapperHtml(mondeDuDofus(dofusId).nom)}${succes ? ` · succès « ${echapperHtml(succes.nom)} »` : ``}</p>` : ``}</div>
+          ${mondeDuDofus(dofusId) ? `<p class="succes-niveau">Niveau ${dofus.niveau} dans Dofus · s'obtient dans le ${echapperHtml(mondeDuDofus(dofusId).nom)}${succesDofus ? ` · succès « ${echapperHtml(succesDofus.nom)} »` : ``}</p>` : ``}</div>
         </div>`;
-        if (!succes) {
+        if (!succesDofus) {
           return `${tete}<p class="succes-a-venir">Ce Dofus n'a pas encore de groupe de quêtes.</p>`;
         }
-        let progression = progressionSucces(quetes, succes);
+        let progressionDofus = progressionSucces(quetes, succesDofus);
         let prerequis = ``;
-        return `${tete}${possede(dofusId) ? `<span class="succes-statut obtenu">Dofus obtenu</span>` : `<span class="succes-statut">${progression.faites} / ${progression.total} quêtes pour l'obtenir</span>`}${prerequis}${htmlQuetes(succes)}`;
+        return `${tete}${possede(dofusId) ? `<span class="succes-statut obtenu">Dofus obtenu</span>` : `<span class="succes-statut">${progressionDofus.faites} / ${progressionDofus.total} quêtes pour l'obtenir</span>`}${prerequis}${htmlQuetes(succesDofus)}`;
       }
       let succes = SUCCES[selectionCourante.slice(2)];
       let progression = progressionSucces(quetes, succes);

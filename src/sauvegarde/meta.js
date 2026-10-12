@@ -54,8 +54,8 @@ export function chargerMeta() {
           : ascensionBrute);
       // champ par champ : une valeur abîmée ne fait pas perdre les autres
       let dofus = (Array.isArray(donnees.dofus) ? donnees.dofus : [])
-        .map((dofus) => (typeof dofus === `string` ? { id: dofus } : dofus))
-        .filter((dofus) => dofus && typeof dofus === `object` && DOFUS[dofus.id]);
+        .map((entree) => (typeof entree === `string` ? { id: entree } : entree))
+        .filter((entree) => entree && typeof entree === `object` && DOFUS[entree.id]);
       let quetes = {
         faites: Array.isArray(donnees.quetes?.faites)
           ? donnees.quetes.faites.filter((cle) => typeof cle === `string`)

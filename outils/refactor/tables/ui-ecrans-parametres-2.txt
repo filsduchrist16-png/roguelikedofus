@@ -1,0 +1,4 @@
+# fichier: src/ui/ecrans/parametres.js
+253 classeId idClasse
+257 classeId idClasse
+262 classeId idClasse

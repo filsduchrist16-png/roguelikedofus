@@ -1,0 +1,2 @@
+# fichier: src/carte/generation.js
+15 poids poidsType

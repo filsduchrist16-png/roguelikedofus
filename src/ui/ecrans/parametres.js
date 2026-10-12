@@ -250,17 +250,17 @@ export function ecranParametres(meta) {
         let arrivee = classes.indexOf(classeOrdre);
         if (!(depart < 0 || arrivee < 0)) {
           classes.splice(arrivee, 0, classes.splice(depart, 1)[0]);
-          classes.forEach((classeId, indice) => {
-            parametres.ordre[classeId] = indice + 1;
+          classes.forEach((idClasse, indice) => {
+            parametres.ordre[idClasse] = indice + 1;
           });
           Object.keys(parametres.ordre)
-            .filter((classeId) => !classes.includes(classeId))
+            .filter((idClasse) => !classes.includes(idClasse))
             .sort(
               (premier, second) =>
                 rangOrdre(parametres.ordre, premier) - rangOrdre(parametres.ordre, second),
             )
-            .forEach((classeId, indice) => {
-              parametres.ordre[classeId] = classes.length + indice + 1;
+            .forEach((idClasse, indice) => {
+              parametres.ordre[idClasse] = classes.length + indice + 1;
             });
           sauverParametres(parametres);
           afficher();
