@@ -486,3 +486,178 @@ body.couleurs-adaptees .combat .carte:not(.carte-joueur) .pv-barre:not(.ko) {
   outline: 2px solid var(--cyan);
   outline-offset: 1px;
 }
+
+/* ---------- Songes infinis : bouton de l'accueil, écran entre deux étages, bilan ---------- */
+.songes-accueil {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin: 10px 12px;
+  max-width: 100%;
+  text-align: center;
+}
+.btn-songes {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 4px 18px 4px 8px;
+  font-weight: 800;
+}
+.btn-songes img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+.btn-songes.verrou {
+  opacity: 0.6;
+  filter: grayscale(0.8);
+  cursor: help;
+}
+.songes-accueil-info {
+  margin: 0;
+  font-size: max(12px, 0.8rem);
+  color: var(--muet);
+  overflow-wrap: anywhere;
+}
+.songes-accueil-info.songes-condition {
+  color: var(--txt);
+  font-weight: 700;
+}
+.ecran-songe {
+  max-width: 900px;
+  margin: 0 auto;
+  overflow-wrap: anywhere;
+}
+.songe-tete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.songe-tete h1 {
+  margin: 0;
+}
+.songe-embleme {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px #8a6cff99);
+}
+.songe-sous-titre {
+  margin: 2px 0 0;
+  font-size: max(12px, 0.85rem);
+  color: var(--muet);
+}
+.songe-bloc {
+  margin: 10px 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--panel-2);
+}
+.songe-bloc h2 {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+}
+.songe-h3 {
+  margin: 8px 0 4px;
+  font-size: max(12px, 0.85rem);
+}
+.songe-info,
+.songe-aucun-affixe {
+  margin: 0 0 6px;
+  font-size: max(12px, 0.85rem);
+  line-height: 1.35;
+}
+.songe-aucun-affixe {
+  color: var(--muet);
+}
+.songe-affixes {
+  justify-content: flex-start;
+}
+.songe-affixes .affixe-pastille {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+}
+.songe-recompenses {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+}
+.songe-recompense {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-height: 64px;
+  min-width: 0;
+  padding: 10px 12px;
+  text-align: left;
+  border: 2px solid var(--or);
+  border-radius: 12px;
+  cursor: pointer;
+}
+.songe-recompense small {
+  font-size: max(12px, 0.8rem);
+  line-height: 1.3;
+}
+.songe-rec-titre {
+  font-weight: 800;
+}
+.songe-rec-objet {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.songe-rec-objet img {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+.songe-rec-objet .item-nom {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.songe-palier-choix,
+.songe-outils {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.songe-palier-choix button,
+.songe-outil {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+}
+.songe-outil img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+.songe-boutons .songe-entrer {
+  min-height: 48px;
+  padding: 8px 18px;
+  font-weight: 800;
+}
+.recap-songes {
+  margin: 4px auto 10px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 6px 12px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 700;
+}
+.recap-songes.nouveau {
+  border: 1px solid var(--or);
+  background: #f7c44f33;
+}

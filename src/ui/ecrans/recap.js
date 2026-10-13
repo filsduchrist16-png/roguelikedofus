@@ -64,7 +64,8 @@ export function deblocagesVictoire(avant, apres) {
   return lignes;
 }
 // Résout 'memes' (rejouer avec les mêmes héros), 'choix' (autre équipe) ou null (accueil).
-export function ecranRecap(run, victoire, quetes = [], debloques = []) {
+// songes (facultatif) : bilan des Songes infinis, { etage, record, nouveauRecord }.
+export function ecranRecap(run, victoire, quetes = [], debloques = [], songes = null) {
   return new Promise((resolve) => {
     let stats = run.stats;
     let maxDegats = Math.max(1, ...Object.values(stats.degats));
@@ -83,12 +84,17 @@ export function ecranRecap(run, victoire, quetes = [], debloques = []) {
       })
       .join(``);
     afficherEcran(`
-      <h1 class="${victoire ? `` : `defaite`}">${victoire ? `🏆 Krosmoz traversé !` : `Équipe anéantie`}</h1>
+      <h1 class="${victoire ? `` : `defaite`}">${songes ? `🌙 Fin du songe` : victoire ? `🏆 Krosmoz traversé !` : `Équipe anéantie`}</h1>
       ${run.ascension >= 1 ? `<p class="asc-record">${echapperHtml(DIFFICULTES[run.ascension].nom)} <span class="asc-badge">${etoilesDifficulte(run.ascension)}</span></p>` : ``}
-      <p class="sous-titre">${victoire ? `Toutes les zones du monde sont vaincues.` : `La run s'arrête ici${stats.zones ? ` après ${stats.zones} zone${stats.zones > 1 ? `s` : ``} traversée${stats.zones > 1 ? `s` : ``}` : ``}. Tes Dofus et tes captures, eux, sont conservés.`}</p>
+      ${
+        songes
+          ? `<p class="sous-titre">Ton équipe se réveille après <b>${songes.etage} étage${songes.etage > 1 ? `s` : ``}</b> franchi${songes.etage > 1 ? `s` : ``}.</p>
+      <p class="recap-songes${songes.nouveauRecord ? ` nouveau` : ``}">${songes.nouveauRecord ? `🏆 Nouveau record !` : `Record : <b>${songes.record}</b> étage${songes.record > 1 ? `s` : ``}`}</p>`
+          : `<p class="sous-titre">${victoire ? `Toutes les zones du monde sont vaincues.` : `La run s'arrête ici${stats.zones ? ` après ${stats.zones} zone${stats.zones > 1 ? `s` : ``} traversée${stats.zones > 1 ? `s` : ``}` : ``}. Tes Dofus et tes captures, eux, sont conservés.`}</p>`
+      }
       ${debloques.length ? `<p class="recap-debloque">🔓 Débloqué : ${debloques.map((nom) => `<b>${echapperHtml(nom)}</b>`).join(` · `)}</p>` : ``}
       <div class="recap-compteurs">
-        <span class="recap-chip">🗺️ ${stats.zones} zone${stats.zones > 1 ? `s` : ``}</span>
+        ${songes ? `<span class="recap-chip">🌙 Étage ${songes.etage}</span>` : `<span class="recap-chip">🗺️ ${stats.zones} zone${stats.zones > 1 ? `s` : ``}</span>`}
         <span class="recap-chip">⚔️ ${stats.combats} combat${stats.combats > 1 ? `s` : ``} gagné${stats.combats > 1 ? `s` : ``}</span>
         <span class="recap-chip">💀 ${stats.ennemis ?? 0} ennemi${(stats.ennemis ?? 0) > 1 ? `s` : ``} vaincu${(stats.ennemis ?? 0) > 1 ? `s` : ``}</span>
         <span class="recap-chip">🎒 ${stats.objets} objet${stats.objets > 1 ? `s` : ``}</span>

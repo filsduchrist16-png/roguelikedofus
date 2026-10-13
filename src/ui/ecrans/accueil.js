@@ -50,6 +50,8 @@ import {
 } from "../../sauvegarde/nuage.js";
 import { resumePartieLocale, texteResume } from "../../sauvegarde/export.js";
 import { dateLisible } from "./parametres.js";
+import { CONDITION_SONGES, recordSonges, songesDebloques } from "../../jeu/songes.js";
+import { IMG_SONGES } from "./songes.js";
 import { VERSION } from "../../version.js";
 const LIEN_DISCORD = `https://discord.gg/jxfWpRB7Rp`;
 const numeroMonde = (id) => MONDES.findIndex((monde) => monde.id === id) + 1;
@@ -90,7 +92,9 @@ export function ecranAccueil(meta, onReset, reprise = null) {
       let meilleurPalier = ascensionMonde(meta, trancheId);
       let diff = DIFFICULTES[ascension] ?? DIFFICULTES[0];
       let recap = reprise
-        ? `Reprendre · Zone ${reprise.zoneNum}/${reprise.nbZones} : ${reprise.zoneNom}`
+        ? reprise.songes
+          ? `Reprendre · Songes infinis, étage ${reprise.etage}`
+          : `Reprendre · Zone ${reprise.zoneNum}/${reprise.nbZones} : ${reprise.zoneNom}`
         : `Monde ${numeroMonde(trancheId)} · ${`★`.repeat(ascension + 1)} ${diff.nom}`;
       let htmlBoutons = reprise
         ? `<button id="btn-reprendre" class="btn-jouer btn-reprendre" aria-label="${echapperHtml(recap)}"><img src="${IMG_JOUER}" alt="Reprendre" onerror="this.remove()" /></button>
@@ -105,6 +109,17 @@ export function ecranAccueil(meta, onReset, reprise = null) {
         : `<div class="run-du-jour">
           <button id="btn-jour" class="secondaire btn-run-jour" aria-label="${echapperHtml(`Run du jour, Monde ${numeroMonde(trancheId)}`)}">📅 Run du jour</button>
           <p class="run-du-jour-info">Mêmes cartes pour tous aujourd'hui · ${echapperHtml(benediction.nom)} imposée (${echapperHtml(benediction.desc)})${recordJour ? ` · Record du jour : ${recordJour.score} points` : ``}</p>
+        </div>`;
+      // Songes infinis : ouverts après une run du Monde 5 gagnée ; record sous le bouton
+      const songesOuverts = songesDebloques(meta);
+      const recordSonge = recordSonges(meta);
+      const songesBloques = !songesOuverts || !!reprise;
+      const conditionSonges = !songesOuverts
+        ? CONDITION_SONGES
+        : `Termine ou abandonne la partie en cours pour entrer dans les Songes.`;
+      const htmlSonges = `<div class="songes-accueil">
+          <button id="btn-songes" class="secondaire btn-songes${songesBloques ? ` verrou` : ``}"${songesBloques ? ` aria-disabled="true" data-tip="${echapperHtml(conditionSonges)}"` : ``}><img src="${IMG_SONGES}" alt="" onerror="this.remove()" /><span>${songesOuverts ? `` : `🔒 `}Songes infinis</span></button>
+          <p class="songes-accueil-info">${songesOuverts ? `Combats sans fin, de plus en plus durs.${recordSonge ? ` Record : <b>${recordSonge} étage${recordSonge > 1 ? `s` : ``}</b>` : ``}` : echapperHtml(CONDITION_SONGES)}</p>
         </div>`;
       htmlBoutons += `<p class="jouer-recap${diff.effets.mortDefinitive && !reprise ? ` mort-definitive` : ``}">${echapperHtml(recap)}</p>`;
       let htmlEtoiles = (mondeId) => {
@@ -195,11 +210,14 @@ export function ecranAccueil(meta, onReset, reprise = null) {
                   : ``
                 : `Bientôt`
               : `🔒 Finis le monde ${indice}`;
-            let tipRun = reprise
-              ? `Run en cours
+            let tipRun = reprise?.songes
+              ? `Songes infinis en cours
+Étage ${reprise.etage}`
+              : reprise
+                ? `Run en cours
 Zone ${reprise.zoneNum}/${reprise.nbZones} : ${reprise.zoneNom}
 Difficulté : ${DIFFICULTES[reprise.ascension]?.nom ?? `Normal`}`
-              : ``;
+                : ``;
             let etoilesMonde =
               precedentTermine && jouable && !reprise
                 ? `<span class="asc-rangee monde-etoiles" data-rangee="${monde.id}">${htmlEtoiles(monde.id)}</span>`
@@ -242,6 +260,7 @@ Difficulté : ${DIFFICULTES[reprise.ascension]?.nom ?? `Normal`}`
           ${htmlBoutons}
         </div>
         ${htmlJour}
+        ${htmlSonges}
         <div class="accueil-mentions">
           <p class="mention-ankama">Fangame non officiel. Les illustrations DOFUS appartiennent à Ankama. <button id="btn-disclaimer" class="btn-lien">Mentions légales</button> · Fait avec passion par Cora, Daaye et T. · <span class="version-jeu">Version ${VERSION}</span></p>
           <p class="bandeau-credits">🎨 Crédits : illustrations, icônes de sorts et symboles de classe © <b>Ankama Games</b> — DOFUS (<a href="https://www.dofus.com" target="_blank" rel="noopener noreferrer">dofus.com</a>), icônes récupérées via <a href="https://dofusdb.fr" target="_blank" rel="noopener noreferrer">DofusDB</a>.</p>
@@ -459,6 +478,18 @@ Difficulté : ${DIFFICULTES[reprise.ascension]?.nom ?? `Normal`}`
           return;
         }
         resolve({ action: `nouvelle`, ascension, trancheId, idoles: [], jour: true });
+      });
+      document.getElementById(`btn-songes`)?.addEventListener(`click`, () => {
+        if (songesBloques) {
+          // verrouillé : la condition s'affiche sous le bouton (le toucher n'ouvre pas de bulle)
+          const info = racine.querySelector(`.songes-accueil-info`);
+          if (info) {
+            info.textContent = conditionSonges;
+            info.classList.add(`songes-condition`);
+          }
+          return;
+        }
+        resolve({ action: `songes` });
       });
       document.getElementById(`btn-reprendre`)?.addEventListener(`click`, () =>
         resolve({

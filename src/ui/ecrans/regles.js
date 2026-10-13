@@ -102,6 +102,21 @@ const SECTIONS_REGLES = [
     corps: `<p>Les étoiles sur l'image d'un monde règlent sa difficulté, de une (normal) à cinq. Gagner une
       run débloque l'étoile suivante, et gagner un monde ouvre le monde suivant.</p>`,
   },
+  {
+    titre: `Songes infinis`,
+    corps: `<p>Mode de fin de jeu, ouvert après une run du Monde 5 gagnée (bouton sur l'accueil). Tes deux
+      héros partent au niveau 200 avec un objet commun du Monde 5 dans chaque emplacement, en difficulté
+      Normal et sans idole.</p>
+      <ul>
+        <li>Une suite sans fin de combats (étages) de plus en plus durs, avec un boss tous les 5 étages.</li>
+        <li>Tous les 3 étages, un <b>affixe de songe</b> s'ajoute pour de bon : il touche tous les ennemis
+          des étages suivants (affiché en combat et entre les étages).</li>
+        <li>Après chaque étage, choisis une récompense parmi trois : objet du Monde 5 (plus rare en montant),
+          repos (50 % des PV, K.O. relevés à 30 %), kamas ou amélioration. Pas de soin automatique.</li>
+        <li>Après chaque boss, un palier : équipe soignée à 100 %, une taverne et un Hôtel de vente.</li>
+        <li>Quand toute l'équipe tombe, le score est le dernier étage franchi ; le record est gardé.</li>
+      </ul>`,
+  },
 ];
 export function ecranRegles() {
   return new Promise((resolve) => {
