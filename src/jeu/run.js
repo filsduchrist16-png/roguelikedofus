@@ -698,7 +698,7 @@ export function monstresDuCombat(combatId) {
     creerMonstre(MONSTRES[ennemi.monstre], `e${indice}_${ennemi.monstre}`, ennemi.position),
   );
 }
-function appliquerAffixe(monstres, rng, affixeId) {
+export function appliquerAffixe(monstres, rng, affixeId) {
   let affixe =
     AFFIXES_GROUPE.find((candidat) => candidat.id === affixeId) ??
     AFFIXES_GROUPE[Math.floor(rng() * AFFIXES_GROUPE.length)];
@@ -776,7 +776,10 @@ function facteurTypeZone(type, zoneId) {
 export const puissanceZone = (zoneId) => AJUSTEMENTS_ZONES[zoneId] ?? 1;
 export function appliquerPuissanceZone(monstres, zoneId, type) {
   // facteur de la zone × facteur du type de combat (normal / difficile / donjon)
-  let facteur = puissanceZone(zoneId) * facteurTypeZone(type, zoneId);
+  appliquerPuissance(monstres, puissanceZone(zoneId) * facteurTypeZone(type, zoneId));
+}
+// PV et dégâts des monstres multipliés par `facteur` (zones, Songes infinis).
+export function appliquerPuissance(monstres, facteur) {
   if (facteur === 1) {
     return;
   }

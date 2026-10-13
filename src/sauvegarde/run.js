@@ -5,6 +5,7 @@ import { DIFFICULTE_MAX, getMonde, zonesDuMonde } from "../jeu/config.js";
 import { nouvellesStatsRun } from "../jeu/run.js";
 import { idolesDepartValides } from "../jeu/idolesDepart.js";
 import { EMPLACEMENTS, emplacementsDuType } from "../jeu/emplacements.js";
+import { MODE_SONGES, runSongesValide } from "../jeu/songes.js";
 const CLE_RUN = `rld_run_v0`;
 /** Enregistre la run. Renvoie false (et prévient une fois) si le navigateur refuse d'écrire. */
 export function sauverRun(zoneIdx, run) {
@@ -66,6 +67,42 @@ function assainirObjet(inst) {
   }
   return out;
 }
+// Récompenses en attente et palier d'une run de songes : abîmés, ils sont simplement oubliés.
+const TYPES_RECOMPENSE = [`objet`, `soin`, `kamas`, `amelioration`];
+function assainirSonges(run) {
+  const offre = Array.isArray(run.offreSonge)
+    ? run.offreSonge
+        .filter((recompense) => TYPES_RECOMPENSE.includes(recompense?.type))
+        .map((recompense) =>
+          recompense.type === `objet`
+            ? {
+                type: `objet`,
+                objet: EQUIPEMENTS[recompense.objet?.id] ? assainirObjet(recompense.objet) : null,
+              }
+            : recompense.type === `kamas`
+              ? { type: `kamas`, montant: Math.max(0, Math.round(nombre(recompense.montant) ?? 0)) }
+              : recompense.type === `soin`
+                ? {
+                    type: `soin`,
+                    pct: Math.min(1, Math.max(0, nombre(recompense.pct) ?? 0.5)),
+                    releve: Math.min(1, Math.max(0, nombre(recompense.releve) ?? 0.3)),
+                  }
+                : {
+                    type: `amelioration`,
+                    ...(typeof recompense.benediction === `string`
+                      ? { benediction: recompense.benediction }
+                      : { forge: true }),
+                  },
+        )
+        .filter((recompense) => recompense.type !== `objet` || recompense.objet)
+        .slice(0, 3)
+    : [];
+  run.offreSonge = offre.length ? offre : null;
+  run.palierSonge =
+    run.palierSonge && typeof run.palierSonge === `object`
+      ? { taverne: !!run.palierSonge.taverne, hdv: !!run.palierSonge.hdv }
+      : null;
+}
 export function chargerRun() {
   try {
     let brut = localStorage.getItem(CLE_RUN);
@@ -84,6 +121,10 @@ export function chargerRun() {
       !sauvegarde.run?.persos?.length ||
       !sauvegarde.run.persos.every((perso) => CLASSES[perso.classeId])
     ) {
+      return null;
+    }
+    // Songes infinis : seul mode connu ; une run sans `mode` reste une run normale
+    if (sauvegarde.run.mode !== undefined && !runSongesValide(sauvegarde.run)) {
       return null;
     }
     sauvegarde.run.inventaire = (sauvegarde.run.inventaire ?? [])
@@ -121,6 +162,9 @@ export function chargerRun() {
       if (modif && !noeud.eliteModifs) {
         noeud.eliteModifs = [modif];
       }
+    }
+    if (sauvegarde.run.mode === MODE_SONGES) {
+      assainirSonges(sauvegarde.run);
     }
     return sauvegarde;
   } catch {
