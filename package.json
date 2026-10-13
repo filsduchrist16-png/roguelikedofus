@@ -10,6 +10,7 @@
     "format": "prettier --write \"src/**/*.{js,css}\" \"tests/**/*.js\" \"outils/**/*.{js,mjs}\" index.html",
     "test": "vitest run",
     "sim": "vite-node outils/simulation/simrun.mjs --",
+    "sim:tableau": "node outils/simulation/tableau.mjs",
     "lint": "eslint .",
     "check": "prettier --check . && eslint . && vitest run"
   },
