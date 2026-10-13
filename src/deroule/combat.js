@@ -18,6 +18,7 @@ import {
   peutGagnerXp,
 } from "../jeu/run.js";
 import { monstresSecrets } from "../jeu/secret.js";
+import { affixesAffiches, appliquerSonge } from "../jeu/songes.js";
 import { idoleActive, traqueActive, bonusEquipeRun } from "../jeu/rencontres.js";
 import {
   appliquerBonusDofus,
@@ -74,8 +75,18 @@ export async function jouerCombat(run, combatId, contexte) {
     especesZone: contexte.zone ? especesNormalesZone(contexte.zone) : undefined,
     rng: Math.random,
   });
-  // après le renfort d'ascension, pour qu'il soit aussi à la puissance de la zone
-  appliquerPuissanceZone(monstres, contexte.zone?.id, contexte.type);
+  if (contexte.songe) {
+    // Songes infinis : puissance de l'étage et tous les affixes de songe actifs, en pastilles
+    appliquerSonge(monstres, contexte.songe.facteur, contexte.songe.affixes, Math.random);
+    affixes = affixesAffiches(contexte.songe.affixes).map((affixe) => ({
+      nom: affixe.nom,
+      desc: affixe.desc,
+    }));
+    titre = `Étage ${contexte.songe.etage} · ${titre}`;
+  } else {
+    // après le renfort d'ascension, pour qu'il soit aussi à la puissance de la zone
+    appliquerPuissanceZone(monstres, contexte.zone?.id, contexte.type);
+  }
   if (contexte.elite) {
     // affixes en pastilles sous le titre (le titre reste court)
     affixes = appliquerAffixesElite(monstres, Math.random, contexte.eliteModifs).map((affixe) => ({
@@ -245,7 +256,9 @@ export async function jouerCombat(run, combatId, contexte) {
     ((run.stats.combats += 1),
     noterEnnemisVaincus(run.stats, monstres.length),
     (run.stats.archis += await capturerArchis(combattants)),
-    contexte.type === `donjon`)
+    contexte.type === `donjon` &&
+      // pas de relique dans les Songes : elles restent des récompenses des donjons
+      !contexte.songe)
   ) {
     let reliques = tirerReliques(
       meta,

@@ -10,6 +10,8 @@ import { chargerRun, effacerRun } from "../sauvegarde/run.js";
 import { zonesDuMonde, getMonde } from "../jeu/config.js";
 import { ecranAccueil } from "../ui/ecrans/accueil.js";
 import { jouerRun } from "./run.js";
+import { jouerSonges } from "./songes.js";
+import { MODE_SONGES } from "../jeu/songes.js";
 
 export async function boucleJeu() {
   // page de connexion en première page (hors claude.ai, où le compte claude.ai suffit)
@@ -28,6 +30,7 @@ export async function boucleJeu() {
     try {
       let sauvegarde = chargerRun();
       let zones = zonesDuMonde(getMonde(sauvegarde?.run.trancheId ?? `t1`));
+      let songes = sauvegarde?.run.mode === MODE_SONGES;
       let { action, ascension, trancheId, idoles, jour } = await ecranAccueil(
         meta,
         () => reinitialiserDofus(meta),
@@ -38,12 +41,24 @@ export async function boucleJeu() {
               nbZones: zones.length,
               ascension: sauvegarde.run.ascension,
               trancheId: sauvegarde.run.trancheId,
+              // Songes infinis : l'étage à reprendre
+              ...(songes ? { songes: true, etage: sauvegarde.run.etage } : {}),
             }
           : null,
       );
       if (action === `abandonner`) {
         effacerRun();
         enregistrerRun(meta, false);
+        continue;
+      }
+      if (action === `songes` || (action === `reprendre` && songes)) {
+        let suite = await jouerSonges(action === `reprendre` ? sauvegarde : null);
+        while (suite?.relancer) {
+          suite = await jouerSonges(
+            null,
+            suite.relancer === `selection` ? undefined : suite.relancer,
+          );
+        }
         continue;
       }
       let suite = await jouerRun(

@@ -202,7 +202,8 @@ export const zoneAArchis = (zone) => monstresDeZone(zone).some((id) => MONSTRES[
 
 // Idole de l'autel de la zone (rencontre), sans les idoles de départ.
 export function idoleZone(run, zoneId) {
-  return run.idole?.zone === zoneId ? IDOLES[run.idole.id] : null;
+  // sans zone (Songes infinis) : aucune idole d'autel
+  return run.idole && run.idole.zone === zoneId ? IDOLES[run.idole.id] : null;
 }
 
 // Effets des idoles en cours : celle de la zone et celles choisies au départ, cumulées. Sans idole

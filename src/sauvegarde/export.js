@@ -91,7 +91,10 @@ export function resumeSauvegarde(objet) {
   let run = null;
   if (etat?.run && typeof etat.zoneIdx === `number`) {
     const monde = /^t(\d+)$/.exec(etat.run.trancheId ?? `t1`)?.[1] ?? `1`;
-    run = `Monde ${monde} · zone ${etat.zoneIdx + 1}`;
+    run =
+      etat.run.mode === `songes`
+        ? `Songes · étage ${Number(etat.run.etage) || 1}`
+        : `Monde ${monde} · zone ${etat.zoneIdx + 1}`;
   }
   return {
     date: typeof objet?.date === `string` ? objet.date : null,
