@@ -1,6 +1,7 @@
 // Simulation de runs complètes avec la vraie logique du jeu (carte, XP, butin, tavernes,
 // rencontres, HDV), un joueur automatique qui choisit son chemin et s'équipe, et l'IA en combat.
 // usage : npm run sim -- t1,t2 [N] [ascension] [sortie.json]
+//         npm run sim -- songes [N]   (Songes infinis : étage moyen atteint par le robot)
 // (N runs par monde ; l'IA joue les héros en essayant chaque sort sur une copie du combat)
 const R = new URL("../../src", import.meta.url).pathname;
 const { CLASSES, EQUIPEMENTS, MONDES, ZONES, SORTS, DOFUS, MONSTRES } = await import(
@@ -19,6 +20,7 @@ const { choisirActionIA } = await import(`${R}/combat/ia.js`);
 const { alliesVivants, coutPA } = await import(`${R}/combat/stats.js`);
 const { mondeDuDofus } = await import(`${R}/jeu/obtention.js`);
 const { creerIaPlus } = await import("./iaplus.mjs");
+const songes = await import(`${R}/jeu/songes.js`);
 const IA_SIMPLE = !!process.env.IA_SIMPLE;
 
 const args = process.argv.slice(2).filter((a) => a !== "--");
@@ -128,17 +130,22 @@ const pvFrac = (run) => {
   );
 };
 
-async function combat(run, meta, combatId, type, zone, rng, eliteModifs) {
+// songe (facultatif) : étage des Songes infinis { facteur, affixes } au lieu d'une zone
+async function combat(run, meta, combatId, type, zone, rng, eliteModifs, songe) {
   const heros = run_.combattantsEquipe(run);
   const mons = run_.monstresDuCombat(combatId);
-  run_.appliquerPuissanceZone(mons, zone.id, type);
-  run_.appliquerDifficulteMonstres(mons, run_.effetsDifficulte(run.ascension), {
-    type,
-    especesZone: run_.especesNormalesZone(zone),
-    rng,
-  });
+  if (songe) {
+    songes.appliquerSonge(mons, songe.facteur, songe.affixes, rng);
+  } else {
+    run_.appliquerPuissanceZone(mons, zone.id, type);
+    run_.appliquerDifficulteMonstres(mons, run_.effetsDifficulte(run.ascension), {
+      type,
+      especesZone: run_.especesNormalesZone(zone),
+      rng,
+    });
+  }
   if (type === "combat_dur") run_.appliquerAffixesElite(mons, rng, eliteModifs);
-  const idole = renc.idoleActive(run, zone.id);
+  const idole = renc.idoleActive(run, zone?.id);
   if (idole?.pvMult)
     for (const m of mons) m.pvBase = m.pvMax = m.pvActuels = Math.round(m.pvMax * idole.pvMult);
   run_.tirerArchis(mons, rng, run_.chanceArchi(run));
@@ -332,6 +339,95 @@ async function jouerRun(monde, seed) {
     Object.values(run_.compterPanoplies(p)).some((v) => v >= 4),
   ).length;
   return journal;
+}
+
+// ---------- Songes infinis : le robot enchaîne les étages jusqu'à la chute ----------
+const scoreEquipe = (run) => run.persos.map(scoreHeros).reduce((a, b) => a + b, 0);
+function choisirRecompense(run, offre) {
+  const pv = pvFrac(run);
+  const ko = run.persos.some((p) => p.pvActuels <= 0);
+  const par = (type) => offre.findIndex((r) => r.type === type);
+  if (par("soin") >= 0 && (pv < 0.6 || ko)) return par("soin");
+  const iObjet = par("objet");
+  if (iObjet >= 0 && offre[iObjet].objet) {
+    // l'objet est pris s'il améliore l'équipe
+    const avant = scoreEquipe(run);
+    const essai = structuredClone(run);
+    essai.inventaire.push(structuredClone(offre[iObjet].objet));
+    sEquiper(essai);
+    if (scoreEquipe(essai) > avant * 1.005) return iObjet;
+  }
+  if (par("amelioration") >= 0) return par("amelioration");
+  if (par("soin") >= 0 && pv < 0.85) return par("soin");
+  if (par("kamas") >= 0) return par("kamas");
+  return 0;
+}
+function palier(run, rng) {
+  const recrues = run_.tirerRecrues(run, rng);
+  if (run.persos.length < 4 && recrues.length) {
+    run_.recruter(run, recrues[0]);
+    const recrue = run.persos.find((p) => p.classeId === recrues[0]);
+    songes.equiperKit(recrue, rng);
+    recrue.pvActuels = run_.pvMaxPerso(recrue);
+  }
+  // HDV de la dernière zone du Monde 5 : achète le plus cher qui améliore l'équipe
+  const stock = eco.genererStockHdv(MONDES.at(-1).zones.at(-1), rng);
+  stock.sort((a, b) => b.prix - a.prix);
+  for (const offre of stock) {
+    if (offre.prix > run.kamas) continue;
+    const avant = scoreEquipe(run);
+    run.inventaire.push(offre.inst);
+    sEquiper(run);
+    if (scoreEquipe(run) > avant) run.kamas -= offre.prix;
+  }
+}
+async function jouerSonge(seed) {
+  const rng = rngSeed(seed);
+  Math.random = rng;
+  const meta = metaPour("t5");
+  const depart = [];
+  while (depart.length < 2) {
+    const c = classes[Math.floor(rng() * classes.length)];
+    if (!depart.includes(c)) depart.push(c);
+  }
+  const run = songes.nouvelleRunSonges(depart, rng, 0);
+  while (run.etage < 300) {
+    const etage = songes.genererEtage(run.etage, rng);
+    const ok = await combat(run, meta, etage.combatId, etage.type, null, rng, undefined, {
+      facteur: etage.facteur,
+      affixes: run.affixesSonge,
+    });
+    if (!ok) {
+      if (process.env.VERBOSE)
+        console.log(`   chute à l'étage ${run.etage} (${etage.combatId}, ${depart.join("+")})`);
+      break;
+    }
+    eco.ajouterKamas(run, eco.gainKamas(etage.boss ? "donjon" : "combat", 60, rng));
+    const { palier: estPalier } = songes.franchirEtage(run, rng);
+    if (estPalier) palier(run, rng);
+    songes.appliquerRecompense(run, run.offreSonge[choisirRecompense(run, run.offreSonge)]);
+    run.offreSonge = null;
+    run.palierSonge = null;
+    sEquiper(run);
+  }
+  return { score: songes.scoreSonges(run.etage), classes: depart, heros: run.persos.length };
+}
+if (mondes[0] === "songes") {
+  const scores = [];
+  for (let k = 0; k < N; k++) {
+    const r = await jouerSonge(4242 + 7919 * k);
+    scores.push(r.score);
+    if (process.env.VERBOSE) console.log(`#${k + 1} : ${r.score} étages (${r.classes.join("+")})`);
+  }
+  const tri = [...scores].sort((a, b) => a - b);
+  const moyenne = scores.reduce((a, b) => a + b, 0) / N;
+  const ecartType = Math.sqrt(scores.reduce((a, b) => a + (b - moyenne) ** 2, 0) / N);
+  console.log(
+    `songes : ${N} tentatives · étage moyen franchi ${moyenne.toFixed(1)} · médiane ${tri[Math.floor(N / 2)]} · min ${tri[0]} · max ${tri.at(-1)} · écart-type ${ecartType.toFixed(1)}`,
+  );
+  console.log(`   étages franchis : ${tri.join(" ")}`);
+  if (SORTIE) (await import("node:fs")).writeFileSync(SORTIE, JSON.stringify({ scores }));
+  process.exit(0);
 }
 
 const resultats = {};
