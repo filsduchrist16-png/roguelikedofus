@@ -28,6 +28,8 @@ const mondes = (args[0] ?? "t1,t2,t3,t4,t5").split(",");
 const N = Number(args[1] ?? 20);
 const ASC = Number(args[2] ?? 0);
 if (process.env.REGEN !== undefined) cfg.RECUPERATION.victoire = Number(process.env.REGEN);
+// réglage : EFFETS='{"pvMult":1.3}' remplace des effets de la difficulté simulée
+if (process.env.EFFETS) Object.assign(cfg.DIFFICULTES[ASC].effets, JSON.parse(process.env.EFFETS));
 const SORTIE = args[3];
 
 function rngSeed(seed) {
@@ -137,12 +139,13 @@ async function combat(run, meta, combatId, type, zone, rng, eliteModifs, songe) 
   if (songe) {
     songes.appliquerSonge(mons, songe.facteur, songe.affixes, rng);
   } else {
-    run_.appliquerPuissanceZone(mons, zone.id, type);
+    // même ordre que le jeu (deroule/combat.js) : le renfort reçoit aussi la puissance de la zone
     run_.appliquerDifficulteMonstres(mons, run_.effetsDifficulte(run.ascension), {
       type,
       especesZone: run_.especesNormalesZone(zone),
       rng,
     });
+    run_.appliquerPuissanceZone(mons, zone.id, type);
   }
   if (type === "combat_dur") run_.appliquerAffixesElite(mons, rng, eliteModifs);
   const idole = renc.idoleActive(run, zone?.id);
@@ -180,12 +183,22 @@ async function combat(run, meta, combatId, type, zone, rng, eliteModifs, songe) 
   return gagne;
 }
 
+const mortDefinitive = (run) => !!run_.effetsDifficulte(run.ascension).mortDefinitive;
+// remplace un héros tombé par une recrue (équipée de ses objets, comme en jeu)
+function remplacer(run, tombe, classeId) {
+  run_.recruter(run, classeId, tombe.classeId);
+  const recrue = run.persos.find((p) => p.classeId === classeId);
+  recrue.pvActuels = run_.pvMaxPerso(recrue);
+  sEquiper(run);
+}
+
 function choisirNoeud(run, options) {
   const pv = pvFrac(run);
+  const tombe = mortDefinitive(run) && run.persos.some((p) => p.pvActuels <= 0);
   const note = (n) => {
     switch (n.type) {
       case "taverne":
-        return run.persos.length < 4 ? 9 : pv < 0.6 ? 8 : 1;
+        return run.persos.length < 4 || tombe ? 9 : pv < 0.6 ? 8 : 1;
       case "rencontre":
         return pv < 0.5 ? 6 : 4;
       case "combat":
@@ -298,7 +311,10 @@ async function jouerRun(monde, seed) {
         if (type === "donjon") break;
       } else if (type === "taverne") {
         const recrues = run_.tirerRecrues(run, rng);
+        // mort définitive : un héros tombé ne revient pas, on le remplace comme un joueur le ferait
+        const tombe = mortDefinitive(run) && run.persos.find((p) => p.pvActuels <= 0);
         if (run.persos.length < 4 && recrues.length) run_.recruter(run, recrues[0]);
+        else if (tombe && recrues.length) remplacer(run, tombe, recrues[0]);
         else run_.soignerEquipe(run, meta_.pctSoinTaverne(run.ascension));
       } else if (type === "rencontre") {
         const r = renc.tirerRencontre(rng);
