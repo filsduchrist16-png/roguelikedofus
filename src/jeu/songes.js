@@ -28,12 +28,13 @@ export const MONDE_SONGES = `t5`;
 export const CONFIG_SONGES = {
   // combats normaux et élites tirés dans ces mondes
   mondesCombats: [`t4`, `t5`],
-  // puissance des monstres à l'étage n : base × croissance^(n − 1) (réglé par simulation)
-  facteurBase: 0.8,
-  croissance: 1.06,
+  // puissance des monstres à l'étage n : base × croissance^(n − 1). Réglé par simulation
+  // (npm run sim -- songes 40) : le robot franchit 12,8 étages en moyenne (min 3, max 22).
+  facteurBase: 0.7,
+  croissance: 1.045,
   // boss (de tous les mondes, ramenés à la menace d'un boss du Monde 5) tous les `bossTous` étages
   bossTous: 5,
-  facteurBoss: 1,
+  facteurBoss: 0.55,
   // combats normaux rapprochés de la menace médiane (0 : bruts, 0,5 : tous égaux) ; le reste de
   // l'écart fait la variance d'un étage à l'autre
   normalisation: 0.35,
