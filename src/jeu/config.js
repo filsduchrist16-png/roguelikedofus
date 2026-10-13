@@ -209,55 +209,102 @@ export const MONSTRES_RARES = {
     chance: 0.02,
   },
 };
+// Difficultés (ascension). L'indice est enregistré dans les sauvegardes : ne pas changer l'ordre.
+// Effets possibles (tous facultatifs) :
+// - degatsMult, pvMult : dégâts et PV des monstres à la dernière zone d'un monde ; `rampe` : part de
+//   ce bonus déjà appliquée dans la première zone (montée linéaire entre les deux, run.js) ;
+// - renfortAvant : un monstre de plus en première ligne (combats normaux et élites), à partir de la
+//   zone `renfortDesZone` du monde (2 par défaut) ;
+//   renfortArriere : un autre monstre en ligne arrière, dès la zone `renfortArriereDesZone` ;
+// - affixesElite : nombre d'affixes des combats élites (1 par défaut) ;
+//   chanceAffixeNormal : chance qu'un combat normal reçoive un affixe ;
+//   affixePermanent : un affixe tiré au début de la run touche tous les combats ;
+// - furieSeuil, furieBouclierPct : furie des boss plus tôt, avec un bouclier (FURIE_BOSS) ;
+// - kamasMult, butinMult : kamas gagnés et chance d'objet ;
+// - recuperationVictoire : PV rendus après une victoire (RECUPERATION.victoire par défaut) ;
+// - tavernePct, tavernesCoupeesAPlein, mortDefinitive.
 export const DIFFICULTES = [
   {
     id: `normal`,
     nom: `Normal`,
-    desc: `Le jeu de base.`,
-    effets: {},
+    desc: `Le jeu de base. Les monstres gagnent jusqu'à +3 % de PV dans les dernières zones et les boss entrent en furie sous 50 % de leurs PV.`,
+    effets: {
+      pvMult: 1.03,
+      rampe: 0,
+    },
   },
   {
     id: `difficile`,
     nom: `Difficile`,
-    desc: `Les monstres tapent 10 % plus fort et ont 20 % de PV en plus. Un monstre de plus en première ligne.`,
+    desc: `Monstres de +10 à +20 % de dégâts et de +18 à +35 % de PV au fil des zones, un de plus en première ligne dès la zone 2. Un combat normal sur cinq a un affixe.`,
     effets: {
-      degatsMult: 1.1,
-      pvMult: 1.2,
+      degatsMult: 1.2,
+      pvMult: 1.35,
+      rampe: 0.5,
       renfortAvant: true,
+      renfortDesZone: 2,
+      chanceAffixeNormal: 0.2,
     },
   },
   {
     id: `extreme`,
     nom: `Extrême`,
-    desc: `Monstres à +15 % de dégâts et +30 % de PV, un de plus en première ligne. Les tavernes ne rendent plus que 30 % des PV.`,
+    desc: `Monstres de +18 à +30 % de dégâts et de +30 à +50 % de PV, un de plus en première ligne. Élites à deux affixes, boss en furie dès 60 % de leurs PV. Tavernes à 30 %, 25 % de kamas et 20 % d'objets en moins.`,
     effets: {
-      degatsMult: 1.15,
-      pvMult: 1.3,
+      degatsMult: 1.3,
+      pvMult: 1.5,
+      rampe: 0.6,
       renfortAvant: true,
+      renfortDesZone: 1,
+      chanceAffixeNormal: 0.2,
+      affixesElite: 2,
+      furieSeuil: 0.6,
       tavernePct: 0.3,
+      kamasMult: 0.75,
+      butinMult: 0.8,
     },
   },
   {
     id: `cauchemar`,
     nom: `Cauchemar`,
-    desc: `Monstres à +30 % de dégâts et +50 % de PV, un de plus en première ligne, tavernes à 30 %. Un héros qui tombe est perdu pour la run.`,
+    desc: `Comme Extrême avec des monstres de +30 à +40 % de dégâts et de +50 à +65 % de PV. Un combat normal sur trois a un affixe, les boss gagnent un bouclier en furie. Un héros qui tombe est perdu pour la run.`,
     effets: {
-      degatsMult: 1.3,
-      pvMult: 1.5,
+      degatsMult: 1.4,
+      pvMult: 1.65,
+      rampe: 0.77,
       renfortAvant: true,
+      renfortDesZone: 1,
+      chanceAffixeNormal: 0.35,
+      affixesElite: 2,
+      furieSeuil: 0.6,
+      furieBouclierPct: 0.15,
       tavernePct: 0.3,
+      kamasMult: 0.75,
+      butinMult: 0.8,
       mortDefinitive: true,
     },
   },
   {
     id: `ultime`,
     nom: `Ultime`,
-    desc: `Comme Cauchemar, mais plus aucune taverne dès que ton équipe est au complet.`,
+    desc: `Comme Cauchemar, plus un affixe permanent tiré au début de la run (affiché sur la carte), un monstre de plus en ligne arrière dès la zone 3, aucun soin après les victoires et plus de taverne dès que ton équipe est au complet.`,
     effets: {
-      degatsMult: 1.3,
-      pvMult: 1.5,
+      degatsMult: 1.4,
+      pvMult: 1.65,
+      rampe: 0.77,
       renfortAvant: true,
+      renfortArriere: true,
+      renfortArriereDesZone: 3,
+      renfortDesZone: 1,
+      chanceAffixeNormal: 0.35,
+      affixesElite: 2,
+      affixePermanent: true,
+      furieSeuil: 0.6,
+      furieBouclierPct: 0.15,
       tavernePct: 0.3,
+      kamasMult: 0.75,
+      butinMult: 0.8,
+      recuperationVictoire: 0,
       mortDefinitive: true,
       tavernesCoupeesAPlein: true,
     },

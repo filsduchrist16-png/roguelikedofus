@@ -7,9 +7,11 @@ import {
   monstresDuCombat,
   appliquerDifficulteMonstres,
   effetsDifficulte,
+  degatsDifficulte,
   especesNormalesZone,
   appliquerPuissanceZone,
-  appliquerAffixesElite,
+  appliquerAffixesCombat,
+  assurerAffixePermanent,
   tirerArchis,
   chanceArchi,
   chanceArchiNouveau,
@@ -70,8 +72,11 @@ export async function jouerCombat(run, combatId, contexte) {
     contexte.type === `secret`
       ? monstresSecrets(run.trancheId, contexte.zone)
       : monstresDuCombat(combatId);
-  appliquerDifficulteMonstres(monstres, effetsDifficulte(run.ascension), {
+  // les Songes ont leur propre puissance par étage : la difficulté ne s'y applique pas
+  let effetsCombat = contexte.songe ? {} : effetsDifficulte(run.ascension);
+  appliquerDifficulteMonstres(monstres, effetsCombat, {
     type: contexte.type,
+    zoneId: contexte.zone?.id,
     especesZone: contexte.zone ? especesNormalesZone(contexte.zone) : undefined,
     rng: Math.random,
   });
@@ -87,11 +92,16 @@ export async function jouerCombat(run, combatId, contexte) {
     // après le renfort d'ascension, pour qu'il soit aussi à la puissance de la zone
     appliquerPuissanceZone(monstres, contexte.zone?.id, contexte.type);
   }
-  if (contexte.elite) {
-    // affixes en pastilles sous le titre (le titre reste court)
-    affixes = appliquerAffixesElite(monstres, Math.random, contexte.eliteModifs).map((affixe) => ({
+  if (!contexte.songe) {
+    // affixes (élites, difficulté, affixe permanent d'Ultime) en pastilles sous le titre
+    affixes = appliquerAffixesCombat(monstres, Math.random, {
+      type: contexte.elite ? `combat_dur` : contexte.type,
+      effets: effetsCombat,
+      eliteModifs: contexte.eliteModifs,
+      affixePermanent: assurerAffixePermanent(run)?.id,
+    }).map((affixe) => ({
       nom: affixe.nom,
-      desc: affixe.desc,
+      desc: affixe.permanent ? `Affixe permanent de la run : ${affixe.desc}` : affixe.desc,
     }));
   }
   // idole de la zone et avis de recherche (rencontres)
@@ -153,11 +163,12 @@ export async function jouerCombat(run, combatId, contexte) {
     titre = `${titre} · ⭐ ${monstreRare}`;
   }
   let bonusEquipe = bonusEquipeRun(meta, run);
+  let degatsMonstres = degatsDifficulte(effetsCombat, contexte.zone?.id) * (idole?.degatsMult ?? 1);
   appliquerBonusDofus(equipe, bonusEquipe);
   let combattants = [...equipe, ...monstres];
   initialiserVueCombat(combattants, titre, meta, {
     playerDamageBonus: bonusEquipe.damageMult,
-    enemyDamageBonus: (effetsDifficulte(run.ascension).degatsMult ?? 1) * (idole?.degatsMult ?? 1),
+    enemyDamageBonus: degatsMonstres,
     reliquesActives: dofusPossedes(meta),
     affixes,
   });
@@ -224,7 +235,7 @@ export async function jouerCombat(run, combatId, contexte) {
       await attendre(parametres.combatRapide ? 20 : 60);
     },
     playerDamageBonus: bonusEquipe.damageMult,
-    enemyDamageBonus: (effetsDifficulte(run.ascension).degatsMult ?? 1) * (idole?.degatsMult ?? 1),
+    enemyDamageBonus: degatsMonstres,
     reliquesActives: dofusPossedes(meta),
   });
   retirerObjectifsCombat();

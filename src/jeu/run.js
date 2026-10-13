@@ -472,10 +472,11 @@ export function soignerEquipe(run, pct) {
 }
 // Récupération après une victoire : seuls les héros debout en profitent.
 export function recupererApresVictoire(run) {
+  let pct = effetsDifficulte(run.ascension).recuperationVictoire ?? RECUPERATION.victoire;
   for (let perso of run.persos) {
     if (perso.pvActuels > 0) {
       let max = pvMaxPerso(perso);
-      perso.pvActuels = Math.min(max, perso.pvActuels + Math.round(max * RECUPERATION.victoire));
+      perso.pvActuels = Math.min(max, perso.pvActuels + Math.round(max * pct));
     }
   }
 }
@@ -531,17 +532,19 @@ export function prospectionEquipe(run) {
   }, 0);
 }
 export function multiplicateurKamas(run) {
-  return run.persos.reduce((acc, perso) => {
+  let mult = run.persos.reduce((acc, perso) => {
     // passif de classe (Enutrof)
     acc *= CLASSES[perso.classeId]?.multKamas ?? 1;
     for (let objet of Object.values(perso.equipement)) {
-      let mult = objet && EQUIPEMENTS[objet.id]?.multKamas;
-      if (mult) {
-        acc *= mult;
+      let multObjet = objet && EQUIPEMENTS[objet.id]?.multKamas;
+      if (multObjet) {
+        acc *= multObjet;
       }
     }
     return acc;
   }, 1);
+  // la difficulté (Extrême et au-delà) réduit les kamas gagnés
+  return mult * (effetsDifficulte(run.ascension).kamasMult ?? 1);
 }
 export function tirerButin(run, zoneId, type, rng, typeTaux = type, prospection = 0) {
   let taux = TAUX_BUTIN.taux[typeTaux] ?? 0;
@@ -550,6 +553,7 @@ export function tirerButin(run, zoneId, type, rng, typeTaux = type, prospection 
   }
   let chance =
     taux *
+    (effetsDifficulte(run.ascension).butinMult ?? 1) *
     (1 +
       Math.min(
         TAUX_BUTIN.capProspection,
@@ -733,14 +737,48 @@ export function appliquerAffixe(monstres, rng, affixeId) {
   }
   return affixe;
 }
-export function appliquerAffixesElite(monstres, rng, idsAffixes) {
-  let affixeChoisi =
-    (idsAffixes ?? [])
-      .map((id) => AFFIXES_GROUPE.find((candidat) => candidat.id === id))
-      .find((trouve) => trouve !== undefined) ??
-    AFFIXES_GROUPE[Math.floor(rng() * AFFIXES_GROUPE.length)];
-  appliquerAffixe(monstres, rng, affixeChoisi.id);
-  return [affixeChoisi];
+// Affixes d'un combat élite : `nombre` affixes distincts, d'abord ceux annoncés sur la carte.
+export function appliquerAffixesElite(monstres, rng, idsAffixes, nombre = 1) {
+  let ids = (idsAffixes ?? []).filter((id) =>
+    AFFIXES_GROUPE.some((candidat) => candidat.id === id),
+  );
+  ids = ids.slice(0, Math.max(1, nombre));
+  while (ids.length < Math.min(nombre, AFFIXES_GROUPE.length) || !ids.length) {
+    let libres = AFFIXES_GROUPE.filter((candidat) => !ids.includes(candidat.id));
+    ids.push(libres[Math.floor(rng() * libres.length)].id);
+  }
+  return ids.map((id) => appliquerAffixe(monstres, rng, id));
+}
+// Affixes d'un combat selon la difficulté (élites, combats normaux, affixe permanent d'Ultime).
+// Renvoie les affixes appliqués, pour les pastilles sous le titre du combat.
+export function appliquerAffixesCombat(monstres, rng, options) {
+  let { type, effets = {}, eliteModifs, affixePermanent } = options;
+  let appliques = [];
+  if (type === `combat_dur`) {
+    appliques = appliquerAffixesElite(monstres, rng, eliteModifs, effets.affixesElite ?? 1);
+  } else if (type === `combat` && effets.chanceAffixeNormal && rng() < effets.chanceAffixeNormal) {
+    appliques = [appliquerAffixe(monstres, rng)];
+  }
+  let permanent = AFFIXES_GROUPE.find((candidat) => candidat.id === affixePermanent);
+  if (permanent) {
+    // l'affixe de la run s'ajoute à ceux du combat (sans doublon)
+    if (!appliques.some((affixe) => affixe.id === permanent.id)) {
+      appliquerAffixe(monstres, rng, permanent.id);
+    }
+    appliques = appliques.filter((affixe) => affixe.id !== permanent.id);
+    appliques.push({ ...permanent, nom: `${permanent.nom} (run)`, permanent: true });
+  }
+  return appliques;
+}
+// Affixe permanent d'Ultime : tiré une fois par run (aussi pour une run d'avant cette règle).
+export function assurerAffixePermanent(run, rng = Math.random) {
+  if (!effetsDifficulte(run.ascension).affixePermanent) {
+    return undefined;
+  }
+  if (!AFFIXES_GROUPE.some((affixe) => affixe.id === run.affixePermanent)) {
+    run.affixePermanent = AFFIXES_GROUPE[Math.floor(rng() * AFFIXES_GROUPE.length)].id;
+  }
+  return AFFIXES_GROUPE.find((affixe) => affixe.id === run.affixePermanent);
 }
 export function especesNormalesZone(zone) {
   let especes = new Set();
@@ -751,19 +789,54 @@ export function especesNormalesZone(zone) {
   }
   return [...especes];
 }
+// Part du bonus de difficulté (PV et dégâts des monstres) appliquée dans une zone : `rampe` dans la
+// première zone d'un monde, puis la totalité à la dernière (montée linéaire). Zone inconnue (donjon
+// secret, tests) : la totalité.
+export function partDifficulte(effets, zoneId) {
+  let rampe = effets.rampe ?? 1;
+  let trouve = zoneId ? trouverZoneDansMonde(zoneId) : null;
+  if (!trouve || rampe >= 1) {
+    return 1;
+  }
+  let nb = trouve.tranche.zones.length;
+  return rampe + (1 - rampe) * (nb > 1 ? trouve.index / (nb - 1) : 1);
+}
+// Multiplicateur de dégâts des monstres dû à la difficulté dans cette zone.
+export function degatsDifficulte(effets, zoneId) {
+  return 1 + ((effets.degatsMult ?? 1) - 1) * partDifficulte(effets, zoneId);
+}
 export function appliquerDifficulteMonstres(monstres, effets, options) {
   let normal = options.type === `combat` || options.type === `combat_dur`;
-  if (effets.renfortAvant && normal && options.especesZone?.length) {
+  // renfort à partir de la zone `renfortDesZone` du monde (partout si la zone est inconnue)
+  let indexZone = options.zoneId ? (trouverZoneDansMonde(options.zoneId)?.index ?? 0) : Infinity;
+  let renfort =
+    normal && options.especesZone?.length && indexZone + 1 >= (effets.renfortDesZone ?? 2);
+  let ajouterRenfort = (positions, prefixe) => {
     let occupees = new Set(monstres.map((monstre) => monstre.position));
-    let positionLibre = [0, 1, 2, 3].find((position) => !occupees.has(position));
+    let positionLibre = positions.find((position) => !occupees.has(position));
     if (positionLibre !== undefined) {
       let espece = options.especesZone[Math.floor(options.rng() * options.especesZone.length)];
-      monstres.push(creerMonstre(MONSTRES[espece], `asc_${espece}`, positionLibre));
+      monstres.push(creerMonstre(MONSTRES[espece], `${prefixe}_${espece}`, positionLibre));
     }
+  };
+  if (effets.renfortAvant && renfort) {
+    ajouterRenfort([0, 1, 2, 3], `asc`);
+  }
+  if (effets.renfortArriere && renfort && indexZone + 1 >= (effets.renfortArriereDesZone ?? 1)) {
+    ajouterRenfort([4, 5, 6, 7], `asc2`);
   }
   if (effets.pvMult) {
+    let pvMult = 1 + (effets.pvMult - 1) * partDifficulte(effets, options.zoneId);
     for (let monstre of monstres) {
-      multiplierPv(monstre, effets.pvMult);
+      multiplierPv(monstre, pvMult);
+    }
+  }
+  for (let monstre of monstres) {
+    if (monstre.furie) {
+      monstre.furie.seuil = effets.furieSeuil ?? monstre.furie.seuil;
+      if (effets.furieBouclierPct) {
+        monstre.furie.bouclierPct = effets.furieBouclierPct;
+      }
     }
   }
 }

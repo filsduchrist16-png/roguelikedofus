@@ -142,12 +142,18 @@ async function combat(run, meta, combatId, type, zone, rng, eliteModifs, songe) 
     // même ordre que le jeu (deroule/combat.js) : le renfort reçoit aussi la puissance de la zone
     run_.appliquerDifficulteMonstres(mons, run_.effetsDifficulte(run.ascension), {
       type,
+      zoneId: zone.id,
       especesZone: run_.especesNormalesZone(zone),
       rng,
     });
     run_.appliquerPuissanceZone(mons, zone.id, type);
+    run_.appliquerAffixesCombat(mons, rng, {
+      type,
+      effets: run_.effetsDifficulte(run.ascension),
+      eliteModifs,
+      affixePermanent: run_.assurerAffixePermanent(run, rng)?.id,
+    });
   }
-  if (type === "combat_dur") run_.appliquerAffixesElite(mons, rng, eliteModifs);
   const idole = renc.idoleActive(run, zone?.id);
   if (idole?.pvMult)
     for (const m of mons) m.pvBase = m.pvMax = m.pvActuels = Math.round(m.pvMax * idole.pvMult);
@@ -158,7 +164,8 @@ async function combat(run, meta, combatId, type, zone, rng, eliteModifs, songe) 
   const ctxIa = {
     playerDamageBonus: bonus.damageMult,
     enemyDamageBonus:
-      (run_.effetsDifficulte(run.ascension).degatsMult ?? 1) * (idole?.degatsMult ?? 1),
+      run_.degatsDifficulte(run_.effetsDifficulte(run.ascension), zone?.id) *
+      (idole?.degatsMult ?? 1),
     reliquesActives: meta_.dofusPossedes(meta),
   };
   const iaPlus = creerIaPlus(ctxIa);
@@ -175,7 +182,8 @@ async function combat(run, meta, combatId, type, zone, rng, eliteModifs, songe) 
     },
     playerDamageBonus: bonus.damageMult,
     enemyDamageBonus:
-      (run_.effetsDifficulte(run.ascension).degatsMult ?? 1) * (idole?.degatsMult ?? 1),
+      run_.degatsDifficulte(run_.effetsDifficulte(run.ascension), zone?.id) *
+      (idole?.degatsMult ?? 1),
     reliquesActives: meta_.dofusPossedes(meta),
     log: process.env.DEBUG ? (s) => console.log(s) : undefined,
   });

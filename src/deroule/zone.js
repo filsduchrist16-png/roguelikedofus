@@ -3,7 +3,7 @@ import { sauverRun } from "../sauvegarde/run.js";
 import { enregistrerToileMax, sauverMeta, enregistrerRecord } from "../sauvegarde/meta.js";
 import { genererCarte } from "../carte/generation.js";
 import { rngCarteDuJour, cleRecordJour } from "../jeu/runDuJour.js";
-import { noeudsExclus } from "../jeu/run.js";
+import { assurerAffixePermanent, noeudsExclus } from "../jeu/run.js";
 import { ecranCarte } from "../ui/ecrans/carte.js";
 import { effetsEnCours } from "../jeu/rencontres.js";
 import { zonesDuMonde, getMonde } from "../jeu/config.js";
@@ -25,6 +25,8 @@ document.addEventListener(`visibilitychange`, () => {
 });
 export async function jouerZone(run, zone, indexZone) {
   etatRun.active = { zoneIdx: indexZone, run };
+  // Ultime : l'affixe permanent est tiré dès la première carte (affiché dans les effets en cours)
+  assurerAffixePermanent(run);
   enregistrerToileMax(meta, run.trancheId, indexZone + 1);
   sauverMeta(meta);
   if (!run.carte) {

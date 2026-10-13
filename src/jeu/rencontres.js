@@ -1,7 +1,7 @@
 // Rencontres : la case « Rencontre » de la carte tire un événement à choix (sanctuaire des Douze,
 // coffre abandonné, autel des Idoles, marchand ambulant, avis de recherche).
 import { MONSTRES } from "../data/index.js";
-import { ECONOMIE, monstresDeZone } from "./config.js";
+import { AFFIXES_GROUPE, ECONOMIE, monstresDeZone } from "./config.js";
 import { bonusDofus } from "../sauvegarde/meta.js";
 import { nomCle, secretDuMonde } from "./secret.js";
 import { IDOLES_DEPART, cumulerIdoles, idolesDepartDeRun } from "./idolesDepart.js";
@@ -246,6 +246,15 @@ export function effetsEnCours(run, zoneId) {
     nom: BENEDICTIONS[id].nom,
     desc: `Bénédiction de ${BENEDICTIONS[id].dieu} pour toute la run : ${BENEDICTIONS[id].desc}.`,
   }));
+  // affixe permanent de la difficulté Ultime, tiré au début de la run
+  const permanent = AFFIXES_GROUPE.find((affixe) => affixe.id === run.affixePermanent);
+  if (permanent) {
+    out.unshift({
+      icone: `💀`,
+      nom: permanent.nom,
+      desc: `Affixe permanent (Ultime) : tous les ennemis de la run sont ${permanent.nom.toLowerCase()} (${permanent.desc}).`,
+    });
+  }
   for (const id of idolesDepartDeRun(run)) {
     out.push({
       icone: `🗿`,
