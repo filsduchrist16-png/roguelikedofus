@@ -1,5 +1,6 @@
-import { afficherEcran, barreRetour, racine } from "../commun.js";
+import { afficherEcran, barreRetour, echapperHtml, racine } from "../commun.js";
 import { AIDE_OBTENTION } from "../../jeu/obtention.js";
+import { DIFFICULTES } from "../../jeu/config.js";
 const SECTIONS_REGLES = [
   {
     titre: `La run`,
@@ -11,8 +12,8 @@ const SECTIONS_REGLES = [
   },
   {
     titre: `Les PV`,
-    corps: `<p>Après chaque combat gagné, les héros encore debout récupèrent 10 % de leurs PV max ; un héros
-      tombé reste K.O. Pour se soigner davantage, il y a la taverne (la moitié des PV max ; moins à partir d'Extrême,
+    corps: `<p>Après chaque combat gagné, les héros encore debout récupèrent 10 % de leurs PV max (rien en
+      Ultime) ; un héros tombé reste K.O. Pour se soigner davantage, il y a la taverne (la moitié des PV max ; moins à partir d'Extrême,
       et en Ultime plus de taverne une fois l'équipe complète), certaines
       rencontres et la victoire contre un boss de zone, qui remet toute l'équipe sur pied.</p>
       <p>Si toute l'équipe tombe, la run s'arrête : tu perds les héros, l'équipement et les kamas.</p>`,
@@ -100,7 +101,12 @@ const SECTIONS_REGLES = [
   {
     titre: `Ascension`,
     corps: `<p>Les étoiles sur l'image d'un monde règlent sa difficulté, de une (normal) à cinq. Gagner une
-      run débloque l'étoile suivante, et gagner un monde ouvre le monde suivant.</p>`,
+      run débloque l'étoile suivante, et gagner un monde ouvre le monde suivant. Chaque palier garde les
+      règles du précédent et en ajoute :</p>
+      <ul>${DIFFICULTES.map((d) => `<li><b>${echapperHtml(d.nom)}</b> : ${echapperHtml(d.desc)}</li>`).join(``)}</ul>
+      <p>Les monstres visent en priorité un héros qu'ils peuvent achever, puis les soigneurs et les héros
+      fragiles. Sous 50 % de ses PV (60 % dès Extrême), un boss <b>entre en furie</b> : +20 % de dégâts et
+      +1 PA jusqu'à la fin du combat (badge 💢 sur sa carte, 🔥 une fois en furie).</p>`,
   },
   {
     titre: `Songes infinis`,

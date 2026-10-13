@@ -21,6 +21,8 @@ npm run lint     # ESLint (règles no-shadow, no-unused-vars, no-sequences, eqeq
 npm run check    # prettier --check, ESLint puis tous les tests
 npm run format   # prettier --write sur src, tests, outils
 npm run sim -- t1,t3,t5 30   # simulation de 30 runs complètes par monde (lente, plusieurs minutes)
+npm run sim -- t1,t3,t5 30 2 # idem en difficulté Extrême (0 Normal … 4 Ultime)
+npm run sim:tableau          # tableau des victoires par monde et par difficulté (paliers en parallèle)
 ```
 
 `FUZZ_N=5000 npm test` simule plus de combats (plus lent, plus exhaustif).
@@ -79,7 +81,7 @@ src/
     effets.js            dégâts infligés, soins, boucliers, effets de début/fin de tour, invocations
     sorts.js             résolution de chaque type de sort
     moteur.js            ordre de jeu et boucle des tours
-    ia.js                comportement des monstres (et des créatures invoquées par les héros)
+    ia.js                comportement des monstres (achever, viser soigneurs et fragiles, soigner à bon escient)
     classes.js           mécaniques des classes ajoutées : infection, créatures, états, marques…
   carte/generation.js    génération de la carte d'une zone
   sauvegarde/            localStorage : paramètres, run en cours, progression (meta), export/import,
