@@ -11,6 +11,7 @@ import {
   AFFIXES_GROUPE,
   CONFIG_ARCHI,
   DIFFICULTES,
+  FURIE_BOSS,
   MONSTRES_RARES,
   RARETES,
   RARETES_INFO,
@@ -682,6 +683,9 @@ function creerMonstre(def, ref, position) {
     position,
     niveau: 1,
     monstreId: def.id,
+    boss: def.boss ? true : undefined,
+    // furie : sous un seuil de PV, le boss frappe plus fort (combat/moteur.js)
+    furie: def.boss ? { ...FURIE_BOSS } : undefined,
     archiNom: def.archiNom,
     ia: def.ia,
     mueElementaire: def.mueElementaire,

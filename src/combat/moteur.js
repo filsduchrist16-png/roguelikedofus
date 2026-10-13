@@ -39,6 +39,39 @@ function chanceEcaflip(combattant, contexte) {
     contexte.log(`🙀 La Chance d'Ecaflip grimace : ${combattant.nom} perd ${gamble.moins} PA.`);
   }
 }
+// Furie des boss : sous un seuil de PV (50 % par défaut), au début de son tour, le boss gagne des
+// dégâts, des PA et parfois un bouclier, une seule fois par combat. Annoncé dans le journal.
+export function declencherFurie(combattant, contexte) {
+  let furie = combattant.furie;
+  if (
+    !furie ||
+    combattant.enFurie ||
+    combattant.pvActuels <= 0 ||
+    combattant.pvActuels > combattant.pvMax * furie.seuil
+  ) {
+    return false;
+  }
+  combattant.enFurie = true;
+  let effets = [];
+  if (furie.degatsPct) {
+    combattant.degatsPctPermanent = (combattant.degatsPctPermanent ?? 0) + furie.degatsPct;
+    effets.push(`+${Math.round(furie.degatsPct * 100)} % de dégâts`);
+  }
+  if (furie.pa) {
+    combattant.paMax += furie.pa;
+    combattant.paActuels += furie.pa;
+    effets.push(`+${furie.pa} PA`);
+  }
+  if (furie.bouclierPct) {
+    let bouclier = Math.round(combattant.pvMax * furie.bouclierPct);
+    combattant.bouclier = (combattant.bouclier ?? 0) + bouclier;
+    effets.push(`bouclier de ${bouclier}`);
+  }
+  contexte.log(`🔥 ${combattant.nom} entre en furie ! (${effets.join(`, `)})`, {
+    tour: combattant.ref,
+  });
+  return true;
+}
 const campVaincu = (combattants, camp) =>
   vivants(combattants).every(
     (combattant) => combattant.camp !== camp || combattant.estLance || combattant.estEgide,
@@ -173,6 +206,7 @@ export async function executerCombat(combattants, options) {
       }
       mueElementaire(acteur, contexte);
       chanceEcaflip(acteur, contexte);
+      declencherFurie(acteur, contexte);
       for (let combattant of combattants) {
         if (
           combattant.estEgide &&

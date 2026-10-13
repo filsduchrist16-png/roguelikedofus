@@ -840,6 +840,14 @@ function badgesCombattant(combattant) {
       `Marque ${NOMS_ELEMENTS[combattant.marqueElement]} : un sort d'un autre élément la combine pour un effet bonus.`,
     );
   }
+  if (combattant.enFurie) {
+    ajouter(`🔥 Furie`, `En furie : frappe plus fort et a plus de PA jusqu'à la fin du combat.`);
+  } else if (combattant.furie && combattant.pvActuels > 0) {
+    ajouter(
+      `💢 ${Math.round(combattant.furie.seuil * 100)} %`,
+      `Boss : entre en furie sous ${Math.round(combattant.furie.seuil * 100)} % de ses PV.`,
+    );
+  }
   if (combattant.tourelle) {
     ajouter(
       `⚙️ Tourelle niv. ${combattant.niveauTourelle ?? 1}`,

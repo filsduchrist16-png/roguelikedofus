@@ -1,7 +1,9 @@
 // IA des monstres : situations construites où le bon choix est évident pour un joueur.
 import { describe, expect, it } from "vitest";
-import { SORTS } from "../src/data/index.js";
+import { COMBATS, MONSTRES, SORTS } from "../src/data/index.js";
+import { FURIE_BOSS } from "../src/jeu/config.js";
 import { choisirActionIA, estimerDegats } from "../src/combat/ia.js";
+import { declencherFurie } from "../src/combat/moteur.js";
 import { combattantsEquipe, monstresDuCombat, nouvelleRun } from "../src/jeu/run.js";
 
 // deux ou trois héros en première ligne, PV pleins
@@ -98,5 +100,33 @@ describe(`IA ennemie`, () => {
     expect(d1).toBe(d2);
     expect(d1).toBeGreaterThan(0);
     expect(a).toEqual(copie);
+  });
+});
+
+describe(`furie des boss`, () => {
+  const bossDuCombat = () => {
+    const id = Object.keys(COMBATS).find((c) =>
+      monstresDuCombat(c).some((m) => MONSTRES[m.monstreId]?.boss),
+    );
+    return monstresDuCombat(id).find((m) => m.boss);
+  };
+  it(`un boss porte une furie, un monstre normal non`, () => {
+    expect(bossDuCombat().furie).toEqual(FURIE_BOSS);
+    expect(monstresDuCombat(`abr_1`).some((m) => m.furie)).toBe(false);
+  });
+  it(`sous 50 % de PV, le boss entre en furie une seule fois, avec une ligne de journal`, () => {
+    const boss = bossDuCombat();
+    const journal = [];
+    const ctx = { log: (texte) => journal.push(texte) };
+    boss.pvActuels = Math.floor(boss.pvMax * 0.6);
+    expect(declencherFurie(boss, ctx)).toBe(false);
+    const pa = boss.paMax;
+    boss.pvActuels = Math.floor(boss.pvMax * 0.5);
+    expect(declencherFurie(boss, ctx)).toBe(true);
+    expect(boss.paMax).toBe(pa + FURIE_BOSS.pa);
+    expect(boss.degatsPctPermanent).toBeCloseTo(FURIE_BOSS.degatsPct);
+    expect(journal[0]).toContain(`${boss.nom} entre en furie !`);
+    expect(declencherFurie(boss, ctx)).toBe(false);
+    expect(journal).toHaveLength(1);
   });
 });

@@ -182,6 +182,13 @@ export const AFFIXES_GROUPE = [
     paBonus: 1,
   },
 ];
+// Furie des boss : sous `seuil` de ses PV, au début de son tour, un boss gagne des dégâts et des PA
+// (une fois par combat). Les difficultés peuvent avancer le seuil et ajouter un bouclier.
+export const FURIE_BOSS = {
+  seuil: 0.5,
+  degatsPct: 0.2,
+  pa: 1,
+};
 export const CONFIG_ARCHI = {
   chance: 0.008,
   philtre: 0.004,
