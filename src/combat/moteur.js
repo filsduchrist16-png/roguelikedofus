@@ -208,7 +208,7 @@ export async function executerCombat(combattants, options) {
         await options.onUpdate?.();
         let actions = 0;
         while (acteur.pvActuels > 0 && !combatTermine(combattants) && !(++actions > 50)) {
-          let action = await options.controllers[acteur.camp](acteur, combattants);
+          let action = await options.controllers[acteur.camp](acteur, combattants, contexte);
           if (!action) {
             break;
           }

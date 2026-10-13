@@ -54,9 +54,9 @@ import { capturerArchis } from "./recompenses.js";
 import { ecranReliques } from "../ui/ecrans/recompenses.js";
 import { verifierQuetesCombat, verifierQuetesMeta } from "../jeu/quetes.js";
 
-export const controleurEnnemi = async (acteur, combattants) => {
+export const controleurEnnemi = async (acteur, combattants, contexte) => {
   // l'action est choisie d'abord : pas d'attente inutile quand le monstre n'a plus rien à faire
-  const action = choisirActionIA(acteur, combattants);
+  const action = choisirActionIA(acteur, combattants, contexte);
   if (action) {
     await attendre(parametres.combatRapide ? 180 : 550);
   }
@@ -207,8 +207,8 @@ export async function jouerCombat(run, combatId, contexte) {
     },
     controllers: {
       // les créatures et tourelles invoquées par les héros jouent seules
-      joueur: (acteur, tous) =>
-        acteur.creature ? controleurEnnemi(acteur, tous) : controleurJoueur(acteur, tous),
+      joueur: (acteur, tous, ctx) =>
+        acteur.creature ? controleurEnnemi(acteur, tous, ctx) : controleurJoueur(acteur, tous),
       ennemi: controleurEnnemi,
     },
     log: journaliser,
