@@ -3956,5 +3956,40 @@
         }
       }
     ]
+  },
+  "songes_infinis": {
+    "categorie": {
+      "general": true,
+      "rubrique": "Songes infinis",
+      "songes": true
+    },
+    "nom": "Rêveur des Songes",
+    "recompense": "+150 kamas au départ des Songes infinis par quête terminée",
+    "quetes": [
+      {
+        "critere": {
+          "seuil": 10,
+          "type": "songes_etage"
+        },
+        "id": "songes_etage_10",
+        "nom": "Franchir l'étage 10 des Songes infinis."
+      },
+      {
+        "critere": {
+          "seuil": 25,
+          "type": "songes_etage"
+        },
+        "id": "songes_etage_25",
+        "nom": "Franchir l'étage 25 des Songes infinis."
+      },
+      {
+        "critere": {
+          "seuil": 50,
+          "type": "songes_etage"
+        },
+        "id": "songes_etage_50",
+        "nom": "Franchir l'étage 50 des Songes infinis."
+      }
+    ]
   }
 }

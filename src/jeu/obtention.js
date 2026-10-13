@@ -341,6 +341,12 @@ function lignesQuete(critere) {
     case `runs_jouees`:
       lignes.push([`Comment`, `chaque run lancée compte, gagnée ou non.`]);
       break;
+    case `songes_etage`:
+      lignes.push([
+        `Comment`,
+        `lance les Songes infinis depuis l'accueil (ouverts après une victoire au Monde 5) et franchis ${critere.seuil} étages.`,
+      ]);
+      break;
   }
   if (conditions.length) {
     lignes.push([`Condition`, `${conditions.join(` ; `)}.`]);

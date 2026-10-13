@@ -163,6 +163,13 @@ export function verifierQuetesMeta(etat, meta, succes = SUCCES) {
   for (let quete of quetesRestantes(etat, succes)) {
     let critere = quete.critere;
     let valide = false;
+    // Songes infinis : record d'étages franchis
+    if (critere.type === `songes_etage`) {
+      if ((meta.songes ?? 0) >= critere.seuil) {
+        rempli.push(quete);
+      }
+      continue;
+    }
     critere.type === `archi_capture`
       ? critere.espece === undefined
         ? critere.zone === undefined
@@ -214,6 +221,9 @@ function progressionCritere(critere, meta) {
   if (critere.type === `runs_jouees`) {
     return [meta.runs, critere.seuil];
   }
+  if (critere.type === `songes_etage`) {
+    return [meta.songes ?? 0, critere.seuil];
+  }
   if (critere.type === `dofus_possedes`) {
     return [new Set(meta.dofus).size, critere.seuil];
   }
@@ -246,6 +256,8 @@ export function contexteMeta(meta) {
     runs: meta.runs,
     ascension: meta.ascension ?? {},
     reliques: meta.reliques ?? [],
+    // record des Songes infinis (étages franchis)
+    songes: meta.records?.songes?.score ?? 0,
   };
 }
 export function progressionSucces(etat, succes) {

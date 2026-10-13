@@ -157,7 +157,7 @@ export function ecranSucces(meta, selection) {
       let succes = SUCCES[selectionCourante.slice(2)];
       let progression = progressionSucces(quetes, succes);
       return `<div class="succes-panneau-tete"><div><h2>${echapperHtml(succes.nom)}</h2></div></div>
-        <span class="succes-statut">${progression.faites} / ${progression.total} quêtes · sans récompense</span>
+        <span class="succes-statut">${progression.faites} / ${progression.total} quêtes · ${echapperHtml(succes.recompense ?? `sans récompense`)}</span>
         ${htmlQuetes(succes)}`;
     };
     let afficher = () => {
