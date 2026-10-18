@@ -1,13 +1,18 @@
 // Rencontres : la case « Rencontre » de la carte tire un événement à choix (sanctuaire des Douze,
 // coffre abandonné, autel des Idoles, marchand ambulant, avis de recherche).
-import { MONSTRES } from "../data/index.js";
+import { MONSTRES, RELIQUES_RUN } from "../data/index.js";
 import { AFFIXES_GROUPE, ECONOMIE, monstresDeZone } from "./config.js";
 import { bonusDofus } from "../sauvegarde/meta.js";
 import { nomCle, secretDuMonde } from "./secret.js";
 import { IDOLES_DEPART, cumulerIdoles, idolesDepartDeRun } from "./idolesDepart.js";
 import { prixForge, rareteSuivante } from "./economie.js";
 import { instancierObjet, pvMaxPerso } from "./run.js";
-import { ajouterReliquesAuBonus, reliquesRunAffichees } from "./recompensesRun.js";
+import {
+  ajouterReliquesAuBonus,
+  reliquesRunAffichees,
+  reliquesRunDe,
+  sacrificePvRun,
+} from "./recompensesRun.js";
 
 // Bénédictions des dieux du Krosmoz : elles durent toute la run.
 export const BENEDICTIONS = {
@@ -95,6 +100,9 @@ const POIDS = {
   cle: 12,
   forgemage: 10,
   temple: 10,
+  // reliques de run hors combat : colporteur (contre des kamas) et autel de sang (contre des PV max)
+  colporteur: 14,
+  autel_sang: 10,
 };
 // Part des PV max rendue à un héros relevé au temple.
 export const PV_TEMPLE = 0.5;
@@ -125,6 +133,14 @@ export function rencontresExclues(run, { mortDefinitive = false } = {}) {
   }
   if (!objetsForgeables(run).length) {
     exclus.push(`forgemage`);
+  }
+  // toutes les reliques de run déjà prises : ni colporteur ni autel ; autel au plafond du sacrifice
+  const reliquesLibres = Object.keys(RELIQUES_RUN).length > reliquesRunDe(run).length;
+  if (!reliquesLibres) {
+    exclus.push(`colporteur`);
+  }
+  if (!reliquesLibres || sacrificePvRun(run) + 0.08 > 0.4 + 1e-9) {
+    exclus.push(`autel_sang`);
   }
   return exclus;
 }
@@ -287,6 +303,14 @@ export function effetsEnCours(run, zoneId) {
       desc: traque.archi
         ? `Le prochain combat contient un archimonstre (monstres +20 % de PV).`
         : `Le prochain combat rapporte le double de kamas (monstres +20 % de PV).`,
+    });
+  }
+  const sacrifice = sacrificePvRun(run);
+  if (sacrifice > 0) {
+    out.push({
+      icone: `🩸`,
+      nom: `Pacte de sang −${Math.round(sacrifice * 100)} %`,
+      desc: `Autel de sang : chaque héros a ${Math.round(sacrifice * 100)} % de PV max en moins en combat, jusqu'à la fin de la run.`,
     });
   }
   // reliques de run, en dernier (emoji + nom, effet dans l'infobulle)

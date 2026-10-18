@@ -8,6 +8,7 @@ import {
   echapperHtml,
   ecranTactile,
   htmlCarteClasse,
+  htmlKamas,
   racine,
 } from "../commun.js";
 const nomClasse = (id) => CLASSES[id]?.nom ?? id;
@@ -19,6 +20,8 @@ export function ecranTaverne(
   pctSoin,
   mortDefinitive = false,
   tavernesCoupees = false,
+  // relique de run en vente au comptoir : { id, icone, nom, detail, prix, kamas } ou null
+  vente = null,
 ) {
   return new Promise((resolve) => {
     afficherAstuce(
@@ -45,6 +48,21 @@ export function ecranTaverne(
       } else {
         resolve({ type: `recrue`, classeId: recrue });
       }
+    };
+    // achat en plus du soin ou de la recrue : la taverne se rouvre ensuite sans la relique
+    const htmlVente = () => {
+      if (!vente) {
+        return ``;
+      }
+      const bloque = (vente.kamas ?? 0) < vente.prix ? `Pas assez de kamas.` : ``;
+      return `<h3>Au comptoir</h3>
+        <div class="rencontre-choix tav-vente">
+          <button id="tav-relique" class="rencontre-option"${bloque ? ` disabled` : ``}>
+            <span class="rencontre-libelle">${vente.icone} ${echapperHtml(vente.nom)} · ${htmlKamas(vente.prix)}</span>
+            <small>Relique de run à acheter, en plus du soin ou de la recrue. ${echapperHtml(vente.detail ?? ``)}</small>
+            ${bloque ? `<small class="rencontre-bloque">${bloque} (bourse : ${htmlKamas(vente.kamas ?? 0)})</small>` : ``}
+          </button>
+        </div>`;
     };
     let afficher = () => {
       if (classeId) {
@@ -109,11 +127,15 @@ export function ecranTaverne(
         ${mortDefinitive && nbTombes > 0 ? `<p class="asc-avertissement">☠ ${nbTombes === 1 ? `Un héros tombé ne se relèvera pas` : `${nbTombes} héros tombés ne se relèveront pas`}. Il faut le${nbTombes > 1 ? `s` : ``} remplacer.</p>` : ``}
         ${avertirComplet && recrues.length ? `<p class="asc-avertissement">⚠ Recruter maintenant complète l'équipe : les tavernes disparaissent du reste de la run (potions, sanctuaires et autres soins restent possibles).</p>` : ``}
         ${htmlRecrues}
+        ${htmlVente()}
         <div class="boutons-ecran tav-boutons">
           <button id="tav-soin" class="${soin.total && !selection ? `primaire` : `secondaire`}">${echapperHtml(libelleSoin)}</button>
           ${selection ? `<button id="tav-recruter" class="primaire">Recruter ${echapperHtml(nomClasse(selection))}</button>` : ``}
         </div>
       `);
+      document
+        .getElementById(`tav-relique`)
+        ?.addEventListener(`click`, () => resolve({ type: `relique` }));
       document.getElementById(`tav-soin`)?.addEventListener(`click`, () =>
         resolve({
           type: `soin`,

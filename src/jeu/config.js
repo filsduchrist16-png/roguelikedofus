@@ -93,7 +93,13 @@ export const CONFIG_CARTE = {
     hdv: 8,
     forgemagie: 6,
     rencontre: 10,
+    camp: 7,
+    coffre: 7,
   },
+  // coffre de la carte : chance de piège (moitié combat, moitié perte de PV) et de relique (sinon un objet)
+  coffre: { piege: 0.25, relique: 0.6, pertePv: 0.2 },
+  // camp de repos : part des PV max rendue
+  campSoin: 0.3,
 };
 export const RARETES = [`commun`, `rare`, `epique`, `legendaire`];
 export const RARETES_INFO = {

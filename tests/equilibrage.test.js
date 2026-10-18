@@ -12,7 +12,7 @@ import {
   ZONES,
 } from "../src/data/index.js";
 import { PUISSANCE_PAR_TYPE, RECUPERATION, facteurType } from "../src/jeu/config.js";
-import { genererCarte } from "../src/carte/generation.js";
+import { genererCarte, trouverNoeud } from "../src/carte/generation.js";
 import { numeroZoneObjet } from "../src/jeu/economie.js";
 import {
   bonusPanoplie,
@@ -149,11 +149,17 @@ describe(`panoplies`, () => {
 });
 
 describe(`équilibrage`, () => {
-  it(`la première zone d'un monde commence par une rangée de tavernes`, () => {
+  it(`la première zone d'un monde a une taverne juste après chaque premier combat`, () => {
     const carte = genererCarte(rngFixe(3), zone(`incarnam`).pools, [], { premiereZone: true });
     const rangee1 = carte.noeuds.filter((n) => n.ligne === 1);
-    expect(rangee1.length).toBeGreaterThan(0);
-    expect(rangee1.every((n) => n.type === `taverne`)).toBe(true);
+    expect(rangee1.length).toBe(3);
+    // la taverne du milieu est atteignable depuis les deux départs ; ses voisines proposent autre chose
+    const milieu = rangee1.find((n) => n.colonne === 0);
+    expect(milieu.type).toBe(`taverne`);
+    for (const id of carte.depart) {
+      expect(trouverNoeud(carte, id).suivants).toContain(milieu.id);
+    }
+    expect(rangee1.filter((n) => n.colonne !== 0).every((n) => n.type !== `taverne`)).toBe(true);
   });
 
   it(`après une victoire, seuls les héros debout récupèrent des PV`, () => {
@@ -270,7 +276,9 @@ describe(`donjons secrets`, () => {
     const rng = rngFixe(7);
     const tirages = new Set(Array.from({ length: 400 }, () => tirerRencontre(rng, [`cle`])));
     expect(tirages.has(`cle`)).toBe(false);
-    expect(tirages.size).toBe(7);
+    // 8 autres rencontres : sanctuaire, coffre, marchand, idoles, traque, forgemage, temple,
+    // colporteur et autel de sang, moins la clé
+    expect(tirages.size).toBe(9);
   });
 });
 

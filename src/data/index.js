@@ -9,6 +9,7 @@ import SUCCES from "./succes.json";
 import CREATURES from "./creatures.json";
 import RELIQUES from "./reliques.json";
 import RELIQUES_RUN from "./reliquesRun.json";
+import SYNERGIES_RUN from "./synergiesRun.json";
 import PANOPLIES from "./panoplies.json";
 import SECRETS from "./secrets.json";
 import AJUSTEMENTS_DONJONS from "./ajustementsDonjons.json";
@@ -539,6 +540,7 @@ export {
   SUCCES,
   RELIQUES,
   RELIQUES_RUN,
+  SYNERGIES_RUN,
   CREATURES,
   PANOPLIES,
   SECRETS,

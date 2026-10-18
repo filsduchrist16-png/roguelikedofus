@@ -489,7 +489,11 @@ export function appliquerBonusDofus(combattants, bonus) {
       combattant.pvBase += gain;
       combattant.pvMax += gain;
       if (combattant.pvActuels > 0) {
-        combattant.pvActuels += gain;
+        // bonus négatif (autel de sang) : les PV actuels sont plafonnés, un héros debout le reste
+        combattant.pvActuels =
+          gain >= 0
+            ? combattant.pvActuels + gain
+            : Math.max(1, Math.min(combattant.pvActuels, combattant.pvMax));
       }
     }
     if (bonus.bouclierDebutPct && combattant.pvActuels > 0) {

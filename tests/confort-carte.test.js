@@ -9,6 +9,7 @@ describe("texteCase", () => {
     expect(t.split(`\n`)).toEqual([
       `Combat : Le fil tendu`,
       `3 monstres : Abraknyde Sombre, Arapex, Néfileuse`,
+      `🎁 Récompense : butin + 1 carte parmi 3 (relique de run 1 fois sur 5)`,
     ]);
   });
 
@@ -60,7 +61,11 @@ describe("texteCase", () => {
   });
 
   it("décrit les cases sans combat par une phrase courte", () => {
-    expect(texteCase({ type: `taverne` })).toBe(`Taverne : soigne ou recrute`);
+    expect(texteCase({ type: `taverne` })).toMatch(/^Taverne : soigne ou recrute\n.*relique/);
+    expect(texteCase({ type: `camp` })).toMatch(/^Camp de repos.*\n.*30 %.*\n.*améliorer un sort/);
+    expect(texteCase({ type: `coffre` })).toMatch(
+      /relique de run ou un objet\n.*piégé : combat ou perte de PV/,
+    );
     expect(texteCase({ type: `otomai` })).toMatch(/philtre/);
     expect(texteCase({ type: `zaap` })).toMatch(/surprise/);
   });

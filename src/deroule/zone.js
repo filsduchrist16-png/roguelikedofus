@@ -72,7 +72,7 @@ export async function jouerZone(run, zone, indexZone) {
     if (type === `zaap`) {
       ({ type, combatId, xp } = await resoudreZaap(zone.pools, noeudsExclus(run, zone)));
     }
-    let issue = await resoudreNoeud(run, type, combatId, xp, zone, noeud.eliteModifs);
+    let issue = await resoudreNoeud(run, type, combatId, xp, zone, noeud.eliteModifs, noeud);
     noeud.visite = true;
     run.carte.courant = noeud.id;
     if (issue === `wipe`) {

@@ -1,0 +1,42 @@
+{
+  "syn_curee": {
+    "id": "syn_curee",
+    "nom": "Curée",
+    "icone": "🩸",
+    "reliques": ["rr_venin_arakne", "rr_crocs_milimulou"],
+    "desc": "les poisons durent encore 1 tour de plus et +10 % de dégâts contre les ennemis sous 30 % de leurs PV.",
+    "effet": { "poisonDureePlus": 1, "degatsAchevement": 0.1 }
+  },
+  "syn_herboriste": {
+    "id": "syn_herboriste",
+    "nom": "Herboristerie",
+    "icone": "🌿",
+    "reliques": ["rr_bandages_rykke", "rr_graine_sadida"],
+    "desc": "+5 % de PV max rendus après chaque victoire et +2 % de régénération au début de chaque tour.",
+    "effet": { "soinFinCombat": 0.05, "regenTour": 0.02 }
+  },
+  "syn_assaut": {
+    "id": "syn_assaut",
+    "nom": "Assaut éclair",
+    "icone": "⚡",
+    "reliques": ["rr_cor_bwork", "rr_sablier_xelor"],
+    "desc": "+15 % de dégâts en plus pendant le premier tour de chaque héros.",
+    "effet": { "degatsPremierTour": 0.15 }
+  },
+  "syn_rempart": {
+    "id": "syn_rempart",
+    "nom": "Rempart du chasseur",
+    "icone": "🛡️",
+    "reliques": ["rr_ecu_feca", "rr_trophee_chasseur"],
+    "desc": "les deux boucliers gagnent 4 % des PV max (12 % au début du combat, 12 % en achevant).",
+    "effet": { "bouclierDebutPct": 0.04, "bouclierSurKO": 0.04 }
+  },
+  "syn_veine": {
+    "id": "syn_veine",
+    "nom": "Veine d'Ecaflip",
+    "icone": "🍀",
+    "reliques": ["rr_de_ecaflip", "rr_trefle"],
+    "desc": "+3 % de coup critique et +3 % d'esquive en plus pour chaque héros.",
+    "effet": { "critPlat": 3, "esquiveBonus": 0.03 }
+  }
+}

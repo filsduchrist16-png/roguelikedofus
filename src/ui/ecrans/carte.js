@@ -43,6 +43,8 @@ const ICONES_NOEUDS = {
   hdv: `🪙`,
   forgemagie: `🔨`,
   rencontre: `❓`,
+  camp: `⛺`,
+  coffre: `🧰`,
 };
 const NOMS_NOEUDS = {
   combat: `Combat`,
@@ -54,15 +56,24 @@ const NOMS_NOEUDS = {
   hdv: `Hôtel de vente`,
   forgemagie: `Forgemagie`,
   rencontre: `Rencontre`,
+  camp: `Camp`,
+  coffre: `Coffre`,
 };
 // Contenu des cases sans combat, affiché au survol (PC) ou dans le panneau de sélection (tactile).
 const DESC_NOEUDS = {
-  taverne: `Taverne : soigne ou recrute`,
+  taverne: `Taverne : soigne ou recrute\nAu comptoir : une relique de run à vendre`,
   otomai: `Otomaï : philtre d'archimonstre`,
   zaap: `Zaap : case surprise`,
   hdv: `Hôtel de vente : vends ou achète des objets`,
   forgemagie: `Forgemagie : monter la rareté`,
-  rencontre: `Rencontre : évènement au hasard`,
+  rencontre: `Rencontre : évènement au hasard\n(sanctuaire, marchand, colporteur de reliques, autel de sang…)`,
+  camp: `Camp de repos : au choix\n💤 se reposer (30 % des PV max)\n⬆ ou améliorer un sort gratuitement`,
+  coffre: `Coffre : une relique de run ou un objet\n⚠ Parfois piégé : combat ou perte de PV (un Sram, Roublard ou Ecaflip le crochète)`,
+};
+// Récompense annoncée sous un combat : le chemin risqué (combat dur) rapporte nettement plus.
+const RECOMPENSES_COMBAT = {
+  combat: `🎁 Récompense : butin + 1 carte parmi 3 (relique de run 1 fois sur 5)`,
+  combat_dur: `🎖️ Récompense : relique de run garantie, cartes plus rares, plus de butin, de kamas et d'XP`,
 };
 const IMAGES_NOEUDS = {
   combat: `combat`,
@@ -75,6 +86,8 @@ const IMAGES_NOEUDS = {
   forgemagie: `forgemagie`,
   rencontre: `rencontre`,
 };
+// Cases sans image dans /assets/cases : une image existante ailleurs, ou l'emoji seul (camp).
+const AUTRES_IMAGES = { coffre: `/assets/monstres/coffre_forgerons.png` };
 function imageBossDonjon(noeud) {
   let ennemis = noeud.combatId ? COMBATS[noeud.combatId]?.ennemis : undefined;
   let boss = ennemis?.find((ennemi) => MONSTRES[ennemi.monstre]?.boss) ?? ennemis?.[0];
@@ -139,6 +152,9 @@ export function texteCase(noeud, nbAffixes = 1) {
       `+ ${inconnus} ${affixes.length ? `autre ` : ``}affixe${inconnus > 1 ? `s` : ``} tiré${inconnus > 1 ? `s` : ``} au hasard au début du combat (difficulté)`,
     );
   }
+  if (RECOMPENSES_COMBAT[noeud.type]) {
+    lignes.push(RECOMPENSES_COMBAT[noeud.type]);
+  }
   return lignes.join(`\n`);
 }
 // Raccourcis 1, 2, 3… : cases atteignables triées de haut en bas (puis de gauche à droite).
@@ -161,7 +177,10 @@ const LETTRES_OUTILS = {
 };
 const imageNoeud = (noeud) =>
   (noeud.type === `donjon` ? imageBossDonjon(noeud) : null) ??
-  cheminAsset(`/assets/cases/${IMAGES_NOEUDS[noeud.type]}.png`);
+  (AUTRES_IMAGES[noeud.type] ? cheminAsset(AUTRES_IMAGES[noeud.type]) : null) ??
+  (IMAGES_NOEUDS[noeud.type]
+    ? cheminAsset(`/assets/cases/${IMAGES_NOEUDS[noeud.type]}.png`)
+    : null);
 const CARTE_HAUTEUR = 500;
 const CARTE_PAS_X = 116;
 const CARTE_MARGE = 56;
@@ -313,8 +332,8 @@ export function ecranCarte(
           let num = atteignable && !tactile && numeros.get(noeud.id);
           return `<button class="${classes}" data-id="${noeud.id}" ${atteignable ? `` : `aria-disabled="true"`}${noeud.id === carte.courant ? ` aria-current="location"` : ``} style="left:${pos.x}px;top:${pos.y}px"${tip}>
             <span class="case-art">
-              <img class="case-img" src="${imageNoeud(noeud)}" alt="" onerror="this.onerror=null;this.nextElementSibling.style.display='';this.remove()" />
-              <span class="mn-icon" style="display:none">${ICONES_NOEUDS[noeud.type]}</span>
+              ${imageNoeud(noeud) ? `<img class="case-img" src="${imageNoeud(noeud)}" alt="" onerror="this.onerror=null;this.nextElementSibling.style.display='';this.remove()" />` : ``}
+              <span class="mn-icon"${imageNoeud(noeud) ? ` style="display:none"` : ``}>${ICONES_NOEUDS[noeud.type] ?? `❔`}</span>
             </span>
             <span class="mn-lbl">${NOMS_NOEUDS[noeud.type]}${affixe ? `<small class="mn-modif"> · ${echapperHtml(affixe.nom)}${affixesEnPlus ? ` +${affixesEnPlus}` : ``}</small>` : ``}</span>
             ${num && num <= 9 ? `<kbd class="mn-kbd" aria-hidden="true">${num}</kbd>` : ``}

@@ -1,7 +1,7 @@
 // Choix de récompense après un combat (inspiré de Slay the Spire / Hades) : amélioration de sort
 // d'un héros, relique de run ou petit bonus, ou « Passer » contre quelques kamas. Logique pure :
 // tirage (hasard injecté), application du choix, effets des reliques de run, sauvegarde.
-import { CLASSES, MONDES, RELIQUES_RUN, SORTS } from "../data/index.js";
+import { CLASSES, MONDES, RELIQUES_RUN, SORTS, SYNERGIES_RUN } from "../data/index.js";
 import {
   AMELIORATIONS_PAR_SORT,
   AMELIORATIONS_SORT,
@@ -14,11 +14,12 @@ export const RARETES_CHOIX = [`commun`, `rare`, `epique`];
 export const NOMS_RARETES_CHOIX = { commun: `Commune`, rare: `Rare`, epique: `Épique` };
 export const CONFIG_RECOMPENSES = {
   // chance que la 2e carte soit une relique de run (sinon une 2e amélioration de sort)
-  chanceRelique: { normal: 0.2, elite: 0.8 },
+  // (élite : relique garantie, c'est la récompense du chemin risqué de la carte)
+  chanceRelique: { normal: 0.2, elite: 1 },
   // poids des raretés au début du monde ; `progression` (0 → 1 sur les zones du monde) les décale
   raretes: {
     normal: { commun: 72, rare: 25, epique: 3 },
-    elite: { commun: 35, rare: 48, epique: 17 },
+    elite: { commun: 20, rare: 50, epique: 30 },
   },
   // bonus : kamas (× gain d'un combat de ce type), repos, caractéristiques
   bonusKamas: 1.5,
@@ -57,11 +58,48 @@ export function reliquesRunDe(run) {
 }
 // effets qui se multiplient (les autres s'additionnent, les booléens s'activent)
 const MULTIPLICATIFS = new Set([`multKamas`, `xpMult`]);
-/** Effets cumulés des reliques de run : { pvPct: 0.06, multKamas: 1.15, koAnnule: 1, … }. */
+
+// ---------- Synergies : deux reliques qui se renforcent ----------
+/** Synergies dont toutes les reliques sont possédées. */
+export function synergiesActives(run) {
+  const possedees = new Set(reliquesRunDe(run));
+  return Object.values(SYNERGIES_RUN).filter((synergie) =>
+    synergie.reliques.every((id) => possedees.has(id)),
+  );
+}
+/** Synergies auxquelles participe une relique. */
+export const synergiesDeRelique = (id) =>
+  Object.values(SYNERGIES_RUN).filter((synergie) => synergie.reliques.includes(id));
+const nomsReliques = (ids) => ids.map((id) => RELIQUES_RUN[id]?.nom ?? id).join(` + `);
+/**
+ * Texte des synergies d'une relique, pour sa description : « Synergie Curée avec Crocs de
+ * Milimulou : … (active) ». `run` (facultatif) dit si la synergie est active ou ce qui manque.
+ */
+export function texteSynergies(id, run = null) {
+  const possedees = new Set(run ? reliquesRunDe(run) : []);
+  return synergiesDeRelique(id)
+    .map((synergie) => {
+      const autres = synergie.reliques.filter((autre) => autre !== id);
+      const etat = !run
+        ? ``
+        : synergie.reliques.every((relique) => possedees.has(relique))
+          ? ` (active)`
+          : autres.every((autre) => possedees.has(autre))
+            ? ` (tu as ${nomsReliques(autres)} : active si tu la prends)`
+            : ``;
+      return `Synergie ${synergie.icone} ${synergie.nom} avec ${nomsReliques(autres)} : ${synergie.desc}${etat}`;
+    })
+    .join(` `);
+}
+/** Effets cumulés des reliques de run et de leurs synergies : { pvPct: 0.06, multKamas: 1.15, … }. */
 export function effetsReliquesRun(run) {
   const total = {};
-  for (const id of reliquesRunDe(run)) {
-    for (const [cle, valeur] of Object.entries(RELIQUES_RUN[id].effet ?? {})) {
+  const sources = [
+    ...reliquesRunDe(run).map((id) => RELIQUES_RUN[id].effet ?? {}),
+    ...synergiesActives(run).map((synergie) => synergie.effet ?? {}),
+  ];
+  for (const effet of sources) {
+    for (const [cle, valeur] of Object.entries(effet)) {
       if (typeof valeur === `boolean`) {
         total[cle] = total[cle] || valeur;
       } else if (MULTIPLICATIFS.has(cle)) {
@@ -73,11 +111,17 @@ export function effetsReliquesRun(run) {
   }
   return total;
 }
+/** Part de PV max sacrifiée à l'autel de sang (0 à 0,4). */
+export const sacrificePvRun = (run) =>
+  typeof run?.sacrificePv === `number` && Number.isFinite(run.sacrificePv)
+    ? Math.min(0.4, Math.max(0, run.sacrificePv))
+    : 0;
 /** Ajoute aux bonus d'équipe (ceux des Dofus et des bénédictions) les reliques « de stats ». */
 export function ajouterReliquesAuBonus(bonus, run) {
   const effets = effetsReliquesRun(run);
   bonus.damageMult *= 1 + (effets.degatsPct ?? 0);
-  bonus.pvPct += effets.pvPct ?? 0;
+  // autel de sang : les reliques prises contre des PV max
+  bonus.pvPct += (effets.pvPct ?? 0) - sacrificePvRun(run);
   bonus.resAllBonus += effets.resAll ?? 0;
   bonus.multKamas *= effets.multKamas ?? 1;
   bonus.prospection += effets.prospectionPlat ?? 0;
@@ -89,15 +133,31 @@ export function ajouterReliquesAuBonus(bonus, run) {
   bonus.ouvreToujours ||= !!effets.ouvreToujours;
   return bonus;
 }
-/** Reliques de run à afficher (carte, équipement, bilan) : [{ id, icone, nom, desc }]. */
+/**
+ * Reliques de run à afficher (carte, équipement, bilan) : [{ id, icone, nom, desc }], puis les
+ * synergies actives (🔗, `synergie: true`).
+ */
 export function reliquesRunAffichees(run) {
-  return reliquesRunDe(run).map((id) => ({
-    id,
-    icone: RELIQUES_RUN[id].icone,
-    nom: RELIQUES_RUN[id].nom,
-    desc: `Relique de run (${NOMS_RARETES_CHOIX[RELIQUES_RUN[id].rarete] ?? ``}) : ${RELIQUES_RUN[id].desc}`,
-    reliqueRun: true,
-  }));
+  return [
+    ...reliquesRunDe(run).map((id) => {
+      const synergies = texteSynergies(id, run);
+      return {
+        id,
+        icone: RELIQUES_RUN[id].icone,
+        nom: RELIQUES_RUN[id].nom,
+        desc: `Relique de run (${NOMS_RARETES_CHOIX[RELIQUES_RUN[id].rarete] ?? ``}) : ${RELIQUES_RUN[id].desc}${synergies ? ` ${synergies}` : ``}`,
+        reliqueRun: true,
+      };
+    }),
+    ...synergiesActives(run).map((synergie) => ({
+      id: synergie.id,
+      icone: `🔗${synergie.icone}`,
+      nom: synergie.nom,
+      desc: `Synergie active (${nomsReliques(synergie.reliques)}) : ${synergie.desc}`,
+      reliqueRun: true,
+      synergie: true,
+    })),
+  ];
 }
 
 // ---------- Héros en combat ----------
@@ -383,7 +443,7 @@ export function decrireChoix(choix, run) {
         icone: relique?.icone ?? `🔮`,
         titre: relique?.nom ?? choix.id,
         sousTitre: `Relique de run`,
-        effet: relique?.desc ?? ``,
+        effet: [relique?.desc ?? ``, texteSynergies(choix.id, run)].filter(Boolean).join(` `),
         rarete: relique?.rarete ?? `commun`,
       };
     }
@@ -476,6 +536,7 @@ export function assainirRecompensesRun(run) {
   }
   run.ameliorations = ameliorations;
   run.reliquesRun = Array.isArray(run.reliquesRun) ? reliquesRunDe(run) : [];
+  run.sacrificePv = sacrificePvRun(run);
   const bonusStats = {};
   for (const [classeId, points] of Object.entries(run.bonusStats ?? {})) {
     if (CLASSES[classeId] && entierPositif(points) > 0) {

@@ -88,8 +88,10 @@ describe(`rencontres`, () => {
     const rng = () => (a = (a * 16807) % 2147483647) / 2147483647;
     const vus = new Set(Array.from({ length: 500 }, () => tirerRencontre(rng)));
     expect([...vus].sort()).toEqual([
+      `autel_sang`,
       `cle`,
       `coffre`,
+      `colporteur`,
       `forgemage`,
       `idoles`,
       `marchand`,

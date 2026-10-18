@@ -42,7 +42,24 @@ import { secretDuMonde, CHANCES_CLE, nomCle } from "../jeu/secret.js";
 import { enregistrerCollection } from "../sauvegarde/meta.js";
 import { meta } from "./etat.js";
 import { ecranButin } from "../ui/ecrans/butin.js";
-import { EQUIPEMENTS, CLASSES } from "../data/index.js";
+import { EQUIPEMENTS, CLASSES, RELIQUES_RUN } from "../data/index.js";
+import {
+  SACRIFICE_AUTEL,
+  acheterReliqueRun,
+  pacteAutel,
+  prixReliqueRun,
+  reliquesProposees,
+} from "../jeu/cases.js";
+import { NOMS_RARETES_CHOIX, sacrificePvRun, texteSynergies } from "../jeu/recompensesRun.js";
+
+// Détail d'une relique dans une option de rencontre : rareté, effet et synergies.
+export const detailRelique = (id, run) =>
+  [
+    `${NOMS_RARETES_CHOIX[RELIQUES_RUN[id].rarete] ?? ``} · ${RELIQUES_RUN[id].desc}`,
+    texteSynergies(id, run),
+  ]
+    .filter(Boolean)
+    .join(` `);
 
 // ---------- Rencontres (case « Rencontre » de la carte) ----------
 export async function jouerRencontre(run, zone) {
@@ -211,6 +228,60 @@ export async function jouerRencontre(run, zone) {
         run.philtres += 1;
       }
     }
+  }
+  if (type === `colporteur`) {
+    // trois reliques de run, une seule achetable, prix selon la rareté
+    let ids = reliquesProposees(run, Math.random, 3);
+    let choix = await ecranRencontre({
+      equipe: run.persos,
+      titre: `🎒 Colporteur de reliques`,
+      texte: `Un colporteur pandawa ouvre sa besace : « Une seule par client, l'ami. Elles te serviront jusqu'au bout du voyage. »`,
+      kamas: run.kamas,
+      choix: [
+        ...ids.map((id) => {
+          let prix = prixReliqueRun(id, toile);
+          return {
+            id,
+            libelle: `${RELIQUES_RUN[id].icone} ${RELIQUES_RUN[id].nom}`,
+            prix,
+            detail: detailRelique(id, run),
+            desactive: run.kamas < prix ? `Pas assez de kamas.` : ``,
+          };
+        }),
+        { id: `partir`, libelle: `Repartir` },
+      ],
+    });
+    if (choix !== `partir` && acheterReliqueRun(run, choix, prixReliqueRun(choix, toile))) {
+      afficherBandeau(
+        `${RELIQUES_RUN[choix].icone} ${RELIQUES_RUN[choix].nom} : ${RELIQUES_RUN[choix].desc}`,
+      );
+    }
+    return;
+  }
+  if (type === `autel_sang`) {
+    // deux reliques plutôt rares, contre des PV max (en combat) jusqu'à la fin de la run
+    let ids = reliquesProposees(run, Math.random, 2, { commun: 15, rare: 55, epique: 30 });
+    let pct = Math.round(SACRIFICE_AUTEL * 100);
+    let deja = Math.round(sacrificePvRun(run) * 100);
+    let choix = await ecranRencontre({
+      equipe: run.persos,
+      titre: `🩸 Autel de sang`,
+      texte: `Un autel couvert de runes rougeoie. Une voix murmure : « Un peu de ta vigueur… contre un trésor. »${deja ? ` Tu as déjà donné ${deja} % de tes PV max.` : ``}`,
+      choix: [
+        ...ids.map((id) => ({
+          id,
+          libelle: `${RELIQUES_RUN[id].icone} ${RELIQUES_RUN[id].nom} (−${pct} % de PV max)`,
+          detail: `${detailRelique(id, run)} En échange, chaque héros a ${pct} % de PV max en moins en combat, pour toute la run.`,
+        })),
+        { id: `partir`, libelle: `Refuser le pacte` },
+      ],
+    });
+    if (choix !== `partir` && pacteAutel(run, choix)) {
+      afficherBandeau(
+        `🩸 Pacte scellé : ${RELIQUES_RUN[choix].icone} ${RELIQUES_RUN[choix].nom}, −${pct} % de PV max en combat`,
+      );
+    }
+    return;
   }
   if (type === `cle`) {
     let prix = prixMarchand(toile).cle;
