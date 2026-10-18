@@ -355,6 +355,10 @@ export function initialiserVueCombat(liste, titre, resolveur = null, options = {
   rendreCombat();
   memoriserEtats(liste);
 }
+// Combattants et ronde du combat affiché (bilan de fin de combat), sans copie.
+export function etatVueCombat() {
+  return [combattants, numeroRonde];
+}
 export function rafraichirCombat() {
   rendreCombat();
   jouerAnimationsFx();
@@ -388,15 +392,32 @@ function memoriserEtats(liste) {
       pv: combattant.pvActuels,
       bouclier: combattant.bouclier,
       mort: combattant.pvActuels <= 0,
+      furie: !!combattant.enFurie,
     });
   }
 }
-function afficherNombreFx(ref, texte, classe) {
+// Cadre où montrer un effet : la carte, ou sur téléphone la pastille du héros dans la barre du bas
+// quand la carte est cachée dessous ou hors de l'écran.
+function cadreFx(ref) {
   let carte = racine.querySelector(`.carte[data-ref="${ref}"]`);
   if (!carte) {
-    return;
+    return null;
   }
   let cadre = carte.getBoundingClientRect();
+  let pastille = racine.querySelector(`.em-heros[data-heros="${ref}"]`);
+  let barre = document.getElementById(`cb-barre`)?.getBoundingClientRect();
+  let milieu = cadre.top + cadre.height / 2;
+  let cachee = milieu < 0 || milieu > innerHeight || (barre && milieu > barre.top);
+  if (pastille && cachee && pastille.getClientRects().length) {
+    return pastille.getBoundingClientRect();
+  }
+  return cadre;
+}
+function afficherNombreFx(ref, texte, classe) {
+  let cadre = cadreFx(ref);
+  if (!cadre) {
+    return;
+  }
   let nombre = document.createElement(`div`);
   nombre.className = `fx-num ${classe}`;
   nombre.textContent = texte;
@@ -405,15 +426,21 @@ function afficherNombreFx(ref, texte, classe) {
   nombre.style.top = `${cadre.top + cadre.height * 0.32}px`;
   nombre.addEventListener(`animationend`, () => nombre.remove());
   obtenirCoucheFx().appendChild(nombre);
+  // un texte long (« 💀 Cra K.O. ») ne sort pas de l'écran sur téléphone
+  const largeur = nombre.offsetWidth;
+  const centre = Math.min(
+    Math.max(parseFloat(nombre.style.left), largeur / 2 + 4),
+    innerWidth - largeur / 2 - 4,
+  );
+  nombre.style.left = `${centre}px`;
 }
-function afficherFlashFx(ref) {
-  let carte = racine.querySelector(`.carte[data-ref="${ref}"]`);
-  if (!carte) {
+function afficherFlashFx(ref, classe = ``) {
+  let cadre = cadreFx(ref);
+  if (!cadre) {
     return;
   }
-  let cadre = carte.getBoundingClientRect();
   let flash = document.createElement(`div`);
-  flash.className = `fx-flash`;
+  flash.className = `fx-flash${classe ? ` ${classe}` : ``}`;
   flash.style.left = `${cadre.left}px`;
   flash.style.top = `${cadre.top}px`;
   flash.style.width = `${cadre.width}px`;
@@ -451,7 +478,21 @@ function jouerAnimationsFx() {
       afficherNombreFx(combattant.ref, `+${boucliers}`, `bouclier`);
     }
     if (!avant.mort && combattant.pvActuels <= 0) {
-      afficherNombreFx(combattant.ref, `K.O.`, `mort`);
+      // un héros qui tombe : en rouge, sur sa carte ou sa pastille de la barre du bas
+      const heros = combattant.camp === `joueur`;
+      afficherNombreFx(
+        combattant.ref,
+        heros ? `💀 ${combattant.nom} K.O.` : `K.O.`,
+        heros ? `mort mort-heros` : `mort`,
+      );
+      if (heros) {
+        afficherFlashFx(combattant.ref, `ko`);
+      }
+    }
+    if (!avant.furie && combattant.enFurie && combattant.pvActuels > 0) {
+      // le détail (+20 % · +1 PA) est sur le badge de la carte
+      afficherNombreFx(combattant.ref, `🔥 Furie !`, `furie`);
+      afficherFlashFx(combattant.ref, `furie`);
     }
   }
   evenementsFx.clear();
@@ -820,7 +861,7 @@ export function badgesEffets(combattant) {
   }
   return badges;
 }
-function badgesCombattant(combattant) {
+export function badgesCombattant(combattant) {
   const badges = badgesEffets(combattant);
   const ajouter = (texte, tip, classe) => badges.push({ texte, tip, classe });
   const etat = combattant.etatClasse && ETATS_CLASSE[combattant.etatClasse];
@@ -841,11 +882,17 @@ function badgesCombattant(combattant) {
     );
   }
   if (combattant.enFurie) {
-    ajouter(`🔥 Furie`, `En furie : frappe plus fort et a plus de PA jusqu'à la fin du combat.`);
-  } else if (combattant.furie && combattant.pvActuels > 0) {
+    const effetsFurie = texteEffetsFurie(combattant.furie);
     ajouter(
-      `💢 ${Math.round(combattant.furie.seuil * 100)} %`,
-      `Boss : entre en furie sous ${Math.round(combattant.furie.seuil * 100)} % de ses PV.`,
+      `🔥 Furie${effetsFurie.court ? ` ${effetsFurie.court}` : ``}`,
+      `En furie jusqu'à la fin du combat${effetsFurie.long ? ` : ${effetsFurie.long}` : ``}.`,
+      `furie`,
+    );
+  } else if (combattant.furie && combattant.pvActuels > 0) {
+    const effetsFurie = texteEffetsFurie(combattant.furie);
+    ajouter(
+      `💢 Furie < ${Math.round(combattant.furie.seuil * 100)} %`,
+      `Boss : sous ${Math.round(combattant.furie.seuil * 100)} % de ses PV, il entre en furie au début de son tour${effetsFurie.long ? ` (${effetsFurie.long})` : ``}, jusqu'à la fin du combat.`,
     );
   }
   if (combattant.tourelle) {
@@ -923,6 +970,25 @@ function badgesCombattant(combattant) {
     );
   }
   return badges;
+}
+// Effets de la furie d'un boss (FURIE_BOSS, réglée par la difficulté) : court pour le badge
+// (« +20 % · +1 PA »), long pour l'infobulle (« +20 % de dégâts, +1 PA, bouclier de 15 % des PV »).
+export function texteEffetsFurie(furie) {
+  const courts = [];
+  const longs = [];
+  if (furie?.degatsPct) {
+    courts.push(`+${Math.round(furie.degatsPct * 100)} %`);
+    longs.push(`+${Math.round(furie.degatsPct * 100)} % de dégâts`);
+  }
+  if (furie?.pa) {
+    courts.push(`+${furie.pa} PA`);
+    longs.push(`+${furie.pa} PA`);
+  }
+  if (furie?.bouclierPct) {
+    courts.push(`🛡`);
+    longs.push(`bouclier de ${Math.round(furie.bouclierPct * 100)} % des PV`);
+  }
+  return { court: courts.join(` · `), long: longs.join(`, `) };
 }
 // niveau de PV pour colorer les barres : « crit » sous 25 %, « bas » sous 50 %
 export function niveauPv(pctPv) {
@@ -1506,7 +1572,7 @@ function htmlBarreSorts(ciblesRendu) {
         combattant.pvMax > 0
           ? Math.max(0, Math.min(100, Math.round((combattant.pvActuels / combattant.pvMax) * 100)))
           : 0;
-      return `<span class="em-heros${combattant.pvActuels <= 0 ? ` mort` : ` ${niveauPv(pctPvCombattant)}`}${combattant === lanceur ? ` actif` : ``}" style="--pv-pct:${pctPvCombattant}%"><b>${echapperHtml(combattant.nom)}</b> <span class="em-pv">${Math.max(0, Math.round(combattant.pvActuels))}/${combattant.pvMax}</span></span>`;
+      return `<span class="em-heros${combattant.pvActuels <= 0 ? ` mort` : ` ${niveauPv(pctPvCombattant)}`}${combattant === lanceur ? ` actif` : ``}" data-heros="${combattant.ref}" style="--pv-pct:${pctPvCombattant}%"><b>${echapperHtml(combattant.nom)}</b> <span class="em-pv">${Math.max(0, Math.round(combattant.pvActuels))}/${combattant.pvMax}</span></span>`;
     })
     .join(``);
   return `

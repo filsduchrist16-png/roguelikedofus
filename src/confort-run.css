@@ -256,3 +256,44 @@
   min-width: 0;
   white-space: nowrap;
 }
+
+/* Bilan du combat sous « Victoire ! » : rondes, ennemis vaincus et PV de chaque héros */
+.fin-combat-boite:has(.fin-combat-heros) {
+  padding: 16px 18px;
+  border: 1px solid #f0e2c433;
+  border-radius: 16px;
+  background: #1c130ae6;
+}
+.fin-combat-infos {
+  margin: 8px 0 0;
+  color: #f0e2c4;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.fin-combat-heros {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.fin-combat-heros li {
+  padding: 3px 10px;
+  border: 1px solid #f0e2c455;
+  border-radius: 999px;
+  background: #0006;
+  color: #f0e2c4;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+.fin-combat-heros li.ko {
+  border-color: #f0a59a88;
+  color: #f0a59a;
+}
+.fin-combat-suite {
+  margin: 12px 0 0;
+  color: #f0e2c4aa;
+  font-size: 0.8rem;
+}

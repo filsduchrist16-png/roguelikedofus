@@ -626,3 +626,46 @@
     min-height: 44px;
   }
 }
+
+/* ---------- Furie des boss et héros K.O. : impossibles à rater ---------- */
+.combat .carte .badge.furie {
+  border-color: #c2410c;
+  background: linear-gradient(180deg, #ffb35c, #f07a1a);
+  color: #3b1300;
+  font-weight: 900;
+}
+.fx-num.furie {
+  color: #ffb35c;
+  font-size: 1.3rem;
+  animation: 1.6s ease-out forwards fx-pop;
+}
+.fx-num.mort-heros {
+  color: #ff6b5b;
+  font-size: 1.15rem;
+  animation-duration: 1.8s;
+}
+.fx-flash.ko {
+  background: radial-gradient(circle at 50% 45%, #d4281bdd, #d4281b00 75%);
+  animation-duration: 0.9s;
+}
+.fx-flash.furie {
+  background: radial-gradient(circle at 50% 45%, #ff9a2ecc, #ff9a2e00 75%);
+  animation-duration: 0.9s;
+}
+@media (width <= 700px) {
+  /* visée : la rangée défile en largeur, les pastilles de coût ne sont plus rognées en haut */
+  .combat.ciblage .sorts-liste {
+    padding-top: 10px;
+    padding-right: 6px;
+  }
+}
+@media (width <= 700px) {
+  /* une ligne vide ne garde plus une colonne morte : l'autre ligne prend toute la largeur, sur
+     deux colonnes (4 ennemis en ligne avant tiennent en deux rangées au lieu de quatre) */
+  .combat .camp-lignes .ligne-col:has(.ligne-vide) {
+    display: none;
+  }
+  .combat .camp-lignes:has(.ligne-vide) .ligne-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
