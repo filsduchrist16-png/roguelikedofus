@@ -21,6 +21,16 @@ const { alliesVivants, coutPA } = await import(`${R}/combat/stats.js`);
 const { mondeDuDofus } = await import(`${R}/jeu/obtention.js`);
 const { creerIaPlus } = await import("./iaplus.mjs");
 const songes = await import(`${R}/jeu/songes.js`);
+const recRun = await import(`${R}/jeu/recompensesRun.js`);
+// SANS_RECOMPENSES=1 : pas de choix de récompense après les combats (comparaison avec la 1.6.0)
+const SANS_RECOMPENSES = !!process.env.SANS_RECOMPENSES;
+if (SANS_RECOMPENSES) {
+  for (const cle of Object.keys(recRun.CONFIG_RECOMPENSES.compensation))
+    recRun.CONFIG_RECOMPENSES.compensation[cle] = { lin: 0, quad: 0 };
+}
+// réglage : COMP='{"t1":{"lin":0.05,"quad":0.01}}' remplace la compensation d'un monde
+if (process.env.COMP)
+  Object.assign(recRun.CONFIG_RECOMPENSES.compensation, JSON.parse(process.env.COMP));
 const IA_SIMPLE = !!process.env.IA_SIMPLE;
 
 const args = process.argv.slice(2).filter((a) => a !== "--");
@@ -200,6 +210,22 @@ function remplacer(run, tombe, classeId) {
   sEquiper(run);
 }
 
+// Règle simple du robot : amélioration de sort, sinon relique de run, sinon bonus (repos si
+// l'équipe est blessée, sinon caractéristiques, sinon kamas).
+function choisirCarte(run, choix) {
+  const par = (test) => choix.findIndex(test);
+  for (const test of [
+    (c) => c.type === "sort",
+    (c) => c.type === "relique",
+    (c) => c.bonus === "soin" && pvFrac(run) < 0.5,
+    (c) => c.bonus === "stats",
+    (c) => c.bonus === "kamas",
+  ]) {
+    const i = par(test);
+    if (i >= 0) return i;
+  }
+  return 0;
+}
 function choisirNoeud(run, options) {
   const pv = pvFrac(run);
   const tombe = mortDefinitive(run) && run.persos.some((p) => p.pvActuels <= 0);
@@ -293,14 +319,22 @@ async function jouerRun(monde, seed) {
         }
         journal.combats = (journal.combats ?? 0) + 1;
         if (type !== "donjon") run_.recupererApresVictoire(run);
+        recRun.soinFinCombat(run);
         const idole = renc.idoleActive(run, zone.id);
         if (type !== "donjon") {
           eco.ajouterKamas(
             run,
-            Math.round(eco.gainKamas(type, num, rng) * run_.multiplicateurKamas(run)),
+            Math.round(
+              eco.gainKamas(type, num, rng) *
+                run_.multiplicateurKamas(run) *
+                recRun.multKamasEliteRun(run, type),
+            ),
           );
           const gain = Math.round(
-            cfg.calculerXpCombat(xp, num, monde) * (1 + 0.3 * 0.5) * (idole?.xpMult ?? 1),
+            cfg.calculerXpCombat(xp, num, monde) *
+              (1 + 0.3 * 0.5) *
+              (idole?.xpMult ?? 1) *
+              recRun.multXpRun(run),
           );
           for (const p of run.persos) run_.gagnerXpPerso(p, gain, monde);
         } else {
@@ -317,13 +351,24 @@ async function jouerRun(monde, seed) {
         );
         sEquiper(run);
         if (type === "donjon") break;
+        if (!SANS_RECOMPENSES) {
+          // choix de récompense comme en jeu : amélioration de sort > relique > bonus
+          run.offreCombat = recRun.tirerOffreCombat(run, {
+            elite: type === "combat_dur",
+            numZone: num,
+            progression: M.zones.length > 1 ? zi / (M.zones.length - 1) : 0,
+            rng,
+          });
+          recRun.resoudreOffreCombat(run, choisirCarte(run, run.offreCombat.choix));
+        }
       } else if (type === "taverne") {
         const recrues = run_.tirerRecrues(run, rng);
         // mort définitive : un héros tombé ne revient pas, on le remplace comme un joueur le ferait
         const tombe = mortDefinitive(run) && run.persos.find((p) => p.pvActuels <= 0);
         if (run.persos.length < 4 && recrues.length) run_.recruter(run, recrues[0]);
         else if (tombe && recrues.length) remplacer(run, tombe, recrues[0]);
-        else run_.soignerEquipe(run, meta_.pctSoinTaverne(run.ascension));
+        else
+          run_.soignerEquipe(run, recRun.soinTaverneRun(run, meta_.pctSoinTaverne(run.ascension)));
       } else if (type === "rencontre") {
         const r = renc.tirerRencontre(rng);
         if (r === "sanctuaire") {
@@ -373,6 +418,11 @@ function choisirRecompense(run, offre) {
   const par = (type) => offre.findIndex((r) => r.type === type);
   if (par("soin") >= 0 && (pv < 0.6 || ko)) return par("soin");
   const iObjet = par("objet");
+  // améliorations de sort et reliques de run d'abord (même règle qu'après un combat de run)
+  if (!SANS_RECOMPENSES) {
+    if (par("sort") >= 0) return par("sort");
+    if (par("relique") >= 0) return par("relique");
+  }
   if (iObjet >= 0 && offre[iObjet].objet) {
     // l'objet est pris s'il améliore l'équipe
     const avant = scoreEquipe(run);
