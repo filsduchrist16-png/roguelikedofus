@@ -52,10 +52,12 @@ import { telechargerTexte } from "../../sauvegarde/telechargement.js";
 import {
   afficherEcran,
   barreRetour,
+  brancherSectionsRepliables,
   demanderConfirmation,
   echapperHtml,
   ecranTactile,
   htmlElementsClasse,
+  htmlSectionRepliable,
   imgSymboleClasse,
   parametres,
   racine,
@@ -103,6 +105,10 @@ export function ecranParametres(meta) {
             <span class="setting-lbl">Tours des monstres rapides<br><small class="muet">les ennemis jouent sans temps mort</small></span>
             <button id="set-rapide" class="secondaire ${parametres.combatRapide ? `on` : ``}" aria-pressed="${!!parametres.combatRapide}">${parametres.combatRapide ? `Activé` : `Désactivé`}</button>
           </div>
+          ${htmlSectionRepliable(
+            `param-confort`,
+            `<span class="setting-lbl">⚡ Confort de jeu<br><small class="muet">re-sélection du sort, cible unique, bouton 🤖, butin</small></span>`,
+            `<div class="settings-groupe-corps">
           ${[
             [
               `reselectionSort`,
@@ -132,6 +138,10 @@ export function ecranParametres(meta) {
             <span class="setting-lbl">Butin : équiper le meilleur d'office<br><small class="muet">à l'écran du butin, « ⚡ Équiper » est appliqué tout de suite (annulable)</small></span>
             <button class="secondaire set-bascule ${parametres.butinAutoEquiper ? `on` : ``}" data-bascule="butinAutoEquiper" aria-pressed="${!!parametres.butinAutoEquiper}">${parametres.butinAutoEquiper ? `Activé` : `Désactivé`}</button>
           </div>
+          </div>`,
+            false,
+            `setting-groupe`,
+          )}
           <div class="setting-ligne">
             <span class="setting-lbl" id="set-taille-lbl">Taille du texte<br><small class="muet">agrandit tous les textes du jeu</small></span>
             <span class="setting-actions" role="group" aria-labelledby="set-taille-lbl">
@@ -378,6 +388,7 @@ export function ecranParametres(meta) {
         reinitialiserAstuces();
         afficher();
       });
+      brancherSectionsRepliables();
       racine.querySelectorAll(`[data-bascule]`).forEach((bouton) =>
         bouton.addEventListener(`click`, () => {
           const cle = bouton.dataset.bascule;

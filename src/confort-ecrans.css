@@ -259,3 +259,23 @@ body.reduire-animations *::after {
 .section-repliable > summary > h2 {
   text-align: left;
 }
+/* Paramètres : groupe « Confort de jeu » replié d'office */
+.setting-groupe {
+  background: var(--panel-2);
+  border: 1px solid var(--bord);
+  border-radius: 12px;
+  padding: 4px 14px;
+  text-align: left;
+}
+.setting-groupe[open] {
+  padding-bottom: 12px;
+}
+.settings-groupe-corps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.setting-groupe > summary > .setting-lbl {
+  flex: 1;
+  min-width: 0;
+}
