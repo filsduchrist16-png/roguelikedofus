@@ -5,7 +5,6 @@ import {
   afficherEcran,
   attrTipObjet,
   barreContinuer,
-  boutonContinuer,
   classeRarete,
   echapperHtml,
   htmlBadgesHeros,
@@ -13,6 +12,7 @@ import {
   htmlMetaObjet,
   htmlNomObjet,
   imgObjet,
+  parametres,
   photoEquipement,
   restaurerEquipement,
 } from "../commun.js";
@@ -39,11 +39,8 @@ export function ecranButin(objets, run, bilan) {
       ${bilan ? `<p class="sous-titre drop-bilan">${echapperHtml(bilan)}</p>` : ``}
       <p class="sous-titre">L'équipe ramasse ${objets.length} pièce${objets.length > 1 ? `s` : ``} d'équipement.</p>
       <div class="drop-liste">${html}</div>
-      ${
-        utiles
-          ? `<div class="boutons-ecran butin-boutons"><button id="drop-equiper" class="primaire">⚡ Équiper (${utiles})</button>${boutonContinuer(`drop-ok`)}</div>`
-          : barreContinuer(`drop-ok`)
-      }
+      ${utiles ? `<p class="butin-equiper"><button id="drop-equiper" class="primaire">⚡ Équiper le meilleur (${utiles})</button></p>` : ``}
+      ${barreContinuer(`drop-ok`)}
     `);
     document.getElementById(`drop-equiper`)?.addEventListener(`click`, (ev) => {
       const bouton = ev.currentTarget;
@@ -77,7 +74,9 @@ export function ecranButin(objets, run, bilan) {
       ligneAnnul.className = `sous-titre butin-annul`;
       ligneAnnul.setAttribute(`role`, `status`);
       ligneAnnul.innerHTML = `✓ ${nb} objet${nb > 1 ? `s` : ``} équipé${nb > 1 ? `s` : ``} · <button class="secondaire petit">Annuler</button>`;
-      document.querySelector(`.drop-liste`)?.after(ligneAnnul);
+      (document.querySelector(`.butin-equiper`) ?? document.querySelector(`.drop-liste`))?.after(
+        ligneAnnul,
+      );
       const annuler = ligneAnnul.querySelector(`button`);
       annuler.focus({ preventScroll: true });
       annuler.addEventListener(`click`, () => {
@@ -96,5 +95,10 @@ export function ecranButin(objets, run, bilan) {
       });
     });
     document.getElementById(`drop-ok`)?.addEventListener(`click`, () => resolve());
+    // réglage « Butin : équiper le meilleur d'office » : appliqué dès l'ouverture, annulable
+    if (utiles && parametres.butinAutoEquiper) {
+      document.getElementById(`drop-equiper`)?.click();
+      document.getElementById(`drop-ok`)?.focus({ preventScroll: true });
+    }
   });
 }

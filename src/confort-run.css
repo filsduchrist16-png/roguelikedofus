@@ -251,15 +251,6 @@
   }
 }
 
-/* ---------- Butin : « Équiper » et « Continuer » sur une seule ligne ---------- */
-.butin-boutons {
-  flex-wrap: nowrap;
-}
-.butin-boutons > #drop-equiper {
-  min-width: 0;
-  white-space: nowrap;
-}
-
 /* Bilan du combat sous « Victoire ! » : rondes, ennemis vaincus et PV de chaque héros */
 .fin-combat-boite:has(.fin-combat-heros) {
   padding: 16px 18px;
@@ -323,4 +314,15 @@
     padding: 0 6px;
     line-height: 1.2;
   }
+}
+
+/* Butin (1.8.0) : « Équiper le meilleur » sous la liste, « Continuer » toujours seul et au même
+   endroit en bas de l'écran, avec ou sans objet à équiper */
+.butin-equiper {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 0;
+}
+.butin-equiper #drop-equiper {
+  min-height: 44px;
 }
