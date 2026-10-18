@@ -212,6 +212,16 @@ export function chargerRun() {
     }
     // améliorations de sort, reliques de run et choix de récompense en attente (absents = vides)
     assainirRecompensesRun(sauvegarde.run);
+    // graine du choix d'une case en cours (camp, rencontre) : même choix après un rechargement
+    const graine = sauvegarde.run.graineCase;
+    sauvegarde.run.graineCase =
+      graine &&
+      typeof graine.cle === `string` &&
+      graine.cle.length <= 80 &&
+      Number.isInteger(graine.graine) &&
+      graine.graine >= 0
+        ? { cle: graine.cle, graine: graine.graine >>> 0 }
+        : null;
     // butin du combat en attente (1.9.0) : relié aux objets de l'inventaire
     const butin = assainirButinCombat(sauvegarde.run.butinCombat);
     sauvegarde.run.butinCombat = butin && {

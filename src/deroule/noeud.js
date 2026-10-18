@@ -29,7 +29,9 @@ import { secretDuMonde, CHANCES_CLE } from "../jeu/secret.js";
 import { ecranMessage } from "../ui/ecrans/message.js";
 import { traiterQuetes } from "./quetes.js";
 import { verifierQuetesMeta } from "../jeu/quetes.js";
-import { quetesMeta, ctxMeta, meta, choixAleatoireMath } from "./etat.js";
+import { quetesMeta, ctxMeta, meta, choixAleatoireMath, etatRun } from "./etat.js";
+import { sauverRun } from "../sauvegarde/run.js";
+import { rngGraine } from "../jeu/runDuJour.js";
 import { pctSoinTaverne } from "../sauvegarde/meta.js";
 import { ecranTaverne } from "../ui/ecrans/taverne.js";
 import { afficherBandeau } from "../ui/ecrans/succes.js";
@@ -197,6 +199,27 @@ async function jouerCoffre(run, zone, noeud) {
   return `continue`;
 }
 const numZoneDe = (zone) => (zone?.id ? numeroZone(zone.id) : 1);
+// Choix d'une case (camp, rencontre) : une graine est rangée dans la run, et la run sauvegardée,
+// avant le tirage ; les options (tirées avant le premier écran) l'utilisent à la place de
+// Math.random. Un rechargement sur cette case redonne la même graine, donc le même choix.
+function jouerAvecGraine(run, noeud, type, jouer) {
+  const zoneIdx = etatRun.active?.zoneIdx;
+  const cle = `${zoneIdx ?? `-`}:${noeud?.id ?? `-`}:${type}`;
+  if (run.graineCase?.cle !== cle) {
+    run.graineCase = { cle, graine: Math.floor(Math.random() * 2 ** 32) };
+  }
+  if (Number.isInteger(zoneIdx)) {
+    sauverRun(zoneIdx, run);
+  }
+  const hasard = Math.random;
+  Math.random = rngGraine(run.graineCase.graine);
+  try {
+    // seule la partie synchrone (tirage des options, jusqu'au premier écran) suit la graine
+    return jouer();
+  } finally {
+    Math.random = hasard;
+  }
+}
 export async function resoudreNoeud(run, type, combatId, xpCombat, zone, eliteModifs, noeud) {
   let zoneId = zone?.id;
   switch (type) {
@@ -380,13 +403,15 @@ export async function resoudreNoeud(run, type, combatId, xpCombat, zone, eliteMo
       return `victoire`;
     }
     case `camp`:
-      await jouerCamp(run, zone);
+      await jouerAvecGraine(run, noeud, type, () => jouerCamp(run, zone));
+      run.graineCase = null;
       noterAlmanax(meta, `camp`);
       return `continue`;
     case `coffre`:
       return jouerCoffre(run, zone, noeud);
     case `rencontre`:
-      await jouerRencontre(run, zone);
+      await jouerAvecGraine(run, noeud, type, () => jouerRencontre(run, zone));
+      run.graineCase = null;
       await traiterQuetes(run, verifierQuetesMeta(quetesMeta(), ctxMeta()));
       return `continue`;
     default:

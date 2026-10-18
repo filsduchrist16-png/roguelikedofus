@@ -54,6 +54,9 @@ beforeEach(() => {
   vi.doUnmock(`../src/ui/ecrans/carte.js`);
   vi.doUnmock(`../src/deroule/combat.js`);
   vi.doUnmock(`../src/ui/ecrans/apresCombat.js`);
+  vi.doUnmock(`../src/ui/ecrans/rencontre.js`);
+  vi.doUnmock(`../src/ui/ecrans/message.js`);
+  vi.doUnmock(`../src/ui/ecrans/butin.js`);
   globalThis.localStorage = stockage();
 });
 
@@ -196,4 +199,63 @@ describe(`ordre des sauvegardes après un combat`, () => {
     const finale = JSON.parse(localStorage.getItem(`rld_run_v0`));
     expect(finale.run.kamas).toBe(avant + vus[0].offre.passer);
   });
+});
+
+describe(`camp et rencontres : même choix après un rechargement`, () => {
+  async function jouerCase(type, sauvegarde) {
+    vi.resetModules();
+    pageMinimale();
+    const vus = [];
+    vi.doMock(`../src/ui/ecrans/rencontre.js`, () => ({
+      ecranRencontre: async (options) => {
+        vus.push({
+          titre: options.titre,
+          choix: options.choix.map((choix) => `${choix.libelle} | ${choix.detail ?? ``}`),
+          sauvegarde: JSON.parse(localStorage.getItem(`rld_run_v0`)),
+        });
+        // on part sans rien prendre quand c'est possible, sinon la première option
+        const partir = options.choix.find((choix) => /^(partir|garder|soin|repos)$/.test(choix.id));
+        return (partir ?? options.choix.find((choix) => !choix.desactive) ?? options.choix[0]).id;
+      },
+    }));
+    vi.doMock(`../src/ui/ecrans/message.js`, () => ({ ecranMessage: async () => {} }));
+    vi.doMock(`../src/ui/ecrans/butin.js`, () => ({ ecranButin: async () => {} }));
+    const { resoudreNoeud } = await import(`../src/deroule/noeud.js`);
+    const { etatRun } = await import(`../src/deroule/etat.js`);
+    const { chargerRun } = await import(`../src/sauvegarde/run.js`);
+    const { zonesDuMonde, getMonde } = await import(`../src/jeu/config.js`);
+    const zone = zonesDuMonde(getMonde(`t1`))[1];
+    let run;
+    if (sauvegarde) {
+      localStorage.setItem(`rld_run_v0`, JSON.stringify(sauvegarde));
+      run = chargerRun().run;
+    } else {
+      run = nouvelleRun([`iop`, `cra`, `eniripsa`]);
+    }
+    etatRun.active = { zoneIdx: 1, run };
+    await resoudreNoeud(run, type, null, 0, zone, undefined, { id: 7, type });
+    return { vus, run };
+  }
+  for (const type of [`camp`, `rencontre`]) {
+    it(`${type} : la run est sauvegardée avec la graine avant l'écran, le choix revient pareil`, async () => {
+      const essais = new Set();
+      for (let essai = 0; essai < 4; essai++) {
+        globalThis.localStorage = stockage();
+        const premier = await jouerCase(type);
+        expect(premier.vus.length).toBeGreaterThan(0);
+        const pendant = premier.vus[0].sauvegarde;
+        expect(pendant.run.graineCase?.cle).toBe(`1:7:${type}`);
+        // après la case, plus de graine en attente
+        expect(premier.run.graineCase).toBe(null);
+        const second = await jouerCase(type, pendant);
+        expect(second.vus[0].titre).toBe(premier.vus[0].titre);
+        expect(second.vus[0].choix).toEqual(premier.vus[0].choix);
+        essais.add(JSON.stringify(premier.vus[0].choix));
+      }
+      // la graine change d'une case à l'autre : les tirages ne sont pas figés
+      if (type === `rencontre`) {
+        expect(essais.size).toBeGreaterThan(1);
+      }
+    });
+  }
 });
