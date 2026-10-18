@@ -84,15 +84,13 @@ function imageBossDonjon(noeud) {
   }
   return null;
 }
-// Affixe d'un combat dur (« Cuirassés »…), ou undefined.
-function affixeNoeud(noeud) {
+// Affixes connus d'un combat dur (« Cuirassés »…), dans l'ordre de la carte, sans doublon.
+function affixesNoeud(noeud) {
   if (noeud.type !== `combat_dur`) {
-    return undefined;
+    return [];
   }
-  const id = (noeud.eliteModifs ?? []).find((modifId) =>
-    AFFIXES_GROUPE.some((affixe) => affixe.id === modifId),
-  );
-  return id ? AFFIXES_GROUPE.find((affixe) => affixe.id === id) : undefined;
+  const ids = [...new Set(noeud.eliteModifs ?? [])];
+  return ids.map((id) => AFFIXES_GROUPE.find((affixe) => affixe.id === id)).filter(Boolean);
 }
 // « 2× Bouftou, Tofu » : les monstres d'un groupe, regroupés par espèce.
 function listeMonstres(ennemis) {
@@ -104,7 +102,9 @@ function listeMonstres(ennemis) {
   return [...comptes].map(([nom, nb]) => (nb > 1 ? `${nb}× ${nom}` : nom)).join(`, `);
 }
 // Texte (brut, plusieurs lignes) qui décrit ce qui attend le joueur sur une case.
-export function texteCase(noeud) {
+// nbAffixes : affixes d'un combat dur selon la difficulté (2 dès Extrême) ; la carte n'en connaît
+// souvent qu'un, les autres sont tirés au début du combat.
+export function texteCase(noeud, nbAffixes = 1) {
   const nomType = NOMS_NOEUDS[noeud.type] ?? noeud.type;
   const combat = noeud.combatId ? COMBATS[noeud.combatId] : undefined;
   if (![`combat`, `combat_dur`, `donjon`].includes(noeud.type) || !combat) {
@@ -126,9 +126,15 @@ export function texteCase(noeud) {
       `${autres.length} ${noeud.type === `donjon` ? `sbire` : `monstre`}${autres.length > 1 ? `s` : ``} : ${listeMonstres(autres)}`,
     );
   }
-  const affixe = affixeNoeud(noeud);
-  if (affixe) {
+  const affixes = affixesNoeud(noeud).slice(0, Math.max(1, nbAffixes));
+  for (const affixe of affixes) {
     lignes.push(`${affixe.nom} : ${affixe.desc}`);
+  }
+  const inconnus = noeud.type === `combat_dur` ? Math.max(0, nbAffixes - affixes.length) : 0;
+  if (inconnus) {
+    lignes.push(
+      `+ ${inconnus} ${affixes.length ? `autre ` : ``}affixe${inconnus > 1 ? `s` : ``} tiré${inconnus > 1 ? `s` : ``} au hasard au début du combat (difficulté)`,
+    );
   }
   return lignes.join(`\n`);
 }
@@ -201,6 +207,7 @@ export function ecranCarte(
       `Touche un nœud accessible pour avancer. Pense à équiper tes héros avant les combats.`,
     );
     const mortDefinitive = !!effetsDifficulte(ascension).mortDefinitive;
+    const nbAffixesElite = effetsDifficulte(ascension).affixesElite ?? 1;
     const niveauMax = infosZone.niveauMax ?? niveauMaxDeZone(nomZone);
     // Clavier : retiré à chaque re-rendu, à l'ouverture d'un sous-écran et à la sortie.
     let toucheCarte = null;
@@ -297,15 +304,16 @@ export function ecranCarte(
           ]
             .filter(Boolean)
             .join(` `);
-          let affixe = affixeNoeud(noeud);
-          let tip = ` data-tip="${echapperHtml(texteCase(noeud))}"`;
+          let affixe = affixesNoeud(noeud)[0];
+          let affixesEnPlus = noeud.type === `combat_dur` ? Math.max(0, nbAffixesElite - 1) : 0;
+          let tip = ` data-tip="${echapperHtml(texteCase(noeud, nbAffixesElite))}"`;
           let num = atteignable && !tactile && numeros.get(noeud.id);
           return `<button class="${classes}" data-id="${noeud.id}" ${atteignable ? `` : `aria-disabled="true"`}${noeud.id === carte.courant ? ` aria-current="location"` : ``} style="left:${pos.x}px;top:${pos.y}px"${tip}>
             <span class="case-art">
               <img class="case-img" src="${imageNoeud(noeud)}" alt="" onerror="this.onerror=null;this.nextElementSibling.style.display='';this.remove()" />
               <span class="mn-icon" style="display:none">${ICONES_NOEUDS[noeud.type]}</span>
             </span>
-            <span class="mn-lbl">${NOMS_NOEUDS[noeud.type]}${affixe ? `<small class="mn-modif"> · ${echapperHtml(affixe.nom)}</small>` : ``}</span>
+            <span class="mn-lbl">${NOMS_NOEUDS[noeud.type]}${affixe ? `<small class="mn-modif"> · ${echapperHtml(affixe.nom)}${affixesEnPlus ? ` +${affixesEnPlus}` : ``}</small>` : ``}</span>
             ${num && num <= 9 ? `<kbd class="mn-kbd" aria-hidden="true">${num}</kbd>` : ``}
           </button>`;
         })

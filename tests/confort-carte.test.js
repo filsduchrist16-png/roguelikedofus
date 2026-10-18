@@ -27,6 +27,23 @@ describe("texteCase", () => {
     expect(t).toContain(`Cuirassés : +20 % de PV et +5 % de résistances`);
   });
 
+  it("annonce tous les affixes d'un combat dur quand la difficulté en donne plusieurs", () => {
+    const deux = texteCase(
+      { type: `combat_dur`, combatId: `abr_2`, eliteModifs: [`cuirasse`, `enrage`] },
+      2,
+    );
+    expect(deux).toContain(`Cuirassés : +20 % de PV et +5 % de résistances`);
+    expect(deux).toMatch(/Enragés : /);
+    expect(deux).not.toMatch(/au hasard/);
+    // la carte ne connaît que le premier : le second est tiré au début du combat
+    const un = texteCase({ type: `combat_dur`, combatId: `abr_2`, eliteModifs: [`cuirasse`] }, 2);
+    expect(un).toContain(`Cuirassés : `);
+    expect(un).toContain(`+ 1 autre affixe tiré au hasard au début du combat (difficulté)`);
+    // difficulté à un seul affixe : rien de plus
+    const seul = texteCase({ type: `combat_dur`, combatId: `abr_2`, eliteModifs: [`cuirasse`] });
+    expect(seul).not.toMatch(/au hasard/);
+  });
+
   it("met le boss du donjon à part, sans répéter « Donjon : »", () => {
     const t = texteCase({ type: `donjon`, combatId: `abr_boss` });
     const lignes = t.split(`\n`);

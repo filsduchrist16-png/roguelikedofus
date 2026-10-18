@@ -1,5 +1,9 @@
 # Journal des modifications
 
+## Version 1.7.0
+
+- **UI/UX — carte** : l'infobulle et le panneau d'une case élite annoncent tous ses affixes ; dès Extrême (2 affixes), celui que la carte ne connaît pas encore est annoncé « + 1 autre affixe tiré au hasard au début du combat (difficulté) », et l'étiquette de la case devient « Combat dur · Véloces +1 ». Sur téléphone, les kamas passent en pastille sur le bord haut de la barre d'équipe au lieu d'occuper seuls une ligne sous les héros.
+
 ## Version 1.6.0
 
 - **IA ennemie** (`src/combat/ia.js`) : chaque action est notée en pourcentage de vie utile retiré, sans tricher (PV, boucliers et effets visibles, dégâts estimés sans tirage). Les monstres achèvent d'abord un héros à portée de coup (avec le plus petit sort qui suffit, pour garder des PA), visent ensuite soigneurs et héros fragiles, délaissent une cible déjà condamnée par son poison, ne gaspillent pas de dégâts au-delà des PV, placent leurs sorts de protection ou de renfort quand l'effet n'est pas actif (surtout blessés) et affaiblissent une cible qui restera debout. Les soutiens soignent un allié en danger (boss d'abord) et plus un allié presque plein. Tests sur situations construites (`tests/ia-ennemie.test.js`).

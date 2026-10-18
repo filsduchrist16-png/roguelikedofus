@@ -252,3 +252,24 @@
     mask-image: linear-gradient(90deg, #000 85%, #0000);
   }
 }
+
+/* Téléphone : les kamas en pastille posée sur le bord haut de la barre d'équipe, plutôt qu'une
+   ligne entière à eux seuls sous les héros. */
+@media (width<=700px) {
+  .map-equipe-bar {
+    margin-top: 22px;
+  }
+  .map-equipe-bar .aside-kamas {
+    z-index: 1;
+    position: absolute;
+    bottom: calc(100% - 4px);
+    right: 12px;
+    margin: 0;
+    padding: 1px 10px;
+    border: 1px solid var(--cadre-or, #c9a24a);
+    border-radius: 999px;
+    background: var(--panel-solide, #f3e6c4);
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+}
