@@ -6,8 +6,8 @@ import {
   annulerVentes,
   prixRevente,
   vendreObjet,
-  vendreTout,
 } from "../../jeu/economie.js";
+import { estFavori } from "../../sauvegarde/parametres.js";
 import { grouperInventaire, herosAmeliores, objetsInutiles } from "../../jeu/inventaire.js";
 import { emplacementCible, equiperObjet } from "../../jeu/run.js";
 import { enregistrerCollection, sauverMeta } from "../../sauvegarde/meta.js";
@@ -24,8 +24,25 @@ import {
   htmlMetaObjet,
   htmlNomObjet,
   imgObjet,
+  parametres,
   racine,
 } from "../commun.js";
+// Récapitulatif d'une vente groupée : « Coiffe Bouftou ×2, Cape… » (noms regroupés, ordre de vente).
+// Au-delà de `max` noms, « + n autres » (la barre du bas reste courte).
+export function recapVentes(ventes, nom = (inst) => EQUIPEMENTS[inst.id]?.nom ?? inst.id, max = 6) {
+  const comptes = new Map();
+  for (const { inst } of ventes) {
+    const cle = nom(inst);
+    comptes.set(cle, (comptes.get(cle) ?? 0) + 1);
+  }
+  const noms = [...comptes].map(([cle, nb]) => (nb > 1 ? `${cle} ×${nb}` : cle));
+  const reste = noms.length - max;
+  return (
+    noms.slice(0, max).join(`, `) + (reste > 0 ? ` + ${reste} autre${reste > 1 ? `s` : ``}` : ``)
+  );
+}
+// les favoris ne partent jamais dans une vente groupée
+const vendables = (liste) => liste.filter((inst) => !estFavori(parametres.favoris, inst));
 const nomObjet = (inst) => echapperHtml(EQUIPEMENTS[inst.id]?.nom ?? inst.id);
 export function ecranHdv(run, offres, meta) {
   return new Promise((resolve) => {
@@ -47,7 +64,9 @@ export function ecranHdv(run, offres, meta) {
             })
             .join(``)
         : `<p class="muet">Rayons vides, reviens à un prochain Hôtel de vente.</p>`;
-      const inutiles = objetsInutiles(run);
+      const inutiles = vendables(objetsInutiles(run));
+      const venteTotale = vendables(run.inventaire);
+      const nbFavoris = run.inventaire.length - venteTotale.length;
       // les objets que « Vendre l'inutile » vendrait d'abord, marqués d'une pastille grise
       const groupes = grouperInventaire(run.inventaire).map((groupe) => ({
         ...groupe,
@@ -63,7 +82,7 @@ export function ecranHdv(run, offres, meta) {
                 inutile,
               }) => `<button class="item-carte hdv-vente${classeRarete(objet)}${inutile ? ` hdv-inutile` : ``}" data-vente="${indices[0]}"${attrTipObjet(objet.id)}>
               <img src="${imgObjet(objet.id)}" alt="" loading="lazy" onerror="this.remove()" />
-              <span class="item-nom">${htmlNomObjet(objet)}${indices.length > 1 ? ` <span class="item-qte">×${indices.length}</span>` : ``}${inutile ? ` <span class="pastille-inutile" data-tip="N'améliore aucun héros : « Vendre l'inutile » le vendra">Inutile</span>` : ``}<small><span class="ic-meta">${htmlMetaObjet(objet)}</span> ${htmlChipsObjet(objet)}</small>${htmlBadgesHeros(objet, run.persos)}</span>
+              <span class="item-nom">${estFavori(parametres.favoris, objet) ? `<span class="hdv-favori" data-tip="Favori : jamais vendu par les ventes groupées (★ dans la fiche de l'équipement)">★</span> ` : ``}${htmlNomObjet(objet)}${indices.length > 1 ? ` <span class="item-qte">×${indices.length}</span>` : ``}${inutile ? ` <span class="pastille-inutile" data-tip="N'améliore aucun héros : « Vendre l'inutile » le vendra">Inutile</span>` : ``}<small><span class="ic-meta">${htmlMetaObjet(objet)}</span> ${htmlChipsObjet(objet)}</small>${htmlBadgesHeros(objet, run.persos)}</span>
               <span class="hdv-prix vente"><small class="hdv-verbe">Vendre</small>${htmlKamas(prixRevente(objet))}</span>
             </button>`,
             )
@@ -89,7 +108,7 @@ export function ecranHdv(run, offres, meta) {
                   ? `<button id="hdv-vendre-inutile" class="secondaire hdv-tout" title="Vend les objets qui n'améliorent aucun héros (ni nettement, ni « plutôt mieux »)">Vendre l'inutile (${inutiles.length}) · ${htmlKamas(inutiles.reduce((acc, item) => acc + prixRevente(item), 0))}</button>`
                   : ``
               }
-              ${run.inventaire.length ? `<button id="hdv-vendre-tout" class="secondaire hdv-tout${confirmerVenteTotale ? ` danger-arme` : ``}" title="Vendre tout l'inventaire (l'équipement porté n'est pas concerné)">${confirmerVenteTotale ? `Confirmer : tout vendre` : `Vendre tout`} · ${htmlKamas(run.inventaire.reduce((acc, item) => acc + prixRevente(item), 0))}</button>` : ``}
+              ${venteTotale.length ? `<button id="hdv-vendre-tout" class="secondaire hdv-tout${confirmerVenteTotale ? ` danger-arme` : ``}" title="Vendre tout l'inventaire (ni l'équipement porté, ni les favoris ★)">${confirmerVenteTotale ? `Confirmer : tout vendre` : nbFavoris ? `Vendre tout sauf ★ (${venteTotale.length})` : `Vendre tout`} · ${htmlKamas(venteTotale.reduce((acc, item) => acc + prixRevente(item), 0))}</button>` : ``}
             </h3>
             <p class="equip-astuce muet">▲ : amélioration pour ce héros. Un appui vend l'objet ; la dernière opération peut être annulée.</p>
             <div class="equip-inv">${htmlVentes}</div>
@@ -147,14 +166,19 @@ export function ecranHdv(run, offres, meta) {
           return;
         }
         confirmerVenteTotale = false;
-        const ventes = run.inventaire.map((inst) => ({ inst, prix: prixRevente(inst) }));
-        vendreTout(run);
+        const ventes = [];
+        for (const inst of vendables(run.inventaire)) {
+          const prix = prixRevente(inst);
+          if (vendreObjet(run, run.inventaire.indexOf(inst))) {
+            ventes.push({ inst, prix });
+          }
+        }
         annulable = ventes.length ? { type: `lot`, ventes } : null;
         afficher();
       });
       document.getElementById(`hdv-vendre-inutile`)?.addEventListener(`click`, () => {
         const ventes = [];
-        for (const inst of objetsInutiles(run)) {
+        for (const inst of vendables(objetsInutiles(run))) {
           const prix = prixRevente(inst);
           if (vendreObjet(run, run.inventaire.indexOf(inst))) {
             ventes.push({ inst, prix });
@@ -238,7 +262,7 @@ export function ecranHdv(run, offres, meta) {
         const total = annulable.ventes.reduce((somme, vente) => somme + vente.prix, 0);
         const nb = annulable.ventes.length;
         const quoi = nb > 1 ? `${nb} objets` : nomObjet(annulable.ventes[0].inst);
-        texte = `Vendu : <b>${quoi}</b> (+${htmlKamas(total)})`;
+        texte = `Vendu : <b>${quoi}</b> (+${htmlKamas(total)})${nb > 1 ? `<small class="hdv-recap">${echapperHtml(recapVentes(annulable.ventes))}</small>` : ``}`;
         possible = run.kamas >= total;
       } else {
         texte = `Acheté : <b>${nomObjet(annulable.inst)}</b> (−${htmlKamas(annulable.prix)})`;

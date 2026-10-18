@@ -51,10 +51,29 @@ import {
   htmlMetaObjet,
   NOMS_ELEMENTS,
   NOMS_STATS,
+  parametres,
 } from "../commun.js";
 import { htmlReliquesRun } from "./choixRecompense.js";
-let triArmurerie = `toile`;
-let filtreSlot = `tout`;
+import {
+  basculerFavori,
+  estFavori,
+  normaliserFiltreInventaire,
+  normaliserTriInventaire,
+  sauverParametres,
+} from "../../sauvegarde/parametres.js";
+// tri et filtre gardés dans les réglages : retrouvés à la prochaine ouverture (et session)
+let triArmurerie = normaliserTriInventaire(parametres.triInventaire);
+let filtreSlot = normaliserFiltreInventaire(parametres.filtreInventaire);
+const memoriserTriFiltre = () => {
+  parametres.triInventaire = triArmurerie;
+  parametres.filtreInventaire = filtreSlot;
+  sauverParametres(parametres);
+};
+// inventaire long : les cartes s'affichent par pages (le reste d'un appui)
+export const TAILLE_PAGE_INVENTAIRE = 12;
+// Nombre de cartes à afficher : une page de plus à chaque « Afficher plus », jamais moins qu'une page.
+export const cartesAffichees = (total, pages) =>
+  Math.min(total, Math.max(1, Math.trunc(pages) || 1) * TAILLE_PAGE_INVENTAIRE);
 const ORDRE_VERDICT = [`mieux`, `mitige`, `egal`, `moins`, `impossible`];
 const TRIS = [
   [`toile`, `Tier`, `Trier par Tier (toile d'obtention), les plus hauts d'abord`],
@@ -246,6 +265,11 @@ function htmlBonusTotal(bonus) {
   }
   return pastilles.length ? pastilles.join(``) : `<span class="muet">aucun bonus</span>`;
 }
+// ★ Favori : jamais vendu par « Vendre l'inutile » ni « Vendre tout » à l'HDV.
+function htmlBoutonFavori(inst) {
+  const favori = estFavori(parametres.favoris, inst);
+  return `<div class="fiche-favori"><button class="secondaire petit${favori ? ` on` : ``}" data-favori aria-pressed="${favori}" title="Un favori n'est jamais vendu par les ventes groupées de l'HDV">${favori ? `★ Favori` : `☆ Marquer comme favori`}</button></div>`;
+}
 // Fiche d'un objet : tout ce qu'il donne, d'où il vient, et ce qu'il changerait pour chaque héros.
 function htmlFicheObjet(inst, persos, perso, porteePar, quantite, emplacementPorte) {
   const def = EQUIPEMENTS[inst.id];
@@ -292,6 +316,7 @@ function htmlFicheObjet(inst, persos, perso, porteePar, quantite, emplacementPor
         </div>
         <button class="fiche-fermer" data-fermer-fiche aria-label="Fermer">✕</button>
       </div>
+      ${htmlBoutonFavori(inst)}
       <div class="fiche-chips">${htmlChipsObjet(inst, perso.classeId)}</div>
       ${lignesHeros}
       <details class="fiche-obtention"><summary>Où le trouver</summary><p>${echapperHtml(texteObtentionObjet(inst.id)).replace(/\n/g, `<br>`)}</p></details>
@@ -299,10 +324,16 @@ function htmlFicheObjet(inst, persos, perso, porteePar, quantite, emplacementPor
 }
 // reliques (facultatif) : reliques de run affichées sous le titre ({ icone, nom, desc }).
 export function ecranEquipement(persos, inventaire, reliques = []) {
-  // à chaque ouverture, le filtre repart sur « Tout » (le tri, lui, est gardé)
-  filtreSlot = `tout`;
+  // tri et filtre repris des réglages (une autre fenêtre a pu les changer)
+  triArmurerie = normaliserTriInventaire(parametres.triInventaire);
+  filtreSlot = normaliserFiltreInventaire(parametres.filtreInventaire);
+  if (filtreSlot !== `tout` && !SLOTS.includes(filtreSlot)) {
+    filtreSlot = `tout`;
+  }
   return new Promise((resolve) => {
     let indexPerso = 0;
+    // pages d'inventaire affichées (remises à une au changement de héros, de tri ou de filtre)
+    let pages = 1;
     // PC : un clic ouvre la fiche après un court délai, annulé par un double-clic (équiper/retirer)
     let minuterieClic = null;
     // objet ouvert dans la fiche : { inst } (inventaire) ou { slot } (porté)
@@ -410,22 +441,28 @@ export function ecranEquipement(persos, inventaire, reliques = []) {
         ),
         heros,
       );
+      const nbAffichees = cartesAffichees(visibles.length, pages);
+      const restantes = visibles.length - nbAffichees;
       let htmlCartes = visibles.length
         ? visibles
+            .slice(0, nbAffichees)
             .map(({ inst, indices, comparaison }) => {
               let def = EQUIPEMENTS[inst.id];
               let possible = comparaison.verdict !== `impossible`;
               return `<button class="item-carte ic${classeRarete(inst)}${possible ? `` : ` inequipable`}" data-index="${indices[0]}" draggable="${possible}" aria-label="${echapperHtml(def.nom)} : voir la fiche">
               <span class="ic-visuel"><img src="${imgObjet(inst.id)}" alt="" loading="lazy" onerror="this.remove()" />${indices.length > 1 ? `<b class="ic-qte">×${indices.length}</b>` : ``}</span>
               <span class="ic-corps">
-                <span class="ic-ligne1"><span class="ic-nom">${htmlNomObjet(inst)}</span>${possible ? htmlVerdictCourt(comparaison) : ``}</span>
+                <span class="ic-ligne1"><span class="ic-nom">${estFavori(parametres.favoris, inst) ? `<span class="ic-favori" aria-label="favori">★</span> ` : ``}${htmlNomObjet(inst)}</span>${possible ? htmlVerdictCourt(comparaison) : ``}</span>
                 <span class="ic-meta">${htmlMetaObjet(inst)}</span>
                 ${possible ? `<span class="ic-cmp">${comparaison.actuel ? `<span class="delta-ref" data-tip="Remplace ${echapperHtml(EQUIPEMENTS[comparaison.actuel.id]?.nom ?? comparaison.actuel.id)}">↔ ${echapperHtml(EQUIPEMENTS[comparaison.actuel.id]?.nom ?? comparaison.actuel.id)}</span>` : `<span class="delta-ref">Emplacement vide</span>`}<span class="ic-deltas">${htmlDeltasCompacts(comparaison.deltas) || `<span class="muet">aucun changement</span>`}</span></span>` : `<span class="ic-stats">${htmlChipsObjet(inst, heros.classeId)}</span><span class="delta-ref">Équipable seulement en ligne avant.</span>`}
                 ${htmlPanoCarte(inst, heros)}${htmlBadgesHeros(inst, persos, heros)}
               </span>
             </button>`;
             })
-            .join(``)
+            .join(``) +
+          (restantes > 0
+            ? `<button id="equip-plus" class="secondaire equip-plus">Afficher ${Math.min(restantes, TAILLE_PAGE_INVENTAIRE)} objet${Math.min(restantes, TAILLE_PAGE_INVENTAIRE) > 1 ? `s` : ``} de plus <small>(${restantes} restant${restantes > 1 ? `s` : ``})</small></button>`
+            : ``)
         : inventaire.length
           ? `<p class="muet equip-vide">Aucun objet de ce type. <button class="secondaire petit" data-filtre="tout">Voir tout (${inventaire.length})</button></p>`
           : ``; // inventaire vide : le message « sac vide » est affiché plus bas, une seule fois
@@ -574,18 +611,23 @@ export function ecranEquipement(persos, inventaire, reliques = []) {
       racine.querySelectorAll(`.equip-onglet`).forEach((onglet) =>
         onglet.addEventListener(`click`, () => {
           indexPerso = Number(onglet.dataset.perso);
+          pages = 1;
           afficher();
         }),
       );
       racine.querySelectorAll(`[data-tri]`).forEach((bouton) =>
         bouton.addEventListener(`click`, () => {
-          triArmurerie = bouton.dataset.tri;
+          triArmurerie = normaliserTriInventaire(bouton.dataset.tri);
+          pages = 1;
+          memoriserTriFiltre();
           afficher();
         }),
       );
       racine.querySelectorAll(`[data-filtre]`).forEach((bouton) =>
         bouton.addEventListener(`click`, () => {
           filtreSlot = bouton.dataset.filtre;
+          pages = 1;
+          memoriserTriFiltre();
           afficher();
         }),
       );
@@ -593,6 +635,8 @@ export function ecranEquipement(persos, inventaire, reliques = []) {
       racine.querySelectorAll(`.equip-slot.vide`).forEach((bouton) => {
         bouton.addEventListener(`click`, () => {
           filtreSlot = typeDeEmplacement(bouton.dataset.slot);
+          pages = 1;
+          memoriserTriFiltre();
           afficher();
           racine
             .querySelector(`.equip-outils`)
@@ -698,6 +742,18 @@ export function ecranEquipement(persos, inventaire, reliques = []) {
           }
         });
       }
+      document.getElementById(`equip-plus`)?.addEventListener(`click`, () => {
+        pages++;
+        afficher();
+      });
+      document.querySelector(`[data-favori]`)?.addEventListener(`click`, () => {
+        const inst = selection?.inst ?? heros.equipement[selection?.slot];
+        if (inst) {
+          parametres.favoris = basculerFavori(parametres.favoris, inst);
+          sauverParametres(parametres);
+          afficher();
+        }
+      });
       // fiche ouverte
       document.querySelectorAll(`[data-fermer-fiche]`).forEach((bouton) =>
         bouton.addEventListener(`click`, () => {

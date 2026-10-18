@@ -15,6 +15,8 @@ import { SORTS } from "../src/data/index.js";
 import { combattantsEquipe, monstresDuCombat, nouvelleRun } from "../src/jeu/run.js";
 import { ciblesValides, raisonIndisponible } from "../src/combat/stats.js";
 import { actionAuto, pvApresCoup } from "../src/ui/combat.js";
+import { cartesAffichees, TAILLE_PAGE_INVENTAIRE } from "../src/ui/ecrans/equipement.js";
+import { recapVentes } from "../src/ui/ecrans/hdv.js";
 
 function stockage() {
   const m = new Map();
@@ -186,5 +188,22 @@ describe(`jeu automatique d'un héros`, () => {
         expect(SORTS[action.sort.id] ?? heros[0].armeSort).toBeTruthy();
       }
     }
+  });
+});
+
+describe(`inventaire et HDV`, () => {
+  it(`inventaire par pages`, () => {
+    expect(cartesAffichees(5, 1)).toBe(5);
+    expect(cartesAffichees(40, 1)).toBe(TAILLE_PAGE_INVENTAIRE);
+    expect(cartesAffichees(40, 2)).toBe(2 * TAILLE_PAGE_INVENTAIRE);
+    expect(cartesAffichees(40, 99)).toBe(40);
+    expect(cartesAffichees(40, 0)).toBe(TAILLE_PAGE_INVENTAIRE);
+  });
+  it(`récapitulatif d'une vente groupée`, () => {
+    const ventes = [{ inst: { id: `a` } }, { inst: { id: `b` } }, { inst: { id: `a` } }];
+    expect(recapVentes(ventes, (inst) => inst.id.toUpperCase())).toBe(`A ×2, B`);
+    expect(recapVentes([])).toBe(``);
+    const beaucoup = [`a`, `b`, `c`, `d`].map((id) => ({ inst: { id } }));
+    expect(recapVentes(beaucoup, (inst) => inst.id, 2)).toBe(`a, b + 2 autres`);
   });
 });
