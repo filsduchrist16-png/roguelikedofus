@@ -259,6 +259,10 @@
   .map-equipe-bar {
     margin-top: 22px;
   }
+  /* la carte laisse la place à la barre d'une équipe de 4 (deux rangées) sous elle */
+  .map-scroll {
+    max-height: calc(100dvh - 250px);
+  }
   .map-equipe-bar .aside-kamas {
     z-index: 1;
     position: absolute;

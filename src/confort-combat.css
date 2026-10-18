@@ -669,3 +669,17 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* PC : la barre des sorts a la place de boutons plus grands, plus faciles à lire et à viser */
+@media (width >= 1000px) and (hover: hover) {
+  .combat .sort {
+    width: 58px;
+    height: 58px;
+  }
+  .combat .sorts-liste {
+    gap: 8px;
+  }
+}
+.fin-tour kbd {
+  font-size: max(11px, 0.6rem);
+}

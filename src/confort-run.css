@@ -6,8 +6,11 @@
     top: auto;
     bottom: calc(env(safe-area-inset-bottom, 0px) + 76px);
   }
-  /* le récap a une barre sur deux rangées : les bandeaux restent en haut */
-  body:has(.recap-boutons) #bandeaux-quete {
+  /* le récap a une barre sur deux rangées, l'accueil un grand bouton « Jouer » et le combat sa
+     barre de sorts : les bandeaux restent en haut au lieu de couvrir l'action principale */
+  body:has(.recap-boutons) #bandeaux-quete,
+  body:has(.ecran-accueil) #bandeaux-quete,
+  body:has(#cb-barre) #bandeaux-quete {
     top: calc(env(safe-area-inset-top, 0px) + 12px);
     bottom: auto;
   }
@@ -296,4 +299,28 @@
   margin: 12px 0 0;
   color: #f0e2c4aa;
   font-size: 0.8rem;
+}
+
+/* ---------- Passe de lisibilité (téléphone) : rien sous 11 px ---------- */
+.be-nom small,
+.be-ko,
+.recap-chip .asc-badge,
+.asc-record .asc-badge {
+  font-size: max(11px, 0.72rem);
+}
+/* « 4 210 gagnés » : l'icône des kamas, le nombre et le mot sur la même ligne de base */
+.recap-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+@media (max-width: 700px) {
+  /* nombre pair de héros : les kamas ne prennent plus une case entière, juste une ligne fine à droite */
+  .barre-equipe > .be-heros:nth-child(even) + .be-kamas {
+    grid-column: 1 / -1;
+    justify-self: end;
+    margin-top: -2px;
+    padding: 0 6px;
+    line-height: 1.2;
+  }
 }

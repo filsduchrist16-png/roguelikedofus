@@ -168,3 +168,49 @@ body.reduire-animations *::after {
     scroll-behavior: auto !important;
   }
 }
+
+/* ---------- Cibles tactiles d'au moins 44 px (téléphone) ---------- */
+@media (hover: none), (width <= 700px) {
+  .aside-icone.btn-retour,
+  .fiche-fermer,
+  .objectifs-pastille,
+  .prog-onglet,
+  .rencontre-option,
+  .setting-ligne > button,
+  .setting-ligne .set-taille,
+  .setting-actions button,
+  #set-texte,
+  #btn-jour {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .fiche-obtention summary {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  /* liens du pied de l'accueil : zone d'appui agrandie sans bouger la mise en page */
+  #btn-disclaimer,
+  .bandeau-credits a {
+    display: inline-block;
+    padding-block: 13px;
+    margin-block: -13px;
+  }
+}
+@media (width > 700px) {
+  /* étoiles de difficulté, liens du pied de l'accueil, « Où le trouver » : 24 px au moins à la souris */
+  .asc-etoile {
+    min-width: 24px;
+  }
+  #btn-disclaimer,
+  .bandeau-credits a,
+  .fiche-obtention summary {
+    display: inline-block;
+    padding-block: 4px;
+    margin-block: -4px;
+  }
+  .fiche-obtention summary {
+    display: block;
+    margin-block: 0;
+  }
+}
