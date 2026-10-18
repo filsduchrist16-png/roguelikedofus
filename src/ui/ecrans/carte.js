@@ -112,7 +112,10 @@ export function texteCase(noeud, nbAffixes = 1) {
   }
   const ennemis = combat.ennemis ?? [];
   // certains noms de combat commencent déjà par « Donjon : »
-  const lignes = [combat.nom.startsWith(nomType) ? combat.nom : `${nomType} : ${combat.nom}`];
+  // « Combat dur : Garde de la crypte (dur) » : le « (dur) » des données ferait doublon
+  const nomCombat =
+    noeud.type === `combat_dur` ? combat.nom.replace(/\s*\(dur\)$/, ``) : combat.nom;
+  const lignes = [nomCombat.startsWith(nomType) ? nomCombat : `${nomType} : ${nomCombat}`];
   let autres = ennemis;
   if (noeud.type === `donjon`) {
     const boss = ennemis.filter((en) => MONSTRES[en.monstre]?.boss);

@@ -44,6 +44,13 @@ describe("texteCase", () => {
     expect(seul).not.toMatch(/au hasard/);
   });
 
+  it("ne répète pas « (dur) » après « Combat dur : »", () => {
+    const id = Object.keys(COMBATS).find((k) => COMBATS[k].nom.endsWith(`(dur)`));
+    expect(id).toBeTruthy();
+    const premiere = texteCase({ type: `combat_dur`, combatId: id }).split(`\n`)[0];
+    expect(premiere).toBe(`Combat dur : ${COMBATS[id].nom.replace(` (dur)`, ``)}`);
+  });
+
   it("met le boss du donjon à part, sans répéter « Donjon : »", () => {
     const t = texteCase({ type: `donjon`, combatId: `abr_boss` });
     const lignes = t.split(`\n`);
