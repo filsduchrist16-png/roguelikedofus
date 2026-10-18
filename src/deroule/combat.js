@@ -55,6 +55,7 @@ import { noterEnnemisVaincus } from "../ui/ecrans/recap.js";
 import { capturerArchis } from "./recompenses.js";
 import { ecranReliques } from "../ui/ecrans/recompenses.js";
 import { verifierQuetesCombat, verifierQuetesMeta } from "../jeu/quetes.js";
+import { noterAlmanax } from "./almanax.js";
 
 export const controleurEnnemi = async (acteur, combattants, contexte) => {
   // l'action est choisie d'abord : pas d'attente inutile quand le monstre n'a plus rien à faire
@@ -294,6 +295,10 @@ export async function jouerCombat(run, combatId, contexte) {
   }
   if (gagne) {
     run.stats.defis = (run.stats.defis ?? 0) + (defiOk ? 1 : 0);
+  }
+  // Almanax du jour : suivi pendant les runs, pas dans les Songes
+  if (!contexte.songe) {
+    noterAlmanax(meta, `combat`, { ...resume, defiOk, coups: suivi.coups });
   }
   await traiterQuetes(run, verifierQuetesCombat(quetesMeta(), resume));
   await traiterQuetes(run, verifierQuetesMeta(quetesMeta(), ctxMeta()));

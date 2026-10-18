@@ -12,6 +12,7 @@ import { enregistrerRun, enregistrerAscension } from "../sauvegarde/meta.js";
 import { traiterQuetes, quetesDeLaRun, contexteRun } from "./quetes.js";
 import { verifierQuetesMeta, verifierQuetesZone, verifierQuetesRun } from "../jeu/quetes.js";
 import { ecranRecap, etatDeblocage, deblocagesVictoire } from "../ui/ecrans/recap.js";
+import { noterAlmanax, verserAlmanax } from "./almanax.js";
 
 export async function jouerRun(
   sauvegarde,
@@ -52,6 +53,11 @@ export async function jouerRun(
     // dernier départ retenu : l'accueil et le choix d'équipe le proposent par défaut
     parametres.dernierDepart = { trancheId: monde.id, ascension, classes: [...classes] };
     sauverParametres(parametres);
+    // Almanax accompli : sa récompense revient à la run qui commence (pas à la run du jour, dont
+    // les scores restent comparables)
+    if (!jour) {
+      verserAlmanax(meta, run);
+    }
   }
   // relance demandée depuis le récapitulatif de fin de run
   let relance = (choix) =>
@@ -104,6 +110,7 @@ export async function jouerRun(
       }
       soignerEquipe(run, 1);
       run.stats.zones += 1;
+      noterAlmanax(meta, `zone`);
       await traiterQuetes(
         run,
         verifierQuetesZone(quetesMeta(), {

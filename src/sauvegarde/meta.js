@@ -5,6 +5,7 @@ import { DIFFICULTES, RARETES, bonusRelique, getMonde } from "../jeu/config.js";
 import { dofusDeSucces, nouvelEtatQuetes, progressionSucces } from "../jeu/quetes.js";
 import { ajouterResistanceTous, effetsDifficulte, prospectionEquipe } from "../jeu/run.js";
 import { idolesDepartValides } from "../jeu/idolesDepart.js";
+import { normaliserAlmanax } from "../jeu/almanax.js";
 const CLE_META = `rld_meta_v0`;
 const MIGRATION_SUCCES = {
   bapteme_du_feu: `g_premiere_run`,
@@ -94,6 +95,8 @@ export function chargerMeta() {
         secrets: Array.isArray(donnees.secrets) ? donnees.secrets : [],
         jaugeArchi: Number.isFinite(donnees.jaugeArchi) ? Math.max(0, donnees.jaugeArchi) : 0,
         records: normaliserRecords(donnees.records),
+        // Almanax du jour (1.8.0) : absent = aucun progrès, aucune récompense en attente
+        almanax: normaliserAlmanax(donnees.almanax),
         // relique équipée (E2) : absente = aucune
         reliqueEquipee:
           typeof donnees.reliqueEquipee === `string` && RELIQUES[donnees.reliqueEquipee]

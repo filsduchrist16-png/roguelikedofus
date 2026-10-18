@@ -53,6 +53,7 @@ import {
   reliqueTaverne,
   reposCamp,
 } from "../jeu/cases.js";
+import { noterAlmanax } from "./almanax.js";
 import { detailRelique } from "./rencontres.js";
 import {
   appliquerChoix,
@@ -144,6 +145,7 @@ async function jouerCoffre(run, zone, noeud) {
     return `continue`;
   }
   run.stats.coffres = (run.stats.coffres ?? 0) + 1;
+  noterAlmanax(meta, `coffre`);
   let { tresor, piege } = contenuCoffre(noeud, Math.random, { crocheteur });
   if (piege === `pv`) {
     let perte = piegePv(run);
@@ -384,6 +386,7 @@ export async function resoudreNoeud(run, type, combatId, xpCombat, zone, eliteMo
     }
     case `camp`:
       await jouerCamp(run, zone);
+      noterAlmanax(meta, `camp`);
       return `continue`;
     case `coffre`:
       return jouerCoffre(run, zone, noeud);

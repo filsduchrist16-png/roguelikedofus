@@ -2,6 +2,8 @@ export const nouveauSuiviCombat = () => ({
   rondes: 0,
   morts: new Set(),
   degats: {},
+  // coups portés par les héros, par élément (Almanax)
+  coups: {},
   soins: 0,
 });
 export function suivreEvenement(suivi, evenement, combattants) {
@@ -14,6 +16,9 @@ export function suivreEvenement(suivi, evenement, combattants) {
       if (evenement.element && campDe(evenement.attaquantRef) === `joueur`) {
         suivi.degats[evenement.element] =
           (suivi.degats[evenement.element] ?? 0) + evenement.montant;
+        if (suivi.coups) {
+          suivi.coups[evenement.element] = (suivi.coups[evenement.element] ?? 0) + 1;
+        }
       }
       break;
     case `soin`:

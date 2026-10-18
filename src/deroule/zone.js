@@ -13,6 +13,7 @@ import { jouerDonjonSecret } from "./secret.js";
 import { scoreRun } from "../jeu/idolesDepart.js";
 import { afficherBandeau } from "../ui/ecrans/succes.js";
 import { proposerOffreCombat } from "./recompenses.js";
+import { effetAlmanax } from "../jeu/almanax.js";
 
 // Hors combat seulement : en plein combat l'état est partiel, la run reprend au dernier nœud.
 document.addEventListener(`visibilitychange`, () => {
@@ -53,7 +54,7 @@ export async function jouerZone(run, zone, indexZone) {
       run.ascension,
       run.philtres,
       () => sauverRun(indexZone, run),
-      effetsEnCours(run, zone.id),
+      [...effetsEnCours(run, zone.id), ...effetAlmanax(meta)],
       {
         zoneNum: indexZone + 1,
         nbZones: zonesDuMonde(getMonde(run.trancheId)).length,

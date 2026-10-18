@@ -53,6 +53,7 @@ import { dateLisible } from "./parametres.js";
 import { CONDITION_SONGES, recordSonges, songesDebloques } from "../../jeu/songes.js";
 import { IMG_SONGES } from "./songes.js";
 import { VERSION } from "../../version.js";
+import { htmlAlmanax } from "../almanax.js";
 const LIEN_DISCORD = `https://discord.gg/jxfWpRB7Rp`;
 const numeroMonde = (id) => MONDES.findIndex((monde) => monde.id === id) + 1;
 // Plus haute difficulté ouverte dans ce monde (une run gagnée débloque la suivante).
@@ -260,6 +261,7 @@ Difficulté : ${DIFFICULTES[reprise.ascension]?.nom ?? `Normal`}`
           ${htmlBoutons}
         </div>
         ${htmlJour}
+        ${htmlAlmanax(meta)}
         ${htmlSonges}
         <div class="accueil-mentions">
           <p class="mention-ankama">Fangame non officiel. Les illustrations DOFUS appartiennent à Ankama. <button id="btn-disclaimer" class="btn-lien">Mentions légales</button> · Fait avec passion par Cora, Daaye et T. · <span class="version-jeu">Version ${VERSION}</span></p>
