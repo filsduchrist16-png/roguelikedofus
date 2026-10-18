@@ -530,11 +530,29 @@ function creerBulle(classe, id) {
   };
   return { bulle, placer, masquer };
 }
+// Dernier pointeur utilisé (souris, toucher, stylet) : après un appui au doigt, le navigateur
+// émule un survol puis un `mouseout` juste après le `click`, qui refermait aussitôt la bulle.
+let dernierPointeur = ``;
+const retenirPointeur = (ev) => {
+  dernierPointeur = ev.pointerType || dernierPointeur;
+};
+const auToucher = () => dernierPointeur === `touch` || dernierPointeur === `pen`;
+let pointeurSuivi = false;
+function suivrePointeur() {
+  if (pointeurSuivi) {
+    return;
+  }
+  pointeurSuivi = true;
+  document.addEventListener(`pointerdown`, retenirPointeur, { capture: true, passive: true });
+  document.addEventListener(`pointermove`, retenirPointeur, { capture: true, passive: true });
+}
 // Survol (souris seulement : le survol simulé d'un toucher laissait des bulles collées), focus
-// clavier et toucher ; Échap et le défilement referment la bulle.
+// clavier et toucher ; Échap et le défilement referment la bulle. Ouverte au toucher, elle reste
+// jusqu'au prochain appui ailleurs.
 function brancherBulle(selecteur, montrer, masquer) {
+  suivrePointeur();
   document.addEventListener(`mouseover`, (ev) => {
-    if (ecranTactile()) {
+    if (ecranTactile() || auToucher()) {
       return;
     }
     const el = ev.target.closest?.(selecteur);
@@ -543,6 +561,10 @@ function brancherBulle(selecteur, montrer, masquer) {
     }
   });
   document.addEventListener(`mouseout`, (ev) => {
+    // survol émulé par un toucher : la bulle attend le prochain appui
+    if (auToucher()) {
+      return;
+    }
     const el = ev.target.closest?.(selecteur);
     if (el && !el.contains(ev.relatedTarget)) {
       masquer();
@@ -571,7 +593,7 @@ function ouvrirAuToucher(selecteur, montrer, masquer) {
   document.addEventListener(
     `click`,
     (ev) => {
-      if (!ecranTactile()) {
+      if (!ecranTactile() && !auToucher()) {
         return;
       }
       // en visée, un appui sur une carte ciblable lance le sort : pas de bulle par-dessus
