@@ -1,6 +1,8 @@
 import { afficherEcran, barreRetour, echapperHtml, racine } from "../commun.js";
 import { AIDE_OBTENTION } from "../../jeu/obtention.js";
 import { DIFFICULTES } from "../../jeu/config.js";
+import { RELIQUES_RUN } from "../../data/index.js";
+import { AMELIORATIONS_SORT } from "../../combat/ameliorations.js";
 const SECTIONS_REGLES = [
   {
     titre: `La run`,
@@ -74,6 +76,28 @@ const SECTIONS_REGLES = [
       Forgemagie.</p>`,
   },
   {
+    titre: `Récompenses de combat`,
+    corps: `<p>Après chaque combat normal ou dur gagné (pas après un boss, qui garde son butin), en plus
+      du butin, choisis <b>une carte parmi trois</b>, ou passe contre quelques kamas. Les combats durs et
+      les dernières zones d'un monde proposent plus souvent des cartes rares et épiques, et des reliques.</p>
+      <ul>
+        <li><b>Amélioration de sort</b> (⬆) : pour un héros et un sort, jusqu'à la fin de la run (deux au
+          plus par sort). Le sort amélioré porte un ⬆ en combat, et son info détaille l'effet :
+          <ul>${Object.values(AMELIORATIONS_SORT)
+            .map(
+              (def) =>
+                `<li>${def.icone} <b>${echapperHtml(def.nom)}</b> : ${echapperHtml(def.texte({ type: `degats` }))}${def.nom === `Puissance` ? ` (ou de soins)` : ``}.</li>`,
+            )
+            .join(``)}</ul></li>
+        <li><b>Relique de run</b> : un effet passif jusqu'à la fin de la run (${Object.keys(RELIQUES_RUN).length}
+          reliques, une seule fois chacune), affiché sur la carte, dans l'équipement et dans le bilan. À ne
+          pas confondre avec les reliques de boss, objets de collection gardés d'une run à l'autre.</li>
+        <li><b>Bonus</b> : une bourse de kamas, un repos (35 % des PV max) ou un entraînement (des points
+          dans les quatre caractéristiques élémentaires d'un héros, pour la run).</li>
+      </ul>
+      <p>Le choix proposé est sauvegardé : recharger la page montre les mêmes cartes.</p>`,
+  },
+  {
     titre: `Ce qui reste après la mort`,
     corps: `<p>Les Dofus. Chacun donne un bonus permanent à toutes tes runs suivantes. On les obtient en
       terminant les groupes de quêtes du menu Succès.</p>
@@ -118,7 +142,8 @@ const SECTIONS_REGLES = [
         <li>Tous les 3 étages, un <b>affixe de songe</b> s'ajoute pour de bon : il touche tous les ennemis
           des étages suivants (affiché en combat et entre les étages).</li>
         <li>Après chaque étage, choisis une récompense parmi trois : objet du Monde 5 (plus rare en montant),
-          repos (50 % des PV, K.O. relevés à 30 %), kamas ou amélioration. Pas de soin automatique.</li>
+          repos (50 % des PV, K.O. relevés à 30 %), kamas, bénédiction, amélioration de sort ou relique de
+          run. Pas de soin automatique.</li>
         <li>Après chaque boss, un palier : équipe soignée à 100 %, une taverne et un Hôtel de vente.</li>
         <li>Quand toute l'équipe tombe, le score est le dernier étage franchi ; le record est gardé.</li>
       </ul>`,
