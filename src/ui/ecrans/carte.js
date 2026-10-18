@@ -182,6 +182,8 @@ const imageNoeud = (noeud) =>
     ? cheminAsset(`/assets/cases/${IMAGES_NOEUDS[noeud.type]}.png`)
     : null);
 const CARTE_HAUTEUR = 500;
+// Appui long (tactile) sur une case atteignable : y aller sans passer par le panneau.
+export const DUREE_APPUI_LONG = 550;
 const CARTE_PAS_X = 116;
 const CARTE_MARGE = 56;
 // onModif : appelé après un changement fait depuis la carte (équipement, formation) pour sauvegarder la run
@@ -383,7 +385,7 @@ export function ecranCarte(
           <h1 class="sr-only">Carte : ${echapperHtml(nomZone)}</h1>
           <header class="map-topbar">
             <h2 class="zone-titre">${infosZone.zoneNum ? `<span class="zone-num">Zone ${Number(infosZone.zoneNum)}${infosZone.nbZones ? `/${Number(infosZone.nbZones)}` : ``}</span> · ` : ``}${echapperHtml(nomZone)}${infosZone.tierObjets != null ? `<span class="asc-badge zone-tier" data-tip="Tier : numéro de la zone où tombent les objets, compté depuis le Monde 1">objets T${Number(infosZone.tierObjets)}</span>` : ``}${ascension >= 1 ? `<span class="asc-badge" data-tip="${echapperHtml(DIFFICULTES[ascension].desc)}">${etoilesDifficulte(ascension)}</span>` : ``}${philtres >= 1 ? `<span class="asc-badge" data-tip="Philtres d'Otomai bus : les archimonstres apparaissent plus souvent (${CONFIG_ARCHI.philtresMax} au maximum)">🧪 ${Math.min(philtres, CONFIG_ARCHI.philtresMax)}/${CONFIG_ARCHI.philtresMax}</span>` : ``}</h2>
-            ${effets.length ? `<div class="zone-effets">${effets.map((effet) => `<span class="zone-effet" data-tip="${echapperHtml(effet.desc)}">${effet.icone} ${echapperHtml(effet.nom)}</span>`).join(``)}</div>` : ``}
+            ${effets.length ? `<div class="zone-effets${effets.length > 4 ? ` compact` : ``}">${effets.map((effet) => `<span class="zone-effet${effet.reliqueRun ? ` ze-relique` : ``}" aria-label="${echapperHtml(effet.nom)}" data-tip="${echapperHtml(`${effet.nom} : ${effet.desc}`)}"><span aria-hidden="true">${effet.icone}</span><span class="ze-nom"> ${echapperHtml(effet.nom)}</span></span>`).join(``)}</div>` : ``}
             <div class="topbar-actions">
               <button id="carte-persos" class="aside-icone" title="Caractéristiques (S)"><img src="${IMG_CARACTERISTIQUES}" alt="Caractéristiques" onerror="this.remove()" /><span class="aside-lbl">Stats</span></button>
               <button id="carte-formation" class="aside-icone" title="Formation (F)"><img src="${IMG_FORMATION}" alt="Formation" onerror="this.remove()" /><span class="aside-lbl">Formation</span></button>
@@ -466,7 +468,47 @@ export function ecranCarte(
       };
       racine.querySelectorAll(`.map-node`).forEach((bouton) => {
         const atteignable = bouton.classList.contains(`atteignable`);
+        // Tactile : un appui long sur une case atteignable y va directement (sans panneau).
+        let appuiLong = null;
+        let departAppui = null;
+        let allerParAppuiLong = false;
+        const annulerAppui = () => {
+          clearTimeout(appuiLong);
+          appuiLong = null;
+        };
+        if (atteignable) {
+          bouton.addEventListener(`pointerdown`, (ev) => {
+            if (ev.pointerType === `mouse`) {
+              return;
+            }
+            departAppui = { x: ev.clientX, y: ev.clientY };
+            allerParAppuiLong = false;
+            annulerAppui();
+            appuiLong = setTimeout(() => {
+              allerParAppuiLong = true;
+              aller(bouton.dataset.id);
+            }, DUREE_APPUI_LONG);
+          });
+          bouton.addEventListener(`pointermove`, (ev) => {
+            // le doigt glisse (défilement de la carte) : pas d'appui long
+            if (
+              appuiLong &&
+              departAppui &&
+              Math.hypot(ev.clientX - departAppui.x, ev.clientY - departAppui.y) > 10
+            ) {
+              annulerAppui();
+            }
+          });
+          for (const fin of [`pointerup`, `pointercancel`, `pointerleave`]) {
+            bouton.addEventListener(fin, annulerAppui);
+          }
+          // pas de menu contextuel du navigateur pendant l'appui long
+          bouton.addEventListener(`contextmenu`, (ev) => ev.preventDefault());
+        }
         bouton.addEventListener(`click`, () => {
+          if (allerParAppuiLong) {
+            return;
+          }
           if (ecranTactile() && selId !== bouton.dataset.id) {
             selectionner(bouton);
           } else if (atteignable) {

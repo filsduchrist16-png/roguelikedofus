@@ -78,3 +78,33 @@
   max-width: 560px;
   margin: 0 auto 10px;
 }
+
+/* ---------- Carte : effets et reliques de run toujours visibles, compacts sur téléphone ---------- */
+@media (max-width: 600px) {
+  /* plus de 4 effets : les reliques de run passent en icônes (nom et effet au toucher) */
+  .zone-effets.compact {
+    gap: 4px;
+  }
+  .zone-effets.compact .ze-relique .ze-nom {
+    display: none;
+  }
+  .zone-effets.compact .ze-relique {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+  }
+}
+.map-node {
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+.zone-effet > span {
+  pointer-events: none;
+}
+.zone-effets.compact {
+  align-items: center;
+}
