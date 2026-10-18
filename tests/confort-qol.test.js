@@ -9,6 +9,7 @@ import {
   normaliserModeAuto,
   normaliserReplis,
   normaliserTriInventaire,
+  sectionOuverte,
   sectionRepliee,
 } from "../src/sauvegarde/parametres.js";
 import { SORTS } from "../src/data/index.js";
@@ -116,6 +117,17 @@ describe(`normaliseurs`, () => {
   });
 });
 
+describe(`sections repliables`, () => {
+  it(`une clé à true inverse l'état par défaut`, () => {
+    const reglages = { replis: { a: true } };
+    expect(sectionOuverte(reglages, `a`, true)).toBe(false);
+    expect(sectionOuverte(reglages, `a`, false)).toBe(true);
+    expect(sectionOuverte(reglages, `b`, true)).toBe(true);
+    expect(sectionOuverte(reglages, `b`, false)).toBe(false);
+    expect(sectionOuverte({}, `b`)).toBe(true);
+  });
+});
+
 describe(`favoris`, () => {
   const inst = { id: `coiffe_bouftou`, rarete: `rare`, stats: { vitalite: 10, force: 4 }, pa: 0 };
   it(`la clé ne dépend pas de l'ordre des stats (rechargement de la run)`, () => {
@@ -198,6 +210,7 @@ describe(`inventaire et HDV`, () => {
     expect(cartesAffichees(40, 2)).toBe(2 * TAILLE_PAGE_INVENTAIRE);
     expect(cartesAffichees(40, 99)).toBe(40);
     expect(cartesAffichees(40, 0)).toBe(TAILLE_PAGE_INVENTAIRE);
+    expect(cartesAffichees(40, 2, 6)).toBe(12);
   });
   it(`récapitulatif d'une vente groupée`, () => {
     const ventes = [{ inst: { id: `a` } }, { inst: { id: `b` } }, { inst: { id: `a` } }];

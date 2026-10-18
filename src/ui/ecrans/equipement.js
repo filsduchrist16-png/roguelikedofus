@@ -72,8 +72,8 @@ const memoriserTriFiltre = () => {
 // inventaire long : les cartes s'affichent par pages (le reste d'un appui)
 export const TAILLE_PAGE_INVENTAIRE = 12;
 // Nombre de cartes à afficher : une page de plus à chaque « Afficher plus », jamais moins qu'une page.
-export const cartesAffichees = (total, pages) =>
-  Math.min(total, Math.max(1, Math.trunc(pages) || 1) * TAILLE_PAGE_INVENTAIRE);
+export const cartesAffichees = (total, pages, taille = TAILLE_PAGE_INVENTAIRE) =>
+  Math.min(total, Math.max(1, Math.trunc(pages) || 1) * taille);
 const ORDRE_VERDICT = [`mieux`, `mitige`, `egal`, `moins`, `impossible`];
 const TRIS = [
   [`toile`, `Tier`, `Trier par Tier (toile d'obtention), les plus hauts d'abord`],

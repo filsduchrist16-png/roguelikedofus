@@ -692,3 +692,16 @@
   opacity: 0.85;
   overflow-wrap: anywhere;
 }
+/* Forgemagie : une section repliable par héros, puis l'inventaire (replié d'office) */
+.forge-liste > .section-repliable > summary .forge-section {
+  margin: 0;
+}
+.forge-liste > .section-repliable > summary small {
+  font-size: 0.8rem;
+}
+.forge-groupe {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 6px;
+}

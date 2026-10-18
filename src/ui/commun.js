@@ -24,6 +24,9 @@ import {
 import {
   chargerParametres,
   comportementDefilement as choisirDefilement,
+  normaliserReplis,
+  sauverParametres,
+  sectionOuverte,
 } from "../sauvegarde/parametres.js";
 import { herosAmeliores } from "../jeu/inventaire.js";
 import { sortAmeliore, textesAmeliorations } from "../combat/ameliorations.js";
@@ -32,6 +35,29 @@ export function definirRacine(element) {
   racine = element;
 }
 export const parametres = chargerParametres();
+// Section repliable des écrans longs (<details>) dont l'état ouvert / replié est mémorisé dans les
+// réglages. `ouverteParDefaut` : état tant que le joueur n'y a pas touché.
+export function htmlSectionRepliable(cle, titre, contenu, ouverteParDefaut = true, classe = ``) {
+  const ouverte = sectionOuverte(parametres, cle, ouverteParDefaut);
+  return `<details class="section-repliable${classe ? ` ${classe}` : ``}" data-repli="${echapperHtml(cle)}" data-defaut="${ouverteParDefaut ? 1 : 0}"${ouverte ? ` open` : ``}><summary>${titre}</summary>${contenu}</details>`;
+}
+// À appeler après afficherEcran : chaque ouverture ou repli est enregistré.
+export function brancherSectionsRepliables(conteneur = racine) {
+  conteneur?.querySelectorAll(`details[data-repli]`).forEach((section) =>
+    section.addEventListener(`toggle`, () => {
+      const cle = section.dataset.repli;
+      const inverse = section.open !== (section.dataset.defaut === `1`);
+      const replis = normaliserReplis(parametres.replis);
+      if (inverse) {
+        replis[cle] = true;
+      } else {
+        delete replis[cle];
+      }
+      parametres.replis = replis;
+      sauverParametres(parametres);
+    }),
+  );
+}
 // `auto` ou `smooth` pour scrollIntoView / scrollBy : instantané si les animations sont réduites.
 export function comportementDefilement() {
   let systeme = false;

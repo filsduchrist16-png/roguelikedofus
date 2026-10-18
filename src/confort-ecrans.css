@@ -214,3 +214,48 @@ body.reduire-animations *::after {
     margin-block: 0;
   }
 }
+
+/* ---------- Confort 1.8.0 : sections repliables mémorisées (succès, accueil…) ---------- */
+.section-repliable > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  cursor: pointer;
+  list-style: none;
+  border-radius: 10px;
+}
+.section-repliable > summary::-webkit-details-marker {
+  display: none;
+}
+.section-repliable > summary::before {
+  content: "▸";
+  flex: none;
+  width: 1em;
+  color: var(--muet);
+  font-size: 1.1em;
+  transition: transform 0.15s;
+}
+.section-repliable[open] > summary::before {
+  transform: rotate(90deg);
+}
+.reduire-animations .section-repliable > summary::before {
+  transition: none;
+}
+.section-repliable > summary:focus-visible {
+  outline: 2px solid var(--or);
+  outline-offset: 2px;
+}
+.section-repliable > summary > h2,
+.section-repliable > summary > h3 {
+  margin: 0;
+}
+.section-repliable > summary small {
+  margin-left: 4px;
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 700;
+}
+.section-repliable > summary > h2 {
+  text-align: left;
+}

@@ -11,6 +11,8 @@ import { decrireQuete, mondeDuDofus } from "../../jeu/obtention.js";
 import {
   comportementDefilement,
   afficherEcran,
+  brancherSectionsRepliables,
+  htmlSectionRepliable,
   barreContinuer,
   barreRetour,
   cheminAsset,
@@ -45,6 +47,21 @@ function rubriques(ids) {
   return [...groupes].sort(([titreA], [titreB]) =>
     titreA === `Général` ? -1 : titreB === `Général` ? 1 : titreA.localeCompare(titreB),
   );
+}
+// Clé de section repliable tirée d'un titre (lettres, chiffres, tirets).
+const cleSection = (titre) =>
+  titre
+    .normalize(`NFD`)
+    .replace(/[^\w]+/g, `-`)
+    .slice(0, 30);
+// Dofus regroupés par monde d'obtention, dans l'ordre d'affichage (« Autres » pour les autres).
+function groupesDofus(ordre) {
+  const groupes = new Map();
+  for (const id of ordre) {
+    const nom = mondeDuDofus(id)?.nom ?? `Autres`;
+    groupes.set(nom, [...(groupes.get(nom) ?? []), id]);
+  }
+  return [...groupes];
 }
 // selection (facultatif) : « d:<id du Dofus> » ou « g:<id du succès> » à ouvrir directement.
 export function ecranSucces(meta, selection) {
@@ -166,12 +183,33 @@ export function ecranSucces(meta, selection) {
         <p class="sous-titre">${quetes.faites.filter((queteId) => trouverQuete(queteId)).length} / ${nbQuetes} quêtes · ${nbComplets} / ${succesAvecDofus.length} Dofus</p>
         <div class="succes-vue">
           <div class="succes-galerie">
-            <div class="succes-cartes">${ordreDofus.map(htmlCarteDofus).join(``)}</div>
+            ${groupesDofus(ordreDofus)
+              .map(([nom, ids]) => {
+                const obtenus = ids.filter(possede).length;
+                // le monde du Dofus choisi (par défaut, le plus avancé) est ouvert d'office
+                const contientSelection = ids.some((id) => selectionCourante === `d:${id}`);
+                return htmlSectionRepliable(
+                  `succes-d-${cleSection(nom)}`,
+                  `<h2 class="succes-rubrique">Dofus · ${echapperHtml(nom)} <small>${obtenus} / ${ids.length}</small></h2>`,
+                  `<div class="succes-cartes">${ids.map(htmlCarteDofus).join(``)}</div>`,
+                  contientSelection,
+                );
+              })
+              .join(``)}
             ${rubriques(succesGeneraux)
-              .map(
-                ([titre, ids]) => `<h2 class="succes-rubrique">${echapperHtml(titre)}</h2>
-            <div class="succes-generaux">${ids.map(htmlCarteGenerale).join(``)}</div>`,
-              )
+              .map(([titre, ids]) => {
+                const faits = ids.filter(
+                  (id) => progressionSucces(quetes, SUCCES[id]).complet,
+                ).length;
+                // la rubrique de la sélection reste ouverte ; les donjons sont repliés d'office
+                const contientSelection = ids.some((id) => selectionCourante === `g:${id}`);
+                return htmlSectionRepliable(
+                  `succes-${cleSection(titre)}`,
+                  `<h2 class="succes-rubrique">${echapperHtml(titre)} <small>${faits} / ${ids.length}</small></h2>`,
+                  `<div class="succes-generaux">${ids.map(htmlCarteGenerale).join(``)}</div>`,
+                  titre === `Général` || contientSelection,
+                );
+              })
               .join(``)}
           </div>
           <aside class="succes-panneau"><button type="button" class="succes-vers-liste secondaire">↑ Liste</button>${htmlPanneau()}</aside>
@@ -202,6 +240,7 @@ export function ecranSucces(meta, selection) {
         carteActive?.focus({ preventScroll: true });
       });
       document.getElementById(`succes-retour`)?.addEventListener(`click`, () => resolve());
+      brancherSectionsRepliables();
     };
     afficher();
     // la carte active est visible dans la galerie (PC : la galerie défile seule) ; sur téléphone,

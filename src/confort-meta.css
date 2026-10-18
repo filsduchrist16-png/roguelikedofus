@@ -667,3 +667,15 @@ body.couleurs-adaptees .combat .carte:not(.carte-joueur) .pv-barre:not(.ko) {
 .ecran .boutons-ecran.songe-boutons-libres {
   position: static;
 }
+
+/* ---------- Accueil (1.8.0) : plus court sur téléphone ---------- */
+/* les statistiques d'un monde (zone max, runs, archimonstres, reliques) ne s'affichent que sous le
+   monde choisi : un appui sur un autre monde les montre */
+@media (width <= 700px) {
+  .mondes-rack .monde-carte:not(.active) .monde-stats {
+    display: none;
+  }
+  .mondes-rack .monde-carte:not(.active) {
+    padding-bottom: 8px;
+  }
+}

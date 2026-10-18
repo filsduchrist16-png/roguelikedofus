@@ -9,12 +9,14 @@ import {
   afficherEnGardantScroll,
   attrTipObjet,
   barreRetour,
+  brancherSectionsRepliables,
   classeRarete,
   echapperHtml,
   htmlChipsObjet,
   htmlKamas,
   htmlMetaObjet,
   htmlNomObjet,
+  htmlSectionRepliable,
   imgObjet,
   libelleDelta,
   racine,
@@ -83,6 +85,7 @@ export function ecranForgemagie(run, meta) {
       const nomHeros = (perso) => CLASSES[perso.classeId]?.nom ?? perso.classeId;
       // d'abord les pièces portées, par héros ; puis l'inventaire regroupé (« ×N »)
       const sections = run.persos.map((perso) => ({
+        cle: `forge-${perso.classeId}`,
         titre: echapperHtml(nomHeros(perso)),
         entrees: Object.values(perso.equipement)
           .filter((objet) => !!objet && rareteSuivante(objet))
@@ -98,6 +101,10 @@ export function ecranForgemagie(run, meta) {
         }));
       if (!equipesSeulement) {
         sections.push({
+          // l'inventaire (souvent long) est replié d'office : son titre donne le nombre d'objets
+          cle: `forge-inventaire`,
+          replie: true,
+          sac: true,
           titre: `Inventaire (${sac.reduce((somme, groupe) => somme + groupe.nb, 0)})`,
           entrees: sac,
         });
@@ -133,9 +140,13 @@ export function ecranForgemagie(run, meta) {
       let htmlListe = entrees.length
         ? sections
             .filter((sec) => sec.entrees.length)
-            .map(
-              (sec) =>
-                `<h4 class="forge-section">${sec.titre}</h4>${sec.entrees.map(htmlEntree).join(``)}`,
+            .map((sec) =>
+              htmlSectionRepliable(
+                sec.cle,
+                `<h4 class="forge-section">${sec.titre}${sec.sac ? `` : ` <small>(${sec.entrees.length} à forger)</small>`}</h4>`,
+                `<div class="forge-groupe">${sec.entrees.map(htmlEntree).join(``)}</div>`,
+                !sec.replie,
+              ),
             )
             .join(``)
         : `<p class="muet">${equipesSeulement ? `Rien à forger parmi les objets équipés.` : `Rien à forger : tout ton équipement à rareté est déjà au maximum.`}</p>`;
@@ -195,6 +206,7 @@ export function ecranForgemagie(run, meta) {
         afficher();
       });
       document.getElementById(`forge-retour`)?.addEventListener(`click`, () => resolve());
+      brancherSectionsRepliables();
     };
     afficher();
   });

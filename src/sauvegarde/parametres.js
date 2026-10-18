@@ -108,7 +108,9 @@ export const basculerFavori = (favoris, inst) => {
     ? liste.filter((autre) => autre !== cle)
     : normaliserFavoris([...liste, cle]);
 };
-// Sections repliées des écrans longs (accueil, succès, HDV…) : { cle: true } seulement.
+// Sections repliables des écrans longs (accueil, succès…) : { cle: true } seulement, une clé à
+// true voulant dire « dans l'état inverse de son défaut » (repliée si ouverte par défaut, et
+// inversement).
 export const normaliserReplis = (valeur) =>
   valeur && typeof valeur === `object` && !Array.isArray(valeur)
     ? Object.fromEntries(
@@ -118,6 +120,8 @@ export const normaliserReplis = (valeur) =>
       )
     : {};
 export const sectionRepliee = (reglages, cle) => normaliserReplis(reglages?.replis)[cle] === true;
+export const sectionOuverte = (reglages, cle, ouverteParDefaut = true) =>
+  sectionRepliee(reglages, cle) ? !ouverteParDefaut : ouverteParDefaut;
 // Comportement des défilements : instantané si le joueur a réduit les animations (réglage du jeu ou
 // préférence du système), progressif sinon.
 export const comportementDefilement = (reduire, systemeReduit = false) =>

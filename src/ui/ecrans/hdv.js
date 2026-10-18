@@ -8,6 +8,9 @@ import {
   vendreObjet,
 } from "../../jeu/economie.js";
 import { estFavori } from "../../sauvegarde/parametres.js";
+import { cartesAffichees } from "./equipement.js";
+// cartes de l'HDV (prix, héros, panoplie) plus hautes que celles de l'inventaire : pages de 6
+const TAILLE_PAGE_HDV = 6;
 import { grouperInventaire, herosAmeliores, objetsInutiles } from "../../jeu/inventaire.js";
 import { emplacementCible, equiperObjet } from "../../jeu/run.js";
 import { enregistrerCollection, sauverMeta } from "../../sauvegarde/meta.js";
@@ -51,9 +54,18 @@ export function ecranHdv(run, offres, meta) {
     // dernière opération annulable : { type: `vente`, inst, prix } · { type: `lot`, ventes }
     // · { type: `achat`, inst, prix, index, equipe?: { perso, emplacement, ancien } }
     let annulable = null;
+    // listes longues : affichées par pages (le reste d'un appui)
+    let pagesAchats = 1;
+    let pagesVentes = 1;
+    const boutonPlus = (id, restantes) =>
+      restantes > 0
+        ? `<button id="${id}" class="secondaire equip-plus">Afficher ${Math.min(restantes, TAILLE_PAGE_HDV)} de plus <small>(${restantes} restant${restantes > 1 ? `s` : ``})</small></button>`
+        : ``;
     let afficher = () => {
+      const nbAchats = cartesAffichees(offres.length, pagesAchats, TAILLE_PAGE_HDV);
       let htmlAchats = offres.length
         ? offres
+            .slice(0, nbAchats)
             .map((offre, indice) => {
               let abordable = run.kamas >= offre.prix;
               return `<button class="item-carte hdv-achat${classeRarete(offre.inst)}" data-achat="${indice}" ${abordable ? `` : `disabled`}${attrTipObjet(offre.inst.id)}>
@@ -62,7 +74,7 @@ export function ecranHdv(run, offres, meta) {
               ${abordable ? `<span class="hdv-prix"><small class="hdv-verbe">Acheter</small>${htmlKamas(offre.prix)}</span>` : `<span class="hdv-prix hdv-manque" title="Prix : ${offre.prix.toLocaleString(`fr-FR`)} k">il manque ${htmlKamas(offre.prix - run.kamas)}</span>`}
             </button>`;
             })
-            .join(``)
+            .join(``) + boutonPlus(`hdv-plus-achats`, offres.length - nbAchats)
         : `<p class="muet">Rayons vides, reviens à un prochain Hôtel de vente.</p>`;
       const inutiles = vendables(objetsInutiles(run));
       const venteTotale = vendables(run.inventaire);
@@ -73,8 +85,10 @@ export function ecranHdv(run, offres, meta) {
         inutile: inutiles.includes(groupe.inst),
       }));
       groupes.sort((premier, second) => Number(second.inutile) - Number(premier.inutile));
+      const nbVentes = cartesAffichees(groupes.length, pagesVentes, TAILLE_PAGE_HDV);
       let htmlVentes = run.inventaire.length
         ? groupes
+            .slice(0, nbVentes)
             .map(
               ({
                 inst: objet,
@@ -86,7 +100,7 @@ export function ecranHdv(run, offres, meta) {
               <span class="hdv-prix vente"><small class="hdv-verbe">Vendre</small>${htmlKamas(prixRevente(objet))}</span>
             </button>`,
             )
-            .join(``)
+            .join(``) + boutonPlus(`hdv-plus-ventes`, groupes.length - nbVentes)
         : `<p class="muet">Rien à vendre : l'équipement non équipé de l'inventaire se revend ici.</p>`;
       afficherEnGardantScroll(`
         <h1>Hôtel de vente</h1>
@@ -125,6 +139,14 @@ export function ecranHdv(run, offres, meta) {
               ?.scrollIntoView({ behavior: comportementDefilement(), block: `start` }),
           ),
         );
+      document.getElementById(`hdv-plus-achats`)?.addEventListener(`click`, () => {
+        pagesAchats++;
+        afficher();
+      });
+      document.getElementById(`hdv-plus-ventes`)?.addEventListener(`click`, () => {
+        pagesVentes++;
+        afficher();
+      });
       racine.querySelectorAll(`[data-achat]`).forEach((bouton) =>
         bouton.addEventListener(`click`, () => {
           let indiceAchat = Number(bouton.dataset.achat);
