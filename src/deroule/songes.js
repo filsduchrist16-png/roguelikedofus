@@ -30,6 +30,7 @@ import { etatRun, meta, quetesMeta, ctxMeta } from "./etat.js";
 import { jouerCombat } from "./combat.js";
 import { distribuerKamas } from "./recompenses.js";
 import { traiterQuetes, quetesDeLaRun } from "./quetes.js";
+import { soinFinCombat } from "../jeu/recompensesRun.js";
 
 // Zone dont l'HDV d'un palier tire son stock : la dernière du Monde 5 (objets épiques et légendaires).
 const zoneHdv = () => getMonde(MONDE_SONGES).zones.at(-1);
@@ -139,6 +140,8 @@ async function jouerEtage(run) {
   if (!gagne) {
     return false;
   }
+  // relique de run « Bandages » : seul soin après une victoire dans les Songes
+  soinFinCombat(run);
   const kamas = distribuerKamas(
     run,
     etage.boss ? `donjon` : `combat`,

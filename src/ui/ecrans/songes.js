@@ -30,6 +30,8 @@ import {
 import { ecranEquipement } from "./equipement.js";
 import { ecranFormation } from "./formation.js";
 import { ecranCaracteristiques } from "./caracteristiques.js";
+import { classeRareteChoix, htmlContenuChoix } from "./choixRecompense.js";
+import { reliquesRunAffichees } from "../../jeu/recompensesRun.js";
 
 export const IMG_SONGES = cheminAsset(`/assets/dofus/dofus_du_cauchemar.png`);
 const pluriel = (nombre, mot) => `${nombre} ${mot}${nombre > 1 ? `s` : ``}`;
@@ -62,6 +64,10 @@ function htmlRecompense(recompense, indice, run) {
       // pas de bulle « où le trouver » : l'objet vient du songe, pas d'une zone à visiter
       return `<button class="songe-recompense" data-recompense="${indice}">${contenu}</button>`;
     }
+    case `sort`:
+    case `relique`:
+      // même carte qu'après un combat de run (src/ui/ecrans/choixRecompense.js)
+      return `<button class="songe-recompense choix-rec-songe${classeRareteChoix(recompense, run)}" data-recompense="${indice}">${htmlContenuChoix(recompense, run)}</button>`;
     case `soin`:
       contenu = `<span class="songe-rec-titre">💤 Repos</span>
         <small>Héros debout : +${Math.round(recompense.pct * 100)} % de leurs PV max. Héros K.O. relevés à ${Math.round(recompense.releve * 100)} %.</small>`;
@@ -128,18 +134,18 @@ export function ecranSonge(run, meta, onModif = () => {}) {
         </section>`
             : ``
         }
-        <div class="songe-outils">
-          <button id="songe-equip" class="secondaire songe-outil"><img src="${IMG_INVENTAIRE}" alt="" onerror="this.remove()" />Équipement${nbObjets ? ` (${nbObjets})` : ``}</button>
-          <button id="songe-formation" class="secondaire songe-outil"><img src="${IMG_FORMATION}" alt="" onerror="this.remove()" />Formation</button>
-          <button id="songe-stats" class="secondaire songe-outil"><img src="${IMG_CARACTERISTIQUES}" alt="" onerror="this.remove()" />Stats</button>
-        </div>
-        <div class="boutons-ecran songe-boutons${offre ? ` songe-boutons-libres` : ``}">
         <section class="songe-bloc">
           <h2>${boss ? `👑 Étage ${etage} : boss du songe` : `⚔ Étage ${etage}`}</h2>
           <p class="songe-info">Puissance des monstres : ×${facteurSonge(etage).toFixed(2).replace(`.`, `,`)}${boss ? ` (boss ramené à la force d'un boss du Monde 5)` : ``}. Prochain affixe après l'étage ${prochainAffixe}, palier après l'étage ${Math.ceil(etage / CONFIG_SONGES.palierTous) * CONFIG_SONGES.palierTous}.</p>
           <h3 class="songe-h3">Affixes de songe actifs</h3>
           ${htmlAffixesSonge(run.affixesSonge)}
         </section>
+        <div class="songe-outils">
+          <button id="songe-equip" class="secondaire songe-outil"><img src="${IMG_INVENTAIRE}" alt="" onerror="this.remove()" />Équipement${nbObjets ? ` (${nbObjets})` : ``}</button>
+          <button id="songe-formation" class="secondaire songe-outil"><img src="${IMG_FORMATION}" alt="" onerror="this.remove()" />Formation</button>
+          <button id="songe-stats" class="secondaire songe-outil"><img src="${IMG_CARACTERISTIQUES}" alt="" onerror="this.remove()" />Stats</button>
+        </div>
+        <div class="boutons-ecran songe-boutons${offre ? ` songe-boutons-libres` : ``}">
           <button id="songe-accueil" class="aside-icone btn-retour" title="Retour à l'accueil (la tentative reste sauvegardée)"><img src="${IMG_MENU}" alt="Accueil" onerror="this.remove()" /></button>
           <button id="songe-combat" class="primaire songe-entrer"${offre ? ` disabled` : ``}>${offre ? `Choisis d'abord une récompense` : `🌙 Entrer dans l'étage ${etage}`}</button>
         </div>
@@ -159,7 +165,9 @@ export function ecranSonge(run, meta, onModif = () => {}) {
           onModif();
           afficher();
         });
-      sousEcran(`songe-equip`, () => ecranEquipement(run.persos, run.inventaire));
+      sousEcran(`songe-equip`, () =>
+        ecranEquipement(run.persos, run.inventaire, reliquesRunAffichees(run)),
+      );
       sousEcran(`songe-formation`, () => ecranFormation(run.persos));
       sousEcran(`songe-stats`, () =>
         ecranCaracteristiques(run.persos, undefined, undefined, true, meta),

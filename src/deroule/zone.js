@@ -12,6 +12,7 @@ import { resoudreZaap, resoudreNoeud } from "./noeud.js";
 import { jouerDonjonSecret } from "./secret.js";
 import { scoreRun } from "../jeu/idolesDepart.js";
 import { afficherBandeau } from "../ui/ecrans/succes.js";
+import { proposerOffreCombat } from "./recompenses.js";
 
 // Hors combat seulement : en plein combat l'état est partiel, la run reprend au dernier nœud.
 document.addEventListener(`visibilitychange`, () => {
@@ -40,6 +41,8 @@ export async function jouerZone(run, zone, indexZone) {
     sauverRun(indexZone, run);
   }
   while (true) {
+    // reprise d'une sauvegarde faite pendant le choix de récompense : la même offre revient
+    await proposerOffreCombat(run, indexZone);
     let noeud = await ecranCarte(
       run.carte,
       run.persos,
@@ -79,6 +82,8 @@ export async function jouerZone(run, zone, indexZone) {
       await jouerDonjonSecret(run, zone);
       return `clear`;
     }
+    // nœud marqué visité d'abord : recharger pendant le choix ne rejoue pas le combat
+    await proposerOffreCombat(run, indexZone);
     sauverRun(indexZone, run);
   }
 }

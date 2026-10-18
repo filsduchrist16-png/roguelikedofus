@@ -26,6 +26,7 @@ import {
   comportementDefilement as choisirDefilement,
 } from "../sauvegarde/parametres.js";
 import { herosAmeliores } from "../jeu/inventaire.js";
+import { sortAmeliore, textesAmeliorations } from "../combat/ameliorations.js";
 export let racine;
 export function definirRacine(element) {
   racine = element;
@@ -410,6 +411,9 @@ function texteElement(sort, lanceur) {
   return `en <b>${NOMS_ELEMENTS[meilleur]}</b>${autres.length ? ` (ou ${autres.join(` / `)} si la cible y résiste moins)` : ``}`;
 }
 export function infobulleSort(sort, lanceur) {
+  // améliorations de sort de la run : valeurs, coût et cibles de la copie améliorée
+  const ameliorations = textesAmeliorations(lanceur, sort);
+  sort = sortAmeliore(lanceur, sort);
   let valeurHtml = ``;
   if (lanceur) {
     let stats = statsEffectives(lanceur);
@@ -456,6 +460,7 @@ export function infobulleSort(sort, lanceur) {
     `<div class="tip-nom">${echapperHtml(sort.nom)}<span class="tip-pa">${lanceur ? coutPA(sort, lanceur) : sort.coutPA} PA</span></div>`,
     valeurHtml ? `<div class="tip-stat">${valeurHtml}</div>` : ``,
     sort.desc ? `<div class="tip-effet">${echapperHtml(sort.desc)}</div>` : ``,
+    ...ameliorations.map((texte) => `<div class="tip-amelio">⬆ ${echapperHtml(texte)}</div>`),
     `<div class="tip-cible">🎯 ${LIBELLES_CIBLE[sort.cible] ?? sort.cible}${details.length ? ` · ${details.join(` · `)}` : ``}</div>`,
   ]
     .filter(Boolean)

@@ -9,6 +9,8 @@ import {
   htmlKamas,
   imgSymboleClasse,
 } from "../commun.js";
+import { htmlReliquesRun } from "./choixRecompense.js";
+import { reliquesRunAffichees } from "../../jeu/recompensesRun.js";
 // Mémorise les objets obtenus pendant la run (id et rareté) pour le bilan de fin. Les anciennes
 // sauvegardes n'ont pas ce compteur : on le crée au besoin ; la liste reste bornée.
 export function noterObjetsObtenus(stats, objets) {
@@ -107,6 +109,7 @@ export function ecranRecap(run, victoire, quetes = [], debloques = [], songes = 
         .reduce((somme, valeur) => somme + valeur, 0)
         .toLocaleString(`fr-FR`)}</h3>
       <div class="recap-degats">${htmlLignes}</div>
+      ${htmlReliquesRun(reliquesRunAffichees(run), `<span class="recap-reliques-titre">Reliques de run :</span>`)}
       ${stats.reliques?.length ? `<div class="recap-succes">${stats.reliques.map((id) => `<span class="succes-chip nouveau">Relique : ${echapperHtml(RELIQUES[id]?.nom ?? id)}</span>`).join(``)}</div>` : ``}
       ${quetes.length ? `<div class="recap-succes">${quetes.map((quete) => `<span class="succes-chip nouveau">✓ ${echapperHtml(quete.nom)}</span>`).join(``)}</div>` : ``}
       <div class="boutons-ecran recap-boutons">

@@ -46,6 +46,7 @@ import {
   pctSoin,
   racine,
 } from "./commun.js";
+import { sortAmeliore } from "../combat/ameliorations.js";
 let combattants = [];
 let journalCombat = [];
 let titreCombat = ``;
@@ -1109,7 +1110,7 @@ function libelleCible(combattant) {
 // En visée d'un sort de ligne : l'ennemi de la ligne arrière est protégé par sa ligne avant.
 function sortDeLigne() {
   return (
-    sortChoisi?.cible === `ennemi_ligne` &&
+    sortAmeliore(combattantActif, sortChoisi)?.cible === `ennemi_ligne` &&
     combattantActif &&
     sommeEffets(combattantActif, `ignoreLigne`) <= 0
   );
@@ -1407,7 +1408,7 @@ function htmlBoutonSort(lanceur, sort, touche, icone, arme = false) {
   } else if (!raison && max >= 2) {
     etiquette = `${max - lances}/${max}`;
   }
-  const libelle = `${sort.nom}${arme ? `, attaque d'arme` : ``}${
+  const libelle = `${sort.nom}${arme ? `, attaque d'arme` : ``}${lanceur.ameliorations?.[sort.id]?.length ? `, amélioré` : ``}${
     raison ? ` : ${raison}` : max >= 2 ? ` : ${max - lances}/${max} lancers restants` : ``
   }`;
   const classes = [
@@ -1424,6 +1425,7 @@ function htmlBoutonSort(lanceur, sort, touche, icone, arme = false) {
         <span class="sort-pa-badge"><img src="${IMG_ETOILE}" alt="" onerror="this.remove()" /><b>${coutPA(sort, lanceur)}</b></span>
         ${icone}
         ${pastilleElementSort(sort, lanceur)}
+        ${lanceur.ameliorations?.[sort.id]?.length ? `<span class="sort-amelio" aria-hidden="true">⬆</span>` : ``}
         ${recharge > 0 ? `<span class="sort-cd" title="Rechargement : ${recharge} tour(s)">${recharge}</span>` : ``}
         ${etiquette ? `<span class="sort-etiquette${raison ? `` : ` dispo`}">${echapperHtml(etiquette)}</span>` : ``}
       </button>`;

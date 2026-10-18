@@ -52,6 +52,7 @@ import {
   NOMS_ELEMENTS,
   NOMS_STATS,
 } from "../commun.js";
+import { htmlReliquesRun } from "./choixRecompense.js";
 let triArmurerie = `toile`;
 let filtreSlot = `tout`;
 const ORDRE_VERDICT = [`mieux`, `mitige`, `egal`, `moins`, `impossible`];
@@ -296,7 +297,8 @@ function htmlFicheObjet(inst, persos, perso, porteePar, quantite, emplacementPor
       <details class="fiche-obtention"><summary>Où le trouver</summary><p>${echapperHtml(texteObtentionObjet(inst.id)).replace(/\n/g, `<br>`)}</p></details>
     </section>`;
 }
-export function ecranEquipement(persos, inventaire) {
+// reliques (facultatif) : reliques de run affichées sous le titre ({ icone, nom, desc }).
+export function ecranEquipement(persos, inventaire, reliques = []) {
   // à chaque ouverture, le filtre repart sur « Tout » (le tri, lui, est gardé)
   filtreSlot = `tout`;
   return new Promise((resolve) => {
@@ -455,6 +457,7 @@ export function ecranEquipement(persos, inventaire) {
       const boutonAuto = `<button id="equip-auto" class="primaire petit"${nbAuto ? `` : ` disabled`} title="${nbAuto ? `Équipe sur chaque héros les objets qui font gagner des PA (objet ou panoplie qui se complète) ou des dégâts, sans en faire perdre` : `Rien à améliorer dans l'inventaire pour le moment`}">⚡ Équiper le meilleur${nbAuto ? ` (${nbAuto})` : ``}</button>`;
       afficherEcran(`
         <h1>Équipement</h1>
+        ${htmlReliquesRun(reliques)}
         <div class="equip-onglets">${htmlOnglets}</div>
         <div class="equip-corps">
           <div class="equip-col">

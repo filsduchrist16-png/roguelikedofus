@@ -14,6 +14,9 @@ import { bonusEquipeRun, idoleActive } from "../jeu/rencontres.js";
 import { noterObjetsObtenus } from "../ui/ecrans/recap.js";
 import { ecranButin } from "../ui/ecrans/butin.js";
 import { gainKamas, ajouterKamas } from "../jeu/economie.js";
+import { resoudreOffreCombat } from "../jeu/recompensesRun.js";
+import { ecranChoixRecompense } from "../ui/ecrans/choixRecompense.js";
+import { sauverRun } from "../sauvegarde/run.js";
 
 // Renvoie l'XP donnée à chaque héros (0 si tous sont au niveau max du monde)
 // et le nombre de héros qui ont gagné au moins un niveau.
@@ -81,4 +84,19 @@ export function soignerAvecGain(run, pct) {
   let avant = run.persos.reduce((somme, perso) => somme + Math.max(0, perso.pvActuels), 0);
   soignerEquipe(run, pct);
   return run.persos.reduce((somme, perso) => somme + Math.max(0, perso.pvActuels), 0) - avant;
+}
+// Choix de récompense en attente (après un combat normal ou élite) : la run est sauvegardée avec
+// l'offre avant de l'afficher, pour qu'un rechargement propose exactement les mêmes cartes.
+export async function proposerOffreCombat(run, zoneIdx) {
+  if (!run.offreCombat?.choix?.length) {
+    run.offreCombat = null;
+    return;
+  }
+  sauverRun(zoneIdx, run);
+  const indice = await ecranChoixRecompense(run.offreCombat, run);
+  const texte = resoudreOffreCombat(run, indice);
+  sauverRun(zoneIdx, run);
+  if (texte) {
+    afficherBandeau(texte);
+  }
 }

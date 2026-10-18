@@ -16,7 +16,7 @@ import {
   distribuerButin,
   soignerAvecGain,
 } from "./recompenses.js";
-import { calculerXpCombat, CONFIG_ARCHI, XP_PAR_COMBAT } from "../jeu/config.js";
+import { calculerXpCombat, CONFIG_ARCHI, XP_PAR_COMBAT, getMonde } from "../jeu/config.js";
 import { texteBilan } from "../ui/finCombat.js";
 import { secretDuMonde, CHANCES_CLE, nomCle } from "../jeu/secret.js";
 import { ecranMessage } from "../ui/ecrans/message.js";
@@ -31,6 +31,13 @@ import { ecranHdv } from "../ui/ecrans/hdv.js";
 import { ecranForgemagie } from "../ui/ecrans/forgemagie.js";
 import { jouerRencontre } from "./rencontres.js";
 import { tirerTypeZaap } from "../carte/generation.js";
+import {
+  multKamasEliteRun,
+  multXpRun,
+  soinFinCombat,
+  soinTaverneRun,
+  tirerOffreCombat,
+} from "../jeu/recompensesRun.js";
 
 export const ARTICLES_NOEUDS = {
   combat: `un combat`,
@@ -43,6 +50,12 @@ export const ARTICLES_NOEUDS = {
   forgemagie: `une Forgemagie`,
   rencontre: `une rencontre`,
 };
+// Avancée dans le monde (0 à la première zone, 1 à la dernière) : les offres s'améliorent.
+function progressionDansMonde(run, zoneId) {
+  const zones = getMonde(run.trancheId).zones;
+  const indice = zones.indexOf(zoneId);
+  return indice < 0 || zones.length < 2 ? 0 : indice / (zones.length - 1);
+}
 export async function resoudreNoeud(run, type, combatId, xpCombat, zone, eliteModifs) {
   let zoneId = zone?.id;
   switch (type) {
@@ -58,6 +71,7 @@ export async function resoudreNoeud(run, type, combatId, xpCombat, zone, eliteMo
         return `wipe`;
       }
       recupererApresVictoire(run);
+      soinFinCombat(run);
       let numZone = zoneId ? numeroZone(zoneId) : 1;
       let idole = idoleActive(run, zoneId);
       let bonusDefi = defiOk ? 1 + BONUS_DEFI : 1;
@@ -65,12 +79,15 @@ export async function resoudreNoeud(run, type, combatId, xpCombat, zone, eliteMo
         run,
         type,
         numZone,
-        bonusDefi * (idole?.kamasMult ?? 1) * (prime ? 2 : 1),
+        bonusDefi * (idole?.kamasMult ?? 1) * (prime ? 2 : 1) * multKamasEliteRun(run, type),
       );
       let { xp, niveaux } = gagnerXpEquipe(
         run,
         Math.round(
-          calculerXpCombat(xpCombat, numZone, run.trancheId) * bonusDefi * (idole?.xpMult ?? 1),
+          calculerXpCombat(xpCombat, numZone, run.trancheId) *
+            bonusDefi *
+            (idole?.xpMult ?? 1) *
+            multXpRun(run),
         ),
       );
       await distribuerButin(
@@ -92,6 +109,14 @@ export async function resoudreNoeud(run, type, combatId, xpCombat, zone, eliteMo
           `Un des monstres portait une clé : elle ouvre le donjon secret du monde, ${secretDuMonde(run.trancheId).nom}.`,
         );
       }
+      // choix de récompense : tiré maintenant, proposé par jouerZone une fois le nœud visité et
+      // la run sauvegardée (un rechargement montre la même offre)
+      run.offreCombat = tirerOffreCombat(run, {
+        elite: type === `combat_dur`,
+        numZone,
+        progression: progressionDansMonde(run, zoneId),
+        rng: Math.random,
+      });
       await traiterQuetes(run, verifierQuetesMeta(quetesMeta(), ctxMeta()));
       return `continue`;
     }
@@ -104,7 +129,7 @@ export async function resoudreNoeud(run, type, combatId, xpCombat, zone, eliteMo
         return `continue`;
       }
       run.stats.tavernes = (run.stats.tavernes ?? 0) + 1;
-      let pctSoin = pctSoinTaverne(run.ascension);
+      let pctSoin = soinTaverneRun(run, pctSoinTaverne(run.ascension));
       let effets = effetsDifficulte(run.ascension);
       let recrues = tirerRecrues(run, Math.random);
       let choix = await ecranTaverne(
@@ -178,12 +203,14 @@ export async function resoudreNoeud(run, type, combatId, xpCombat, zone, eliteMo
           idoleDonjon?.kamasMult ?? 1,
         );
       }
+      soinFinCombat(run);
       let { xp, niveaux } = gagnerXpEquipe(
         run,
         Math.round(
           calculerXpCombat(XP_PAR_COMBAT.donjon, zoneId ? numeroZone(zoneId) : 1, run.trancheId) *
             bonusDefi *
-            (idoleDonjon?.xpMult ?? 1),
+            (idoleDonjon?.xpMult ?? 1) *
+            multXpRun(run),
         ),
       );
       await distribuerButin(

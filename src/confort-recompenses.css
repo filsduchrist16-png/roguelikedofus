@@ -1,0 +1,169 @@
+/* Choix de récompense après un combat (cartes amélioration de sort / relique de run / bonus),
+   améliorations sur les sorts en combat et reliques de run (équipement, bilan). Mobile d'abord. */
+.choix-rec-liste {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin: 10px 0 4px;
+}
+@media (min-width: 760px) {
+  .choix-rec-liste {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.choix-rec-carte,
+.songe-recompense.choix-rec-songe {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 72px;
+  min-width: 0;
+  padding: 10px 12px;
+  text-align: left;
+  border: 2px solid var(--r-commun);
+  border-radius: 12px;
+  background: var(--panel-solide);
+  color: var(--txt);
+  cursor: pointer;
+  font: inherit;
+}
+.choix-rec-carte.choix-rec-rare,
+.songe-recompense.choix-rec-rare {
+  border-color: var(--r-rare);
+  box-shadow: 0 0 9px #3a8fe655;
+}
+.choix-rec-carte.choix-rec-epique,
+.songe-recompense.choix-rec-epique {
+  border-color: var(--r-epique);
+  box-shadow: 0 0 10px #a44fd060;
+}
+.choix-rec-carte:hover:not(:disabled),
+.choix-rec-carte:focus-visible {
+  background: var(--panel-2);
+}
+.choix-rec-carte:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+.choix-rec-icone {
+  position: relative;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  line-height: 1;
+}
+.choix-rec-icone-sort img {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.choix-rec-fleche {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  min-width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  border-radius: 9px;
+  background: var(--or);
+  color: #3a2c1a;
+}
+.choix-rec-texte {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.choix-rec-type {
+  font-size: max(11px, 0.72rem);
+  color: var(--muet);
+  font-weight: 700;
+}
+.choix-rec-rarete {
+  font-weight: 800;
+}
+.choix-rec-commun .choix-rec-rarete {
+  color: #3d8a42;
+}
+.choix-rec-rare .choix-rec-rarete {
+  color: #2a6fb8;
+}
+.choix-rec-epique .choix-rec-rarete {
+  color: #8a3bb3;
+}
+.choix-rec-titre {
+  font-size: max(14px, 0.95rem);
+  line-height: 1.2;
+}
+.choix-rec-effet {
+  font-size: max(13px, 0.85rem);
+  line-height: 1.3;
+}
+.choix-rec-boutons button {
+  min-height: 44px;
+}
+.choix-rec-passer-gain .kamas img {
+  width: 14px;
+  height: 14px;
+  vertical-align: -2px;
+}
+
+/* Sort amélioré en combat : marqueur ⬆ sur l'icône, ligne dans l'info du sort */
+.sort .sort-amelio {
+  position: absolute;
+  left: -4px;
+  top: -4px;
+  z-index: 6;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 2px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1;
+  border-radius: 9px;
+  background: var(--or);
+  color: #3a2c1a;
+  box-shadow: 0 0 0 1px #3a2c1a88;
+}
+.tip-amelio {
+  margin-top: 4px;
+  font-size: max(12px, 0.8rem);
+  font-weight: 700;
+  color: var(--or-texte);
+}
+
+/* Reliques de run : barre dans l'équipement et le bilan */
+.reliques-run {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0;
+}
+.relique-run {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  padding: 3px 9px;
+  font-size: max(12px, 0.8rem);
+  font-weight: 700;
+  border: 1px solid var(--bord-clair);
+  border-radius: 16px;
+  background: var(--panel-2);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.recap-reliques-titre {
+  align-self: center;
+  font-size: max(12px, 0.8rem);
+  font-weight: 800;
+}

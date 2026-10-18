@@ -553,7 +553,11 @@ export function ecranCarte(
         onModif();
       });
       sousEcran(`carte-equip`, async () => {
-        await ecranEquipement(persos, inventaire);
+        await ecranEquipement(
+          persos,
+          inventaire,
+          effets.filter((effet) => effet.reliqueRun),
+        );
         onModif();
       });
       sousEcran(`carte-bestiaire`, () => ecranBestiaire(meta));
