@@ -10,8 +10,10 @@ import {
   bonusEquipement,
   compterPanoplies,
   desequiper,
+  emplacementCible,
   emplacementPossible,
   equiperObjet,
+  peutEquiper,
   pvMaxPerso,
 } from "../../jeu/run.js";
 import { emplacementsDuType, typeDeEmplacement } from "../../jeu/emplacements.js";
@@ -270,6 +272,71 @@ function htmlBoutonFavori(inst) {
   const favori = estFavori(parametres.favoris, inst);
   return `<div class="fiche-favori"><button class="secondaire petit${favori ? ` on` : ``}" data-favori aria-pressed="${favori}" title="Un favori n'est jamais vendu par les ventes groupées de l'HDV">${favori ? `★ Favori` : `☆ Marquer comme favori`}</button></div>`;
 }
+/**
+ * Donne l'objet porté par `donneur` (emplacement) à `receveur`, en un geste : l'objet que le
+ * receveur portait à cet endroit passe au donneur s'il peut le porter (échange), sinon il retourne
+ * dans l'inventaire. Renvoie { inst, ancien, echange } ou null si le receveur ne peut pas le porter.
+ */
+export function donnerObjet(inventaire, donneur, emplacement, receveur) {
+  const inst = donneur.equipement[emplacement];
+  if (!inst || !receveur || receveur === donneur || !peutEquiper(receveur, inst.id)) {
+    return null;
+  }
+  const cible = emplacementCible(receveur, inst);
+  if (!cible || !emplacementPossible(receveur, inst, cible)) {
+    return null;
+  }
+  const ancien = receveur.equipement[cible];
+  delete donneur.equipement[emplacement];
+  receveur.equipement[cible] = inst;
+  let echange = false;
+  if (ancien) {
+    if (peutEquiper(donneur, ancien.id) && emplacementPossible(donneur, ancien, emplacement)) {
+      donneur.equipement[emplacement] = ancien;
+      echange = true;
+    } else {
+      inventaire.push(ancien);
+    }
+  }
+  for (const heros of [donneur, receveur]) {
+    heros.pvActuels = Math.min(heros.pvActuels, pvMaxPerso(heros));
+  }
+  return { inst, ancien, echange };
+}
+// Objet porté : ce qu'il changerait chez chacun des autres héros, et ce que le porteur recevrait en
+// échange (l'objet que l'autre porte à cet endroit).
+function htmlDonnerA(inst, persos, porteePar, emplacementPorte) {
+  const autres = persos.filter((heros) => heros !== porteePar);
+  if (!autres.length) {
+    return ``;
+  }
+  const lignes = autres
+    .map((heros) => {
+      const comparaison = comparerObjet(inst, heros);
+      const ancien = comparaison.actuel;
+      const retour =
+        ancien &&
+        peutEquiper(porteePar, ancien.id) &&
+        emplacementPossible(porteePar, ancien, emplacementPorte)
+          ? comparerObjet(ancien, porteePar, emplacementPorte)
+          : null;
+      const nomAncien = ancien ? echapperHtml(EQUIPEMENTS[ancien.id]?.nom ?? ancien.id) : ``;
+      const echange = ancien
+        ? retour
+          ? `${echapperHtml(nomClasse(porteePar))} reçoit ${nomAncien} : ${htmlDeltasCompacts(retour.deltas, 4) || `aucun changement`}`
+          : `${nomAncien} retourne dans l'inventaire`
+        : `emplacement vide`;
+      const impossible = comparaison.verdict === `impossible`;
+      return `<li>
+        <span class="fiche-heros-nom"><img src="${imgSymboleClasse(heros.classeId)}" alt="" onerror="this.remove()" />${echapperHtml(nomClasse(heros))}</span>
+        ${htmlVerdict(comparaison)}
+        <span class="fiche-heros-detail">${impossible ? `Équipable seulement en ligne avant.` : `${htmlDeltasCompacts(comparaison.deltas, 6) || `aucun changement de stats`} · ${echange}`}</span>
+        <span class="fiche-heros-boutons"><button class="secondaire" data-donner="${persos.indexOf(heros)}" ${impossible ? `disabled` : ``}>${ancien && retour ? `⇄ Échanger` : `➜ Donner`}</button></span>
+      </li>`;
+    })
+    .join(``);
+  return `<h4 class="fiche-sous-titre">Comparer et donner à un autre héros</h4><ul class="fiche-heros fiche-donner">${lignes}</ul>`;
+}
 // Fiche d'un objet : tout ce qu'il donne, d'où il vient, et ce qu'il changerait pour chaque héros.
 function htmlFicheObjet(inst, persos, perso, porteePar, quantite, emplacementPorte) {
   const def = EQUIPEMENTS[inst.id];
@@ -290,7 +357,8 @@ function htmlFicheObjet(inst, persos, perso, porteePar, quantite, emplacementPor
   };
   const lignesHeros = porteePar
     ? `<p class="fiche-porte">Porté par <b>${echapperHtml(nomClasse(porteePar))}</b>${emplacementPorte && emplacementPorte !== def.slot ? ` (${NOMS_EMPLACEMENTS[emplacementPorte]})` : ``}.</p>
-       <div class="fiche-actions"><button class="secondaire" data-retirer="${emplacementPorte ?? def.slot}">Retirer (retourne dans l'inventaire)</button></div>`
+       <div class="fiche-actions"><button class="secondaire" data-retirer="${emplacementPorte ?? def.slot}">Retirer (retourne dans l'inventaire)</button></div>
+       ${htmlDonnerA(inst, persos, porteePar, emplacementPorte ?? def.slot)}`
     : `<h4 class="fiche-sous-titre">Sur quel héros ?</h4>
        <ul class="fiche-heros">${persos
          .map((heros, indice) => {
@@ -776,6 +844,26 @@ export function ecranEquipement(persos, inventaire, reliques = []) {
       document
         .querySelector(`[data-retirer]`)
         ?.addEventListener(`click`, (ev) => desequiperSlot(ev.currentTarget.dataset.retirer));
+      // objet porté : le donner (ou l'échanger) à un autre héros en un geste
+      document.querySelectorAll(`[data-donner]`).forEach((bouton) =>
+        bouton.addEventListener(`click`, () => {
+          const emplacement = selection?.slot;
+          const receveur = persos[Number(bouton.dataset.donner)];
+          const resultat = emplacement && donnerObjet(inventaire, heros, emplacement, receveur);
+          if (!resultat) {
+            return;
+          }
+          const nom = EQUIPEMENTS[resultat.inst.id]?.nom ?? resultat.inst.id;
+          const ancien = resultat.ancien && (EQUIPEMENTS[resultat.ancien.id]?.nom ?? ``);
+          selection = null;
+          afficher();
+          afficherBandeau(
+            resultat.echange
+              ? `⇄ ${nom} passe à ${nomClasse(receveur)}, ${ancien} à ${nomClasse(heros)}`
+              : `➜ ${nom} passe à ${nomClasse(receveur)}${ancien ? ` (${ancien} dans l'inventaire)` : ``}`,
+          );
+        }),
+      );
       if (fiche) {
         document.querySelector(`.fiche-fermer`)?.focus({ preventScroll: true });
       } else if (photoAnnul && messageAuto) {

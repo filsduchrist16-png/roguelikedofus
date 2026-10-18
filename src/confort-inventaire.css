@@ -705,3 +705,9 @@
   gap: 8px;
   margin-bottom: 6px;
 }
+
+/* Fiche d'un objet porté (1.9.0) : « Comparer et donner à un autre héros », boutons d'au moins 44 px */
+.fiche-actions button,
+.fiche-donner button {
+  min-height: 44px;
+}
