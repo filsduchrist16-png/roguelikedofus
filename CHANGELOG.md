@@ -3,6 +3,7 @@
 ## Version 1.7.0
 
 - **UI/UX — carte** : l'infobulle et le panneau d'une case élite annoncent tous ses affixes ; dès Extrême (2 affixes), celui que la carte ne connaît pas encore est annoncé « + 1 autre affixe tiré au hasard au début du combat (difficulté) », et l'étiquette de la case devient « Combat dur · Véloces +1 ». Sur téléphone, les kamas passent en pastille sur le bord haut de la barre d'équipe au lieu d'occuper seuls une ligne sous les héros.
+- **UI/UX — Songes** : l'écran d'étage montre d'abord le palier puis le choix de récompense, avant la puissance de l'étage et ses affixes ; tant qu'une récompense reste à choisir, la barre du bas (bouton « Entrer », alors inutilisable) n'est plus collée à l'écran et ne recouvre plus les récompenses. Un objet proposé n'affiche plus la bulle « où le trouver » (hors sujet dans un songe) mais les héros pour qui il est une amélioration (▲ Iop).
 
 ## Version 1.6.0
 

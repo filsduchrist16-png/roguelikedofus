@@ -661,3 +661,9 @@ body.couleurs-adaptees .combat .carte:not(.carte-joueur) .pv-barre:not(.ko) {
   border: 1px solid var(--or);
   background: #f7c44f33;
 }
+
+/* Songes : tant qu'une récompense reste à choisir, le bouton « Entrer » est inutilisable ; la barre
+   reprend sa place en fin d'écran au lieu de rester collée en bas et de couvrir les récompenses. */
+.ecran .boutons-ecran.songe-boutons-libres {
+  position: static;
+}

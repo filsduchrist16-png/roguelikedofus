@@ -16,10 +16,10 @@ import {
   IMG_INVENTAIRE,
   IMG_MENU,
   afficherEcran,
-  attrTipObjet,
   cheminAsset,
   classeRarete,
   echapperHtml,
+  htmlBadgesHeros,
   htmlChipsObjet,
   htmlKamas,
   htmlMetaObjet,
@@ -58,8 +58,9 @@ function htmlRecompense(recompense, indice, run) {
       }
       contenu = `<span class="songe-rec-titre">🎒 Objet</span>
         <span class="songe-rec-objet${classeRarete(inst)}"><img src="${imgObjet(inst.id)}" alt="" loading="lazy" onerror="this.remove()" />
-          <span class="item-nom">${htmlNomObjet(inst)}<small><span class="ic-meta">${htmlMetaObjet(inst)}</span> ${htmlChipsObjet(inst)}</small></span></span>`;
-      return `<button class="songe-recompense" data-recompense="${indice}"${attrTipObjet(inst.id)}>${contenu}</button>`;
+          <span class="item-nom">${htmlNomObjet(inst)}<small><span class="ic-meta">${htmlMetaObjet(inst)}</span> ${htmlChipsObjet(inst)}</small>${htmlBadgesHeros(inst, run.persos)}</span></span>`;
+      // pas de bulle « où le trouver » : l'objet vient du songe, pas d'une zone à visiter
+      return `<button class="songe-recompense" data-recompense="${indice}">${contenu}</button>`;
     }
     case `soin`:
       contenu = `<span class="songe-rec-titre">💤 Repos</span>
@@ -107,12 +108,6 @@ export function ecranSonge(run, meta, onModif = () => {}) {
           </div>
         </div>
         ${htmlBarreEquipe(run.persos, run.kamas)}
-        <section class="songe-bloc">
-          <h2>${boss ? `👑 Étage ${etage} : boss du songe` : `⚔ Étage ${etage}`}</h2>
-          <p class="songe-info">Puissance des monstres : ×${facteurSonge(etage).toFixed(2).replace(`.`, `,`)}${boss ? ` (boss ramené à la force d'un boss du Monde 5)` : ``}. Prochain affixe après l'étage ${prochainAffixe}, palier après l'étage ${Math.ceil(etage / CONFIG_SONGES.palierTous) * CONFIG_SONGES.palierTous}.</p>
-          <h3 class="songe-h3">Affixes de songe actifs</h3>
-          ${htmlAffixesSonge(run.affixesSonge)}
-        </section>
         ${
           palier
             ? `<section class="songe-bloc songe-palier">
@@ -138,7 +133,13 @@ export function ecranSonge(run, meta, onModif = () => {}) {
           <button id="songe-formation" class="secondaire songe-outil"><img src="${IMG_FORMATION}" alt="" onerror="this.remove()" />Formation</button>
           <button id="songe-stats" class="secondaire songe-outil"><img src="${IMG_CARACTERISTIQUES}" alt="" onerror="this.remove()" />Stats</button>
         </div>
-        <div class="boutons-ecran songe-boutons">
+        <div class="boutons-ecran songe-boutons${offre ? ` songe-boutons-libres` : ``}">
+        <section class="songe-bloc">
+          <h2>${boss ? `👑 Étage ${etage} : boss du songe` : `⚔ Étage ${etage}`}</h2>
+          <p class="songe-info">Puissance des monstres : ×${facteurSonge(etage).toFixed(2).replace(`.`, `,`)}${boss ? ` (boss ramené à la force d'un boss du Monde 5)` : ``}. Prochain affixe après l'étage ${prochainAffixe}, palier après l'étage ${Math.ceil(etage / CONFIG_SONGES.palierTous) * CONFIG_SONGES.palierTous}.</p>
+          <h3 class="songe-h3">Affixes de songe actifs</h3>
+          ${htmlAffixesSonge(run.affixesSonge)}
+        </section>
           <button id="songe-accueil" class="aside-icone btn-retour" title="Retour à l'accueil (la tentative reste sauvegardée)"><img src="${IMG_MENU}" alt="Accueil" onerror="this.remove()" /></button>
           <button id="songe-combat" class="primaire songe-entrer"${offre ? ` disabled` : ``}>${offre ? `Choisis d'abord une récompense` : `🌙 Entrer dans l'étage ${etage}`}</button>
         </div>
