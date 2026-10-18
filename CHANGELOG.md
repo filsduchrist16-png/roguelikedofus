@@ -1,5 +1,13 @@
 # Journal des modifications
 
+## Version 1.8.0
+
+- **Confort — combat** : en visée, un appui n'importe où sur la carte d'une cible (résistance ou badge compris) lance le sort, les bulles restant lisibles hors visée ; l'aperçu des dégâts donne aussi les PV restants (« 💥 10–16 dégâts → ❤ 0–1 », bouclier compris, `pvApresCoup`) ; le dernier sort à cible est re-sélectionné tant que le héros peut le relancer (réglage, activé) ; réglage « Lancer direct sur la seule cible » (désactivé). Bouton 🤖 dans la barre : joue le tour du héros, ou toute l'équipe jusqu'à la fin du combat, avec l'IA des monstres (mode soutien si le héros a un soin, arme en dernier recours, `actionAuto`) ; ⏹ reprend la main, y compris pendant le tour des monstres ; réglable ou masqué. iPhone 13 : un sort relancé coûte 1 appui au lieu de 2, un combat entier en auto 1 appui. L'ordre des tours (frise) et la vitesse mémorisée existaient déjà.
+- **Confort — butin** : « ⚡ Équiper le meilleur » passe sous la liste, « Continuer » reste seul au même endroit en bas ; réglage « Butin : équiper le meilleur d'office » (désactivé, annulable) : 4 → 3 appuis entre la fin d'un combat et la carte (2 si on laisse le bilan se fermer seul).
+- **Confort — inventaire** : tri et filtre de l'équipement gardés d'une ouverture et d'une session à l'autre ; objets favoris (★ dans la fiche, sur la carte et à l'HDV), jamais vendus par « Vendre l'inutile » ni « Vendre tout » (« Vendre tout sauf ★ »), clé stable au rechargement (`cleFavori`) ; récapitulatif des objets d'une vente groupée ; inventaire par pages de 12 (40 objets : 10 → 4 écrans d'iPhone).
+- **Confort — écrans longs** : sections repliables mémorisées (`htmlSectionRepliable`) ; Succès : Dofus regroupés par monde, rubriques de donjons repliées d'office (9,6 → 3,1 écrans) ; Forgemagie : une section par héros, inventaire replié (7,1 → 1 avant ouverture) ; HDV : listes par pages de 6 (6,2 → 4,1) ; accueil sur téléphone : statistiques du seul monde choisi ; Paramètres : groupe « ⚡ Confort de jeu » replié.
+- **Réglages** (`rld_settings_v0`) : `reselectionSort`, `cibleUniqueDirecte`, `modeAuto`, `butinAutoEquiper`, `triInventaire`, `filtreInventaire`, `favoris`, `replis`, lus de façon tolérante (absents ou étrangers : valeurs par défaut), testés dans `tests/confort-qol.test.js`.
+
 ## Version 1.7.0
 
 - **UI/UX — carte** : l'infobulle et le panneau d'une case élite annoncent tous ses affixes ; dès Extrême (2 affixes), celui que la carte ne connaît pas encore est annoncé « + 1 autre affixe tiré au hasard au début du combat (difficulté) », et l'étiquette de la case devient « Combat dur · Véloces +1 ». Sur téléphone, les kamas passent en pastille sur le bord haut de la barre d'équipe au lieu d'occuper seuls une ligne sous les héros.
