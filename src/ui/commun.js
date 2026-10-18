@@ -4,6 +4,7 @@ import { descriptionPanoplie } from "../jeu/panoplies.js";
 import { texteObtentionDofus, texteObtentionObjet } from "../jeu/obtention.js";
 import { CLASSES, DOFUS, EQUIPEMENTS } from "../data/index.js";
 import { DIFFICULTES, DIFFICULTE_MAX, DOSSIER_ICONE_SORT, RARETES_INFO } from "../jeu/config.js";
+import { iconeEmojiSort } from "./iconesSorts.js";
 import {
   GAINS_ARCHETYPE,
   STAT_PAR_ELEMENT,
@@ -294,7 +295,9 @@ export function installerToucheEchap() {
   });
 }
 export const cheminAsset = (chemin) => `/` + chemin.replace(/^\/+/, ``);
+// sorts avancés (sans image) : leur emoji sur une pastille (src/ui/iconesSorts.js)
 export const iconeSort = (sortId) =>
+  iconeEmojiSort(sortId) ??
   cheminAsset(`/assets/spells/${DOSSIER_ICONE_SORT[sortId] ?? `monstres`}/${sortId}.png`);
 export const IMG_ETOILE = cheminAsset(`/assets/divers/etoile.png`);
 export const IMG_COEUR = cheminAsset(`/assets/divers/coeur_base.png`);

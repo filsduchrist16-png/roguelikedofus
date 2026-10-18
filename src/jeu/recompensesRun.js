@@ -8,7 +8,7 @@ import {
   ameliorationsPossibles,
 } from "../combat/ameliorations.js";
 import { ajouterKamas, gainKamas } from "./economie.js";
-import { effetsDifficulte, pvMaxPerso, soignerEquipe } from "./run.js";
+import { effetsDifficulte, pvMaxPerso, soignerEquipe, sortsAppris } from "./run.js";
 
 export const RARETES_CHOIX = [`commun`, `rare`, `epique`];
 export const NOMS_RARETES_CHOIX = { commun: `Commune`, rare: `Rare`, epique: `Épique` };
@@ -16,6 +16,9 @@ export const CONFIG_RECOMPENSES = {
   // chance que la 2e carte soit une relique de run (sinon une 2e amélioration de sort)
   // (élite : relique garantie, c'est la récompense du chemin risqué de la carte)
   chanceRelique: { normal: 0.2, elite: 1 },
+  // chance que la 3e carte soit un nouveau sort (sort avancé de la classe) au lieu d'un bonus,
+  // tant qu'un héros a encore un sort avancé à apprendre
+  chanceNouveauSort: { normal: 0.2, elite: 0.45 },
   // poids des raretés au début du monde ; `progression` (0 → 1 sur les zones du monde) les décale
   raretes: {
     normal: { commun: 72, rare: 25, epique: 3 },
@@ -258,14 +261,33 @@ const herosEligibles = (run) =>
 const cleChoix = (choix) =>
   choix.type === `sort`
     ? `sort:${choix.heros}:${choix.sort}`
-    : choix.type === `relique`
-      ? `relique:${choix.id}`
-      : `bonus:${choix.bonus}`;
+    : choix.type === `apprendre`
+      ? `apprendre:${choix.heros}`
+      : choix.type === `relique`
+        ? `relique:${choix.id}`
+        : `bonus:${choix.bonus}`;
+/** Sorts d'un héros qui peuvent recevoir une amélioration : ceux de sa classe et ceux appris. */
+const sortsAmeliorables = (perso) => [
+  ...(CLASSES[perso.classeId]?.sorts ?? []),
+  ...sortsAppris(perso),
+];
+/** Sorts avancés qu'un héros peut encore apprendre (dans l'ordre de sa classe). */
+export function sortsAApprendre(perso) {
+  const deja = new Set(sortsAppris(perso));
+  return (CLASSES[perso?.classeId]?.sortsAvances ?? []).filter((id) => SORTS[id] && !deja.has(id));
+}
+/** Un nouveau sort à apprendre pour un héros de l'équipe (ou null s'ils savent tout). */
+export function tirerApprentissage(run, rng, exclus = new Set()) {
+  const candidats = herosEligibles(run)
+    .filter((perso) => !exclus.has(`apprendre:${perso.classeId}`))
+    .flatMap((perso) => sortsAApprendre(perso).map((sort) => ({ heros: perso.classeId, sort })));
+  return candidats.length ? { type: `apprendre`, ...choisir(candidats, rng) } : null;
+}
 /** Toutes les améliorations encore possibles : [{ heros, sort, amelioration }]. */
 export function ameliorationsCandidates(run) {
   const out = [];
   for (const perso of herosEligibles(run)) {
-    for (const sortId of CLASSES[perso.classeId]?.sorts ?? []) {
+    for (const sortId of sortsAmeliorables(perso)) {
       const deja = run.ameliorations?.[perso.classeId]?.[sortId] ?? [];
       for (const id of ameliorationsPossibles(SORTS[sortId], deja)) {
         out.push({ heros: perso.classeId, sort: sortId, amelioration: id });
@@ -350,6 +372,10 @@ export function tirerOffreCombat(run, { elite = false, numZone = 1, progression 
     ajouter(tirerAmeliorationSort(run, rng, rarete, exclus)) ||
       ajouter(tirerReliqueRun(run, rng, rarete, exclus));
   }
+  // 3e carte : parfois un nouveau sort pour un héros (sorts avancés de sa classe)
+  if (rng() < CONFIG_RECOMPENSES.chanceNouveauSort[elite ? `elite` : `normal`]) {
+    ajouter(tirerApprentissage(run, rng, exclus));
+  }
   while (choix.length < 3) {
     ajouter(tirerBonus(run, rng, { type, numZone, exclus }));
   }
@@ -375,6 +401,15 @@ export function appliquerChoix(run, choix) {
         liste.push(choix.amelioration);
       }
       return `⬆ ${SORTS[choix.sort].nom} (${CLASSES[choix.heros]?.nom ?? choix.heros}) : ${def.texte(SORTS[choix.sort])}`;
+    }
+    case `apprendre`: {
+      const perso = run.persos.find((candidat) => candidat.classeId === choix.heros);
+      const sort = SORTS[choix.sort];
+      if (!perso || !sort || !CLASSES[choix.heros]?.sortsAvances?.includes(choix.sort)) {
+        return ``;
+      }
+      perso.sortsAppris = [...new Set([...sortsAppris(perso), choix.sort])];
+      return `📖 ${CLASSES[choix.heros].nom} apprend ${sort.nom} : ${sort.desc}`;
     }
     case `relique`: {
       const relique = RELIQUES_RUN[choix.id];
@@ -438,6 +473,17 @@ export function decrireChoix(choix, run) {
         sortId: choix.sort,
       };
     }
+    case `apprendre`: {
+      const sort = SORTS[choix.sort];
+      return {
+        icone: sort?.emoji ?? `📖`,
+        titre: `Nouveau sort : ${sort?.nom ?? choix.sort}`,
+        sousTitre: `Nouveau sort · ${CLASSES[choix.heros]?.nom ?? choix.heros}`,
+        effet:
+          `${sort?.desc ?? ``} ${sort ? `${sort.coutPA} PA. ` : ``}Le héros le garde pour toute la run.`.trim(),
+        rarete: `rare`,
+      };
+    }
     case `relique`: {
       const relique = RELIQUES_RUN[choix.id];
       return {
@@ -489,9 +535,14 @@ export function assainirChoix(choix) {
     case `sort`:
       return CLASSES[choix.heros] &&
         SORTS[choix.sort] &&
-        CLASSES[choix.heros].sorts?.includes(choix.sort) &&
+        (CLASSES[choix.heros].sorts?.includes(choix.sort) ||
+          CLASSES[choix.heros].sortsAvances?.includes(choix.sort)) &&
         AMELIORATIONS_SORT[choix.amelioration]
         ? { type: `sort`, heros: choix.heros, sort: choix.sort, amelioration: choix.amelioration }
+        : null;
+    case `apprendre`:
+      return CLASSES[choix.heros]?.sortsAvances?.includes(choix.sort) && SORTS[choix.sort]
+        ? { type: `apprendre`, heros: choix.heros, sort: choix.sort }
         : null;
     case `relique`:
       return reliqueRunConnue(choix.id) ? { type: `relique`, id: choix.id } : null;
@@ -536,6 +587,15 @@ export function assainirRecompensesRun(run) {
     }
   }
   run.ameliorations = ameliorations;
+  // sorts avancés appris (1.9.0) : absents = aucun, inconnus retirés
+  for (const perso of run.persos ?? []) {
+    const appris = sortsAppris(perso);
+    if (appris.length) {
+      perso.sortsAppris = appris;
+    } else {
+      delete perso.sortsAppris;
+    }
+  }
   run.reliquesRun = Array.isArray(run.reliquesRun) ? reliquesRunDe(run) : [];
   run.sacrificePv = sacrificePvRun(run);
   const bonusStats = {};

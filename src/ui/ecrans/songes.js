@@ -66,6 +66,7 @@ function htmlRecompense(recompense, indice, run) {
     }
     case `sort`:
     case `relique`:
+    case `apprendre`:
       // même carte qu'après un combat de run (src/ui/ecrans/choixRecompense.js)
       return `<button class="songe-recompense choix-rec-songe${classeRareteChoix(recompense, run)}" data-recompense="${indice}">${htmlContenuChoix(recompense, run)}</button>`;
     case `soin`:

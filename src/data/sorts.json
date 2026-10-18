@@ -3910,5 +3910,562 @@
     "baseMin": 26,
     "baseMax": 36,
     "cooldownTours": 3
+  },
+  "fleche_explosive": {
+    "baseMax": 14,
+    "baseMin": 10,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 4,
+    "desc": "La flèche explose sur la rangée visée : tous les ennemis de cette ligne sont touchés.",
+    "emoji": "💥",
+    "id": "fleche_explosive",
+    "nom": "Flèche Explosive",
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "fleche_empoisonnee": {
+    "baseMax": 10,
+    "baseMin": 8,
+    "cible": "ennemi_tous",
+    "coutPA": 3,
+    "desc": "Peut viser la ligne arrière. Empoisonne la cible : 35 % des dégâts du coup au début de chacun de ses 2 prochains tours.",
+    "emoji": "🧪",
+    "id": "fleche_empoisonnee",
+    "maxParTour": 1,
+    "nom": "Flèche Empoisonnée",
+    "poisonSiPortails": {
+      "seuil": 0,
+      "ratio": 0.35,
+      "duree": 2
+    },
+    "type": "degats"
+  },
+  "rekop": {
+    "baseMax": 30,
+    "baseMin": 4,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 4,
+    "desc": "Ecaflip joue le coup au hasard : de très faible à dévastateur (jet de 4 à 30).",
+    "emoji": "🎲",
+    "id": "rekop",
+    "nom": "Rekop",
+    "type": "degats"
+  },
+  "trefle": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "allie_tous",
+    "cooldownTours": 3,
+    "coutPA": 2,
+    "desc": "Toute l'équipe gagne +10 % de chance de coup critique pendant 2 tours.",
+    "effet": {
+      "stat": "crit",
+      "valeur": 10,
+      "duree": 2
+    },
+    "emoji": "🍀",
+    "id": "trefle",
+    "nom": "Trèfle",
+    "nonCumulable": true,
+    "type": "buff"
+  },
+  "therapie": {
+    "baseMax": 24,
+    "baseMin": 18,
+    "cible": "allie",
+    "cooldownTours": 2,
+    "coutPA": 3,
+    "desc": "Le Wakfu referme les plaies : soigne un allié.",
+    "emoji": "💗",
+    "id": "therapie",
+    "nom": "Thérapie",
+    "type": "soin"
+  },
+  "tranchant": {
+    "baseMax": 10,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 2,
+    "desc": "Un coup de Wakfu rapide et bon marché, deux fois par tour.",
+    "emoji": "🗡️",
+    "id": "tranchant",
+    "maxParTour": 2,
+    "nom": "Tranchant",
+    "type": "degats"
+  },
+  "mot_interdit": {
+    "baseMax": 14,
+    "baseMin": 10,
+    "cible": "ennemi_tous",
+    "cooldownTours": 2,
+    "coutPA": 3,
+    "desc": "Peut viser la ligne arrière. La cible ne peut plus être soignée ni régénérée pendant 2 tours.",
+    "effet": {
+      "stat": "friction",
+      "valeur": 1,
+      "duree": 2
+    },
+    "emoji": "🤐",
+    "id": "mot_interdit",
+    "nom": "Mot Interdit",
+    "type": "degats"
+  },
+  "mot_de_regeneration": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "allie",
+    "cooldownTours": 2,
+    "coutPA": 2,
+    "desc": "L'allié régénère 7 % de ses PV max au début de chacun de ses 3 prochains tours.",
+    "emoji": "🌱",
+    "hotDuree": 3,
+    "hotPct": 0.07,
+    "id": "mot_de_regeneration",
+    "nom": "Mot de Régénération",
+    "type": "buff"
+  },
+  "attaque_naturelle": {
+    "baseMax": 15,
+    "baseMin": 11,
+    "bouclierRatioDegats": 0.25,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Frappe la ligne avant et protège le Feca : bouclier égal à 25 % des dégâts infligés.",
+    "emoji": "🌿",
+    "id": "attaque_naturelle",
+    "nom": "Attaque Naturelle",
+    "type": "degats"
+  },
+  "treve": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "allie_tous",
+    "cooldownTours": 4,
+    "coutPA": 3,
+    "desc": "Toute l'équipe subit 12 % de dégâts en moins pendant 2 tours.",
+    "effet": {
+      "stat": "reductionDegats",
+      "valeur": 0.12,
+      "duree": 2
+    },
+    "emoji": "🕊️",
+    "id": "treve",
+    "nom": "Trêve",
+    "nonCumulable": true,
+    "type": "buff"
+  },
+  "gungnir": {
+    "baseMax": 19,
+    "baseMin": 14,
+    "cible": "ennemi_tous",
+    "coutPA": 4,
+    "desc": "Une lance projetée qui atteint n'importe quel ennemi, ligne arrière comprise.",
+    "emoji": "⚡",
+    "id": "gungnir",
+    "maxParTour": 1,
+    "nom": "Gungnir",
+    "type": "degats"
+  },
+  "brionac": {
+    "baseMax": 16,
+    "baseMin": 13,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "Un balayage : la cible prend tout, le reste de sa rangée 50 % des dégâts.",
+    "emoji": "🌀",
+    "id": "brionac",
+    "maxParTour": 1,
+    "nom": "Brionac",
+    "ratioLigne": 0.5,
+    "type": "degats"
+  },
+  "epee_celeste": {
+    "baseMax": 16,
+    "baseMin": 13,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 4,
+    "desc": "L'épée s'abat sur toute la rangée avant adverse.",
+    "emoji": "⚔️",
+    "id": "epee_celeste",
+    "nom": "Épée Céleste",
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "puissance_iop": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "cooldownTours": 3,
+    "coutPA": 2,
+    "desc": "Le Iop gagne +20 % de dégâts pendant 2 tours.",
+    "effet": {
+      "stat": "degatsInfliges",
+      "valeur": 0.2,
+      "duree": 2
+    },
+    "emoji": "💪",
+    "id": "puissance_iop",
+    "nom": "Puissance",
+    "nonCumulable": true,
+    "type": "buff"
+  },
+  "cubitus": {
+    "baseMax": 16,
+    "baseMin": 11,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Un coup d'os qui nourrit la Rage de l'Ouginak (+5 % de dégâts par Rage).",
+    "emoji": "🦴",
+    "id": "cubitus",
+    "maxParTour": 2,
+    "nom": "Cubitus",
+    "rage": true,
+    "type": "degats"
+  },
+  "aboiement": {
+    "baseMax": 6,
+    "baseMin": 4,
+    "cible": "ennemi_tous",
+    "cooldownTours": 2,
+    "coutPA": 2,
+    "desc": "Intimide toute une rangée : petits dégâts, et ses ennemis font 10 % de dégâts en moins à leur prochain tour.",
+    "effet": {
+      "stat": "degatsInfliges",
+      "valeur": -0.1,
+      "duree": 1
+    },
+    "emoji": "🐕",
+    "id": "aboiement",
+    "nom": "Aboiement",
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "arquebuse": {
+    "baseMax": 20,
+    "baseMin": 15,
+    "cible": "ennemi_tous",
+    "coutPA": 4,
+    "desc": "Un tir précis sur n'importe quel ennemi, ligne arrière comprise.",
+    "emoji": "🎯",
+    "id": "arquebuse",
+    "maxParTour": 1,
+    "nom": "Arquebuse",
+    "type": "degats"
+  },
+  "tromblon": {
+    "baseMax": 11,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Une gerbe de mitraille sur toute la rangée avant adverse.",
+    "emoji": "🧨",
+    "id": "tromblon",
+    "maxParTour": 1,
+    "nom": "Tromblon",
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "vent_empoisonne": {
+    "baseMax": 8,
+    "baseMin": 5,
+    "cible": "ennemi_tous",
+    "cooldownTours": 2,
+    "coutPA": 4,
+    "desc": "Une rangée au choix est infectée et empoisonnée : 50 % des dégâts du coup à chacun des 2 tours suivants.",
+    "emoji": "🍃",
+    "id": "vent_empoisonne",
+    "infecte": 2,
+    "nom": "Vent Empoisonné",
+    "poisonSiPortails": {
+      "seuil": 0,
+      "ratio": 0.5,
+      "duree": 2
+    },
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "tremblement": {
+    "baseMax": 14,
+    "baseMin": 10,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 4,
+    "desc": "La terre tremble sous la rangée avant : chaque ennemi touché a 35 % de chances de perdre 1 PA.",
+    "emoji": "🌍",
+    "id": "tremblement",
+    "nom": "Tremblement",
+    "retraitPA": 1,
+    "retraitPAChance": 0.35,
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "coupe_gorge": {
+    "baseMax": 15,
+    "baseMin": 11,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Une lame vive : le Sram récupère 20 % des dégâts infligés.",
+    "emoji": "🔪",
+    "id": "coupe_gorge",
+    "nom": "Coupe-Gorge",
+    "type": "degats",
+    "vampirismeRatio": 0.2
+  },
+  "peur": {
+    "baseMax": 8,
+    "baseMin": 5,
+    "cible": "ennemi_ligne",
+    "coutPA": 2,
+    "deplaceCible": "arriere",
+    "desc": "Effraie un ennemi de la ligne avant et le repousse en ligne arrière (un piège posé sur sa nouvelle rangée se déclenche).",
+    "emoji": "😱",
+    "id": "peur",
+    "maxParTour": 1,
+    "nom": "Peur",
+    "type": "degats"
+  },
+  "frappe_de_xelor": {
+    "baseMax": 15,
+    "baseMin": 11,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Frappe et vole le temps : une chance sur deux de retirer 1 PA à la cible.",
+    "emoji": "🕰️",
+    "id": "frappe_de_xelor",
+    "nom": "Frappe de Xélor",
+    "retraitPA": 1,
+    "retraitPAChance": 0.5,
+    "type": "degats"
+  },
+  "flou": {
+    "baseMax": 5,
+    "baseMin": 3,
+    "cible": "ennemi_tous",
+    "cooldownTours": 3,
+    "coutPA": 3,
+    "desc": "Brouille le temps d'une rangée au choix : chaque ennemi touché a 60 % de chances de perdre 1 PA.",
+    "emoji": "🌫️",
+    "id": "flou",
+    "nom": "Flou",
+    "retraitPA": 1,
+    "retraitPAChance": 0.6,
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "corbeau": {
+    "baseMax": 14,
+    "baseMin": 10,
+    "cible": "ennemi_tous",
+    "coutPA": 3,
+    "desc": "Un corbeau fond sur n'importe quel ennemi, ligne arrière comprise.",
+    "emoji": "🐦",
+    "id": "corbeau",
+    "maxParTour": 2,
+    "nom": "Corbeau",
+    "type": "degats"
+  },
+  "benediction_animale": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "allie_tous",
+    "cooldownTours": 3,
+    "coutPA": 3,
+    "desc": "Toute l'équipe (créatures comprises) gagne +10 % de résistance dans chaque élément pendant 2 tours.",
+    "effet": {
+      "stat": "resAll",
+      "valeur": 0.1,
+      "duree": 2
+    },
+    "emoji": "🦁",
+    "id": "benediction_animale",
+    "nom": "Bénédiction Animale",
+    "nonCumulable": true,
+    "type": "buff"
+  },
+  "pelle_du_jugement": {
+    "baseMax": 26,
+    "baseMin": 20,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 5,
+    "desc": "Un grand coup de pelle sur la ligne avant.",
+    "emoji": "⚖️",
+    "id": "pelle_du_jugement",
+    "nom": "Pelle du Jugement",
+    "type": "degats"
+  },
+  "maladresse": {
+    "baseMax": 6,
+    "baseMin": 4,
+    "cible": "ennemi_tous",
+    "cooldownTours": 2,
+    "coutPA": 2,
+    "desc": "Rend la cible maladroite : 25 % de chances que chacun de ses sorts échoue à son prochain tour.",
+    "effet": {
+      "stat": "echecCritique",
+      "valeur": 0.25,
+      "duree": 1
+    },
+    "emoji": "🙃",
+    "id": "maladresse",
+    "nom": "Maladresse",
+    "type": "degats"
+  },
+  "chatiment": {
+    "baseMax": 20,
+    "baseMin": 15,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 1,
+    "coutPA": 4,
+    "desc": "Le Sacrieur châtie la ligne avant et récupère 20 % des dégâts infligés.",
+    "emoji": "⛓️",
+    "id": "chatiment",
+    "nom": "Châtiment",
+    "type": "degats",
+    "vampirismeRatio": 0.2
+  },
+  "coagulation": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "cible": "soi",
+    "cooldownTours": 4,
+    "coutPA": 2,
+    "desc": "Le sang coagule : régénère 8 % des PV max sur 3 tours et réduit les dégâts subis de 10 % pendant 2 tours.",
+    "effet": {
+      "stat": "reductionDegats",
+      "valeur": 0.1,
+      "duree": 2
+    },
+    "emoji": "🩹",
+    "hotDuree": 3,
+    "hotPct": 0.08,
+    "id": "coagulation",
+    "nom": "Coagulation",
+    "type": "buff"
+  },
+  "flasque_explosive": {
+    "baseMax": 15,
+    "baseMin": 11,
+    "cible": "ennemi_ligne",
+    "coutPA": 4,
+    "desc": "La flasque éclate sur toute la rangée avant (+30 % de dégâts en état Saoul).",
+    "emoji": "🍶",
+    "id": "flasque_explosive",
+    "maxParTour": 1,
+    "nom": "Flasque Explosive",
+    "selonEtat": {
+      "saoul": {
+        "multEtat": 1.3
+      }
+    },
+    "type": "degats",
+    "zoneLigne": true
+  },
+  "lait_de_bambou": {
+    "baseMax": 24,
+    "baseMin": 18,
+    "cible": "allie",
+    "cooldownTours": 2,
+    "coutPA": 3,
+    "desc": "Une rasade de lait de bambou : soigne un allié.",
+    "emoji": "🥛",
+    "id": "lait_de_bambou",
+    "nom": "Lait de Bambou",
+    "type": "soin"
+  },
+  "martelement": {
+    "baseMax": 15,
+    "baseMin": 11,
+    "cible": "ennemi_ligne",
+    "coutPA": 3,
+    "desc": "Frappe la ligne avant, deux fois par tour (+25 % de dégâts sous le Masque du Psychopathe).",
+    "emoji": "🔨",
+    "id": "martelement",
+    "maxParTour": 2,
+    "nom": "Martèlement",
+    "selonEtat": {
+      "psychopathe": {
+        "multEtat": 1.25
+      }
+    },
+    "type": "degats"
+  },
+  "bastion": {
+    "baseMax": 0,
+    "baseMin": 0,
+    "bouclierPortee": {
+      "pct": 0.12,
+      "portee": "rangee_avant",
+      "tours": 2
+    },
+    "cible": "soi",
+    "cooldownTours": 3,
+    "coutPA": 3,
+    "desc": "Toute la ligne avant alliée gagne un bouclier de 12 % de ses PV max pendant 2 tours.",
+    "emoji": "🏰",
+    "id": "bastion",
+    "nom": "Bastion",
+    "type": "buff"
+  },
+  "torpille": {
+    "baseMax": 19,
+    "baseMin": 15,
+    "cible": "ennemi_tous",
+    "coutPA": 4,
+    "desc": "Une torpille sur n'importe quel ennemi, ligne arrière comprise.",
+    "emoji": "🚀",
+    "id": "torpille",
+    "maxParTour": 1,
+    "nom": "Torpille",
+    "type": "degats"
+  },
+  "corrosion": {
+    "baseMax": 11,
+    "baseMin": 8,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 2,
+    "coutPA": 3,
+    "desc": "Ronge l'armure de la cible : −10 % de résistance dans chaque élément pendant 2 tours.",
+    "effet": {
+      "stat": "resAll",
+      "valeur": -0.1,
+      "duree": 2
+    },
+    "emoji": "⚗️",
+    "id": "corrosion",
+    "nom": "Corrosion",
+    "type": "degats"
+  },
+  "meteore": {
+    "baseMax": 25,
+    "baseMin": 19,
+    "cible": "ennemi_tous",
+    "cooldownTours": 2,
+    "coutPA": 5,
+    "desc": "Un météore de Feu sur n'importe quel ennemi, ligne arrière comprise. Pose une marque Feu.",
+    "element": "feu",
+    "emoji": "☄️",
+    "id": "meteore",
+    "marqueElement": "feu",
+    "nom": "Météore",
+    "type": "degats"
+  },
+  "torrent": {
+    "baseMax": 14,
+    "baseMin": 10,
+    "cible": "ennemi_ligne",
+    "cooldownTours": 1,
+    "coutPA": 4,
+    "desc": "Un torrent d'Eau sur toute la rangée avant. Pose une marque Eau sur chaque ennemi touché.",
+    "element": "eau",
+    "emoji": "🌊",
+    "id": "torrent",
+    "marqueElement": "eau",
+    "nom": "Torrent",
+    "type": "degats",
+    "zoneLigne": true
   }
 }

@@ -19,18 +19,26 @@ export function ecranEncyclopedie() {
     let htmlFiche = (classeId) => {
       let classe = CLASSES[classeId];
       let cid = classeId;
-      let htmlSorts = classe.sorts
-        .map((sortId) => {
-          let sort = SORTS[sortId];
-          if (sort) {
-            return `<div class="ency-sort">
+      let htmlSortsDe = (ids) =>
+        ids
+          .map((sortId) => {
+            let sort = SORTS[sortId];
+            if (sort) {
+              return `<div class="ency-sort">
             <span class="ency-sort-icone"${attrElementSort(sort, null, CLASSES[cid].elements)}><img src="${iconeSort(sortId)}" alt="" loading="lazy" onerror="this.remove()" /></span>
             <div class="ency-sort-detail">${infobulleSort(sort, null)}</div>
           </div>`;
-          }
-          return ``;
-        })
-        .join(``);
+            }
+            return ``;
+          })
+          .join(``);
+      let htmlSorts = htmlSortsDe(classe.sorts);
+      // sorts avancés : appris pendant une run (nouveau sort après un combat, ou au camp)
+      let htmlAvances = (classe.sortsAvances ?? []).length
+        ? `<h3 class="ency-avances-titre">📖 Sorts à apprendre en run</h3>
+          <p class="muet ency-avances-aide">Proposés par une récompense « Nouveau sort » après un combat, ou en étudiant au camp de repos. Un héros les garde jusqu'à la fin de la run.</p>
+          <div class="ency-sorts">${htmlSortsDe(classe.sortsAvances)}</div>`
+        : ``;
       return `
         <div class="ency-fiche">
           <div class="ency-tete">
@@ -45,6 +53,7 @@ export function ecranEncyclopedie() {
             </div>
           </div>
           <div class="ency-sorts">${htmlSorts}</div>
+          ${htmlAvances}
         </div>`;
     };
     let afficher = () => {

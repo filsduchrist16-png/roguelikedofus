@@ -8,6 +8,7 @@ import {
   poidsRaretes,
   reliquesRunDe,
   tirerAmeliorationSort,
+  tirerApprentissage,
   tirerReliqueRun,
 } from "./recompensesRun.js";
 
@@ -44,7 +45,9 @@ export function optionsCamp(run, rng, progression = 0) {
     exclus.add(`sort:${choix.heros}:${choix.sort}`);
     ameliorations.push(choix);
   }
-  return { soinPct: CONFIG_CARTE.campSoin, ameliorations };
+  // étudier : un nouveau sort (sort avancé de la classe) pour un héros, s'il en reste à apprendre
+  const apprendre = tirerApprentissage(run, rng);
+  return { soinPct: CONFIG_CARTE.campSoin, ameliorations, apprendre };
 }
 /** Repos au camp : renvoie les PV rendus à l'équipe. */
 export function reposCamp(run, pct = CONFIG_CARTE.campSoin) {

@@ -19,6 +19,10 @@
       "tir_puissant",
       "acuite_absolue"
     ],
+    "sortsAvances": [
+      "fleche_explosive",
+      "fleche_empoisonnee"
+    ],
     "stats": {
       "agilite": 0,
       "force": 0,
@@ -46,6 +50,10 @@
       "griffe_joueuse",
       "roulette",
       "chateau_de_cartes"
+    ],
+    "sortsAvances": [
+      "rekop",
+      "trefle"
     ],
     "stats": {
       "agilite": 0,
@@ -75,6 +83,10 @@
       "coalition",
       "conjuration"
     ],
+    "sortsAvances": [
+      "therapie",
+      "tranchant"
+    ],
     "stats": {
       "agilite": 0,
       "force": 0,
@@ -102,6 +114,10 @@
       "mot_de_solidarite",
       "mot_galvanisant",
       "mot_stimulant"
+    ],
+    "sortsAvances": [
+      "mot_interdit",
+      "mot_de_regeneration"
     ],
     "stats": {
       "agilite": 0,
@@ -132,6 +148,10 @@
       "egide",
       "fortification"
     ],
+    "sortsAvances": [
+      "attaque_naturelle",
+      "treve"
+    ],
     "stats": {
       "agilite": 0,
       "force": 0,
@@ -159,6 +179,10 @@
       "lance",
       "vajra",
       "etreinte_de_valkyr"
+    ],
+    "sortsAvances": [
+      "gungnir",
+      "brionac"
     ],
     "stats": {
       "agilite": 0,
@@ -188,6 +212,10 @@
       "precipitation",
       "vertu"
     ],
+    "sortsAvances": [
+      "epee_celeste",
+      "puissance_iop"
+    ],
     "stats": {
       "agilite": 0,
       "force": 0,
@@ -215,6 +243,10 @@
       "tetanisation",
       "tibias",
       "apaisement"
+    ],
+    "sortsAvances": [
+      "cubitus",
+      "aboiement"
     ],
     "stats": {
       "agilite": 0,
@@ -244,6 +276,10 @@
       "roublardise",
       "resquille"
     ],
+    "sortsAvances": [
+      "arquebuse",
+      "tromblon"
+    ],
     "stats": {
       "agilite": 0,
       "force": 0,
@@ -271,6 +307,10 @@
       "contagion_sadida",
       "inoculation",
       "la_bloqueuse"
+    ],
+    "sortsAvances": [
+      "vent_empoisonne",
+      "tremblement"
     ],
     "stats": {
       "agilite": 0,
@@ -300,6 +340,10 @@
       "concentration_de_chakra",
       "brume"
     ],
+    "sortsAvances": [
+      "coupe_gorge",
+      "peur"
+    ],
     "stats": {
       "agilite": 0,
       "force": 0,
@@ -327,6 +371,10 @@
       "rayon_obscur",
       "cadran_de_xelor",
       "premonition"
+    ],
+    "sortsAvances": [
+      "frappe_de_xelor",
+      "flou"
     ],
     "stats": {
       "agilite": 0,
@@ -356,6 +404,10 @@
       "invocation_crapipou",
       "piqure_motivante"
     ],
+    "sortsAvances": [
+      "corbeau",
+      "benediction_animale"
+    ],
     "stats": {
       "agilite": 0,
       "force": 0,
@@ -383,6 +435,10 @@
       "pelle_fantomatique",
       "sac_anime",
       "boite_de_pandore"
+    ],
+    "sortsAvances": [
+      "pelle_du_jugement",
+      "maladresse"
     ],
     "stats": {
       "agilite": 0,
@@ -413,6 +469,10 @@
       "transfusion",
       "sacrifice"
     ],
+    "sortsAvances": [
+      "chatiment",
+      "coagulation"
+    ],
     "stats": {
       "agilite": 0,
       "force": 0,
@@ -441,6 +501,10 @@
       "karcham",
       "fermentation",
       "eau_de_vie"
+    ],
+    "sortsAvances": [
+      "flasque_explosive",
+      "lait_de_bambou"
     ],
     "stats": {
       "agilite": 0,
@@ -471,6 +535,10 @@
       "furia",
       "cabriole"
     ],
+    "sortsAvances": [
+      "martelement",
+      "bastion"
+    ],
     "stats": {
       "agilite": 0,
       "force": 0,
@@ -499,6 +567,10 @@
       "ressac",
       "scaphandre"
     ],
+    "sortsAvances": [
+      "torpille",
+      "corrosion"
+    ],
     "stats": {
       "agilite": 0,
       "force": 0,
@@ -526,6 +598,10 @@
       "glacier",
       "polarite",
       "bouclier_elementaire"
+    ],
+    "sortsAvances": [
+      "meteore",
+      "torrent"
     ],
     "stats": {
       "agilite": 0,
