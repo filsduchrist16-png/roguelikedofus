@@ -64,6 +64,8 @@ export const MODES_AUTO = [`heros`, `combat`, `cache`];
 export const normaliserModeAuto = (valeur) => (MODES_AUTO.includes(valeur) ? valeur : `heros`);
 // Écran du butin : « Équiper le meilleur » appliqué dès l'ouverture (annulable) (désactivé).
 export const normaliserButinAutoEquiper = (valeur) => booleen(valeur, false);
+// Écran butin + récompense : la carte touchée valide tout de suite (sinon : choisir, puis Continuer).
+export const normaliserRecompenseDirecte = (valeur) => booleen(valeur, false);
 // Tri et filtre de l'inventaire, gardés d'une ouverture (et d'une session) à l'autre.
 export const TRIS_INVENTAIRE = [`toile`, `type`, `rarete`, `interet`];
 export const normaliserTriInventaire = (valeur) =>
@@ -162,6 +164,7 @@ const PARAMETRES_DEFAUT = {
   cibleUniqueDirecte: false,
   modeAuto: `heros`,
   butinAutoEquiper: false,
+  recompenseDirecte: false,
   triInventaire: `toile`,
   filtreInventaire: `tout`,
   favoris: [],
@@ -227,6 +230,7 @@ export function chargerParametres() {
       reglages.cibleUniqueDirecte = normaliserCibleUniqueDirecte(reglages.cibleUniqueDirecte);
       reglages.modeAuto = normaliserModeAuto(reglages.modeAuto);
       reglages.butinAutoEquiper = normaliserButinAutoEquiper(reglages.butinAutoEquiper);
+      reglages.recompenseDirecte = normaliserRecompenseDirecte(reglages.recompenseDirecte);
       reglages.triInventaire = normaliserTriInventaire(reglages.triInventaire);
       reglages.filtreInventaire = normaliserFiltreInventaire(reglages.filtreInventaire);
       reglages.favoris = normaliserFavoris(reglages.favoris);

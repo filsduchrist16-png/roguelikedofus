@@ -107,7 +107,7 @@ export function ecranParametres(meta) {
           </div>
           ${htmlSectionRepliable(
             `param-confort`,
-            `<span class="setting-lbl">⚡ Confort de jeu<br><small class="muet">re-sélection du sort, cible unique, bouton 🤖, butin</small></span>`,
+            `<span class="setting-lbl">⚡ Confort de jeu<br><small class="muet">re-sélection du sort, cible unique, bouton 🤖, butin, récompense</small></span>`,
             `<div class="settings-groupe-corps">
           ${[
             [
@@ -137,6 +137,10 @@ export function ecranParametres(meta) {
           <div class="setting-ligne">
             <span class="setting-lbl">Butin : équiper le meilleur d'office<br><small class="muet">à l'écran du butin, « ⚡ Équiper » est appliqué tout de suite (annulable)</small></span>
             <button class="secondaire set-bascule ${parametres.butinAutoEquiper ? `on` : ``}" data-bascule="butinAutoEquiper" aria-pressed="${!!parametres.butinAutoEquiper}">${parametres.butinAutoEquiper ? `Activé` : `Désactivé`}</button>
+          </div>
+          <div class="setting-ligne">
+            <span class="setting-lbl">Récompense d'un seul appui<br><small class="muet">après un combat, la carte touchée est prise tout de suite, sans « Continuer »</small></span>
+            <button class="secondaire set-bascule ${parametres.recompenseDirecte ? `on` : ``}" data-bascule="recompenseDirecte" aria-pressed="${!!parametres.recompenseDirecte}">${parametres.recompenseDirecte ? `Activé` : `Désactivé`}</button>
           </div>
           </div>`,
             false,

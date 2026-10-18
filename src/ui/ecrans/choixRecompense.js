@@ -1,8 +1,8 @@
-// Écran « Choisis une récompense » après un combat normal ou élite : trois cartes (amélioration de
-// sort, relique de run, bonus) et « Passer » contre quelques kamas. Mobile d'abord : une carte par
-// ligne, l'effet exact écrit sur la carte (pas besoin d'infobulle).
+// Cartes de récompense (amélioration de sort, relique de run, bonus), montrées sur l'écran butin +
+// récompense après un combat (apresCombat.js) et dans les Songes. Mobile d'abord : l'effet exact
+// est écrit sur la carte (pas besoin d'infobulle).
 import { NOMS_RARETES_CHOIX, decrireChoix } from "../../jeu/recompensesRun.js";
-import { afficherEcran, echapperHtml, htmlKamas, iconeSort } from "../commun.js";
+import { echapperHtml, iconeSort } from "../commun.js";
 
 /** Icône d'un choix : l'icône du sort amélioré, sinon un emoji. */
 function htmlIconeChoix(description) {
@@ -27,43 +27,6 @@ export function htmlContenuChoix(choix, run) {
 export const classeRareteChoix = (choix, run) =>
   ` choix-rec-${decrireChoix(choix, run)?.rarete ?? `commun`}`;
 
-/**
- * Affiche l'offre ; résout l'indice de la carte choisie ou `passer`.
- * @param {{ elite: boolean, choix: object[], passer: number }} offre
- */
-export function ecranChoixRecompense(offre, run) {
-  return new Promise((resolve) => {
-    const cartes = offre.choix
-      .map(
-        (choix, indice) =>
-          `<button class="choix-rec-carte${classeRareteChoix(choix, run)}" data-choix="${indice}">${htmlContenuChoix(choix, run)}</button>`,
-      )
-      .join(``);
-    afficherEcran(
-      `
-      <h1>${offre.elite ? `🎖️ Récompense d'élite` : `🎁 Récompense`}</h1>
-      <p class="sous-titre">Choisis une récompense pour la suite de la run.</p>
-      <div class="choix-rec-liste">${cartes}</div>
-      <div class="boutons-ecran choix-rec-boutons">
-        <button id="choix-rec-passer" class="secondaire">Passer <span class="choix-rec-passer-gain">(+${htmlKamas(offre.passer)})</span></button>
-      </div>
-    `,
-      `ecran-choix-rec`,
-    );
-    const racineEcran = document.querySelector(`.ecran-choix-rec`);
-    racineEcran?.querySelectorAll(`[data-choix]`).forEach((bouton) =>
-      bouton.addEventListener(`click`, () => {
-        // pas de double choix si on tape deux fois
-        racineEcran.querySelectorAll(`button`).forEach((autre) => (autre.disabled = true));
-        resolve(Number(bouton.dataset.choix));
-      }),
-    );
-    document.getElementById(`choix-rec-passer`)?.addEventListener(`click`, () => {
-      racineEcran?.querySelectorAll(`button`).forEach((autre) => (autre.disabled = true));
-      resolve(`passer`);
-    });
-  });
-}
 /** Barre des reliques de run (équipement, bilan) : emoji + nom, effet en infobulle. */
 export function htmlReliquesRun(reliques = [], titre = ``) {
   if (!reliques.length) {

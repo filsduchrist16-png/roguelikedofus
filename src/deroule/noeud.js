@@ -14,6 +14,7 @@ import {
   distribuerKamas,
   gagnerXpEquipe,
   distribuerButin,
+  preparerButin,
   soignerAvecGain,
 } from "./recompenses.js";
 import {
@@ -24,7 +25,7 @@ import {
   getMonde,
 } from "../jeu/config.js";
 import { texteBilan } from "../ui/finCombat.js";
-import { secretDuMonde, CHANCES_CLE, nomCle } from "../jeu/secret.js";
+import { secretDuMonde, CHANCES_CLE } from "../jeu/secret.js";
 import { ecranMessage } from "../ui/ecrans/message.js";
 import { traiterQuetes } from "./quetes.js";
 import { verifierQuetesMeta } from "../jeu/quetes.js";
@@ -230,37 +231,28 @@ export async function resoudreNoeud(run, type, combatId, xpCombat, zone, eliteMo
             multXpRun(run),
         ),
       );
-      // choix de récompense : tiré avant le butin (prêt pour un écran qui les réunirait), mais
-      // rangé dans la run seulement après : une sauvegarde faite pendant le butin (onglet caché)
-      // ne doit pas garder l'offre d'un nœud pas encore marqué visité. jouerZone la propose une
-      // fois le nœud visité et la run sauvegardée (un rechargement montre la même offre).
+      // choix de récompense, butin et clé : tout est tiré et rangé dans la run ici, sans écran.
+      // jouerZone marque ensuite la case visitée, sauvegarde la run, puis montre butin et
+      // récompense sur un seul écran (proposerOffreCombat) : un rechargement remontre cet écran
+      // sans rejouer le combat ni relancer le tirage.
       const offre = tirerOffreCombat(run, {
         elite: type === `combat_dur`,
         numZone,
         progression: progressionDansMonde(run, zoneId),
         rng: Math.random,
       });
-      await distribuerButin(
-        run,
-        zoneId,
-        type,
-        type === `combat_dur` ? `donjon` : undefined,
-        texteBilan({ xp, kamas, defiOk, niveaux }),
-      );
+      const objets = preparerButin(run, zoneId, type, type === `combat_dur` ? `donjon` : undefined);
+      let cle = false;
       if (
         type === `combat_dur` &&
         !run.cle &&
         secretDuMonde(run.trancheId) &&
         Math.random() < CHANCES_CLE.combatDur
       ) {
-        run.cle = true;
-        await ecranMessage(
-          `🗝️ ${nomCle(run.trancheId)}`,
-          `Un des monstres portait une clé : elle ouvre le donjon secret du monde, ${secretDuMonde(run.trancheId).nom}.`,
-        );
+        run.cle = cle = true;
       }
+      run.butinCombat = { objets, bilan: texteBilan({ xp, kamas, defiOk, niveaux }), cle };
       run.offreCombat = offre;
-      await traiterQuetes(run, verifierQuetesMeta(quetesMeta(), ctxMeta()));
       return `continue`;
     }
     case `taverne`: {

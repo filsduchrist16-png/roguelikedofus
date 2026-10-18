@@ -6,7 +6,7 @@ import {
   soignerEquipe,
 } from "../jeu/run.js";
 import { capturerArchi, enregistrerCollection } from "../sauvegarde/meta.js";
-import { meta } from "./etat.js";
+import { meta, quetesMeta, ctxMeta } from "./etat.js";
 import { MONSTRES } from "../data/index.js";
 import { ecranCaptureArchi } from "../ui/ecrans/recompenses.js";
 import { afficherBandeau } from "../ui/ecrans/succes.js";
@@ -15,7 +15,9 @@ import { noterObjetsObtenus } from "../ui/ecrans/recap.js";
 import { ecranButin } from "../ui/ecrans/butin.js";
 import { gainKamas, ajouterKamas } from "../jeu/economie.js";
 import { resoudreOffreCombat } from "../jeu/recompensesRun.js";
-import { ecranChoixRecompense } from "../ui/ecrans/choixRecompense.js";
+import { ecranApresCombat } from "../ui/ecrans/apresCombat.js";
+import { traiterQuetes } from "./quetes.js";
+import { verifierQuetesMeta } from "../jeu/quetes.js";
 import { sauverRun } from "../sauvegarde/run.js";
 
 // Renvoie l'XP donnée à chaque héros (0 si tous sont au niveau max du monde)
@@ -48,13 +50,10 @@ export async function capturerArchis(combattants) {
   }
   return noms.length;
 }
-// bilan : texte XP / kamas du combat, en sous-titre du butin (ou en bandeau s'il n'y a rien).
-export async function distribuerButin(run, zoneId, type, typeTaux, bilan) {
+// Tire le butin d'un combat et le range dans l'inventaire, sans rien afficher.
+export function preparerButin(run, zoneId, type, typeTaux) {
   if (!zoneId) {
-    if (bilan) {
-      afficherBandeau(`Victoire : ${bilan}`);
-    }
-    return;
+    return [];
   }
   let prospection =
     bonusEquipeRun(meta, run).prospection + (idoleActive(run, zoneId)?.prospection ?? 0);
@@ -62,6 +61,11 @@ export async function distribuerButin(run, zoneId, type, typeTaux, bilan) {
   enregistrerCollection(meta, objets);
   run.stats.objets += objets.length;
   noterObjetsObtenus(run.stats, objets);
+  return objets;
+}
+// bilan : texte XP / kamas du combat, en sous-titre du butin (ou en bandeau s'il n'y a rien).
+export async function distribuerButin(run, zoneId, type, typeTaux, bilan) {
+  let objets = preparerButin(run, zoneId, type, typeTaux);
   if (objets.length) {
     await ecranButin(objets, run, bilan);
   } else if (bilan) {
@@ -85,18 +89,37 @@ export function soignerAvecGain(run, pct) {
   soignerEquipe(run, pct);
   return run.persos.reduce((somme, perso) => somme + Math.max(0, perso.pvActuels), 0) - avant;
 }
-// Choix de récompense en attente (après un combat normal ou élite) : la run est sauvegardée avec
-// l'offre avant de l'afficher, pour qu'un rechargement propose exactement les mêmes cartes.
+// Après un combat normal ou élite : butin et choix de récompense sur un seul écran. Tout est déjà
+// rangé dans la run (objets dans l'inventaire, `butinCombat`, `offreCombat`) et la case marquée
+// visitée par jouerZone : la run est sauvegardée avant l'affichage, un rechargement remontre le même
+// écran sans rejouer le combat ni relancer le tirage.
 export async function proposerOffreCombat(run, zoneIdx) {
   if (!run.offreCombat?.choix?.length) {
     run.offreCombat = null;
+  }
+  const butin = run.butinCombat;
+  if (!run.offreCombat && !butin) {
     return;
   }
   sauverRun(zoneIdx, run);
-  const indice = await ecranChoixRecompense(run.offreCombat, run);
-  const texte = resoudreOffreCombat(run, indice);
+  let texte = ``;
+  if (run.offreCombat) {
+    const indice = await ecranApresCombat(
+      { objets: butin?.objets ?? [], bilan: butin?.bilan ?? ``, cle: !!butin?.cle },
+      run.offreCombat,
+      run,
+    );
+    texte = resoudreOffreCombat(run, indice);
+  } else if (butin.objets.length) {
+    await ecranButin(butin.objets, run, butin.bilan);
+  } else if (butin.bilan) {
+    afficherBandeau(`Victoire : ${butin.bilan}`);
+  }
+  run.butinCombat = null;
   sauverRun(zoneIdx, run);
   if (texte) {
     afficherBandeau(texte);
   }
+  // quêtes liées au butin (collection) : après l'écran, pour ne pas l'interrompre
+  await traiterQuetes(run, verifierQuetesMeta(quetesMeta(), ctxMeta()));
 }

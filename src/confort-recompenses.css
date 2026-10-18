@@ -168,3 +168,56 @@
   font-size: max(12px, 0.8rem);
   font-weight: 800;
 }
+
+/* Écran unique butin + récompense (1.9.0) : butin en haut, cartes dessous, « Continuer » seul et au
+   même endroit en bas ; une carte choisie est cerclée d'or, « Continuer » reste terne avant. */
+.ecran-apres-combat .ac-titre {
+  margin: 14px 0 2px;
+  font-size: max(15px, 1rem);
+  text-align: left;
+}
+.ecran-apres-combat .drop-liste {
+  margin-top: 6px;
+}
+.ac-sans-butin {
+  margin: 2px 0 0;
+}
+.ac-cle {
+  margin: 10px 0 0;
+  padding: 8px 12px;
+  border: 1px solid var(--or);
+  border-radius: 10px;
+  background: var(--panel-2);
+  font-size: max(13px, 0.85rem);
+  line-height: 1.35;
+  text-align: left;
+}
+.choix-rec-carte.ac-choisi {
+  border-color: var(--or);
+  background: var(--panel-2);
+  box-shadow:
+    0 0 0 3px var(--or),
+    0 0 14px #e8b13a88;
+}
+.ac-passer {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0 0;
+}
+.ac-passer button {
+  min-height: 44px;
+}
+.ac-passer button.ac-choisi {
+  box-shadow: 0 0 0 3px var(--or);
+}
+.ac-aide {
+  margin: 8px 0 0;
+  text-align: center;
+  font-weight: 700;
+  font-size: max(13px, 0.85rem);
+  color: var(--or-texte);
+}
+.btn-continuer.ac-attente {
+  opacity: 0.45;
+  filter: grayscale(0.6);
+}

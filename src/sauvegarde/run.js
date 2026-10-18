@@ -69,14 +69,16 @@ function assainirObjet(inst) {
   return out;
 }
 // Récompenses en attente et palier d'une run de songes : abîmés, ils sont simplement oubliés.
-const TYPES_RECOMPENSE = [`objet`, `soin`, `kamas`, `amelioration`, `sort`, `relique`];
+const TYPES_RECOMPENSE = [`objet`, `soin`, `kamas`, `amelioration`, `sort`, `relique`, `apprendre`];
 function assainirSonges(run) {
   const offre = Array.isArray(run.offreSonge)
     ? run.offreSonge
         .filter((recompense) => TYPES_RECOMPENSE.includes(recompense?.type))
         .map((recompense) =>
           // amélioration de sort et relique de run : même format que le choix après un combat
-          recompense.type === `sort` || recompense.type === `relique`
+          recompense.type === `sort` ||
+          recompense.type === `relique` ||
+          recompense.type === `apprendre`
             ? assainirChoix(recompense)
             : recompense.type === `objet`
               ? {
@@ -109,6 +111,44 @@ function assainirSonges(run) {
     run.palierSonge && typeof run.palierSonge === `object`
       ? { taverne: !!run.palierSonge.taverne, hdv: !!run.palierSonge.hdv }
       : null;
+}
+// Butin du dernier combat en attente (écran butin + récompense) : copies des objets ramassés, bilan
+// et clé trouvée. Abîmé ou absent : rien en attente.
+export const MAX_BUTIN_COMBAT = 12;
+export function assainirButinCombat(brut) {
+  if (!brut || typeof brut !== `object` || Array.isArray(brut)) {
+    return null;
+  }
+  const objets = Array.isArray(brut.objets)
+    ? brut.objets
+        .filter((objet) => EQUIPEMENTS[objet?.id])
+        .map(assainirObjet)
+        .slice(0, MAX_BUTIN_COMBAT)
+    : [];
+  return {
+    objets,
+    bilan: typeof brut.bilan === `string` ? brut.bilan.slice(0, 300) : ``,
+    cle: brut.cle === true,
+  };
+}
+// Après un rechargement, chaque objet du butin en attente redevient l'objet rangé dans l'inventaire
+// (ou déjà porté) : « Équiper le meilleur » et « porté par » s'appliquent alors au vrai objet.
+export function relierButin(run, objets) {
+  const cle = (objet) => JSON.stringify(assainirObjet(objet));
+  const libres = [
+    ...(run.inventaire ?? []),
+    ...(run.persos ?? []).flatMap((perso) => Object.values(perso.equipement ?? {})),
+  ].filter((objet) => EQUIPEMENTS[objet?.id]);
+  const pris = new Set();
+  return objets.map((objet) => {
+    const recherche = cle(objet);
+    const trouve = libres.find((candidat) => !pris.has(candidat) && cle(candidat) === recherche);
+    if (!trouve) {
+      return objet;
+    }
+    pris.add(trouve);
+    return trouve;
+  });
 }
 export function chargerRun() {
   try {
@@ -172,6 +212,12 @@ export function chargerRun() {
     }
     // améliorations de sort, reliques de run et choix de récompense en attente (absents = vides)
     assainirRecompensesRun(sauvegarde.run);
+    // butin du combat en attente (1.9.0) : relié aux objets de l'inventaire
+    const butin = assainirButinCombat(sauvegarde.run.butinCombat);
+    sauvegarde.run.butinCombat = butin && {
+      ...butin,
+      objets: relierButin(sauvegarde.run, butin.objets),
+    };
     if (sauvegarde.run.mode === MODE_SONGES) {
       assainirSonges(sauvegarde.run);
     }
