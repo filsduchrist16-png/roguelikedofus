@@ -7,6 +7,7 @@ import { nomCle, secretDuMonde } from "./secret.js";
 import { IDOLES_DEPART, cumulerIdoles, idolesDepartDeRun } from "./idolesDepart.js";
 import { prixForge, rareteSuivante } from "./economie.js";
 import { instancierObjet, pvMaxPerso } from "./run.js";
+import { ajouterReliquesAuBonus, reliquesRunAffichees } from "./recompensesRun.js";
 
 // Bénédictions des dieux du Krosmoz : elles durent toute la run.
 export const BENEDICTIONS = {
@@ -236,7 +237,8 @@ export function bonusEquipeRun(meta, run) {
     bonus.initiativeBonus += effet.initiativeBonus ?? 0;
     bonus.esquiveBonus += effet.esquiveBonus ?? 0;
   }
-  return bonus;
+  // reliques de run « de stats » (PV, dégâts, kamas, critique…)
+  return ajouterReliquesAuBonus(bonus, run);
 }
 
 // Effets en cours (affichés sur la carte).
@@ -287,5 +289,7 @@ export function effetsEnCours(run, zoneId) {
         : `Le prochain combat rapporte le double de kamas (monstres +20 % de PV).`,
     });
   }
+  // reliques de run, en dernier (emoji + nom, effet dans l'infobulle)
+  out.push(...reliquesRunAffichees(run));
   return out;
 }

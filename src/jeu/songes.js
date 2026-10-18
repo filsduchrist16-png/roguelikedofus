@@ -21,6 +21,12 @@ import {
 import { ajouterKamas } from "./economie.js";
 import { EMPLACEMENTS, typeDeEmplacement } from "./emplacements.js";
 import { ascensionMonde, statsMonde } from "../sauvegarde/meta.js";
+import {
+  appliquerChoix,
+  poidsRaretes,
+  tirerAmeliorationSort,
+  tirerReliqueRun,
+} from "./recompensesRun.js";
 
 export const MODE_SONGES = `songes`;
 // Monde des héros (niveau maximal) et du butin.
@@ -249,9 +255,17 @@ export function ameliorationPossible(run, rng) {
   }
   return objetsForgeables(run, 1).length ? { forge: true } : null;
 }
+// Rareté des améliorations de sort et reliques de run des Songes : celles d'une élite, de plus en
+// plus généreuses jusqu'à l'étage 30.
+function rareteSonge(etage, rng) {
+  const poids = poidsRaretes(true, Math.min(1, etage / 30));
+  const total = poids.commun + poids.rare + poids.epique;
+  const tirage = rng() * total;
+  return tirage < poids.commun ? `commun` : tirage < poids.commun + poids.rare ? `rare` : `epique`;
+}
 /**
  * Trois récompenses différentes après l'étage `etage` (franchi), parmi : objet, soin (sauf au
- * palier), kamas, amélioration. Chaque récompense est entièrement tirée ici (objet compris) pour qu'une reprise de
+ * palier), kamas, amélioration, amélioration de sort et relique de run. Chaque récompense est entièrement tirée ici (objet compris) pour qu'une reprise de
  * sauvegarde ne permette pas de relancer le tirage.
  */
 export function tirerRecompenses(etage, run, rng) {
@@ -260,6 +274,15 @@ export function tirerRecompenses(etage, run, rng) {
   const amelioration = ameliorationPossible(run, rng);
   if (amelioration) {
     types.push(`amelioration`);
+  }
+  // améliorations de sort et reliques de run (src/jeu/recompensesRun.js), tirées tout de suite
+  const sort = tirerAmeliorationSort(run, rng, rareteSonge(etage, rng));
+  if (sort) {
+    types.push(`sort`);
+  }
+  const relique = tirerReliqueRun(run, rng, rareteSonge(etage, rng));
+  if (relique) {
+    types.push(`relique`);
   }
   const choisis = [];
   while (choisis.length < 3 && types.length) {
@@ -273,6 +296,10 @@ export function tirerRecompenses(etage, run, rng) {
         return { type, pct: CONFIG_SONGES.soinPct, releve: CONFIG_SONGES.releve };
       case `kamas`:
         return { type, montant: montantKamasSonge(etage) };
+      case `sort`:
+        return sort;
+      case `relique`:
+        return relique;
       default:
         return { type, ...amelioration };
     }
@@ -314,6 +341,9 @@ export function appliquerRecompense(run, recompense) {
     case `kamas`:
       ajouterKamas(run, recompense.montant);
       return `💰 +${recompense.montant} kamas`;
+    case `sort`:
+    case `relique`:
+      return appliquerChoix(run, recompense);
     case `amelioration`:
       if (recompense.benediction && BENEDICTIONS[recompense.benediction]) {
         if (!(run.benedictions ?? []).includes(recompense.benediction)) {

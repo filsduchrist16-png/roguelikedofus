@@ -1,0 +1,218 @@
+{
+  "rr_laine_bouftou": {
+    "id": "rr_laine_bouftou",
+    "nom": "Laine de Bouftou royal",
+    "icone": "🐑",
+    "rarete": "commun",
+    "desc": "+6 % de PV max pour chaque héros.",
+    "effet": { "pvPct": 0.06 }
+  },
+  "rr_plume_tofu": {
+    "id": "rr_plume_tofu",
+    "nom": "Plume de Tofu",
+    "icone": "🐤",
+    "rarete": "commun",
+    "desc": "+4 d'initiative pour chaque héros.",
+    "effet": { "initiativeBonus": 4 }
+  },
+  "rr_bourse_kerubim": {
+    "id": "rr_bourse_kerubim",
+    "nom": "Bourse de Kerubim",
+    "icone": "💰",
+    "rarete": "commun",
+    "desc": "+15 % de kamas gagnés.",
+    "effet": { "multKamas": 1.15 }
+  },
+  "rr_pioche_mineur": {
+    "id": "rr_pioche_mineur",
+    "nom": "Pioche de mineur",
+    "icone": "⛏️",
+    "rarete": "commun",
+    "desc": "+25 en prospection : plus d'objets et de reliques de boss.",
+    "effet": { "prospectionPlat": 25 }
+  },
+  "rr_fiole_eniripsa": {
+    "id": "rr_fiole_eniripsa",
+    "nom": "Fiole de rosée d'Eniripsa",
+    "icone": "💧",
+    "rarete": "commun",
+    "desc": "+15 en Soin pour chaque héros.",
+    "effet": { "soinPlat": 15 }
+  },
+  "rr_ecu_feca": {
+    "id": "rr_ecu_feca",
+    "nom": "Écu cabossé de Feca",
+    "icone": "🔰",
+    "rarete": "commun",
+    "desc": "Chaque héros commence le combat avec un bouclier de 8 % de ses PV max (2 tours).",
+    "effet": { "bouclierDebutPct": 0.08 }
+  },
+  "rr_parchemin_eveil": {
+    "id": "rr_parchemin_eveil",
+    "nom": "Parchemin d'éveil",
+    "icone": "📜",
+    "rarete": "commun",
+    "desc": "Le premier sort de chaque héros à chaque combat coûte 1 PA de moins (minimum 1).",
+    "effet": { "remisePremierSort": 1 }
+  },
+  "rr_bandages_rykke": {
+    "id": "rr_bandages_rykke",
+    "nom": "Bandages de Rykke Errel",
+    "icone": "🩹",
+    "rarete": "commun",
+    "desc": "Après chaque victoire, les héros debout récupèrent 5 % de leurs PV max.",
+    "effet": { "soinFinCombat": 0.05 }
+  },
+  "rr_venin_arakne": {
+    "id": "rr_venin_arakne",
+    "nom": "Venin d'Arakne",
+    "icone": "🕷️",
+    "rarete": "commun",
+    "desc": "Les poisons infligés par les héros durent 1 tour de plus.",
+    "effet": { "poisonDureePlus": 1 }
+  },
+  "rr_carapace_scarafeuille": {
+    "id": "rr_carapace_scarafeuille",
+    "nom": "Carapace de Scarafeuille",
+    "icone": "🐞",
+    "rarete": "commun",
+    "desc": "Le premier coup que reçoit chaque héros à chaque combat est réduit de moitié.",
+    "effet": { "premierCoupReduit": 0.5 }
+  },
+  "rr_grimoire_apprenti": {
+    "id": "rr_grimoire_apprenti",
+    "nom": "Grimoire d'apprenti",
+    "icone": "📖",
+    "rarete": "commun",
+    "desc": "+15 % d'XP gagnée en combat.",
+    "effet": { "xpMult": 1.15 }
+  },
+  "rr_chope_taverne": {
+    "id": "rr_chope_taverne",
+    "nom": "Chope de la taverne d'Astrub",
+    "icone": "🍺",
+    "rarete": "commun",
+    "desc": "Les soins de taverne rendent 20 % de PV max en plus.",
+    "effet": { "soinTaverne": 0.2 }
+  },
+  "rr_de_ecaflip": {
+    "id": "rr_de_ecaflip",
+    "nom": "Dé pipé d'Ecaflip",
+    "icone": "🎲",
+    "rarete": "rare",
+    "desc": "+4 % de coup critique pour chaque héros.",
+    "effet": { "critPlat": 4 }
+  },
+  "rr_carapace_kwak": {
+    "id": "rr_carapace_kwak",
+    "nom": "Plumes de Kwak",
+    "icone": "🪶",
+    "rarete": "rare",
+    "desc": "+4 % de résistance dans chaque élément.",
+    "effet": { "resAll": 0.04 }
+  },
+  "rr_trefle": {
+    "id": "rr_trefle",
+    "nom": "Trèfle des Champs d'Astrub",
+    "icone": "🍀",
+    "rarete": "rare",
+    "desc": "+4 % d'esquive pour chaque héros.",
+    "effet": { "esquiveBonus": 0.04 }
+  },
+  "rr_sablier_xelor": {
+    "id": "rr_sablier_xelor",
+    "nom": "Sablier fêlé de Xélor",
+    "icone": "⏳",
+    "rarete": "rare",
+    "desc": "+1 PA au premier tour de chaque combat.",
+    "effet": { "paPremierTour": 1 }
+  },
+  "rr_lunette_cra": {
+    "id": "rr_lunette_cra",
+    "nom": "Lunette de Cra",
+    "icone": "🏹",
+    "rarete": "rare",
+    "desc": "+15 % de dégâts contre les ennemis de la ligne arrière.",
+    "effet": { "degatsLigneArriere": 0.15 }
+  },
+  "rr_crocs_milimulou": {
+    "id": "rr_crocs_milimulou",
+    "nom": "Crocs de Milimulou",
+    "icone": "🐗",
+    "rarete": "rare",
+    "desc": "+20 % de dégâts contre les ennemis sous 30 % de leurs PV.",
+    "effet": { "degatsAchevement": 0.2 }
+  },
+  "rr_cor_bwork": {
+    "id": "rr_cor_bwork",
+    "nom": "Cor de guerre Bwork",
+    "icone": "📯",
+    "rarete": "rare",
+    "desc": "+20 % de dégâts pendant le premier tour de chaque héros.",
+    "effet": { "degatsPremierTour": 0.2 }
+  },
+  "rr_ronces_sadida": {
+    "id": "rr_ronces_sadida",
+    "nom": "Ronces de Sadida",
+    "icone": "🌵",
+    "rarete": "rare",
+    "desc": "Renvoie 10 % des dégâts subis par un héros à l'ennemi qui frappe.",
+    "effet": { "renvoiDegats": 0.1 }
+  },
+  "rr_graine_sadida": {
+    "id": "rr_graine_sadida",
+    "nom": "Graine de l'Arbre de Vie",
+    "icone": "🌱",
+    "rarete": "rare",
+    "desc": "Au début de son tour, chaque héros récupère 3 % de ses PV max.",
+    "effet": { "regenTour": 0.03 }
+  },
+  "rr_trophee_chasseur": {
+    "id": "rr_trophee_chasseur",
+    "nom": "Trophée de chasseur",
+    "icone": "🏆",
+    "rarete": "rare",
+    "desc": "Un héros qui achève un ennemi gagne un bouclier de 8 % de ses PV max.",
+    "effet": { "bouclierSurKO": 0.08 }
+  },
+  "rr_insigne_milice": {
+    "id": "rr_insigne_milice",
+    "nom": "Insigne de la Milice",
+    "icone": "🎖️",
+    "rarete": "rare",
+    "desc": "Les combats d'élite rapportent 50 % de kamas en plus.",
+    "effet": { "kamasElite": 0.5 }
+  },
+  "rr_bandeau_goultard": {
+    "id": "rr_bandeau_goultard",
+    "nom": "Bandeau de Goultard",
+    "icone": "⚔️",
+    "rarete": "epique",
+    "desc": "+6 % de dégâts pour chaque héros.",
+    "effet": { "degatsPct": 0.06 }
+  },
+  "rr_plume_phenix": {
+    "id": "rr_plume_phenix",
+    "nom": "Plume de Phénix",
+    "icone": "🔥",
+    "rarete": "epique",
+    "desc": "Une fois par combat, le premier héros mis K.O. par un coup reste debout à 1 PV.",
+    "effet": { "koAnnule": 1 }
+  },
+  "rr_coeur_iop": {
+    "id": "rr_coeur_iop",
+    "nom": "Cœur de Iop",
+    "icone": "❤️‍🔥",
+    "rarete": "epique",
+    "desc": "Quand il ne reste qu'un héros debout, il inflige 30 % de dégâts en plus.",
+    "effet": { "degatsDernierDebout": 0.3 }
+  },
+  "rr_ailes_tofu": {
+    "id": "rr_ailes_tofu",
+    "nom": "Ailes de Tofu royal",
+    "icone": "🕊️",
+    "rarete": "epique",
+    "desc": "Les héros jouent toujours en premier.",
+    "effet": { "ouvreToujours": true }
+  }
+}

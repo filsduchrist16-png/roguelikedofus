@@ -9,6 +9,7 @@ import {
 } from "../jeu/progression.js";
 import { caseLibreSurLigne, caseOpposeeLibre, membresRangee } from "./effets.js";
 import { lancerAttaque } from "./sorts.js";
+import { effetRun, sortAmeliore } from "./ameliorations.js";
 export const tirageEntier = (min, max, rng) => min + Math.floor(rng() * (max - min + 1));
 export const vivants = (combattants) =>
   combattants.filter((combattant) => combattant.pvActuels > 0);
@@ -97,9 +98,12 @@ export function chanceEsquive(combattant, options) {
   return Math.min(0.35, total);
 }
 export function coutPA(sort, combattant) {
-  let remise = combattant.remisesCout?.[sort.id] ?? 0;
+  sort = sortAmeliore(combattant, sort);
+  // relique de run : le premier sort du combat coûte moins (drapeau retiré au premier lancer)
+  let remise = (combattant.remisesCout?.[sort.id] ?? 0) + (combattant.remisePremierSort ?? 0);
   if (remise > 0) {
-    return Math.max(1, sort.coutPA - remise);
+    // jamais plus cher qu'avant (un sort à 0 PA reste à 0)
+    return Math.min(sort.coutPA, Math.max(1, sort.coutPA - remise));
   }
   return sort.coutPA;
 }
@@ -115,6 +119,7 @@ const enCooldownSurCible = (combattant, sort, ref) =>
 const enCooldown = (combattant, sort) =>
   !!sort.cooldownTours && (combattant.cooldowns[sort.id] ?? 0) > 0;
 export function ciblesValides(lanceur, sort, combattants) {
+  sort = sortAmeliore(lanceur, sort);
   let visibles = combattants.filter((combattant) => !combattant.estEgide);
   let cibles;
   switch (sort.cible) {
@@ -201,6 +206,7 @@ export function ciblesValides(lanceur, sort, combattants) {
 // Pourquoi un sort ne peut pas être lancé maintenant : libellé court pour l'interface, ou null.
 // Reprend dans l'ordre le coût en PA, la recharge, puis les conditions de ciblesValides.
 export function raisonIndisponible(lanceur, sort, combattants) {
+  sort = sortAmeliore(lanceur, sort);
   const cout = coutPA(sort, lanceur);
   if (lanceur.paActuels < cout) {
     return `PA : ${lanceur.paActuels}/${cout}`;
@@ -459,6 +465,8 @@ export function calculerDegats(lanceur, sort, cible, options) {
   return calculerDegatsDetail(lanceur, sort, cible, options);
 }
 export function calculerDegatsDetail(lanceur, sort, cible, options) {
+  // sort amélioré du héros (sans effet sur une copie déjà améliorée) : aperçus compris
+  sort = sortAmeliore(lanceur, sort);
   let { ctx } = options;
   let stats = statsEffectives(lanceur);
   if (!sort.sansEsquiveNiCrit && ctx.rng() < chanceEsquive(cible)) {
@@ -475,7 +483,7 @@ export function calculerDegatsDetail(lanceur, sort, cible, options) {
   let element = sort.element ?? (sort.elementPire ? tries[tries.length - 1] : tries[0]);
   degats *= multiplicateurStat(statElement(stats, element));
   let crit = false;
-  if (!sort.sansEsquiveNiCrit && ctx.rng() < chanceCritique(stats)) {
+  if (!sort.sansEsquiveNiCrit && ctx.rng() < chanceCritique(stats) + (sort.critBonusSort ?? 0)) {
     degats *= 1 + bonusDegatsCritiques(stats);
     degats *= 1 + sommeEffets(cible, `degatsCritSubis`);
     crit = true;
@@ -504,6 +512,9 @@ export function calculerDegatsDetail(lanceur, sort, cible, options) {
   if (lanceur.degatsPctPermanent) {
     degats *= 1 + lanceur.degatsPctPermanent;
   }
+  if (lanceur.effetsRun) {
+    degats *= multiplicateurReliquesRun(lanceur, cible, ctx);
+  }
   degats *= bonusDegatsIntelligence(stats);
   degats -= sommeEffets(cible, `armure`) + (cible.armure ?? 0);
   return {
@@ -512,6 +523,30 @@ export function calculerDegatsDetail(lanceur, sort, cible, options) {
     crit,
     element,
   };
+}
+// Reliques de run offensives d'un héros : ligne arrière, achèvement, premier tour, dernier debout.
+export function multiplicateurReliquesRun(lanceur, cible, ctx) {
+  let mult = 1;
+  if (cible.camp !== lanceur.camp) {
+    if (!enLigneAvant(cible)) {
+      mult *= 1 + effetRun(lanceur, `degatsLigneArriere`);
+    }
+    if (cible.pvActuels <= cible.pvMax * 0.3) {
+      mult *= 1 + effetRun(lanceur, `degatsAchevement`);
+    }
+  }
+  if (lanceur.toursJoues === 1) {
+    mult *= 1 + effetRun(lanceur, `degatsPremierTour`);
+  }
+  const dernier = effetRun(lanceur, `degatsDernierDebout`);
+  if (
+    dernier &&
+    ctx?.combatants &&
+    alliesVivants(lanceur, ctx.combatants).filter((allie) => !allie.creature).length === 1
+  ) {
+    mult *= 1 + dernier;
+  }
+  return mult;
 }
 export function recalculerPvMax(combattant) {
   let bonus = sommeEffets(combattant, `vitalite`);

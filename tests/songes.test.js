@@ -1,7 +1,7 @@
 // Songes infinis : logique pure (étages, facteur, affixes, récompenses, score, déblocage, sauvegarde).
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AFFIXES_GROUPE, RARETES } from "../src/jeu/config.js";
-import { EQUIPEMENTS, MONSTRES } from "../src/data/index.js";
+import { CLASSES, EQUIPEMENTS, MONSTRES, RELIQUES_RUN } from "../src/data/index.js";
 import { BENEDICTIONS } from "../src/jeu/rencontres.js";
 import { monstresDuCombat, pvMaxPerso } from "../src/jeu/run.js";
 import { rngGraine } from "../src/jeu/runDuJour.js";
@@ -179,6 +179,14 @@ describe(`Songes : départ et récompenses`, () => {
     const run = nouvelleRunSonges([`iop`, `cra`], rngGraine(1));
     run.benedictions = Object.keys(BENEDICTIONS);
     for (const perso of run.persos) perso.equipement = {};
+    // toutes les améliorations de sort et reliques de run prises aussi : il reste objet, soin, kamas
+    run.reliquesRun = Object.keys(RELIQUES_RUN);
+    run.ameliorations = Object.fromEntries(
+      run.persos.map((perso) => [
+        perso.classeId,
+        Object.fromEntries(CLASSES[perso.classeId].sorts.map((id) => [id, [`a`, `b`]])),
+      ]),
+    );
     const offre = tirerRecompenses(2, run, rngGraine(4));
     expect(offre.map((r) => r.type).sort()).toEqual([`kamas`, `objet`, `soin`]);
   });

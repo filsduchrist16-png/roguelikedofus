@@ -20,6 +20,7 @@ import { appliquerBonusDofus, bonusDofus } from "../src/sauvegarde/meta.js";
 import { executerCombat } from "../src/combat/moteur.js";
 import { choisirActionIA } from "../src/combat/ia.js";
 import { ciblesValides, coutPA } from "../src/combat/stats.js";
+import { appliquerChoix, tirerOffreCombat } from "../src/jeu/recompensesRun.js";
 
 function rngSeed(seed) {
   let a = seed >>> 0;
@@ -90,6 +91,14 @@ describe("moteur de combat (fuzz)", () => {
       for (const c of equipe.slice(2)) recruter(run, c);
       for (const p of run.persos) p.progression.niveau = 1 + Math.floor(rng() * 100);
       if (rng() < 0.7) equiperAleatoirement(run, rng);
+      // améliorations de sort et reliques de run tirées à part (la suite du hasard reste la même)
+      const rngRec = rngSeed(50000 + i);
+      if (rngRec() < 0.5) {
+        for (let k = 0; k < 12; k++) {
+          const offre = tirerOffreCombat(run, { elite: rngRec() < 0.5, rng: rngRec });
+          appliquerChoix(run, offre.choix[Math.floor(rngRec() * offre.choix.length)]);
+        }
+      }
       const combatId = combats[Math.floor(rng() * combats.length)];
       const heros = combattantsEquipe(run);
       for (const h of heros) h.pvActuels = h.pvMax;

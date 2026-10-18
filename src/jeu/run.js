@@ -33,6 +33,7 @@ import {
 } from "./progression.js";
 import { etatCombatInitial } from "../combat/stats.js";
 import { valeurEquipement } from "./evaluation.js";
+import { compensationRecompenses, preparerHerosRun } from "./recompensesRun.js";
 import { bonusPanoplie, compterPanoplies } from "./panoplies.js";
 import { PA_MAX_EQUIPEMENT, PA_MAX_PANOPLIES, emplacementsDuType } from "./emplacements.js";
 export { compterPanoplies };
@@ -431,7 +432,11 @@ export function creerCombattantPerso(perso) {
   };
 }
 export function combattantsEquipe(run) {
-  return run.persos.map((perso) => creerCombattantPerso(perso));
+  // améliorations de sort et reliques de run (src/jeu/recompensesRun.js)
+  return preparerHerosRun(
+    run.persos.map((perso) => creerCombattantPerso(perso)),
+    run,
+  );
 }
 export function synchroniserPv(run, combattants) {
   for (let perso of run.persos) {
@@ -853,7 +858,11 @@ function facteurTypeZone(type, zoneId) {
 export const puissanceZone = (zoneId) => AJUSTEMENTS_ZONES[zoneId] ?? 1;
 export function appliquerPuissanceZone(monstres, zoneId, type) {
   // facteur de la zone × facteur du type de combat (normal / difficile / donjon)
-  appliquerPuissance(monstres, puissanceZone(zoneId) * facteurTypeZone(type, zoneId));
+  // × compensation des récompenses de combat (améliorations de sort, reliques de run)
+  appliquerPuissance(
+    monstres,
+    puissanceZone(zoneId) * facteurTypeZone(type, zoneId) * compensationRecompenses(zoneId),
+  );
 }
 // PV et dégâts des monstres multipliés par `facteur` (zones, Songes infinis).
 export function appliquerPuissance(monstres, facteur) {

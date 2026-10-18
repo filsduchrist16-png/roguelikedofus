@@ -7,7 +7,8 @@ import {
   trouverParRef,
   vivants,
 } from "./stats.js";
-import { appliquerSoinsEtBoucliers, debutTourEffets, finTourEffets } from "./effets.js";
+import { appliquerSoinsEtBoucliers, debutTourEffets, finTourEffets, soigner } from "./effets.js";
+import { effetRun } from "./ameliorations.js";
 import { lancerSort } from "./sorts.js";
 function mueElementaire(combattant, contexte) {
   if (combattant.mueElementaire === undefined) {
@@ -233,6 +234,11 @@ export async function executerCombat(combattants, options) {
       );
       appliquerSoinsEtBoucliers(effetsDebut, combattants, contexte);
       acteur.degatsPctDofus = effetsDebut.degatsPct;
+      // relique de run : régénération au début du tour
+      const regen = effetRun(acteur, `regenTour`);
+      if (regen && acteur.pvActuels > 0 && acteur.pvActuels < acteur.pvMax) {
+        soigner(acteur, Math.max(1, Math.round(acteur.pvMax * regen)), contexte);
+      }
       if (acteur.effets.some((effet) => effet.stat === `assome`)) {
         acteur.effets = acteur.effets.filter((effet) => effet.stat !== `assome`);
         contexte.log(`💫 ${acteur.nom} est assommé et passe son tour !`, { tour: acteur.ref });
@@ -251,6 +257,8 @@ export async function executerCombat(combattants, options) {
             break;
           }
           acteur.paActuels -= cout;
+          // relique de run « premier sort moins cher » : consommée au premier lancer
+          acteur.remisePremierSort = 0;
           lancerSort(acteur, action.sort, action.cibleRef, combattants, contexte);
           if (acteur.recupPASort && cout > 0 && contexte.rng() < acteur.recupPASort.chance) {
             acteur.paActuels += acteur.recupPASort.pa;

@@ -38,6 +38,7 @@ import {
   tirerArchis,
 } from "../src/jeu/run.js";
 import { monstresSecrets, recompensesSecret } from "../src/jeu/secret.js";
+import { compensationRecompenses } from "../src/jeu/recompensesRun.js";
 
 const rngFixe = (seed = 1) => {
   let a = seed;
@@ -169,7 +170,8 @@ describe(`équilibrage`, () => {
   it(`l'ajustement de puissance d'une zone multiplie PV et dégâts`, () => {
     const id = Object.keys(AJUSTEMENTS_ZONES)[0];
     const z = zone(id);
-    const f = AJUSTEMENTS_ZONES[id];
+    // × compensation des récompenses de combat (1 en première zone d'un monde)
+    const f = AJUSTEMENTS_ZONES[id] * compensationRecompenses(id);
     const base = monstresDuCombat(z.pools.normales[0]);
     const ajuste = monstresDuCombat(z.pools.normales[0]);
     appliquerPuissanceZone(ajuste, id);
@@ -222,7 +224,7 @@ describe(`équilibrage`, () => {
     const base = monstresDuCombat(z.pools.elite[0]);
     const dur = monstresDuCombat(z.pools.elite[0]);
     appliquerPuissanceZone(dur, id, `combat_dur`);
-    const f = puissanceZone(id) * facteurType(`combat_dur`, 3);
+    const f = puissanceZone(id) * facteurType(`combat_dur`, 3) * compensationRecompenses(id);
     expect(dur[0].pvMax).toBe(Math.round(base[0].pvMax * f));
   });
 });

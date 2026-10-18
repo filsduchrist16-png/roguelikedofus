@@ -62,6 +62,12 @@ import {
   soigner,
   soignerPlusBlesse,
 } from "./effets.js";
+import { effetRun, sortAmeliore } from "./ameliorations.js";
+// relique de run : les poisons infligés par un héros durent plus longtemps
+const poisonDe = (lanceur, poison) => {
+  const plus = effetRun(lanceur, `poisonDureePlus`);
+  return plus ? { ...poison, duree: poison.duree + plus } : poison;
+};
 export function lancerAttaque(lanceur, sort, cible, options, libelle) {
   let detail = calculerDegatsDetail(lanceur, sort, cible, options);
   if (detail.esquive) {
@@ -938,17 +944,23 @@ function effetsSurCibleTouchee({ lanceur, sort, ctx, paAvant }, cible, detail, m
   let total = 0;
   effetsClasseSurCible(lanceur, sort, cible, detail, ctx);
   if (detail.crit && detail.dmg > 0 && reliquesActivesDe(lanceur, ctx).has(`dofus_forgelave`)) {
-    appliquerPoison(cible, { degats: Math.max(1, Math.round(detail.dmg * 0.15)), duree: 2 });
+    appliquerPoison(
+      cible,
+      poisonDe(lanceur, { degats: Math.max(1, Math.round(detail.dmg * 0.15)), duree: 2 }),
+    );
     ctx.log(`🔥 Le Dofus Forgelave embrase ${cible.nom}.`);
   }
   if (sort.poison) {
-    appliquerPoison(cible, sort.poison);
+    appliquerPoison(cible, poisonDe(lanceur, sort.poison));
   }
   if (sort.poisonSiPortails && (lanceur.portails ?? 0) >= sort.poisonSiPortails.seuil) {
-    appliquerPoison(cible, {
-      degats: Math.round(detail.dmg * sort.poisonSiPortails.ratio),
-      duree: sort.poisonSiPortails.duree,
-    });
+    appliquerPoison(
+      cible,
+      poisonDe(lanceur, {
+        degats: Math.round(detail.dmg * sort.poisonSiPortails.ratio),
+        duree: sort.poisonSiPortails.duree,
+      }),
+    );
   }
   if (sort.effet) {
     appliquerEffet(
@@ -1189,7 +1201,8 @@ function effetsFinLancer(
   effetsClasseFinLancer(lanceur, sort, cs, ctx);
 }
 export function lancerSort(lanceur, sort, cibleRef, combattants, contexte) {
-  sort = sortSelonEtat(lanceur, sort);
+  // améliorations de sort de la run : copie du sort propre au héros
+  sort = sortAmeliore(lanceur, sortSelonEtat(lanceur, sort));
   let lancer = preparerLancer(lanceur, sort, cibleRef, combattants, contexte);
   if (echecCritique(lancer)) {
     return;

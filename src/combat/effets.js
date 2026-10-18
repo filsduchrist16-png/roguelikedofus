@@ -18,6 +18,7 @@ import {
   vivants,
 } from "./stats.js";
 import { declencherPiege } from "./sorts.js";
+import { effetRun } from "./ameliorations.js";
 // Libellé lisible d'un renfort de rangée pour le journal (« +10 % de dégâts (1 tour) »).
 const NOMS_EFFETS_RANGEE = {
   degatsInfliges: [`de dégâts`, true],
@@ -79,6 +80,22 @@ export function infligerDegats(
     cible.nullifieProchainCoup = false;
     ctx?.log(`${cible.nom} annule le coup grâce à sa nullification !`);
     montant = 0;
+  }
+  // relique de run : le premier coup ennemi reçu par chaque héros est réduit
+  const reductionPremierCoup = effetRun(cible, `premierCoupReduit`);
+  if (
+    !dejaRedirige &&
+    montant > 0 &&
+    reductionPremierCoup &&
+    !cible.premierCoupEncaisse &&
+    attaquant &&
+    attaquant.camp !== cible.camp
+  ) {
+    cible.premierCoupEncaisse = true;
+    montant = Math.round(montant * (1 - reductionPremierCoup));
+    ctx?.log(
+      `🐞 ${cible.nom} amortit le premier coup (−${Math.round(reductionPremierCoup * 100)} %).`,
+    );
   }
   if (!dejaRedirige && montant > 0 && (cible.coupsAnnulesRestants ?? 0) > 0) {
     --cible.coupsAnnulesRestants;
@@ -163,6 +180,20 @@ export function infligerDegats(
     cible.pvActuels = 1;
     ctx.log(`💀 Le Dokille retient ${cible.nom} : il reste debout avec 1 PV !`);
   }
+  // relique de run : un K.O. par combat est annulé (le héros reste à 1 PV)
+  if (
+    etaitVivant &&
+    cible.pvActuels <= 0 &&
+    ctx &&
+    !ctx.koRunAnnule &&
+    !cible.estInvocation &&
+    !cible.creature &&
+    effetRun(cible, `koAnnule`)
+  ) {
+    ctx.koRunAnnule = true;
+    cible.pvActuels = 1;
+    ctx.log(`🔥 La Plume de Phénix relève ${cible.nom} : il reste debout avec 1 PV !`);
+  }
   verifierDofusArgente(cible, reliquesActivesDe(cible, ctx ?? {}));
   verifierRenaissance(cible, ctx);
   etaitVivant &&
@@ -184,6 +215,35 @@ export function infligerDegats(
       ctx.combatants,
       ctx,
     );
+    // relique de run : achever un ennemi donne un bouclier
+    const bouclierKo = effetRun(attaquant, `bouclierSurKO`);
+    if (bouclierKo) {
+      const gain = Math.round(attaquant.pvMax * bouclierKo);
+      attaquant.bouclier = (attaquant.bouclier ?? 0) + gain;
+      ctx.log(`🏆 ${attaquant.nom} gagne un bouclier de ${gain} en achevant ${cible.nom}.`);
+    }
+  }
+  // relique de run : une partie des dégâts subis par un héros revient à l'ennemi qui frappe
+  const renvoi = effetRun(cible, `renvoiDegats`);
+  if (
+    renvoi &&
+    attaquant &&
+    ctx &&
+    !ctx.enRenvoi &&
+    aInfliger > 0 &&
+    attaquant.camp !== cible.camp &&
+    attaquant.pvActuels > 0
+  ) {
+    const retour = Math.round(aInfliger * renvoi);
+    if (retour > 0) {
+      ctx.enRenvoi = true;
+      try {
+        infligerDegats(attaquant, retour, undefined, ctx);
+      } finally {
+        ctx.enRenvoi = false;
+      }
+      ctx.log(`🌵 Les ronces renvoient ${retour} dégâts à ${attaquant.nom}.`);
+    }
   }
   if (cible.soinDegatsRecus && montant > 0 && cible.pvActuels > 0) {
     let soinGoyave = Math.round(montant * cible.soinDegatsRecus);
