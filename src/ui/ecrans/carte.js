@@ -33,6 +33,7 @@ import { ecranArmurerie } from "./armurerie.js";
 import { ecranDofus } from "./dofus.js";
 import { ecranFormation } from "./formation.js";
 import { ecranCaracteristiques } from "./caracteristiques.js";
+import { noterAbandonEnCours } from "./historique.js";
 const ICONES_NOEUDS = {
   combat: `⚔️`,
   combat_dur: `💀`,
@@ -632,6 +633,9 @@ export function ecranCarte(
             `Recommencer`,
           )
         ) {
+          // la run abandonnée entre dans l'historique
+          onModif();
+          noterAbandonEnCours(meta);
           resolve(`recommencer-memes`);
         }
       });
@@ -642,6 +646,9 @@ export function ecranCarte(
             `Recommencer`,
           )
         ) {
+          // la run abandonnée entre dans l'historique
+          onModif();
+          noterAbandonEnCours(meta);
           resolve(`recommencer-choix`);
         }
       });

@@ -1,6 +1,8 @@
 import { CLASSES, EQUIPEMENTS, MONDES, RELIQUES } from "../../data/index.js";
 import { DIFFICULTES, DIFFICULTE_MAX, RARETES } from "../../jeu/config.js";
-import { ascensionMonde, mondeJouable } from "../../sauvegarde/meta.js";
+import { ascensionMonde, mondeJouable, noterFinDeRun } from "../../sauvegarde/meta.js";
+import { meta } from "../../deroule/etat.js";
+import { resumeDernierCombat } from "../combat.js";
 import {
   afficherEcran,
   boutonRetour,
@@ -67,7 +69,29 @@ export function deblocagesVictoire(avant, apres) {
 }
 // Résout 'memes' (rejouer avec les mêmes héros), 'choix' (autre équipe) ou null (accueil).
 // songes (facultatif) : bilan des Songes infinis, { etage, record, nouveauRecord }.
+/** Ce qui a arrêté l'équipe : « Vaincue par Bouftou royal, Tofu · Combat : Les Bouftous ». */
+export function texteCauseDefaite({ titre = ``, ennemis = [] } = {}) {
+  const noms = [...new Set(ennemis)];
+  const qui = noms.length
+    ? `Vaincue par ${noms.slice(0, 3).join(`, `)}${noms.length > 3 ? ` et ${noms.length - 3} autre${noms.length > 4 ? `s` : ``}` : ``}`
+    : `Équipe vaincue`;
+  return titre ? `${qui} · ${titre}` : qui;
+}
+// Fin de run : rangée dans l'historique (20 dernières) et les statistiques du compte.
+function noterDansHistorique(run, victoire, songes) {
+  try {
+    const monde = MONDES.find((candidat) => candidat.id === run.trancheId);
+    const nbZones = songes ? 0 : (monde?.zones.length ?? 0);
+    noterFinDeRun(meta, run, {
+      issue: victoire ? `victoire` : `defaite`,
+      zone: victoire ? nbZones : Math.min(nbZones || 99, (run.stats?.zones ?? 0) + 1),
+      nbZones,
+      cause: victoire ? `` : texteCauseDefaite(resumeDernierCombat()),
+    });
+  } catch {}
+}
 export function ecranRecap(run, victoire, quetes = [], debloques = [], songes = null) {
+  noterDansHistorique(run, victoire, songes);
   return new Promise((resolve) => {
     let stats = run.stats;
     let maxDegats = Math.max(1, ...Object.values(stats.degats));

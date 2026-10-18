@@ -54,6 +54,7 @@ import { CONDITION_SONGES, recordSonges, songesDebloques } from "../../jeu/songe
 import { IMG_SONGES } from "./songes.js";
 import { VERSION } from "../../version.js";
 import { htmlAlmanax } from "../almanax.js";
+import { ecranHistorique, noterAbandonEnCours } from "./historique.js";
 const LIEN_DISCORD = `https://discord.gg/jxfWpRB7Rp`;
 const numeroMonde = (id) => MONDES.findIndex((monde) => monde.id === id) + 1;
 // Plus haute difficulté ouverte dans ce monde (une run gagnée débloque la suivante).
@@ -177,6 +178,7 @@ export function ecranAccueil(meta, onReset, reprise = null) {
         <div class="coin-gauche">
           <h1 class="sr-only">Roguefus Lite</h1>
           <button id="btn-regles" class="btn-regles">Règles</button>
+          <button id="btn-historique" class="btn-regles btn-historique" aria-label="Historique des runs et statistiques">📜 Historique</button>
           <a class="btn-discord" href="${LIEN_DISCORD}" target="_blank" rel="noopener noreferrer" title="Rejoindre le Discord du jeu">
             <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M20.32 4.37A19.8 19.8 0 0 0 15.39 2.8a13.7 13.7 0 0 0-.63 1.3 18.4 18.4 0 0 0-5.5 0 13.7 13.7 0 0 0-.64-1.3 19.7 19.7 0 0 0-4.93 1.53C.53 9.05-.32 13.6.1 18.1a19.9 19.9 0 0 0 6.04 3.05 14.6 14.6 0 0 0 1.29-2.1 12.9 12.9 0 0 1-2.04-.97l.5-.39a14.2 14.2 0 0 0 12.2 0l.5.39c-.65.39-1.33.71-2.04.98.37.74.8 1.44 1.29 2.1a19.8 19.8 0 0 0 6.04-3.06c.5-5.2-.84-9.7-3.56-13.73ZM8.02 15.33c-1.18 0-2.16-1.08-2.16-2.42 0-1.33.95-2.42 2.16-2.42 1.21 0 2.18 1.1 2.16 2.42 0 1.34-.95 2.42-2.16 2.42Zm7.97 0c-1.18 0-2.16-1.08-2.16-2.42 0-1.33.95-2.42 2.16-2.42 1.21 0 2.18 1.1 2.16 2.42 0 1.34-.94 2.42-2.16 2.42Z"/></svg>
             <span>Discord</span>
@@ -283,6 +285,10 @@ Difficulté : ${DIFFICULTES[reprise.ascension]?.nom ?? `Normal`}`
       });
       document.getElementById(`btn-regles`)?.addEventListener(`click`, async () => {
         await ecranRegles();
+        afficher();
+      });
+      document.getElementById(`btn-historique`)?.addEventListener(`click`, async () => {
+        await ecranHistorique(meta);
         afficher();
       });
       document.getElementById(`btn-succes`)?.addEventListener(`click`, async () => {
@@ -507,6 +513,7 @@ Difficulté : ${DIFFICULTES[reprise.ascension]?.nom ?? `Normal`}`
             `Abandonner`,
           )
         ) {
+          noterAbandonEnCours(meta);
           resolve({
             action: `abandonner`,
             ascension: 0,

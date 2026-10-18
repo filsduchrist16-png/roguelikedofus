@@ -679,3 +679,167 @@ body.couleurs-adaptees .combat .carte:not(.carte-joueur) .pv-barre:not(.ko) {
     padding-bottom: 8px;
   }
 }
+
+/* ---------- Historique des runs et statistiques du compte (1.9.0) ---------- */
+.coin-gauche {
+  flex-wrap: wrap;
+}
+.btn-historique {
+  white-space: nowrap;
+}
+.hist-tuiles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 10px 0;
+}
+@media (min-width: 760px) {
+  .hist-tuiles {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.hist-tuile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--bord-clair);
+  border-radius: 10px;
+  background: var(--panel-2);
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.hist-tuile-lbl,
+.hist-tuile small {
+  font-size: max(11px, 0.75rem);
+  color: var(--muet);
+  font-weight: 700;
+}
+.hist-tuile b {
+  font-size: max(16px, 1.05rem);
+}
+.hist-records {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin: 6px 0 2px;
+  font-size: max(12px, 0.8rem);
+}
+.hist-records th,
+.hist-records td {
+  padding: 6px 2px;
+  min-height: 44px;
+  height: 44px;
+  text-align: center;
+  border-bottom: 1px solid var(--bord-clair);
+}
+.hist-records thead th {
+  font-size: max(11px, 0.72rem);
+  color: var(--muet);
+}
+.hist-records tbody th {
+  font-weight: 800;
+}
+.hist-records tbody th small {
+  display: block;
+  font-size: max(11px, 0.7rem);
+  color: var(--muet);
+  font-weight: 700;
+}
+.hist-records td.hist-gagne {
+  color: #2f7d34;
+  font-weight: 900;
+}
+.hist-legende {
+  margin: 4px 0 8px;
+  font-size: max(11px, 0.75rem);
+  color: var(--muet);
+  text-align: left;
+}
+.hist-titre {
+  margin: 14px 0 4px;
+  font-size: max(15px, 1rem);
+  text-align: left;
+}
+.hist-liste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.hist-run {
+  padding: 8px 12px;
+  border: 1px solid var(--bord-clair);
+  border-left: 5px solid var(--muet);
+  border-radius: 10px;
+  background: var(--panel-solide);
+  text-align: left;
+}
+.hist-run.hist-victoire {
+  border-left-color: #3d8a42;
+}
+.hist-run.hist-defaite {
+  border-left-color: #b8432f;
+}
+.hist-run p {
+  margin: 3px 0;
+  font-size: max(13px, 0.85rem);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.hist-tete {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.hist-date,
+.hist-cause {
+  color: var(--muet);
+}
+.hist-equipe,
+.hist-reliques {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+.hist-heros {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 700;
+}
+.hist-heros img {
+  width: 22px;
+  height: 22px;
+}
+.hist-heros small {
+  font-size: max(11px, 0.75rem);
+  color: var(--muet);
+}
+.hist-relique {
+  display: inline-grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 6px;
+  font-size: 20px;
+  border: 1px solid var(--bord-clair);
+  border-radius: 10px;
+  background: var(--panel-2);
+}
+.hist-relique-boss {
+  font-size: max(12px, 0.8rem);
+  font-weight: 700;
+}
+.hist-plus {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 0;
+}
+.hist-plus button {
+  min-height: 44px;
+}

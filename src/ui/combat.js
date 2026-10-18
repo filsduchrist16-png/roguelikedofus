@@ -344,6 +344,16 @@ function htmlDefi() {
     <small class="defi-bonus">+30 % XP et kamas</small>
   </div>`;
 }
+// Combat en cours ou dernier combat joué : son titre et les ennemis restés debout (cause d'une
+// défaite, pour l'historique des runs).
+export function resumeDernierCombat() {
+  return {
+    titre: titreCombat,
+    ennemis: combattants
+      .filter((combattant) => combattant.camp === `ennemi` && combattant.pvActuels > 0)
+      .map((combattant) => combattant.nom),
+  };
+}
 export function initialiserVueCombat(liste, titre, resolveur = null, options = {}) {
   optionsVue = options;
   defiCombat = null;

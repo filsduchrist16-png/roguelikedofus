@@ -1,6 +1,14 @@
 import { signalerEchecSauvegarde } from "./echec.js";
 import { signalerChangement } from "./nuage.js";
-import { CONFIG_RELIQUES, DOFUS, MONDES, RELIQUES, SUCCES } from "../data/index.js";
+import {
+  CLASSES,
+  CONFIG_RELIQUES,
+  DOFUS,
+  MONDES,
+  RELIQUES,
+  RELIQUES_RUN,
+  SUCCES,
+} from "../data/index.js";
 import { DIFFICULTES, RARETES, bonusRelique, getMonde } from "../jeu/config.js";
 import { dofusDeSucces, nouvelEtatQuetes, progressionSucces } from "../jeu/quetes.js";
 import { ajouterResistanceTous, effetsDifficulte, prospectionEquipe } from "../jeu/run.js";
@@ -97,6 +105,9 @@ export function chargerMeta() {
         records: normaliserRecords(donnees.records),
         // Almanax du jour (1.8.0) : absent = aucun progrès, aucune récompense en attente
         almanax: normaliserAlmanax(donnees.almanax),
+        // historique des 20 dernières runs et statistiques du compte (1.9.0) : absents = vides
+        historique: normaliserHistorique(donnees.historique),
+        compte: normaliserCompte(donnees.compte),
         // relique équipée (E2) : absente = aucune
         reliqueEquipee:
           typeof donnees.reliqueEquipee === `string` && RELIQUES[donnees.reliqueEquipee]
@@ -116,6 +127,7 @@ export function chargerMeta() {
 }
 /** Enregistre la méta-progression. Renvoie false (et prévient une fois) si l'écriture échoue. */
 export function sauverMeta(meta) {
+  noterTempsJeu(meta);
   let ecrit = true;
   try {
     localStorage.setItem(CLE_META, JSON.stringify(meta));
@@ -520,4 +532,188 @@ export function appliquerBonusDofus(combattants, bonus) {
       combattant.ouvreToujours = true;
     }
   }
+}
+
+// ---------- Historique des runs et statistiques du compte (1.9.0) ----------
+export const MAX_HISTORIQUE = 20;
+// Au-delà, un écart entre deux sauvegardes compte comme une pause (onglet oublié ouvert).
+export const PAUSE_TEMPS_JEU = 5 * 60 * 1000;
+const ISSUES_RUN = [`victoire`, `defaite`, `abandon`];
+const MODES_RUN = [`run`, `jour`, `songes`];
+const entier = (valeur, max = 1e9) =>
+  typeof valeur === `number` && Number.isFinite(valeur)
+    ? Math.max(0, Math.min(max, Math.floor(valeur)))
+    : 0;
+const texteCourt = (valeur, max) => (typeof valeur === `string` ? valeur.slice(0, max) : ``);
+const compteVierge = () => ({ tempsJeu: 0, combats: 0, heros: {}, meilleurs: {} });
+/** Une run de l'historique lue dans une sauvegarde : nettoyée, ou null si elle est illisible. */
+function normaliserEntreeHistorique(brut) {
+  if (!brut || typeof brut !== `object` || !Number.isFinite(brut.date) || brut.date <= 0) {
+    return null;
+  }
+  return {
+    date: Math.floor(brut.date),
+    mode: MODES_RUN.includes(brut.mode) ? brut.mode : `run`,
+    monde: MONDES.some((monde) => monde.id === brut.monde) ? brut.monde : `t1`,
+    difficulte: entier(brut.difficulte, DIFFICULTES.length - 1),
+    issue: ISSUES_RUN.includes(brut.issue) ? brut.issue : `defaite`,
+    zone: entier(brut.zone, 99),
+    nbZones: entier(brut.nbZones, 99),
+    etage: entier(brut.etage, 9999),
+    equipe: (Array.isArray(brut.equipe) ? brut.equipe : [])
+      .filter((heros) => CLASSES[heros?.classe])
+      .slice(0, 4)
+      .map((heros) => ({ classe: heros.classe, niveau: entier(heros.niveau, 999) })),
+    cause: texteCourt(brut.cause, 140),
+    reliques: (Array.isArray(brut.reliques) ? brut.reliques : [])
+      .filter((id) => RELIQUES_RUN[id])
+      .slice(0, 40),
+    reliquesBoss: (Array.isArray(brut.reliquesBoss) ? brut.reliquesBoss : [])
+      .filter((id) => RELIQUES[id])
+      .slice(0, 10),
+    combats: entier(brut.combats, 9999),
+  };
+}
+export function normaliserHistorique(liste) {
+  return Array.isArray(liste)
+    ? liste.map(normaliserEntreeHistorique).filter(Boolean).slice(0, MAX_HISTORIQUE)
+    : [];
+}
+export function normaliserCompte(brut) {
+  const compte = compteVierge();
+  if (!brut || typeof brut !== `object` || Array.isArray(brut)) {
+    return compte;
+  }
+  compte.tempsJeu = entier(brut.tempsJeu);
+  compte.combats = entier(brut.combats);
+  for (const [classe, runs] of Object.entries(brut.heros ?? {})) {
+    if (CLASSES[classe] && entier(runs) > 0) {
+      compte.heros[classe] = entier(runs);
+    }
+  }
+  for (const [monde, parDifficulte] of Object.entries(brut.meilleurs ?? {})) {
+    if (!MONDES.some((candidat) => candidat.id === monde) || !parDifficulte) {
+      continue;
+    }
+    for (const [cran, record] of Object.entries(parDifficulte)) {
+      if (DIFFICULTES[cran] && record && typeof record === `object`) {
+        (compte.meilleurs[monde] ??= {})[cran] = {
+          zone: entier(record.zone, 99),
+          victoires: entier(record.victoires),
+        };
+      }
+    }
+  }
+  return compte;
+}
+// Temps de jeu approximatif : l'écart depuis la sauvegarde précédente (plafonné), à chaque
+// sauvegarde de la méta.
+let dernierPointage = Date.now();
+export function noterTempsJeu(meta, maintenant = Date.now()) {
+  const ecart = maintenant - dernierPointage;
+  dernierPointage = maintenant;
+  if (!meta || !(ecart > 0)) {
+    return;
+  }
+  const compte = (meta.compte ??= compteVierge());
+  compte.tempsJeu = entier(compte.tempsJeu) + Math.round(Math.min(ecart, PAUSE_TEMPS_JEU) / 1000);
+}
+/**
+ * Ligne d'historique d'une run qui se termine. issue : victoire, defaite ou abandon ; zone : zone
+ * atteinte (1 = première) ; cause : ce qui a battu l'équipe.
+ */
+export function entreeHistorique(run, { issue, zone, nbZones, cause = ``, date = Date.now() }) {
+  return normaliserEntreeHistorique({
+    date,
+    mode: run.mode === `songes` ? `songes` : run.jour ? `jour` : `run`,
+    monde: run.trancheId ?? `t1`,
+    difficulte: run.ascension ?? 0,
+    issue,
+    zone,
+    nbZones,
+    etage: run.mode === `songes` ? (run.etage ?? 0) : 0,
+    equipe: (run.persos ?? []).map((perso) => ({
+      classe: perso.classeId,
+      niveau: perso.progression?.niveau ?? 1,
+    })),
+    cause,
+    reliques: run.reliquesRun ?? [],
+    reliquesBoss: run.stats?.reliques ?? [],
+    combats: run.stats?.combats ?? 0,
+  });
+}
+/** Range la run dans l'historique (20 dernières) et met à jour les statistiques du compte. */
+export function noterFinDeRun(meta, run, infos) {
+  const entree = entreeHistorique(run, infos);
+  if (!entree) {
+    return null;
+  }
+  meta.historique = [entree, ...normaliserHistorique(meta.historique)].slice(0, MAX_HISTORIQUE);
+  const compte = (meta.compte = normaliserCompte(meta.compte));
+  compte.combats += entree.combats;
+  for (const { classe } of entree.equipe) {
+    compte.heros[classe] = (compte.heros[classe] ?? 0) + 1;
+  }
+  if (entree.mode !== `songes`) {
+    const record = ((compte.meilleurs[entree.monde] ??= {})[entree.difficulte] ??= {
+      zone: 0,
+      victoires: 0,
+    });
+    record.zone = Math.max(record.zone, entree.zone);
+    record.victoires += entree.issue === `victoire` ? 1 : 0;
+  }
+  sauverMeta(meta);
+  return entree;
+}
+/**
+ * Statistiques du compte pour l'écran Historique : temps de jeu, runs, combats, héros le plus joué,
+ * et pour chaque monde et chaque difficulté la meilleure zone atteinte (gagnée ou non).
+ */
+export function statistiquesCompte(meta) {
+  const compte = normaliserCompte(meta.compte);
+  const favori = Object.entries(compte.heros).sort(
+    (premier, second) => second[1] - premier[1] || premier[0].localeCompare(second[0]),
+  )[0];
+  return {
+    tempsJeu: compte.tempsJeu,
+    runs: entier(meta.runs),
+    victoires: entier(meta.victoires),
+    combats: compte.combats,
+    herosFavori: favori ? { classe: favori[0], runs: favori[1] } : null,
+    records: MONDES.filter((monde) => monde.zones.length).map((monde) => {
+      const gagneJusquA = meta.ascension?.[monde.id];
+      return {
+        monde: monde.id,
+        nbZones: monde.zones.length,
+        toileMax: entier(meta.statsMonde?.[monde.id]?.toileMax),
+        score: entier(meta.records?.[monde.id]?.score),
+        parDifficulte: DIFFICULTES.map((_difficulte, cran) => {
+          const record = compte.meilleurs[monde.id]?.[cran];
+          // une difficulté ne s'ouvre qu'après une victoire à la précédente : toutes celles
+          // jusqu'au meilleur palier gagné l'ont été (même avant la 1.9.0)
+          const gagnee =
+            (record?.victoires ?? 0) > 0 || (Number.isFinite(gagneJusquA) && cran <= gagneJusquA);
+          return {
+            difficulte: cran,
+            zone: gagnee ? monde.zones.length : (record?.zone ?? 0),
+            gagnee,
+            victoires: record?.victoires ?? 0,
+          };
+        }),
+      };
+    }),
+  };
+}
+/** « ≈ 3 h 20 », « ≈ 12 min », « moins d'une minute ». */
+export function texteDuree(secondes) {
+  const minutes = Math.floor(entier(secondes) / 60);
+  if (minutes < 1) {
+    return `moins d'une minute`;
+  }
+  if (minutes < 60) {
+    return `≈ ${minutes} min`;
+  }
+  const heures = Math.floor(minutes / 60);
+  const reste = minutes % 60;
+  return `≈ ${heures} h${reste ? ` ${String(reste).padStart(2, `0`)}` : ``}`;
 }
