@@ -293,7 +293,7 @@ export function ecranDofusDebloque(id) {
 export const dureeBandeau = (texte) => (String(texte ?? ``).length > 60 ? 8000 : 4000);
 // Bandeau temporaire (quête accomplie, défi…) : 3 au plus à l'écran, les plus anciens partent.
 // Le survol (ou le toucher maintenu) met le décompte en pause.
-export function afficherBandeau(texte) {
+export function afficherBandeau(texte, classe = ``) {
   let conteneur = document.getElementById(`bandeaux-quete`);
   if (!conteneur) {
     conteneur = document.createElement(`div`);
@@ -302,7 +302,7 @@ export function afficherBandeau(texte) {
     document.body.appendChild(conteneur);
   }
   let bandeau = document.createElement(`div`);
-  bandeau.className = `bandeau-quete`;
+  bandeau.className = classe ? `bandeau-quete ${classe}` : `bandeau-quete`;
   bandeau.textContent = texte;
   conteneur.appendChild(bandeau);
   while (conteneur.children.length > 3) {
@@ -329,6 +329,10 @@ export function afficherBandeau(texte) {
   bandeau.addEventListener(`pointerleave`, lancer);
   lancer();
 }
+// Retire les astuces encore affichées (elles masqueraient le bas d'un écran d'action).
+export function retirerAstuces() {
+  document.querySelectorAll(`#bandeaux-quete .astuce`).forEach((b) => b.remove());
+}
 // Astuce de première partie : un bandeau non bloquant, une seule fois par moment clé (`cle`).
 export function afficherAstuce(cle, texte) {
   if (!parametres.vuTuto || tutoVu(parametres.vuTuto, cle)) {
@@ -336,7 +340,7 @@ export function afficherAstuce(cle, texte) {
   }
   parametres.vuTuto = { ...normaliserVuTuto(parametres.vuTuto), [cle]: true };
   sauverParametres(parametres);
-  afficherBandeau(`💡 ${texte}`);
+  afficherBandeau(`💡 ${texte}`, `astuce`);
 }
 // « Revoir les astuces » (Paramètres) : toutes les astuces redeviennent disponibles.
 export function reinitialiserAstuces() {

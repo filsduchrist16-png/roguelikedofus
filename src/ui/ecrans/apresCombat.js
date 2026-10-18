@@ -12,7 +12,7 @@ import {
 } from "../commun.js";
 import { brancherEquiperButin, htmlEquiperButin, htmlListeButin } from "./butin.js";
 import { classeRareteChoix, htmlContenuChoix } from "./choixRecompense.js";
-import { afficherAstuce } from "./succes.js";
+import { afficherAstuce, retirerAstuces } from "./succes.js";
 
 /** Libellé du bouton « Continuer » selon la carte choisie (lecteurs d'écran, infobulle). */
 export function libelleContinuer(choisi, offre) {
@@ -45,6 +45,7 @@ export function ecranApresCombat(butin, offre, run) {
           `<button class="choix-rec-carte${classeRareteChoix(choix, run)}" data-choix="${indice}" aria-pressed="false">${htmlContenuChoix(choix, run)}</button>`,
       )
       .join(``);
+    retirerAstuces();
     afficherEcran(
       `
       <h1>${offre.elite ? `🎖️ Victoire d'élite !` : `🏆 Victoire !`}</h1>
