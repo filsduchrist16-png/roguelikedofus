@@ -28,3 +28,11 @@ export function verserAlmanax(meta, run) {
   }
   return texte;
 }
+/** Récompense obtenue (amélioration de sort, nouveau sort, relique de run) pour la quête du jour. */
+export function noterGainAlmanax(meta, choix) {
+  const gain = choix?.type;
+  if (gain === `sort` || gain === `apprendre` || gain === `relique`) {
+    return noterAlmanax(meta, `recompense`, { gain });
+  }
+  return false;
+}

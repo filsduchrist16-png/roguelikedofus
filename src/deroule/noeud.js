@@ -56,7 +56,7 @@ import {
   reliqueTaverne,
   reposCamp,
 } from "../jeu/cases.js";
-import { noterAlmanax } from "./almanax.js";
+import { noterAlmanax, noterGainAlmanax } from "./almanax.js";
 import { detailRelique } from "./rencontres.js";
 import {
   appliquerChoix,
@@ -87,10 +87,11 @@ function progressionDansMonde(run, zoneId) {
   const indice = zones.indexOf(zoneId);
   return indice < 0 || zones.length < 2 ? 0 : indice / (zones.length - 1);
 }
-// Camp de repos : se soigner OU améliorer gratuitement un sort (une des trois améliorations proposées).
+// Camp de repos : se soigner OU améliorer gratuitement un sort (une des trois améliorations proposées)
+// OU étudier un nouveau sort (sort avancé de la classe d'un héros, s'il en reste à apprendre).
 async function jouerCamp(run, zone) {
   run.stats.camps = (run.stats.camps ?? 0) + 1;
-  let { soinPct, ameliorations } = optionsCamp(
+  let { soinPct, ameliorations, apprendre } = optionsCamp(
     run,
     Math.random,
     progressionDansMonde(run, zone?.id),
@@ -114,13 +115,28 @@ async function jouerCamp(run, zone) {
           detail: `${description.sousTitre}. ${description.effet}`,
         };
       }),
+      ...(apprendre
+        ? [
+            {
+              id: `etudier`,
+              libelle: `📖 Étudier : ${decrireChoix(apprendre, run).titre}`,
+              detail: `${decrireChoix(apprendre, run).sousTitre}. ${decrireChoix(apprendre, run).effet}`,
+            },
+          ]
+        : []),
     ],
   });
+  if (choix === `etudier` && apprendre) {
+    afficherBandeau(`⛺ ${appliquerChoix(run, apprendre)}`);
+    noterGainAlmanax(meta, apprendre);
+    return;
+  }
   if (choix === `repos`) {
     afficherBandeau(`⛺ Repos : +${reposCamp(run, soinPct)} PV pour l'équipe`);
     return;
   }
   let texte = appliquerChoix(run, ameliorations[Number(choix.slice(1))]);
+  noterGainAlmanax(meta, ameliorations[Number(choix.slice(1))]);
   if (texte) {
     afficherBandeau(`⛺ ${texte}`);
   }
@@ -174,6 +190,7 @@ async function jouerCoffre(run, zone, noeud) {
       : null;
   if (relique) {
     appliquerChoix(run, relique);
+    noterGainAlmanax(meta, relique);
     let def = RELIQUES_RUN[relique.id];
     await ecranMessage(
       `${def.icone} ${def.nom}`,
@@ -409,11 +426,14 @@ export async function resoudreNoeud(run, type, combatId, xpCombat, zone, eliteMo
       return `continue`;
     case `coffre`:
       return jouerCoffre(run, zone, noeud);
-    case `rencontre`:
-      await jouerAvecGraine(run, noeud, type, () => jouerRencontre(run, zone));
+    case `rencontre`: {
+      // une rencontre du Krosmoz peut lancer un combat : une défaite y met fin à la run
+      const issue = await jouerAvecGraine(run, noeud, type, () => jouerRencontre(run, zone));
       run.graineCase = null;
+      noterAlmanax(meta, `rencontre`);
       await traiterQuetes(run, verifierQuetesMeta(quetesMeta(), ctxMeta()));
-      return `continue`;
+      return issue === `wipe` ? `wipe` : `continue`;
+    }
     default:
       return `continue`;
   }

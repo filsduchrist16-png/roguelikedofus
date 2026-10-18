@@ -51,6 +51,17 @@ import {
   reliquesProposees,
 } from "../jeu/cases.js";
 import { NOMS_RARETES_CHOIX, sacrificePvRun, texteSynergies } from "../jeu/recompensesRun.js";
+import {
+  appliquerEffetsLore,
+  estRencontreLore,
+  payerChoix,
+  preparerRencontreLore,
+  tirerIssue,
+} from "../jeu/rencontresLore.js";
+import { choixAleatoireMath } from "./etat.js";
+import { noterGainAlmanax } from "./almanax.js";
+import { resoudreNoeud } from "./noeud.js";
+import { RENCONTRES } from "../data/index.js";
 
 // Détail d'une relique dans une option de rencontre : rareté, effet et synergies.
 export const detailRelique = (id, run) =>
@@ -60,6 +71,54 @@ export const detailRelique = (id, run) =>
   ]
     .filter(Boolean)
     .join(` `);
+
+// ---------- Rencontres du Krosmoz (src/data/rencontres.json) ----------
+// Choix, issue tirée au hasard, combat éventuel de la zone (normal ou dur) puis les effets. Renvoie
+// `wipe` si l'équipe tombe pendant ce combat.
+async function jouerRencontreLore(run, zone, id, toile) {
+  const rencontre = preparerRencontreLore(run, id, { rng: Math.random, toile });
+  const avecPrix = rencontre.choix.some((option) => option.prix);
+  const choix = await ecranRencontre({
+    equipe: run.persos,
+    titre: rencontre.titre,
+    img: rencontre.img,
+    texte: rencontre.texte,
+    ...(avecPrix ? { kamas: run.kamas } : {}),
+    choix: rencontre.choix,
+  });
+  const issue = tirerIssue(id, choix, Math.random);
+  if (!issue || !payerChoix(run, id, choix, toile)) {
+    return `continue`;
+  }
+  const gains = [];
+  const options = { rng: Math.random, toile, heros: rencontre.heros, gains };
+  const noterGains = () => gains.forEach((gain) => noterGainAlmanax(meta, { type: gain }));
+  if (issue.combat) {
+    await ecranMessage(issue.titre, issue.texte);
+    const elite = issue.combat === `elite`;
+    const combatId = choixAleatoireMath((elite ? zone?.pools?.elite : zone?.pools?.normales) ?? []);
+    if (combatId) {
+      const resultat = await resoudreNoeud(
+        run,
+        elite ? `combat_dur` : `combat`,
+        combatId,
+        elite ? XP_PAR_COMBAT.combat_dur : XP_PAR_COMBAT.combat,
+        zone,
+      );
+      if (resultat !== `continue`) {
+        return resultat;
+      }
+    }
+    const lignes = appliquerEffetsLore(run, issue.effets, options);
+    noterGains();
+    await ecranMessage(`🎁 ${RENCONTRES[id].titre}`, lignes.join(` `));
+    return `continue`;
+  }
+  const lignes = appliquerEffetsLore(run, issue.effets, options);
+  noterGains();
+  await ecranMessage(issue.titre, [issue.texte, ...lignes].join(` `));
+  return `continue`;
+}
 
 // ---------- Rencontres (case « Rencontre » de la carte) ----------
 export async function jouerRencontre(run, zone) {
@@ -75,6 +134,9 @@ export async function jouerRencontre(run, zone) {
     type = `coffre`;
   }
   run.stats.rencontres = (run.stats.rencontres ?? 0) + 1;
+  if (estRencontreLore(type)) {
+    return jouerRencontreLore(run, zone, type, toile);
+  }
   if (type === `sanctuaire`) {
     let dieux = dieuxProposes(run, Math.random);
     let choix = await ecranRencontre({
@@ -252,6 +314,7 @@ export async function jouerRencontre(run, zone) {
       ],
     });
     if (choix !== `partir` && acheterReliqueRun(run, choix, prixReliqueRun(choix, toile))) {
+      noterGainAlmanax(meta, { type: `relique` });
       afficherBandeau(
         `${RELIQUES_RUN[choix].icone} ${RELIQUES_RUN[choix].nom} : ${RELIQUES_RUN[choix].desc}`,
       );
@@ -277,6 +340,7 @@ export async function jouerRencontre(run, zone) {
       ],
     });
     if (choix !== `partir` && pacteAutel(run, choix)) {
+      noterGainAlmanax(meta, { type: `relique` });
       afficherBandeau(
         `🩸 Pacte scellé : ${RELIQUES_RUN[choix].icone} ${RELIQUES_RUN[choix].nom}, −${pct} % de PV max en combat`,
       );

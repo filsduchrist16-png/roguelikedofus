@@ -276,9 +276,9 @@ describe(`donjons secrets`, () => {
     const rng = rngFixe(7);
     const tirages = new Set(Array.from({ length: 400 }, () => tirerRencontre(rng, [`cle`])));
     expect(tirages.has(`cle`)).toBe(false);
-    // 8 autres rencontres : sanctuaire, coffre, marchand, idoles, traque, forgemage, temple,
-    // colporteur et autel de sang, moins la clé
-    expect(tirages.size).toBe(9);
+    // 9 autres rencontres : sanctuaire, coffre, marchand, idoles, traque, forgemage, temple,
+    // colporteur et autel de sang, plus les 7 rencontres du Krosmoz (1.9.0)
+    expect(tirages.size).toBe(16);
   });
 });
 

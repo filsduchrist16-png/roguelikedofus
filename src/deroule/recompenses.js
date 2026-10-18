@@ -19,6 +19,7 @@ import { ecranApresCombat } from "../ui/ecrans/apresCombat.js";
 import { traiterQuetes } from "./quetes.js";
 import { verifierQuetesMeta } from "../jeu/quetes.js";
 import { sauverRun } from "../sauvegarde/run.js";
+import { noterGainAlmanax } from "./almanax.js";
 
 // Renvoie l'XP donnée à chaque héros (0 si tous sont au niveau max du monde)
 // et le nombre de héros qui ont gagné au moins un niveau.
@@ -109,7 +110,9 @@ export async function proposerOffreCombat(run, zoneIdx) {
       run.offreCombat,
       run,
     );
+    const choisi = indice === `passer` ? null : run.offreCombat.choix[indice];
     texte = resoudreOffreCombat(run, indice);
+    noterGainAlmanax(meta, choisi);
   } else if (butin.objets.length) {
     await ecranButin(butin.objets, run, butin.bilan);
   } else if (butin.bilan) {

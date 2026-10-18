@@ -14,6 +14,8 @@ import PANOPLIES from "./panoplies.json";
 import SECRETS from "./secrets.json";
 import AJUSTEMENTS_DONJONS from "./ajustementsDonjons.json";
 import AJUSTEMENTS_ZONES from "./ajustementsZones.json";
+import CAPACITES_BOSS from "./capacitesBoss.json";
+import RENCONTRES from "./rencontres.json";
 export const CONFIG_RELIQUES = {
   base: 0.01,
   parCran: 0.01,
@@ -546,4 +548,6 @@ export {
   SECRETS,
   AJUSTEMENTS_DONJONS,
   AJUSTEMENTS_ZONES,
+  CAPACITES_BOSS,
+  RENCONTRES,
 };

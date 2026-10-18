@@ -1,6 +1,6 @@
 // Rencontres : la case « Rencontre » de la carte tire un événement à choix (sanctuaire des Douze,
 // coffre abandonné, autel des Idoles, marchand ambulant, avis de recherche).
-import { MONSTRES, RELIQUES_RUN } from "../data/index.js";
+import { MONSTRES, RELIQUES_RUN, RENCONTRES } from "../data/index.js";
 import { AFFIXES_GROUPE, ECONOMIE, monstresDeZone } from "./config.js";
 import { bonusDofus } from "../sauvegarde/meta.js";
 import { nomCle, secretDuMonde } from "./secret.js";
@@ -103,6 +103,8 @@ const POIDS = {
   // reliques de run hors combat : colporteur (contre des kamas) et autel de sang (contre des PV max)
   colporteur: 14,
   autel_sang: 10,
+  // rencontres du Krosmoz (1.9.0, src/data/rencontres.json, src/jeu/rencontresLore.js)
+  ...Object.fromEntries(Object.entries(RENCONTRES).map(([id, def]) => [id, def.poids ?? 8])),
 };
 // Part des PV max rendue à un héros relevé au temple.
 export const PV_TEMPLE = 0.5;

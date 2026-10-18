@@ -1,0 +1,340 @@
+{
+  "otomai": {
+    "titre": "🧪 L'alchimiste Otomaï",
+    "img": "/assets/cases/otomai.png",
+    "poids": 9,
+    "texte": "Otomaï, le savant fou de l'île qui porte son nom, fait tourner une fiole fumante entre ses doigts : « Une petite gorgée pour la science ? Les effets secondaires sont… rarement mortels. »",
+    "choix": [
+      {
+        "id": "boire",
+        "libelle": "🧪 Goûter la potion bouillonnante",
+        "detail": "2 chances sur 3 : un héros au hasard gagne {stats} en Force, Intelligence, Agilité et Chance pour toute la run. Sinon, chaque héros perd 15 % de ses PV max.",
+        "issues": [
+          {
+            "chance": 0.67,
+            "titre": "🧪 Ça marche !",
+            "texte": "La potion pétille, une chaleur étrange parcourt les muscles.",
+            "effets": {
+              "stats": 1.5
+            }
+          },
+          {
+            "chance": 0.33,
+            "titre": "🤢 Effets secondaires",
+            "texte": "La potion a un goût de Bwork mouillé : toute l'équipe est prise de crampes.",
+            "effets": {
+              "pertePvPct": 0.15
+            }
+          }
+        ]
+      },
+      {
+        "id": "elixir",
+        "libelle": "💊 Lui acheter un élixir éprouvé",
+        "prix": 1,
+        "detail": "L'équipe récupère 50 % de ses PV max.",
+        "issues": [
+          {
+            "chance": 1,
+            "titre": "💊 Élixir d'Otomaï",
+            "texte": "Le remède est amer, mais il fonctionne.",
+            "effets": {
+              "soinPct": 0.5
+            }
+          }
+        ]
+      },
+      {
+        "id": "partir",
+        "libelle": "Décliner poliment"
+      }
+    ]
+  },
+  "xelor": {
+    "titre": "⌛ Le sablier de Xélor",
+    "img": "/assets/class_symbol/xelor.png",
+    "poids": 8,
+    "texte": "Le temps se fige. Une silhouette drapée de bandelettes retourne un sablier immense : « Je peux t'offrir du temps… mais le temps a toujours un prix. »",
+    "choix": [
+      {
+        "id": "don",
+        "libelle": "⏳ Accepter le don du temps",
+        "detail": "Une amélioration de sort rare (ou épique) pour un héros, contre 12 % des PV max de chaque héros.",
+        "issues": [
+          {
+            "chance": 1,
+            "titre": "⏳ Le temps file",
+            "texte": "Les aiguilles tournent à toute allure : tes héros ont vieilli d'un coup, mais l'un d'eux a mûri sa technique.",
+            "effets": {
+              "pertePvPct": 0.12,
+              "amelioration": "rare"
+            }
+          }
+        ]
+      },
+      {
+        "id": "rembobiner",
+        "libelle": "🔁 Remonter le sablier",
+        "detail": "L'équipe retrouve 40 % de ses PV max, mais le dieu prend 15 % de ta bourse.",
+        "issues": [
+          {
+            "chance": 1,
+            "titre": "🔁 Retour en arrière",
+            "texte": "Les blessures se referment comme si elles n'avaient jamais existé. Ta bourse, elle, s'est allégée.",
+            "effets": {
+              "soinPct": 0.4,
+              "perteKamasPct": 0.15
+            }
+          }
+        ]
+      },
+      {
+        "id": "partir",
+        "libelle": "Ne pas défier le temps"
+      }
+    ]
+  },
+  "wabbit": {
+    "titre": "🐰 Un Wabbit chapardeur",
+    "img": "/assets/monstres/wabbit.png",
+    "poids": 9,
+    "texte": "Un Wabbit jaillit d'un buisson, ton sac de kamas entre les dents, et file vers son terrier en ricanant.",
+    "choix": [
+      {
+        "id": "poursuivre",
+        "libelle": "🏃 Le poursuivre jusqu'au terrier",
+        "detail": "Une chance sur deux : tu récupères ton bien et son magot. Sinon, ses amis t'attendent (combat de la zone), puis le magot est à toi.",
+        "issues": [
+          {
+            "chance": 0.5,
+            "titre": "🥕 Rattrapé !",
+            "texte": "Le Wabbit trébuche sur une cawotte : tu récupères ton sac… et le sien.",
+            "effets": {
+              "kamas": 2
+            }
+          },
+          {
+            "chance": 0.5,
+            "titre": "🐰 Embuscade !",
+            "texte": "Le terrier était un piège : des monstres surgissent !",
+            "combat": "normal",
+            "effets": {
+              "kamas": 2.5
+            }
+          }
+        ]
+      },
+      {
+        "id": "cawotte",
+        "libelle": "🥕 Lui lancer une cawotte",
+        "prix": 0.6,
+        "detail": "Le Wabbit, ravi, lâche ton sac et te laisse un porte-bonheur : une relique de run commune.",
+        "issues": [
+          {
+            "chance": 1,
+            "titre": "🥕 Marché conclu",
+            "texte": "Le Wabbit croque la cawotte et dépose à tes pieds un curieux objet.",
+            "effets": {
+              "relique": "commun"
+            }
+          }
+        ]
+      },
+      {
+        "id": "laisser",
+        "libelle": "Le laisser filer",
+        "detail": "Tu perds 10 % de ta bourse.",
+        "issues": [
+          {
+            "chance": 1,
+            "titre": "💸 Envolé",
+            "texte": "Le Wabbit disparaît dans son terrier avec une partie de tes kamas.",
+            "effets": {
+              "perteKamasPct": 0.1
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "milices": {
+    "titre": "⚔️ Bonta contre Brâkmar",
+    "img": "/assets/cases/combat.png",
+    "poids": 8,
+    "texte": "Au détour du chemin, un milicien bontarien et un milicien brâkmarien croisent le fer. Tous deux t'appellent à l'aide, chacun promettant la faveur de sa cité.",
+    "choix": [
+      {
+        "id": "bonta",
+        "libelle": "😇 Rallier Bonta",
+        "detail": "Combat de la zone aux côtés de la milice, puis la cité te bénit : Égide de Feca (+6 % de résistance dans chaque élément) pour toute la run.",
+        "issues": [
+          {
+            "chance": 1,
+            "titre": "😇 Pour Bonta !",
+            "texte": "Les Brâkmariens appellent des renforts : il faut se battre.",
+            "combat": "normal",
+            "effets": {
+              "benediction": "feca"
+            }
+          }
+        ]
+      },
+      {
+        "id": "brakmar",
+        "libelle": "😈 Rallier Brâkmar",
+        "detail": "Pas de combat, mais un pacte : Fureur d'Iop (+8 % de dégâts) pour toute la run, contre 8 % de PV max en combat jusqu'à la fin de la run.",
+        "issues": [
+          {
+            "chance": 1,
+            "titre": "😈 Pacte brâkmarien",
+            "texte": "Le milicien brâkmarien grave une rune sur tes armes. Elle brûle un peu… pour toujours.",
+            "effets": {
+              "benediction": "iop",
+              "sacrificePv": 0.08
+            }
+          }
+        ]
+      },
+      {
+        "id": "partir",
+        "libelle": "Rester neutre et passer"
+      }
+    ]
+  },
+  "dopeul": {
+    "titre": "👥 Le Dopeul",
+    "poids": 7,
+    "texte": "Une silhouette identique à l'un de tes héros te barre la route : le Dopeul de son temple, venu tester sa valeur.",
+    "choix": [
+      {
+        "id": "duel",
+        "libelle": "⚔️ Accepter le duel",
+        "detail": "Combat dur de la zone. Vaincu, le Dopeul enseigne un nouveau sort à {heros} (ou une amélioration de sort rare s'il les connaît tous).",
+        "issues": [
+          {
+            "chance": 1,
+            "titre": "👥 Duel !",
+            "texte": "Le Dopeul appelle ses disciples : le duel tourne à la mêlée.",
+            "combat": "elite",
+            "effets": {
+              "apprendre": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "mediter",
+        "libelle": "🧘 Méditer face à lui",
+        "detail": "{heros} gagne {stats} en Force, Intelligence, Agilité et Chance pour toute la run.",
+        "issues": [
+          {
+            "chance": 1,
+            "titre": "🧘 Méditation",
+            "texte": "Le héros et son reflet s'observent longuement, puis le Dopeul s'incline et s'efface.",
+            "effets": {
+              "stats": 1
+            }
+          }
+        ]
+      },
+      {
+        "id": "partir",
+        "libelle": "Saluer et passer son chemin"
+      }
+    ]
+  },
+  "marchand_ames": {
+    "titre": "👻 Le marchand d'âmes",
+    "img": "/assets/monstres/fantomalamere.png",
+    "poids": 8,
+    "texte": "Un marchand encapuchonné fait briller des pierres d'âme à la lueur d'une lanterne : « J'achète tout… et je vends ce qu'on ne trouve nulle part ailleurs. »",
+    "choix": [
+      {
+        "id": "pierre",
+        "libelle": "💎 Acheter une pierre d'âme",
+        "prix": 1.6,
+        "detail": "Une relique de run rare (ou épique).",
+        "issues": [
+          {
+            "chance": 1,
+            "titre": "💎 Pierre d'âme",
+            "texte": "La pierre palpite dans ta main : une âme puissante y dort encore.",
+            "effets": {
+              "relique": "rare"
+            }
+          }
+        ]
+      },
+      {
+        "id": "vendre",
+        "libelle": "🩸 Lui vendre un éclat de ton âme",
+        "detail": "Un gros sac de kamas, contre 6 % de PV max en combat jusqu'à la fin de la run.",
+        "issues": [
+          {
+            "chance": 1,
+            "titre": "🩸 Marché conclu",
+            "texte": "Le marchand recueille une lueur pâle dans une fiole et compte les kamas.",
+            "effets": {
+              "kamas": 3,
+              "sacrificePv": 0.06
+            }
+          }
+        ]
+      },
+      {
+        "id": "partir",
+        "libelle": "Garder son âme et repartir"
+      }
+    ]
+  },
+  "rubilax": {
+    "titre": "🗡️ Le Shushu Rubilax",
+    "img": "/assets/items/corbalame.png",
+    "poids": 7,
+    "texte": "Une épée plantée dans la roche murmure d'une voix grinçante : « Libère-moi, et je te donnerai la force… Rubilax tient TOUJOURS parole. Enfin, presque. »",
+    "choix": [
+      {
+        "id": "liberer",
+        "libelle": "🗡️ Écouter le Shushu",
+        "detail": "Une chance sur deux : une amélioration de sort épique. Sinon, le démon se moque de toi et chaque héros perd 20 % de ses PV max.",
+        "issues": [
+          {
+            "chance": 0.5,
+            "titre": "🗡️ Rubilax a tenu parole",
+            "texte": "Le démon souffle un secret de combat à l'un de tes héros.",
+            "effets": {
+              "amelioration": "epique"
+            }
+          },
+          {
+            "chance": 0.5,
+            "titre": "😈 Rubilax ricane",
+            "texte": "« Naïf ! » L'épée crache une onde de flammes noires sur l'équipe.",
+            "effets": {
+              "pertePvPct": 0.2
+            }
+          }
+        ]
+      },
+      {
+        "id": "sceller",
+        "libelle": "🔒 Le resceller dans sa roche",
+        "detail": "L'équipe gagne de l'expérience (l'équivalent de deux combats durs).",
+        "issues": [
+          {
+            "chance": 1,
+            "titre": "🔒 Scellé",
+            "texte": "Il faut toute la volonté de l'équipe pour faire taire le Shushu. L'épreuve forge le caractère.",
+            "effets": {
+              "xp": 2
+            }
+          }
+        ]
+      },
+      {
+        "id": "partir",
+        "libelle": "Ne pas l'écouter"
+      }
+    ]
+  }
+}

@@ -87,18 +87,28 @@ describe(`rencontres`, () => {
     let a = 1;
     const rng = () => (a = (a * 16807) % 2147483647) / 2147483647;
     const vus = new Set(Array.from({ length: 500 }, () => tirerRencontre(rng)));
-    expect([...vus].sort()).toEqual([
-      `autel_sang`,
-      `cle`,
-      `coffre`,
-      `colporteur`,
-      `forgemage`,
-      `idoles`,
-      `marchand`,
-      `sanctuaire`,
-      `temple`,
-      `traque`,
-    ]);
+    // 1.9.0 : les 7 rencontres du Krosmoz (src/data/rencontres.json) s'ajoutent aux 10 d'avant
+    expect([...vus].sort()).toEqual(
+      [
+        `autel_sang`,
+        `cle`,
+        `coffre`,
+        `colporteur`,
+        `forgemage`,
+        `idoles`,
+        `marchand`,
+        `sanctuaire`,
+        `temple`,
+        `traque`,
+        `otomai`,
+        `xelor`,
+        `wabbit`,
+        `milices`,
+        `dopeul`,
+        `marchand_ames`,
+        `rubilax`,
+      ].sort(),
+    );
   });
 });
 

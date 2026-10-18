@@ -7,10 +7,13 @@ import { dateDuJour, graineDeTexte, rngGraine } from "./runDuJour.js";
 const NOMS_ELEMENTS = { terre: `Terre`, feu: `Feu`, eau: `Eau`, air: `Air` };
 const ICONES_ELEMENTS = { terre: `🪨`, feu: `🔥`, eau: `💧`, air: `🌪️` };
 const combatGagne = (evenement) => evenement.type === `combat` && evenement.gagne;
+// récompense obtenue (choix après un combat, camp, coffre, rencontre) : { type: `recompense`, gain }
+const gainDe = (evenement, gain) => evenement.type === `recompense` && evenement.gain === gain;
 /**
  * Quêtes possibles : `compte(evenement)` dit de combien l'évènement fait avancer la quête.
  * Évènements : `combat` (résumé du combat : gagne, herosKO, noeud, rondes, defiOk, coups),
- * `zone` (zone terminée), `camp` (halte au camp), `coffre` (coffre ouvert).
+ * `zone` (zone terminée), `camp` (halte au camp), `coffre` (coffre ouvert), `rencontre` (case
+ * rencontre jouée), `recompense` (gain : `sort` amélioré, `apprendre` nouveau sort, `relique`).
  */
 export const QUETES_ALMANAX = [
   {
@@ -77,6 +80,50 @@ export const QUETES_ALMANAX = [
     objectif: 2,
     compte: (evenement) => (evenement.type === `camp` ? 1 : 0),
   },
+  // 1.9.0
+  {
+    id: `combats`,
+    icone: `⚔️`,
+    texte: `Gagne 6 combats`,
+    objectif: 6,
+    compte: (evenement) => (combatGagne(evenement) ? 1 : 0),
+  },
+  {
+    id: `elite_sans_ko`,
+    icone: `🎖️`,
+    texte: `Bats un combat dur sans qu'aucun héros tombe`,
+    objectif: 1,
+    compte: (evenement) =>
+      combatGagne(evenement) && evenement.noeud === `combat_dur` && !evenement.herosKO ? 1 : 0,
+  },
+  {
+    id: `rencontres`,
+    icone: `❔`,
+    texte: `Vis 3 rencontres`,
+    objectif: 3,
+    compte: (evenement) => (evenement.type === `rencontre` ? 1 : 0),
+  },
+  {
+    id: `ameliorations`,
+    icone: `⬆️`,
+    texte: `Améliore 3 sorts`,
+    objectif: 3,
+    compte: (evenement) => (gainDe(evenement, `sort`) ? 1 : 0),
+  },
+  {
+    id: `nouveau_sort`,
+    icone: `📖`,
+    texte: `Apprends un nouveau sort`,
+    objectif: 1,
+    compte: (evenement) => (gainDe(evenement, `apprendre`) ? 1 : 0),
+  },
+  {
+    id: `reliques`,
+    icone: `🔮`,
+    texte: `Obtiens 2 reliques de run`,
+    objectif: 2,
+    compte: (evenement) => (gainDe(evenement, `relique`) ? 1 : 0),
+  },
 ];
 const QUETE_PAR_ID = Object.fromEntries(QUETES_ALMANAX.map((quete) => [quete.id, quete]));
 // Kamas de départ : multiple du gain d'un combat dur de la première zone du monde de la run.
@@ -100,7 +147,8 @@ export const TEXTES_RECOMPENSE = {
 export function etatAlmanax(meta, date = dateDuJour()) {
   const almanax = meta?.almanax;
   const quete = queteDuJour(date);
-  const duJour = almanax?.date === date;
+  // la quête notée avec le progrès (1.9.0) : une autre quête ce jour-là repart de zéro
+  const duJour = almanax?.date === date && (!almanax.quete || almanax.quete === quete.id);
   return {
     date,
     quete,
@@ -127,6 +175,7 @@ export function progresserAlmanax(meta, evenement, date = dateDuJour()) {
   const accompli = progres >= etat.quete.objectif;
   meta.almanax = {
     date,
+    quete: etat.quete.id,
     progres,
     fait: accompli,
     // une récompense non utilisée est remplacée par la nouvelle
@@ -163,6 +212,9 @@ export function normaliserAlmanax(almanax) {
   }
   return {
     date: almanax.date,
+    ...(typeof almanax.quete === `string` && QUETE_PAR_ID[almanax.quete]
+      ? { quete: almanax.quete }
+      : {}),
     progres: Number.isFinite(almanax.progres) ? Math.max(0, Math.floor(almanax.progres)) : 0,
     fait: !!almanax.fait,
     enAttente,
