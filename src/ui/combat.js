@@ -49,6 +49,7 @@ import {
 } from "./commun.js";
 import { sortAmeliore } from "../combat/ameliorations.js";
 import { htmlRecapEffets, marqueursEffets } from "./recapEffets.js";
+import { badgesContenu, enConcentration } from "./capacitesBoss.js";
 let combattants = [];
 let journalCombat = [];
 let titreCombat = ``;
@@ -467,6 +468,7 @@ function memoriserEtats(liste) {
       bouclier: combattant.bouclier,
       mort: combattant.pvActuels <= 0,
       furie: !!combattant.enFurie,
+      concentration: enConcentration(combattant),
     });
   }
 }
@@ -566,6 +568,11 @@ function jouerAnimationsFx() {
     if (!avant.furie && combattant.enFurie && combattant.pvActuels > 0) {
       // le détail (+20 % · +1 PA) est sur le badge de la carte
       afficherNombreFx(combattant.ref, `🔥 Furie !`, `furie`);
+      afficherFlashFx(combattant.ref, `furie`);
+    }
+    // boss qui prépare une frappe (capacité de boss) : impossible à rater
+    if (!avant.concentration && enConcentration(combattant) && combattant.pvActuels > 0) {
+      afficherNombreFx(combattant.ref, `⚠️ ${combattant.capacite?.nom ?? `Frappe`} !`, `furie`);
       afficherFlashFx(combattant.ref, `furie`);
     }
   }
@@ -1053,7 +1060,8 @@ export function badgesEffets(combattant) {
   return badges;
 }
 export function badgesCombattant(combattant) {
-  const badges = badgesEffets(combattant);
+  // capacité de boss et affixes portés d'abord : la frappe préparée reste en tête
+  const badges = [...badgesContenu(combattant), ...badgesEffets(combattant)];
   const ajouter = (texte, tip, classe) => badges.push({ texte, tip, classe });
   const etat = combattant.etatClasse && ETATS_CLASSE[combattant.etatClasse];
   if (etat) {

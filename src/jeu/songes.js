@@ -4,6 +4,7 @@
 import { COMBATS, EQUIPEMENTS, MONDES, MONSTRES, SUCCES, ZONES } from "../data/index.js";
 import {
   AFFIXES_GROUPE,
+  AFFIXES_SONGE,
   ECONOMIE,
   RARETES,
   RARETES_INFO,
@@ -25,6 +26,7 @@ import {
   appliquerChoix,
   poidsRaretes,
   tirerAmeliorationSort,
+  tirerApprentissage,
   tirerReliqueRun,
 } from "./recompensesRun.js";
 
@@ -154,19 +156,21 @@ export function genererEtage(etage, rng) {
 }
 
 // ---------- Affixes de songe ----------
-export const affixeConnu = (id) => AFFIXES_GROUPE.some((affixe) => affixe.id === id);
+// affixes des groupes et affixes propres aux Songes (Brumeux, Régénérants)
+export const AFFIXES_SONGES = [...AFFIXES_GROUPE, ...AFFIXES_SONGE];
+export const affixeConnu = (id) => AFFIXES_SONGES.some((affixe) => affixe.id === id);
 /** Nouvel affixe : d'abord ceux qui manquent, puis ils se cumulent (une 2e couche, etc.). */
 export function tirerAffixeSonge(actifs, rng) {
   const compte = (id) => actifs.filter((actif) => actif === id).length;
-  const minimum = Math.min(...AFFIXES_GROUPE.map((affixe) => compte(affixe.id)));
-  const candidats = AFFIXES_GROUPE.filter((affixe) => compte(affixe.id) === minimum);
+  const minimum = Math.min(...AFFIXES_SONGES.map((affixe) => compte(affixe.id)));
+  const candidats = AFFIXES_SONGES.filter((affixe) => compte(affixe.id) === minimum);
   return candidats[Math.floor(rng() * candidats.length)].id;
 }
 /** Affixes actifs regroupés pour l'affichage : [{ id, nom, desc, n }]. */
 export function affixesAffiches(actifs = []) {
   const groupes = [];
   for (const id of actifs) {
-    const affixe = AFFIXES_GROUPE.find((candidat) => candidat.id === id);
+    const affixe = AFFIXES_SONGES.find((candidat) => candidat.id === id);
     if (!affixe) {
       continue;
     }
@@ -284,6 +288,11 @@ export function tirerRecompenses(etage, run, rng) {
   if (relique) {
     types.push(`relique`);
   }
+  // nouveau sort (sort avancé de la classe d'un héros)
+  const apprendre = tirerApprentissage(run, rng);
+  if (apprendre) {
+    types.push(`apprendre`);
+  }
   const choisis = [];
   while (choisis.length < 3 && types.length) {
     choisis.push(types.splice(Math.floor(rng() * types.length), 1)[0]);
@@ -300,6 +309,8 @@ export function tirerRecompenses(etage, run, rng) {
         return sort;
       case `relique`:
         return relique;
+      case `apprendre`:
+        return apprendre;
       default:
         return { type, ...amelioration };
     }
@@ -343,6 +354,7 @@ export function appliquerRecompense(run, recompense) {
       return `💰 +${recompense.montant} kamas`;
     case `sort`:
     case `relique`:
+    case `apprendre`:
       return appliquerChoix(run, recompense);
     case `amelioration`:
       if (recompense.benediction && BENEDICTIONS[recompense.benediction]) {

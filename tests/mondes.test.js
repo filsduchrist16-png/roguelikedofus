@@ -14,7 +14,8 @@ describe(`mondes 3 à 5`, () => {
         const zone = ZONES.find((z) => z.id === zid);
         expect(zone?.pools, zid).toBeTruthy();
         expect(zone.pools.normales.length, zid).toBe(5);
-        expect(zone.pools.elite.length, zid).toBe(1);
+        // 1.9.0 : deux combats durs par zone (le second composé avec les monstres de la zone)
+        expect(zone.pools.elite.length, zid).toBe(2);
         expect(zone.pools.boss.length, zid).toBeGreaterThan(0);
         for (const cid of [...zone.pools.normales, ...zone.pools.elite, ...zone.pools.boss]) {
           for (const { monstre } of COMBATS[cid].ennemis) {

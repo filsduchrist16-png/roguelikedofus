@@ -1,6 +1,7 @@
 import {
   AJUSTEMENTS_DONJONS,
   AJUSTEMENTS_ZONES,
+  CAPACITES_BOSS,
   CLASSES,
   COMBATS,
   EQUIPEMENTS,
@@ -9,6 +10,7 @@ import {
 import { idolesDepartValides } from "./idolesDepart.js";
 import {
   AFFIXES_GROUPE,
+  AFFIXES_SONGE,
   CONFIG_ARCHI,
   DIFFICULTES,
   FURIE_BOSS,
@@ -421,7 +423,8 @@ export function creerCombattantPerso(perso) {
     paActuels: classe.pa + bonusEquip.paBonus,
     initiative: classe.initiative,
     resistances: bonusEquip.resistances,
-    sorts: [...classe.sorts, ...sortsPlus],
+    // sorts avancés appris pendant la run (récompense « Nouveau sort », camp), après ceux de base
+    sorts: [...classe.sorts, ...sortsAppris(perso), ...sortsPlus],
     camp: `joueur`,
     position: perso.position,
     niveau: perso.progression.niveau,
@@ -430,6 +433,16 @@ export function creerCombattantPerso(perso) {
     ...etatCombatInitial(),
     bouclier: Math.round(pvMax * (propriete(`bouclierDebut`) ?? 0)),
   };
+}
+/**
+ * Sorts avancés appris par un héros pendant la run (`perso.sortsAppris`), dans l'ordre où il les a
+ * appris : seulement ceux de sa classe (`sortsAvances`), sans doublon. Absent ou abîmé : aucun.
+ */
+export function sortsAppris(perso) {
+  const avances = CLASSES[perso?.classeId]?.sortsAvances ?? [];
+  return Array.isArray(perso?.sortsAppris)
+    ? [...new Set(perso.sortsAppris.filter((id) => avances.includes(id)))]
+    : [];
 }
 export function combattantsEquipe(run) {
   // améliorations de sort et reliques de run (src/jeu/recompensesRun.js)
@@ -671,7 +684,7 @@ export function desequiper(inventaire, perso, emplacement) {
     perso.pvActuels = Math.min(perso.pvActuels, pvMaxPerso(perso));
   }
 }
-function creerMonstre(def, ref, position) {
+export function creerMonstre(def, ref, position) {
   return {
     ref,
     nom: def.nom,
@@ -695,6 +708,9 @@ function creerMonstre(def, ref, position) {
     boss: def.boss ? true : undefined,
     // furie : sous un seuil de PV, le boss frappe plus fort (combat/moteur.js)
     furie: def.boss ? { ...FURIE_BOSS } : undefined,
+    // capacité spéciale du boss de donjon (src/combat/capacites.js)
+    capacite:
+      def.boss && CAPACITES_BOSS[def.id] ? structuredClone(CAPACITES_BOSS[def.id]) : undefined,
     archiNom: def.archiNom,
     ia: def.ia,
     mueElementaire: def.mueElementaire,
@@ -713,7 +729,7 @@ export function monstresDuCombat(combatId) {
 }
 export function appliquerAffixe(monstres, rng, affixeId) {
   let affixe =
-    AFFIXES_GROUPE.find((candidat) => candidat.id === affixeId) ??
+    [...AFFIXES_GROUPE, ...AFFIXES_SONGE].find((candidat) => candidat.id === affixeId) ??
     AFFIXES_GROUPE[Math.floor(rng() * AFFIXES_GROUPE.length)];
   for (let monstre of monstres) {
     if (affixe.statMult) {
@@ -738,6 +754,27 @@ export function appliquerAffixe(monstres, rng, affixeId) {
     if (affixe.paBonus) {
       monstre.paMax += affixe.paBonus;
       monstre.paActuels = monstre.paMax;
+    }
+    // affixes à effet en combat (1.9.0) : cumulés s'ils reviennent (Songes), pastille sur la carte
+    for (const cle of [`volDeVie`, `explosionMort`, `protecteur`, `epines`, `esquiveBonus`]) {
+      if (affixe[cle]) {
+        monstre[cle] = (monstre[cle] ?? 0) + affixe[cle];
+      }
+    }
+    if (affixe.regenPct) {
+      monstre.effets.push({
+        stat: `hot`,
+        valeur: Math.max(1, Math.round(monstre.pvMax * affixe.regenPct)),
+        toursRestants: 999,
+      });
+    }
+    if (affixe.icone && !(monstre.affixesPortes ??= []).some((porte) => porte.id === affixe.id)) {
+      monstre.affixesPortes.push({
+        id: affixe.id,
+        icone: affixe.icone,
+        nom: affixe.nom,
+        desc: affixe.desc,
+      });
     }
   }
   return affixe;

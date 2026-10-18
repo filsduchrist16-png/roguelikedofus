@@ -8291,5 +8291,1365 @@
         "position": 5
       }
     ]
+  },
+  "gob_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "gobaladee",
+        "position": 0
+      },
+      {
+        "monstre": "gobichon",
+        "position": 1
+      },
+      {
+        "monstre": "gob_trotteur",
+        "position": 2
+      },
+      {
+        "monstre": "gobet",
+        "position": 4
+      }
+    ],
+    "nom": "Gobaladée et sa bande (dur)"
+  },
+  "por_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "cochon_de_farle",
+        "position": 0
+      },
+      {
+        "monstre": "cavalier_porkass",
+        "position": 1
+      },
+      {
+        "monstre": "berger_porkass",
+        "position": 2
+      },
+      {
+        "monstre": "gorgouille",
+        "position": 4
+      },
+      {
+        "monstre": "don_dorgan",
+        "position": 5
+      }
+    ],
+    "nom": "L'escorte : Cochon de Farle en tête (dur)"
+  },
+  "moo_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "gloutovore",
+        "position": 0
+      },
+      {
+        "monstre": "gloutovore",
+        "position": 1
+      },
+      {
+        "monstre": "fourbasse",
+        "position": 2
+      },
+      {
+        "monstre": "trukikol",
+        "position": 4
+      },
+      {
+        "monstre": "dostrogo",
+        "position": 5
+      }
+    ],
+    "nom": "Gloutovore rallie la troupe (dur)"
+  },
+  "combat_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "epouvanteur",
+        "position": 0
+      },
+      {
+        "monstre": "rose_demoniaque",
+        "position": 1
+      },
+      {
+        "monstre": "rose_demoniaque",
+        "position": 2
+      },
+      {
+        "monstre": "tournesol_sauvage",
+        "position": 4
+      }
+    ],
+    "nom": "Les vétérans : Épouvanteur mène la charge (dur)"
+  },
+  "cho_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "kanniboul_tam",
+        "position": 0
+      },
+      {
+        "monstre": "kanniboul_eth",
+        "position": 1
+      },
+      {
+        "monstre": "ricanif",
+        "position": 2
+      },
+      {
+        "monstre": "ivremor",
+        "position": 4
+      },
+      {
+        "monstre": "kanniboul_sarbak",
+        "position": 5
+      }
+    ],
+    "nom": "Kanniboul Tam et sa bande (dur)"
+  },
+  "arc_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "sparo",
+        "position": 0
+      },
+      {
+        "monstre": "sparo",
+        "position": 1
+      },
+      {
+        "monstre": "le_flib",
+        "position": 2
+      },
+      {
+        "monstre": "le_flib",
+        "position": 4
+      }
+    ],
+    "nom": "L'escorte : Sparo en tête (dur)"
+  },
+  "blp_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "blop_coco",
+        "position": 0
+      },
+      {
+        "monstre": "biblop_indigo",
+        "position": 1
+      },
+      {
+        "monstre": "biblop_griotte",
+        "position": 2
+      },
+      {
+        "monstre": "biblop_coco",
+        "position": 4
+      }
+    ],
+    "nom": "Blop Coco rallie la troupe (dur)"
+  },
+  "abr_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "abraknyde_sombre",
+        "position": 0
+      },
+      {
+        "monstre": "arapex",
+        "position": 1
+      },
+      {
+        "monstre": "araknotron",
+        "position": 2
+      },
+      {
+        "monstre": "abraknyde_venerable",
+        "position": 4
+      },
+      {
+        "monstre": "nefileuse",
+        "position": 5
+      }
+    ],
+    "nom": "Les vétérans : Abraknyde Sombre mène la charge (dur)"
+  },
+  "frg_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "forgeron_sombre",
+        "position": 0
+      },
+      {
+        "monstre": "forgeron_sombre",
+        "position": 1
+      },
+      {
+        "monstre": "mineur_sombre",
+        "position": 2
+      },
+      {
+        "monstre": "boulanger_sombre",
+        "position": 4
+      }
+    ],
+    "nom": "Forgeron Sombre et sa bande (dur)"
+  },
+  "gel_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "gelee_menthe",
+        "position": 0
+      },
+      {
+        "monstre": "gelee_citron",
+        "position": 1
+      },
+      {
+        "monstre": "gelee_bleuet",
+        "position": 2
+      },
+      {
+        "monstre": "gelee_menthe",
+        "position": 4
+      }
+    ],
+    "nom": "L'escorte : Gelée Menthe en tête (dur)"
+  },
+  "hsk_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "palmifleur_morito",
+        "position": 0
+      },
+      {
+        "monstre": "crustorail_malibout",
+        "position": 1
+      },
+      {
+        "monstre": "crustorail_passaoh",
+        "position": 2
+      },
+      {
+        "monstre": "crustorail_kouracao",
+        "position": 4
+      }
+    ],
+    "nom": "Palmifleur Morito rallie la troupe (dur)"
+  },
+  "inc_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "sergent_chafer",
+        "position": 0
+      },
+      {
+        "monstre": "chafer_piquier",
+        "position": 1
+      },
+      {
+        "monstre": "chafer_furtif",
+        "position": 2
+      },
+      {
+        "monstre": "chafer_debutant",
+        "position": 4
+      }
+    ],
+    "nom": "Les vétérans : Sergent Chafer mène la charge (dur)"
+  },
+  "kan_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "sakarien",
+        "position": 0
+      },
+      {
+        "monstre": "ceglumen",
+        "position": 1
+      },
+      {
+        "monstre": "pyrasite",
+        "position": 2
+      },
+      {
+        "monstre": "mirgrillon",
+        "position": 4
+      }
+    ],
+    "nom": "Sakarien et sa bande (dur)"
+  },
+  "kwa_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "kwakere_de_flamme",
+        "position": 0
+      },
+      {
+        "monstre": "kwak_de_feu",
+        "position": 1
+      },
+      {
+        "monstre": "kwak_de_vent",
+        "position": 2
+      },
+      {
+        "monstre": "kwak_de_terre",
+        "position": 4
+      }
+    ],
+    "nom": "L'escorte : Kwakere de Flamme en tête (dur)"
+  },
+  "lab_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "kolerat",
+        "position": 0
+      },
+      {
+        "monstre": "macien",
+        "position": 1
+      },
+      {
+        "monstre": "croc_gland",
+        "position": 2
+      }
+    ],
+    "nom": "Kolérat rallie la troupe (dur)"
+  },
+  "lrv_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "larve_doree",
+        "position": 0
+      },
+      {
+        "monstre": "larve_champetre",
+        "position": 1
+      },
+      {
+        "monstre": "larve_verte",
+        "position": 2
+      },
+      {
+        "monstre": "larve_orange",
+        "position": 4
+      }
+    ],
+    "nom": "Les vétérans : Larve Dorée mène la charge (dur)"
+  },
+  "fan_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "tofu_malefique",
+        "position": 0
+      },
+      {
+        "monstre": "vampire",
+        "position": 1
+      },
+      {
+        "monstre": "gargrouille",
+        "position": 2
+      },
+      {
+        "monstre": "kwoan",
+        "position": 4
+      }
+    ],
+    "nom": "Tofu Maléfique et sa bande (dur)"
+  },
+  "roc_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "craquelourd",
+        "position": 0
+      },
+      {
+        "monstre": "craqueleur_des_plaines",
+        "position": 1
+      },
+      {
+        "monstre": "craqueleur_des_plaines",
+        "position": 2
+      },
+      {
+        "monstre": "craqueboule",
+        "position": 4
+      }
+    ],
+    "nom": "L'escorte : Craquelourd en tête (dur)"
+  },
+  "khz_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "dragoss_ardoise",
+        "position": 0
+      },
+      {
+        "monstre": "dragoss_charbon",
+        "position": 1
+      },
+      {
+        "monstre": "dragoss_proteiforme",
+        "position": 2
+      },
+      {
+        "monstre": "dragoeuf_charbon",
+        "position": 4
+      },
+      {
+        "monstre": "dragoeuf_ardoise",
+        "position": 5
+      }
+    ],
+    "nom": "Dragoss Ardoise rallie la troupe (dur)"
+  },
+  "scr_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "scarafeuille_noir",
+        "position": 0
+      },
+      {
+        "monstre": "scarafeuille_noir",
+        "position": 1
+      },
+      {
+        "monstre": "scarafeuille_vert",
+        "position": 2
+      },
+      {
+        "monstre": "scarafeuille_immature",
+        "position": 4
+      }
+    ],
+    "nom": "Les vétérans : Scarafeuille Noir mène la charge (dur)"
+  },
+  "tai_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "bouftou_noir",
+        "position": 0
+      },
+      {
+        "monstre": "bouftou",
+        "position": 1
+      },
+      {
+        "monstre": "boufton_noir",
+        "position": 2
+      },
+      {
+        "monstre": "boufton_blanc",
+        "position": 4
+      },
+      {
+        "monstre": "boufton_blanc",
+        "position": 5
+      }
+    ],
+    "nom": "Bouftou Noir et sa bande (dur)"
+  },
+  "mlo_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "cocholou",
+        "position": 0
+      },
+      {
+        "monstre": "cocholou",
+        "position": 1
+      },
+      {
+        "monstre": "mergranlou",
+        "position": 2
+      },
+      {
+        "monstre": "mulou",
+        "position": 4
+      },
+      {
+        "monstre": "mulounoke",
+        "position": 5
+      }
+    ],
+    "nom": "L'escorte : Cocholou en tête (dur)"
+  },
+  "wab_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "tiwabbit",
+        "position": 0
+      },
+      {
+        "monstre": "tiwabbit_kiafin",
+        "position": 1
+      },
+      {
+        "monstre": "tiwobot",
+        "position": 2
+      },
+      {
+        "monstre": "tiwobot",
+        "position": 4
+      },
+      {
+        "monstre": "tiwobot",
+        "position": 5
+      }
+    ],
+    "nom": "Tiwabbit rallie la troupe (dur)"
+  },
+  "tof_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "tofu_mutant",
+        "position": 0
+      },
+      {
+        "monstre": "tofu_noir",
+        "position": 1
+      },
+      {
+        "monstre": "tofoune",
+        "position": 2
+      },
+      {
+        "monstre": "tofukaz",
+        "position": 4
+      }
+    ],
+    "nom": "Les vétérans : Tofu Mutant mène la charge (dur)"
+  },
+  "egouts_bonta_brakmar_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "rat_sio",
+        "position": 0
+      },
+      {
+        "monstre": "rat_li",
+        "position": 1
+      },
+      {
+        "monstre": "scelee_rate",
+        "position": 2
+      },
+      {
+        "monstre": "rat_plapla",
+        "position": 4
+      }
+    ],
+    "nom": "Rat Sio et sa bande (dur)"
+  },
+  "bibliotheque_corbac_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "kapotie_le_buveur",
+        "position": 0
+      },
+      {
+        "monstre": "rono_le_renarbo",
+        "position": 1
+      },
+      {
+        "monstre": "corbac_chef",
+        "position": 2
+      },
+      {
+        "monstre": "buveur_de_sang",
+        "position": 4
+      }
+    ],
+    "nom": "L'escorte : Kapotie le Buveur en tête (dur)"
+  },
+  "goulet_rasboul_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "crapeur",
+        "position": 0
+      },
+      {
+        "monstre": "mufafah",
+        "position": 1
+      },
+      {
+        "monstre": "kido",
+        "position": 2
+      },
+      {
+        "monstre": "craqueboule_poli",
+        "position": 4
+      }
+    ],
+    "nom": "Crapeur rallie la troupe (dur)"
+  },
+  "antre_blop_multicolore_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "blop_coco_royal_2",
+        "position": 0
+      },
+      {
+        "monstre": "blop_reinette_royal_2",
+        "position": 1
+      },
+      {
+        "monstre": "blop_indigo_royal_2",
+        "position": 2
+      },
+      {
+        "monstre": "blopignon_2",
+        "position": 4
+      }
+    ],
+    "nom": "Les vétérans : Blop Coco Royal mène la charge (dur)"
+  },
+  "antre_crocabulia_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "dragmatique",
+        "position": 0
+      },
+      {
+        "monstre": "dragueuse",
+        "position": 1
+      },
+      {
+        "monstre": "dragace",
+        "position": 2
+      },
+      {
+        "monstre": "draguaindrop",
+        "position": 4
+      }
+    ],
+    "nom": "Dragmatique et sa bande (dur)"
+  },
+  "labyrinthe_minotoror_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "mominotor",
+        "position": 0
+      },
+      {
+        "monstre": "mominotor",
+        "position": 1
+      },
+      {
+        "monstre": "serpiplume",
+        "position": 2
+      },
+      {
+        "monstre": "scaratos",
+        "position": 4
+      }
+    ],
+    "nom": "L'escorte : Mominotor en tête (dur)"
+  },
+  "vallee_dame_des_eaux_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "betto",
+        "position": 0
+      },
+      {
+        "monstre": "akakwa",
+        "position": 1
+      },
+      {
+        "monstre": "kwamourai",
+        "position": 2
+      },
+      {
+        "monstre": "kokom",
+        "position": 4
+      },
+      {
+        "monstre": "sarkapwane",
+        "position": 5
+      }
+    ],
+    "nom": "Betto rallie la troupe (dur)"
+  },
+  "voliere_haute_truche_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "gruche",
+        "position": 0
+      },
+      {
+        "monstre": "truchideur",
+        "position": 1
+      },
+      {
+        "monstre": "truchtine",
+        "position": 2
+      },
+      {
+        "monstre": "truchmuche",
+        "position": 4
+      },
+      {
+        "monstre": "truchon",
+        "position": 5
+      }
+    ],
+    "nom": "Les vétérans : Gruche mène la charge (dur)"
+  },
+  "dojo_du_vent_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "uchiwang",
+        "position": 0
+      },
+      {
+        "monstre": "lichangoro",
+        "position": 1
+      },
+      {
+        "monstre": "fangshu",
+        "position": 2
+      },
+      {
+        "monstre": "ino_naru",
+        "position": 4
+      },
+      {
+        "monstre": "kurookin",
+        "position": 5
+      }
+    ],
+    "nom": "Uchiwang et sa bande (dur)"
+  },
+  "laboratoire_tynril_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "bitouf_sombre",
+        "position": 0
+      },
+      {
+        "monstre": "fecorce",
+        "position": 1
+      },
+      {
+        "monstre": "nerbe",
+        "position": 2
+      },
+      {
+        "monstre": "brouture",
+        "position": 4
+      },
+      {
+        "monstre": "chiendent",
+        "position": 5
+      }
+    ],
+    "nom": "L'escorte : Bitouf Sombre en tête (dur)"
+  },
+  "excavation_mansot_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "shamansot",
+        "position": 0
+      },
+      {
+        "monstre": "mansobese",
+        "position": 1
+      },
+      {
+        "monstre": "fu_mansot",
+        "position": 2
+      },
+      {
+        "monstre": "mamansot",
+        "position": 4
+      },
+      {
+        "monstre": "timansot",
+        "position": 5
+      }
+    ],
+    "nom": "Shamansot rallie la troupe (dur)"
+  },
+  "epave_grolandais_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "fantomalamere",
+        "position": 0
+      },
+      {
+        "monstre": "harpirate",
+        "position": 1
+      },
+      {
+        "monstre": "vigie_pirate",
+        "position": 2
+      },
+      {
+        "monstre": "fantomat",
+        "position": 4
+      },
+      {
+        "monstre": "fantimonier",
+        "position": 5
+      }
+    ],
+    "nom": "Les vétérans : Fantomalamère mène la charge (dur)"
+  },
+  "canopee_kimbo_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "abrakleur_clair",
+        "position": 0
+      },
+      {
+        "monstre": "kaskargo",
+        "position": 1
+      },
+      {
+        "monstre": "meupette",
+        "position": 2
+      },
+      {
+        "monstre": "bitouf_aerien",
+        "position": 4
+      }
+    ],
+    "nom": "Abrakleur Clair et sa bande (dur)"
+  },
+  "hypogee_obsidiantre_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "solfatare",
+        "position": 0
+      },
+      {
+        "monstre": "fumrirolle",
+        "position": 1
+      },
+      {
+        "monstre": "mofette",
+        "position": 2
+      },
+      {
+        "monstre": "atomystique",
+        "position": 4
+      }
+    ],
+    "nom": "L'escorte : Solfataré en tête (dur)"
+  },
+  "salle_minotot_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "mominotor_2",
+        "position": 0
+      },
+      {
+        "monstre": "mominotor_2",
+        "position": 1
+      },
+      {
+        "monstre": "serpiplume_2",
+        "position": 2
+      },
+      {
+        "monstre": "scaratos_2",
+        "position": 4
+      }
+    ],
+    "nom": "Mominotor rallie la troupe (dur)"
+  },
+  "tombe_tofugawa_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "kaonashi",
+        "position": 0
+      },
+      {
+        "monstre": "tsukinochi",
+        "position": 1
+      },
+      {
+        "monstre": "tambourai",
+        "position": 2
+      },
+      {
+        "monstre": "onabu_geisha",
+        "position": 4
+      }
+    ],
+    "nom": "Les vétérans : Kaonashi mène la charge (dur)"
+  },
+  "cavernes_givrefoux_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "soryo_givrefoux",
+        "position": 0
+      },
+      {
+        "monstre": "yomi_givrefoux",
+        "position": 1
+      },
+      {
+        "monstre": "kami_givrefoux",
+        "position": 2
+      },
+      {
+        "monstre": "yokai_givrefoux",
+        "position": 4
+      }
+    ],
+    "nom": "Soryo Givrefoux et sa bande (dur)"
+  },
+  "poste_supervizoeuf_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "balebz",
+        "position": 0
+      },
+      {
+        "monstre": "quadrabz",
+        "position": 1
+      },
+      {
+        "monstre": "kamikabz",
+        "position": 2
+      },
+      {
+        "monstre": "toubibz",
+        "position": 4
+      }
+    ],
+    "nom": "L'escorte : Balebz en tête (dur)"
+  },
+  "antre_korriandre_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "fongeur",
+        "position": 0
+      },
+      {
+        "monstre": "fongeur",
+        "position": 1
+      },
+      {
+        "monstre": "merulette",
+        "position": 2
+      },
+      {
+        "monstre": "abrazif",
+        "position": 4
+      },
+      {
+        "monstre": "dramanite",
+        "position": 5
+      }
+    ],
+    "nom": "Fongeur rallie la troupe (dur)"
+  },
+  "antre_kralamoure_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "roissingue",
+        "position": 0
+      },
+      {
+        "monstre": "tourbassingue",
+        "position": 1
+      },
+      {
+        "monstre": "bourbassingue",
+        "position": 2
+      },
+      {
+        "monstre": "le_ouassingue_entourbe",
+        "position": 4
+      },
+      {
+        "monstre": "bourbassingue",
+        "position": 5
+      }
+    ],
+    "nom": "Les vétérans : Roissingue mène la charge (dur)"
+  },
+  "grotte_bworker_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "bwork_elemental_d_eau",
+        "position": 0
+      },
+      {
+        "monstre": "bwork_elemental_d_air",
+        "position": 1
+      },
+      {
+        "monstre": "bwork_elemental_de_feu",
+        "position": 2
+      },
+      {
+        "monstre": "bwork_elemental_de_terre",
+        "position": 4
+      },
+      {
+        "monstre": "mama_bwork",
+        "position": 5
+      }
+    ],
+    "nom": "Bwork Élémental d'Eau et sa bande (dur)"
+  },
+  "temple_ougah_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "champaknyde",
+        "position": 0
+      },
+      {
+        "monstre": "champ_a_gnons",
+        "position": 1
+      },
+      {
+        "monstre": "champmane",
+        "position": 2
+      },
+      {
+        "monstre": "champbis",
+        "position": 4
+      },
+      {
+        "monstre": "tromperelle",
+        "position": 5
+      }
+    ],
+    "nom": "L'escorte : Champaknyde en tête (dur)"
+  },
+  "antichambre_glourseleste_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "meliglours",
+        "position": 0
+      },
+      {
+        "monstre": "gloursaya",
+        "position": 1
+      },
+      {
+        "monstre": "aperiglours",
+        "position": 2
+      },
+      {
+        "monstre": "boulglours",
+        "position": 4
+      },
+      {
+        "monstre": "glouragan",
+        "position": 5
+      }
+    ],
+    "nom": "Meliglours rallie la troupe (dur)"
+  },
+  "pyramide_ombre_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "panterreur",
+        "position": 0
+      },
+      {
+        "monstre": "brutopak",
+        "position": 1
+      },
+      {
+        "monstre": "somblero",
+        "position": 2
+      },
+      {
+        "monstre": "caznoar",
+        "position": 4
+      },
+      {
+        "monstre": "noctulule",
+        "position": 5
+      }
+    ],
+    "nom": "Les vétérans : Panterreur mène la charge (dur)"
+  },
+  "forgefroide_transporteur_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "mecanofoux",
+        "position": 0
+      },
+      {
+        "monstre": "karkanik",
+        "position": 1
+      },
+      {
+        "monstre": "ventrublion",
+        "position": 2
+      },
+      {
+        "monstre": "brikoglours",
+        "position": 4
+      }
+    ],
+    "nom": "Mécanofoux et sa bande (dur)"
+  },
+  "salons_klime_labo_nileza_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "dodox",
+        "position": 0
+      },
+      {
+        "monstre": "krakal",
+        "position": 1
+      },
+      {
+        "monstre": "grodruche",
+        "position": 2
+      },
+      {
+        "monstre": "termystique",
+        "position": 4
+      }
+    ],
+    "nom": "L'escorte : Dodox en tête (dur)"
+  },
+  "donjon_harebourg_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "sinistrofu",
+        "position": 0
+      },
+      {
+        "monstre": "nocturlabe",
+        "position": 1
+      },
+      {
+        "monstre": "granduk",
+        "position": 2
+      },
+      {
+        "monstre": "cycloide",
+        "position": 4
+      }
+    ],
+    "nom": "Sinistrofu rallie la troupe (dur)"
+  },
+  "aquadome_vaisseau_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "pikoleur",
+        "position": 0
+      },
+      {
+        "monstre": "harpo",
+        "position": 1
+      },
+      {
+        "monstre": "crabe_yoloniste",
+        "position": 2
+      },
+      {
+        "monstre": "eskoglyphe",
+        "position": 4
+      }
+    ],
+    "nom": "Les vétérans : Pikoleur mène la charge (dur)"
+  },
+  "temple_koutoulou_palais_dantinea_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "grofond",
+        "position": 0
+      },
+      {
+        "monstre": "rilur",
+        "position": 1
+      },
+      {
+        "monstre": "n_yalg",
+        "position": 2
+      },
+      {
+        "monstre": "shokkoth",
+        "position": 4
+      }
+    ],
+    "nom": "Grofond et sa bande (dur)"
+  },
+  "enutrosor_srambad_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "bouroliste",
+        "position": 0
+      },
+      {
+        "monstre": "kamasterisk",
+        "position": 1
+      },
+      {
+        "monstre": "machassin",
+        "position": 2
+      },
+      {
+        "monstre": "doublure",
+        "position": 4
+      }
+    ],
+    "nom": "L'escorte : Bourôliste en tête (dur)"
+  },
+  "xelorium_ecaflipus_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "mejaire",
+        "position": 0
+      },
+      {
+        "monstre": "ikargn",
+        "position": 1
+      },
+      {
+        "monstre": "cavalier_chanceux",
+        "position": 2
+      },
+      {
+        "monstre": "valet_veinard",
+        "position": 4
+      },
+      {
+        "monstre": "dame_du_hasard",
+        "position": 5
+      }
+    ],
+    "nom": "Méjaire rallie la troupe (dur)"
+  },
+  "tours_fratrie_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "tournoye",
+        "position": 0
+      },
+      {
+        "monstre": "funespadon",
+        "position": 1
+      },
+      {
+        "monstre": "klemort",
+        "position": 2
+      },
+      {
+        "monstre": "cranonier",
+        "position": 4
+      },
+      {
+        "monstre": "trepavois",
+        "position": 5
+      }
+    ],
+    "nom": "Les vétérans : Tournoyé mène la charge (dur)"
+  },
+  "wukin_wukang_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "imorok",
+        "position": 0
+      },
+      {
+        "monstre": "mabram",
+        "position": 1
+      },
+      {
+        "monstre": "imushin",
+        "position": 2
+      },
+      {
+        "monstre": "imiyama",
+        "position": 4
+      },
+      {
+        "monstre": "rokoram",
+        "position": 5
+      }
+    ],
+    "nom": "Imorok et sa bande (dur)"
+  },
+  "osavora_ilyzaelle_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "gropotam",
+        "position": 0
+      },
+      {
+        "monstre": "brutapir",
+        "position": 1
+      },
+      {
+        "monstre": "lapilope",
+        "position": 2
+      },
+      {
+        "monstre": "esprigne",
+        "position": 4
+      },
+      {
+        "monstre": "feutome",
+        "position": 5
+      }
+    ],
+    "nom": "L'escorte : Gropotam en tête (dur)"
+  },
+  "dimensions_cavaliers_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "pistilangue",
+        "position": 0
+      },
+      {
+        "monstre": "ferrailleur",
+        "position": 1
+      },
+      {
+        "monstre": "krevladal",
+        "position": 2
+      },
+      {
+        "monstre": "dolid",
+        "position": 4
+      },
+      {
+        "monstre": "fleaunide",
+        "position": 5
+      }
+    ],
+    "nom": "Pistilangue rallie la troupe (dur)"
+  },
+  "tempete_eliocalypse_elite_2": {
+    "ennemis": [
+      {
+        "monstre": "pistilangue_2",
+        "position": 0
+      },
+      {
+        "monstre": "ferrailleur_2",
+        "position": 1
+      },
+      {
+        "monstre": "ferrailleur_2",
+        "position": 2
+      },
+      {
+        "monstre": "armecreante_2",
+        "position": 4
+      },
+      {
+        "monstre": "olgoth",
+        "position": 5
+      }
+    ],
+    "nom": "Les vétérans : Pistilangue mène la charge (dur)"
   }
 }

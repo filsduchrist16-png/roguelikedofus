@@ -202,6 +202,46 @@ export function infligerDegats(
       type: `mort`,
       ref: cible.ref,
     });
+  // affixe Explosifs : le monstre explose en tombant
+  if (etaitVivant && cible.pvActuels <= 0 && cible.explosionMort && ctx?.combatants) {
+    exploserALaMort(cible, ctx.combatants, ctx);
+  }
+  // affixe Vampiriques : l'attaquant récupère une part des dégâts infligés
+  if (
+    attaquant?.volDeVie &&
+    ctx &&
+    aInfliger > 0 &&
+    attaquant.camp !== cible.camp &&
+    attaquant.pvActuels > 0 &&
+    !aFriction(attaquant)
+  ) {
+    const vol = Math.round(aInfliger * attaquant.volDeVie);
+    if (vol > 0 && attaquant.pvActuels < attaquant.pvMax) {
+      attaquant.pvActuels = Math.min(attaquant.pvMax, attaquant.pvActuels + vol);
+      ctx.log(`🩸 ${attaquant.nom} draine ${vol} PV.`);
+    }
+  }
+  // affixe Épineux : une part des dégâts subis revient à l'attaquant
+  if (
+    cible.epines &&
+    attaquant &&
+    ctx &&
+    !ctx.enRenvoi &&
+    aInfliger > 0 &&
+    attaquant.camp !== cible.camp &&
+    attaquant.pvActuels > 0
+  ) {
+    const retour = Math.round(aInfliger * cible.epines);
+    if (retour > 0) {
+      ctx.enRenvoi = true;
+      try {
+        infligerDegats(attaquant, retour, undefined, ctx);
+      } finally {
+        ctx.enRenvoi = false;
+      }
+      ctx.log(`🌵 Les épines de ${cible.nom} renvoient ${retour} dégâts à ${attaquant.nom}.`);
+    }
+  }
   if (
     etaitVivant &&
     cible.pvActuels <= 0 &&
@@ -298,6 +338,28 @@ export function infligerDegats(
       ctx.enRiposte = false;
     }
     logDegats(ctx, `${cible.nom} riposte : `, riposte.dmg, riposte.element, ` à ${attaquant.nom}.`);
+  }
+}
+/**
+ * Affixe Explosifs : un monstre qui tombe inflige une part de ses PV max à chaque adversaire de la
+ * ligne avant (ou à tous si elle est vide). Une seule explosion par monstre.
+ */
+export function exploserALaMort(monstre, combattants, ctx) {
+  if (monstre.aExplose) {
+    return;
+  }
+  monstre.aExplose = true;
+  const adversaires = vivants(combattants).filter(
+    (combattant) => combattant.camp !== monstre.camp && !combattant.estLance,
+  );
+  const devant = adversaires.filter(enLigneAvant);
+  const cibles = devant.length ? devant : adversaires;
+  const degats = Math.max(1, Math.round(monstre.pvMax * monstre.explosionMort));
+  ctx.log(
+    `💣 ${monstre.nom} explose : ${degats} dégâts à ${devant.length ? `la ligne avant` : `chaque héros`} !`,
+  );
+  for (const cible of cibles) {
+    infligerDegats(cible, degats, undefined, ctx);
   }
 }
 export function caseOpposeeLibre(combattant, combattants) {
@@ -423,6 +485,9 @@ export function debutTourEffets(combattant, combattants, contexte) {
       ref: combattant.ref,
     });
     contexte.log(`${combattant.nom} succombe au poison !`);
+    if (combattant.explosionMort) {
+      exploserALaMort(combattant, combattants, contexte);
+    }
     let suivant = voisinSuivant(combattant, combattants);
     for (let effet of combattant.effets.filter(
       (candidat) => candidat.stat === `poison` && candidat.transmet,

@@ -1,0 +1,998 @@
+{
+  "kardorim": {
+    "type": "telegraphe",
+    "nom": "Blizzard d'Incarnam",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 15 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 11,
+    "baseMax": 14,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.15
+  },
+  "tournesol_affame": {
+    "type": "invocation",
+    "nom": "Semis voraces",
+    "desc": "Appelle un monstre de son donjon en renfort (2 au plus, 50 % de leurs PV), tous les 3 tours (dès son tour 2). Les renforts disparaissent avec lui.",
+    "pool": [
+      "pissenlit_diabolique",
+      "tournesol_sauvage",
+      "rose_demoniaque"
+    ],
+    "max": 2,
+    "puissance": 0.5,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "bouftou_royal": {
+    "type": "invocation",
+    "nom": "Appel du troupeau",
+    "desc": "Appelle un monstre de son donjon en renfort (2 au plus, 50 % de leurs PV), tous les 3 tours (dès son tour 2). Les renforts disparaissent avec lui.",
+    "pool": [
+      "bouftou",
+      "bouftou_noir",
+      "boufton_blanc"
+    ],
+    "max": 2,
+    "puissance": 0.5,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "batofu": {
+    "type": "bourrasque",
+    "nom": "Nuée de plumes",
+    "desc": "Projette les héros : la ligne avant passe derrière et la ligne arrière devant, tous les 3 tours (dès son tour 2).",
+    "tous": 3,
+    "debut": 2,
+    "pa": 1
+  },
+  "directeur_grunob": {
+    "type": "bouclier",
+    "nom": "Discipline de fer",
+    "desc": "Tout son camp gagne un bouclier de 12 % de ses PV max pendant 2 tours, tous les 3 tours (dès son tour 2).",
+    "pct": 0.12,
+    "tours": 2,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "kankreblath": {
+    "type": "telegraphe",
+    "nom": "Pinces géantes",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe la ligne avant au tour suivant. Retire-lui 15 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "avant",
+    "baseMin": 22,
+    "baseMax": 31,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.15
+  },
+  "boostache": {
+    "type": "bourrasque",
+    "nom": "Hantise",
+    "desc": "Projette les héros : la ligne avant passe derrière et la ligne arrière devant, tous les 3 tours (dès son tour 2).",
+    "tous": 3,
+    "debut": 2,
+    "pa": 1
+  },
+  "scarabosse_dore": {
+    "type": "bouclier",
+    "nom": "Carapaces dorées",
+    "desc": "Tout son camp gagne un bouclier de 12 % de ses PV max pendant 2 tours, tous les 3 tours (dès son tour 2).",
+    "pct": 0.12,
+    "tours": 2,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "coffre_forgerons": {
+    "type": "telegraphe",
+    "nom": "Mâchoire béante",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe la ligne avant au tour suivant. Retire-lui 15 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "avant",
+    "baseMin": 15,
+    "baseMax": 20,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.15
+  },
+  "shin_larve": {
+    "type": "bouclier",
+    "nom": "Cocon de soie",
+    "desc": "Tout son camp gagne un bouclier de 12 % de ses PV max pendant 2 tours, tous les 3 tours (dès son tour 2).",
+    "pct": 0.12,
+    "tours": 2,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "corailleur_magistral": {
+    "type": "telegraphe",
+    "nom": "Marée corallienne",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 15 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 14,
+    "baseMax": 19,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.15
+  },
+  "kwakwa": {
+    "type": "bourrasque",
+    "nom": "Tempête de Kwak",
+    "desc": "Projette les héros : la ligne avant passe derrière et la ligne arrière devant, tous les 3 tours (dès son tour 2).",
+    "tous": 3,
+    "debut": 2,
+    "pa": 1
+  },
+  "blop_griotte_royal": {
+    "type": "telegraphe",
+    "nom": "Confiture bouillante ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 15 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 11,
+    "baseMax": 14,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.15
+  },
+  "blop_indigo_royal": {
+    "type": "invocation",
+    "nom": "Cri de ralliement",
+    "desc": "Appelle un monstre de son donjon en renfort (2 au plus, 50 % de leurs PV), tous les 3 tours (dès son tour 3). Les renforts disparaissent avec lui.",
+    "pool": [
+      "gloutoblop",
+      "blopignon"
+    ],
+    "max": 2,
+    "puissance": 0.5,
+    "tous": 3,
+    "debut": 3,
+    "pa": 2
+  },
+  "blop_reinette_royal": {
+    "type": "telegraphe",
+    "nom": "Pluie de pommes ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 15 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 3).",
+    "cible": "equipe",
+    "baseMin": 10,
+    "baseMax": 14,
+    "tous": 3,
+    "debut": 3,
+    "interruption": 0.15
+  },
+  "blop_coco_royal": {
+    "type": "bouclier",
+    "nom": "Rempart",
+    "desc": "Tout son camp gagne un bouclier de 12 % de ses PV max pendant 2 tours, tous les 3 tours (dès son tour 3).",
+    "pct": 0.12,
+    "tours": 2,
+    "tous": 3,
+    "debut": 3,
+    "pa": 2
+  },
+  "gourlo_le_terrible": {
+    "type": "telegraphe",
+    "nom": "Bordée ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe la ligne arrière au tour suivant. Retire-lui 15 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "arriere",
+    "baseMin": 14,
+    "baseMax": 19,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.15
+  },
+  "gelee_royale_fraise": {
+    "type": "bourrasque",
+    "nom": "Tourbillon",
+    "desc": "Projette les héros : la ligne avant passe derrière et la ligne arrière devant, tous les 3 tours (dès son tour 2).",
+    "tous": 3,
+    "debut": 2,
+    "pa": 1
+  },
+  "gelee_royale_bleuet": {
+    "type": "telegraphe",
+    "nom": "Gélification ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 15 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 3).",
+    "cible": "equipe",
+    "baseMin": 9,
+    "baseMax": 13,
+    "tous": 3,
+    "debut": 3,
+    "interruption": 0.15
+  },
+  "gelee_royale_menthe": {
+    "type": "invocation",
+    "nom": "Appel des renforts",
+    "desc": "Appelle un monstre de son donjon en renfort (2 au plus, 50 % de leurs PV), tous les 3 tours (dès son tour 3). Les renforts disparaissent avec lui.",
+    "pool": [
+      "gelee_bleuet",
+      "gelee_citron"
+    ],
+    "max": 2,
+    "puissance": 0.5,
+    "tous": 3,
+    "debut": 3,
+    "pa": 2
+  },
+  "gelee_royale_citron": {
+    "type": "telegraphe",
+    "nom": "Gélification ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 15 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 3).",
+    "cible": "equipe",
+    "baseMin": 9,
+    "baseMax": 13,
+    "tous": 3,
+    "debut": 3,
+    "interruption": 0.15
+  },
+  "nelween": {
+    "type": "bouclier",
+    "nom": "Bouclier de zone",
+    "desc": "Tout son camp gagne un bouclier de 12 % de ses PV max pendant 2 tours, tous les 3 tours (dès son tour 2).",
+    "pct": 0.12,
+    "tours": 2,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "wa_wobot": {
+    "type": "telegraphe",
+    "nom": "Contre-mesure ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 15 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 13,
+    "baseMax": 18,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.15
+  },
+  "wa_wabbit": {
+    "type": "bourrasque",
+    "nom": "Bourrasque",
+    "desc": "Projette les héros : la ligne avant passe derrière et la ligne arrière devant, tous les 3 tours (dès son tour 3).",
+    "tous": 3,
+    "debut": 3,
+    "pa": 1
+  },
+  "craqueleur_legendaire": {
+    "type": "telegraphe",
+    "nom": "Durcissement ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 15 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 13,
+    "baseMax": 18,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.15
+  },
+  "le_chouque": {
+    "type": "invocation",
+    "nom": "Cri de ralliement",
+    "desc": "Appelle un monstre de son donjon en renfort (2 au plus, 50 % de leurs PV), tous les 3 tours (dès son tour 2). Les renforts disparaissent avec lui.",
+    "pool": [
+      "ivremor"
+    ],
+    "max": 2,
+    "puissance": 0.5,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "kanniboul_ebil": {
+    "type": "telegraphe",
+    "nom": "Fumée de curare ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 15 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 3).",
+    "cible": "equipe",
+    "baseMin": 13,
+    "baseMax": 18,
+    "tous": 3,
+    "debut": 3,
+    "interruption": 0.15
+  },
+  "dragon_cochon": {
+    "type": "bouclier",
+    "nom": "Rempart",
+    "desc": "Tout son camp gagne un bouclier de 12 % de ses PV max pendant 2 tours, tous les 3 tours (dès son tour 2).",
+    "pct": 0.12,
+    "tours": 2,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "kharnozor": {
+    "type": "telegraphe",
+    "nom": "Charge ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 15 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 16,
+    "baseMax": 22,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.15
+  },
+  "draegnerys": {
+    "type": "bourrasque",
+    "nom": "Tourbillon",
+    "desc": "Projette les héros : la ligne avant passe derrière et la ligne arrière devant, tous les 3 tours (dès son tour 3).",
+    "tous": 3,
+    "debut": 3,
+    "pa": 1
+  },
+  "meulou": {
+    "type": "telegraphe",
+    "nom": "Croc de l'alpha ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 15 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 18,
+    "baseMax": 24,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.15
+  },
+  "reine_nyee": {
+    "type": "invocation",
+    "nom": "Appel des renforts",
+    "desc": "Appelle un monstre de son donjon en renfort (2 au plus, 50 % de leurs PV), tous les 3 tours (dès son tour 2). Les renforts disparaissent avec lui.",
+    "pool": [
+      "arapex"
+    ],
+    "max": 2,
+    "puissance": 0.5,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "abraknyde_ancestral": {
+    "type": "telegraphe",
+    "nom": "Racines ancestrales ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe la ligne arrière au tour suivant. Retire-lui 15 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 3).",
+    "cible": "arriere",
+    "baseMin": 27,
+    "baseMax": 36,
+    "tous": 3,
+    "debut": 3,
+    "interruption": 0.15
+  },
+  "moon": {
+    "type": "bouclier",
+    "nom": "Bouclier de zone",
+    "desc": "Tout son camp gagne un bouclier de 12 % de ses PV max pendant 2 tours, tous les 3 tours (dès son tour 2).",
+    "pct": 0.12,
+    "tours": 2,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "rat_blanc": {
+    "type": "telegraphe",
+    "nom": "Peste Blanche ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 20,
+    "baseMax": 28,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "rat_noir": {
+    "type": "bourrasque",
+    "nom": "Bourrasque",
+    "desc": "Projette les héros : la ligne avant passe derrière et la ligne arrière devant, tous les 3 tours (dès son tour 2).",
+    "tous": 3,
+    "debut": 2,
+    "pa": 1
+  },
+  "maitre_corbac": {
+    "type": "telegraphe",
+    "nom": "Sanction Ténébreuse ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe la ligne arrière au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "arriere",
+    "baseMin": 29,
+    "baseMax": 39,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "silf_le_rasboul_majeur": {
+    "type": "invocation",
+    "nom": "Cri de ralliement",
+    "desc": "Appelle un monstre de son donjon en renfort (2 au plus, 50 % de leurs PV), tous les 3 tours (dès son tour 2). Les renforts disparaissent avec lui.",
+    "pool": [
+      "craqueleur_poli",
+      "craqueboule_poli"
+    ],
+    "max": 2,
+    "puissance": 0.5,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "blop_multicolore_royal": {
+    "type": "telegraphe",
+    "nom": "Blopagation ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 20,
+    "baseMax": 28,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "crocabulia": {
+    "type": "bouclier",
+    "nom": "Rempart",
+    "desc": "Tout son camp gagne un bouclier de 12 % de ses PV max pendant 2 tours, tous les 3 tours (dès son tour 2).",
+    "pct": 0.12,
+    "tours": 2,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "minotoror": {
+    "type": "telegraphe",
+    "nom": "Lancer de Tofu ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe la ligne arrière au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "arriere",
+    "baseMin": 29,
+    "baseMax": 39,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "nagate": {
+    "type": "bourrasque",
+    "nom": "Tourbillon",
+    "desc": "Projette les héros : la ligne avant passe derrière et la ligne arrière devant, tous les 3 tours (dès son tour 2).",
+    "tous": 3,
+    "debut": 2,
+    "pa": 1
+  },
+  "haute_truche": {
+    "type": "telegraphe",
+    "nom": "Tête dans le sable ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 20,
+    "baseMax": 28,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "shihan": {
+    "type": "invocation",
+    "nom": "Appel des renforts",
+    "desc": "Appelle un monstre de son donjon en renfort (2 au plus, 50 % de leurs PV), tous les 3 tours (dès son tour 2). Les renforts disparaissent avec lui.",
+    "pool": [
+      "uchiwang",
+      "ino_naru"
+    ],
+    "max": 2,
+    "puissance": 0.5,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "hanshi": {
+    "type": "telegraphe",
+    "nom": "Source des vents ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 3).",
+    "cible": "equipe",
+    "baseMin": 20,
+    "baseMax": 28,
+    "tous": 3,
+    "debut": 3,
+    "interruption": 0.12
+  },
+  "tynril_ahuri": {
+    "type": "bouclier",
+    "nom": "Bouclier de zone",
+    "desc": "Tout son camp gagne un bouclier de 12 % de ses PV max pendant 2 tours, tous les 3 tours (dès son tour 2).",
+    "pct": 0.12,
+    "tours": 2,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "tynril_consterne": {
+    "type": "telegraphe",
+    "nom": "Helse ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 3).",
+    "cible": "equipe",
+    "baseMin": 20,
+    "baseMax": 28,
+    "tous": 3,
+    "debut": 3,
+    "interruption": 0.12
+  },
+  "tynril_deconcerte": {
+    "type": "bourrasque",
+    "nom": "Bourrasque",
+    "desc": "Projette les héros : la ligne avant passe derrière et la ligne arrière devant, tous les 3 tours (dès son tour 3).",
+    "tous": 3,
+    "debut": 3,
+    "pa": 1
+  },
+  "tynril_perfide": {
+    "type": "telegraphe",
+    "nom": "Bisouille ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 3).",
+    "cible": "equipe",
+    "baseMin": 20,
+    "baseMax": 28,
+    "tous": 3,
+    "debut": 3,
+    "interruption": 0.12
+  },
+  "mansot_royal": {
+    "type": "invocation",
+    "nom": "Cri de ralliement",
+    "desc": "Appelle un monstre de son donjon en renfort (2 au plus, 50 % de leurs PV), tous les 3 tours (dès son tour 2). Les renforts disparaissent avec lui.",
+    "pool": [
+      "mansobese",
+      "shamansot"
+    ],
+    "max": 2,
+    "puissance": 0.5,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "ben_le_ripate": {
+    "type": "telegraphe",
+    "nom": "Tore tue ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 20,
+    "baseMax": 28,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "kimbo": {
+    "type": "bouclier",
+    "nom": "Rempart",
+    "desc": "Tout son camp gagne un bouclier de 12 % de ses PV max pendant 2 tours, tous les 3 tours (dès son tour 2).",
+    "pct": 0.12,
+    "tours": 2,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "obsidiantre": {
+    "type": "telegraphe",
+    "nom": "Scie lisse ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 24,
+    "baseMax": 32,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "minotot": {
+    "type": "bourrasque",
+    "nom": "Tourbillon",
+    "desc": "Projette les héros : la ligne avant passe derrière et la ligne arrière devant, tous les 3 tours (dès son tour 2).",
+    "tous": 3,
+    "debut": 2,
+    "pa": 1
+  },
+  "shogun_tofugawa": {
+    "type": "telegraphe",
+    "nom": "Hageshī Kaze ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 24,
+    "baseMax": 32,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "koumiho": {
+    "type": "invocation",
+    "nom": "Appel des renforts",
+    "desc": "Appelle un monstre de son donjon en renfort (2 au plus, 50 % de leurs PV), tous les 3 tours (dès son tour 2). Les renforts disparaissent avec lui.",
+    "pool": [
+      "kaonashi",
+      "bakazako"
+    ],
+    "max": 2,
+    "puissance": 0.5,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "tengu_givrefoux": {
+    "type": "telegraphe",
+    "nom": "Torgnole givrée ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 24,
+    "baseMax": 32,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "fuji_givrefoux_nourriciere": {
+    "type": "bouclier",
+    "nom": "Bouclier de zone",
+    "desc": "Tout son camp gagne un bouclier de 12 % de ses PV max pendant 2 tours, tous les 3 tours (dès son tour 2).",
+    "pct": 0.12,
+    "tours": 2,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "supervizoeuf": {
+    "type": "telegraphe",
+    "nom": "Abzlation ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 24,
+    "baseMax": 32,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "korriandre": {
+    "type": "bourrasque",
+    "nom": "Bourrasque",
+    "desc": "Projette les héros : la ligne avant passe derrière et la ligne arrière devant, tous les 3 tours (dès son tour 2).",
+    "tous": 3,
+    "debut": 2,
+    "pa": 1
+  },
+  "kralamoure_geant": {
+    "type": "telegraphe",
+    "nom": "Kraken ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe la ligne arrière au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "arriere",
+    "baseMin": 34,
+    "baseMax": 46,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "bworker": {
+    "type": "invocation",
+    "nom": "Cri de ralliement",
+    "desc": "Appelle un monstre de son donjon en renfort (2 au plus, 50 % de leurs PV), tous les 3 tours (dès son tour 2). Les renforts disparaissent avec lui.",
+    "pool": [
+      "cybwork",
+      "bwork_elemental_de_feu"
+    ],
+    "max": 2,
+    "puissance": 0.5,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "ougah": {
+    "type": "telegraphe",
+    "nom": "Sirop Spore ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 24,
+    "baseMax": 32,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "glourseleste": {
+    "type": "bouclier",
+    "nom": "Rempart",
+    "desc": "Tout son camp gagne un bouclier de 12 % de ses PV max pendant 2 tours, tous les 3 tours (dès son tour 2).",
+    "pct": 0.12,
+    "tours": 2,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "ombre": {
+    "type": "telegraphe",
+    "nom": "Paranoïa ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 24,
+    "baseMax": 32,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "missiz_frizz": {
+    "type": "bourrasque",
+    "nom": "Tourbillon",
+    "desc": "Projette les héros : la ligne avant passe derrière et la ligne arrière devant, tous les 3 tours (dès son tour 2).",
+    "tous": 3,
+    "debut": 2,
+    "pa": 1
+  },
+  "sylargh": {
+    "type": "telegraphe",
+    "nom": "Mortier ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe la ligne arrière au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "arriere",
+    "baseMin": 39,
+    "baseMax": 53,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "klime": {
+    "type": "invocation",
+    "nom": "Appel des renforts",
+    "desc": "Appelle un monstre de son donjon en renfort (2 au plus, 50 % de leurs PV), tous les 3 tours (dès son tour 2). Les renforts disparaissent avec lui.",
+    "pool": [
+      "grodruche",
+      "harrogant"
+    ],
+    "max": 2,
+    "puissance": 0.5,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "nileza": {
+    "type": "telegraphe",
+    "nom": "Glace sèche ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 28,
+    "baseMax": 37,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "comte_harebourg": {
+    "type": "bouclier",
+    "nom": "Bouclier de zone",
+    "desc": "Tout son camp gagne un bouclier de 12 % de ses PV max pendant 2 tours, tous les 3 tours (dès son tour 2).",
+    "pct": 0.12,
+    "tours": 2,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "merkator": {
+    "type": "telegraphe",
+    "nom": "Torpillage de glace ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe la ligne arrière au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "arriere",
+    "baseMin": 39,
+    "baseMax": 53,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "capitaine_meno": {
+    "type": "bourrasque",
+    "nom": "Bourrasque",
+    "desc": "Projette les héros : la ligne avant passe derrière et la ligne arrière devant, tous les 3 tours (dès son tour 2).",
+    "tous": 3,
+    "debut": 2,
+    "pa": 1
+  },
+  "larve_de_koutoulou": {
+    "type": "telegraphe",
+    "nom": "Permutation Inquiétante ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 28,
+    "baseMax": 37,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "dantinea": {
+    "type": "invocation",
+    "nom": "Cri de ralliement",
+    "desc": "Appelle un monstre de son donjon en renfort (2 au plus, 50 % de leurs PV), tous les 3 tours (dès son tour 2). Les renforts disparaissent avec lui.",
+    "pool": [
+      "tryde",
+      "poulpee"
+    ],
+    "max": 2,
+    "puissance": 0.5,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "roi_nidas": {
+    "type": "telegraphe",
+    "nom": "Liquidation ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 28,
+    "baseMax": 37,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "reine_des_voleurs": {
+    "type": "bouclier",
+    "nom": "Rempart",
+    "desc": "Tout son camp gagne un bouclier de 12 % de ses PV max pendant 2 tours, tous les 3 tours (dès son tour 2).",
+    "pct": 0.12,
+    "tours": 2,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "vortex": {
+    "type": "telegraphe",
+    "nom": "En temps et en heure ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 28,
+    "baseMax": 37,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "chaloeil": {
+    "type": "bourrasque",
+    "nom": "Tourbillon",
+    "desc": "Projette les héros : la ligne avant passe derrière et la ligne arrière devant, tous les 3 tours (dès son tour 2).",
+    "tous": 3,
+    "debut": 2,
+    "pa": 1
+  },
+  "solar": {
+    "type": "telegraphe",
+    "nom": "Éruption Solaire ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe la ligne arrière au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "arriere",
+    "baseMin": 39,
+    "baseMax": 53,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "bethel_akarna": {
+    "type": "invocation",
+    "nom": "Appel des renforts",
+    "desc": "Appelle un monstre de son donjon en renfort (2 au plus, 50 % de leurs PV), tous les 3 tours (dès son tour 2). Les renforts disparaissent avec lui.",
+    "pool": [
+      "cranonier",
+      "zombruth"
+    ],
+    "max": 2,
+    "puissance": 0.5,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "roi_imagami": {
+    "type": "telegraphe",
+    "nom": "Kami no Jishin ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 28,
+    "baseMax": 37,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "reine_amirukam": {
+    "type": "bouclier",
+    "nom": "Bouclier de zone",
+    "desc": "Tout son camp gagne un bouclier de 12 % de ses PV max pendant 2 tours, tous les 3 tours (dès son tour 2).",
+    "pct": 0.12,
+    "tours": 2,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "venerable_endormi": {
+    "type": "telegraphe",
+    "nom": "Cri Vénérable ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 28,
+    "baseMax": 37,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "ilyzaelle": {
+    "type": "bourrasque",
+    "nom": "Bourrasque",
+    "desc": "Projette les héros : la ligne avant passe derrière et la ligne arrière devant, tous les 3 tours (dès son tour 2).",
+    "tous": 3,
+    "debut": 2,
+    "pa": 1
+  },
+  "corruption": {
+    "type": "telegraphe",
+    "nom": "Putréfaction ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 28,
+    "baseMax": 37,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "guerre": {
+    "type": "invocation",
+    "nom": "Cri de ralliement",
+    "desc": "Appelle un monstre de son donjon en renfort (2 au plus, 50 % de leurs PV), tous les 3 tours (dès son tour 2). Les renforts disparaissent avec lui.",
+    "pool": [
+      "fleaunide",
+      "ravalame"
+    ],
+    "max": 2,
+    "puissance": 0.5,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "servitude": {
+    "type": "telegraphe",
+    "nom": "Asservissement ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 3 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 28,
+    "baseMax": 37,
+    "tous": 3,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "misere": {
+    "type": "bouclier",
+    "nom": "Rempart",
+    "desc": "Tout son camp gagne un bouclier de 12 % de ses PV max pendant 2 tours, tous les 3 tours (dès son tour 2).",
+    "pct": 0.12,
+    "tours": 2,
+    "tous": 3,
+    "debut": 2,
+    "pa": 2
+  },
+  "guerre_2": {
+    "type": "telegraphe",
+    "nom": "Magmaléfice ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe toute l'équipe au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 4 tours (dès son tour 2).",
+    "cible": "equipe",
+    "baseMin": 28,
+    "baseMax": 37,
+    "tous": 4,
+    "debut": 2,
+    "interruption": 0.12
+  },
+  "servitude_2": {
+    "type": "bourrasque",
+    "nom": "Tourbillon",
+    "desc": "Projette les héros : la ligne avant passe derrière et la ligne arrière devant, tous les 4 tours (dès son tour 3).",
+    "tous": 4,
+    "debut": 3,
+    "pa": 1
+  },
+  "misere_2": {
+    "type": "telegraphe",
+    "nom": "Balance-Fléau ultime",
+    "desc": "Se concentre un tour entier (⚠️ sur sa carte, aucun sort), puis frappe la ligne arrière au tour suivant. Retire-lui 12 % de ses PV max pendant sa concentration, ou assomme-le, pour l'interrompre. Tous les 4 tours (dès son tour 4).",
+    "cible": "arriere",
+    "baseMin": 39,
+    "baseMax": 53,
+    "tous": 4,
+    "debut": 4,
+    "interruption": 0.12
+  },
+  "corruption_2": {
+    "type": "invocation",
+    "nom": "Appel des renforts",
+    "desc": "Appelle un monstre de son donjon en renfort (2 au plus, 50 % de leurs PV), tous les 4 tours (dès son tour 5). Les renforts disparaissent avec lui.",
+    "pool": [
+      "ferrailleur_2",
+      "armecreante_2"
+    ],
+    "max": 2,
+    "puissance": 0.5,
+    "tous": 4,
+    "debut": 5,
+    "pa": 2
+  }
+}

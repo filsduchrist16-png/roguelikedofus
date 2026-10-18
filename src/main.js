@@ -24,6 +24,7 @@ import "./confort-meta.css";
 import "./confort-ecrans.css";
 import "./confort-recompenses.css";
 import "./confort-gameplay.css";
+import "./contenu.css";
 function initialiserInterface(racine) {
   definirRacine(racine);
   fondDuMonde(null);

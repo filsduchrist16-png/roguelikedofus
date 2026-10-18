@@ -7,6 +7,7 @@ import { monstresDuCombat, pvMaxPerso } from "../src/jeu/run.js";
 import { rngGraine } from "../src/jeu/runDuJour.js";
 import { EMPLACEMENTS, emplacementsDuType } from "../src/jeu/emplacements.js";
 import {
+  AFFIXES_SONGES,
   CONFIG_SONGES,
   affixesAffiches,
   appliquerRecompense,
@@ -84,16 +85,18 @@ describe(`Songes : étages`, () => {
 });
 
 describe(`Songes : affixes`, () => {
-  it(`d'abord trois affixes différents, puis ils se cumulent`, () => {
+  // 1.9.0 : 7 affixes de groupe + 2 propres aux Songes (au lieu de 3)
+  it(`d'abord tous les affixes différents, puis ils se cumulent`, () => {
     const rng = rngGraine(3);
     const actifs = [];
-    for (let k = 0; k < 3; k++) {
+    for (let k = 0; k < AFFIXES_SONGES.length; k++) {
       actifs.push(tirerAffixeSonge(actifs, rng));
     }
-    expect(new Set(actifs).size).toBe(AFFIXES_GROUPE.length);
+    expect(new Set(actifs).size).toBe(AFFIXES_SONGES.length);
+    expect(AFFIXES_SONGES.length).toBe(AFFIXES_GROUPE.length + 2);
     actifs.push(tirerAffixeSonge(actifs, rng));
     const groupes = affixesAffiches(actifs);
-    expect(groupes).toHaveLength(3);
+    expect(groupes).toHaveLength(AFFIXES_SONGES.length);
     expect(groupes.filter((g) => g.n === 2)).toHaveLength(1);
     expect(groupes.find((g) => g.n === 2).nom).toMatch(/×2$/);
   });
@@ -179,12 +182,16 @@ describe(`Songes : départ et récompenses`, () => {
     const run = nouvelleRunSonges([`iop`, `cra`], rngGraine(1));
     run.benedictions = Object.keys(BENEDICTIONS);
     for (const perso of run.persos) perso.equipement = {};
-    // toutes les améliorations de sort et reliques de run prises aussi : il reste objet, soin, kamas
+    // toutes les améliorations de sort, reliques de run et sorts avancés (1.9.0) pris aussi : il
+    // reste objet, soin, kamas
     run.reliquesRun = Object.keys(RELIQUES_RUN);
+    for (const perso of run.persos) perso.sortsAppris = [...CLASSES[perso.classeId].sortsAvances];
     run.ameliorations = Object.fromEntries(
       run.persos.map((perso) => [
         perso.classeId,
-        Object.fromEntries(CLASSES[perso.classeId].sorts.map((id) => [id, [`a`, `b`]])),
+        Object.fromEntries(
+          [...CLASSES[perso.classeId].sorts, ...perso.sortsAppris].map((id) => [id, [`a`, `b`]]),
+        ),
       ]),
     );
     const offre = tirerRecompenses(2, run, rngGraine(4));

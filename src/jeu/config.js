@@ -187,6 +187,54 @@ export const AFFIXES_GROUPE = [
     initBonus: 4,
     paBonus: 1,
   },
+  // 1.9.0 : affixes à effet en combat (src/combat/effets.js, src/combat/capacites.js), avec une
+  // pastille sur la carte de chaque monstre touché
+  {
+    id: `vampirique`,
+    nom: `Vampiriques`,
+    icone: `🩸`,
+    desc: `rendent en PV 20 % des dégâts qu'ils infligent`,
+    volDeVie: 0.2,
+  },
+  {
+    id: `explosif`,
+    nom: `Explosifs`,
+    icone: `💣`,
+    desc: `explosent à leur mort : 12 % de leurs PV max en dégâts à chaque héros de la ligne avant`,
+    explosionMort: 0.12,
+  },
+  {
+    id: `protecteur`,
+    nom: `Protecteurs`,
+    icone: `🛡️`,
+    desc: `au début de chacun de leurs tours, protègent l'allié le plus blessé (bouclier de 8 % de ses PV max, 2 tours)`,
+    protecteur: 0.08,
+  },
+  {
+    id: `epineux`,
+    nom: `Épineux`,
+    icone: `🌵`,
+    desc: `renvoient à l'attaquant 15 % des dégâts qu'ils subissent`,
+    epines: 0.15,
+  },
+];
+// Affixes propres aux Songes infinis (1.9.0) : ils s'ajoutent à ceux des groupes dans la rotation
+// des affixes de songe, jamais sur la carte d'une run.
+export const AFFIXES_SONGE = [
+  {
+    id: `brumeux`,
+    nom: `Brumeux`,
+    icone: `🌫️`,
+    desc: `+10 % de chance d'esquiver chaque attaque`,
+    esquiveBonus: 0.1,
+  },
+  {
+    id: `regenerant`,
+    nom: `Régénérants`,
+    icone: `💚`,
+    desc: `régénèrent 4 % de leurs PV max au début de chacun de leurs tours`,
+    regenPct: 0.04,
+  },
 ];
 // Furie des boss : sous `seuil` de ses PV, au début de son tour, un boss gagne des dégâts et des PA
 // (une fois par combat). Les difficultés peuvent avancer le seuil et ajouter un bouclier.

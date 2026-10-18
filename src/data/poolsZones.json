@@ -4,7 +4,8 @@
       "gob_boss"
     ],
     "elite": [
-      "gob_elite"
+      "gob_elite",
+      "gob_elite_2"
     ],
     "normales": [
       "gob_1",
@@ -19,7 +20,8 @@
       "por_boss"
     ],
     "elite": [
-      "por_elite"
+      "por_elite",
+      "por_elite_2"
     ],
     "normales": [
       "por_1",
@@ -34,7 +36,8 @@
       "moo_boss"
     ],
     "elite": [
-      "moo_elite"
+      "moo_elite",
+      "moo_elite_2"
     ],
     "normales": [
       "moo_1",
@@ -49,7 +52,8 @@
       "boss"
     ],
     "elite": [
-      "combat_elite"
+      "combat_elite",
+      "combat_elite_2"
     ],
     "normales": [
       "combat_1",
@@ -64,7 +68,8 @@
       "cho_boss"
     ],
     "elite": [
-      "cho_elite"
+      "cho_elite",
+      "cho_elite_2"
     ],
     "normales": [
       "cho_1",
@@ -79,7 +84,8 @@
       "arc_boss"
     ],
     "elite": [
-      "arc_elite"
+      "arc_elite",
+      "arc_elite_2"
     ],
     "normales": [
       "arc_1",
@@ -99,7 +105,8 @@
       "blp_boss_reinette_coco"
     ],
     "elite": [
-      "blp_elite"
+      "blp_elite",
+      "blp_elite_2"
     ],
     "normales": [
       "blp_1",
@@ -114,7 +121,8 @@
       "abr_boss"
     ],
     "elite": [
-      "abr_elite"
+      "abr_elite",
+      "abr_elite_2"
     ],
     "normales": [
       "abr_1",
@@ -129,7 +137,8 @@
       "frg_boss"
     ],
     "elite": [
-      "frg_elite"
+      "frg_elite",
+      "frg_elite_2"
     ],
     "normales": [
       "frg_1",
@@ -149,7 +158,8 @@
       "gel_boss_menthe_citron"
     ],
     "elite": [
-      "gel_elite"
+      "gel_elite",
+      "gel_elite_2"
     ],
     "normales": [
       "gel_1",
@@ -164,7 +174,8 @@
       "hsk_boss"
     ],
     "elite": [
-      "hsk_elite"
+      "hsk_elite",
+      "hsk_elite_2"
     ],
     "normales": [
       "hsk_1",
@@ -179,7 +190,8 @@
       "inc_boss"
     ],
     "elite": [
-      "inc_elite"
+      "inc_elite",
+      "inc_elite_2"
     ],
     "normales": [
       "inc_1",
@@ -194,7 +206,8 @@
       "kan_boss"
     ],
     "elite": [
-      "kan_elite"
+      "kan_elite",
+      "kan_elite_2"
     ],
     "normales": [
       "kan_1",
@@ -209,7 +222,8 @@
       "kwa_boss"
     ],
     "elite": [
-      "kwa_elite"
+      "kwa_elite",
+      "kwa_elite_2"
     ],
     "normales": [
       "kwa_1",
@@ -224,7 +238,8 @@
       "lab_boss"
     ],
     "elite": [
-      "lab_elite"
+      "lab_elite",
+      "lab_elite_2"
     ],
     "normales": [
       "lab_1",
@@ -239,7 +254,8 @@
       "lrv_boss"
     ],
     "elite": [
-      "lrv_elite"
+      "lrv_elite",
+      "lrv_elite_2"
     ],
     "normales": [
       "lrv_1",
@@ -254,7 +270,8 @@
       "fan_boss"
     ],
     "elite": [
-      "fan_elite"
+      "fan_elite",
+      "fan_elite_2"
     ],
     "normales": [
       "fan_1",
@@ -269,7 +286,8 @@
       "roc_boss"
     ],
     "elite": [
-      "roc_elite"
+      "roc_elite",
+      "roc_elite_2"
     ],
     "normales": [
       "roc_1",
@@ -284,7 +302,8 @@
       "khz_boss"
     ],
     "elite": [
-      "khz_elite"
+      "khz_elite",
+      "khz_elite_2"
     ],
     "normales": [
       "khz_1",
@@ -299,7 +318,8 @@
       "scr_boss"
     ],
     "elite": [
-      "scr_elite"
+      "scr_elite",
+      "scr_elite_2"
     ],
     "normales": [
       "scr_1",
@@ -314,7 +334,8 @@
       "tai_boss"
     ],
     "elite": [
-      "tai_elite"
+      "tai_elite",
+      "tai_elite_2"
     ],
     "normales": [
       "tai_1",
@@ -329,7 +350,8 @@
       "mlo_boss"
     ],
     "elite": [
-      "mlo_elite"
+      "mlo_elite",
+      "mlo_elite_2"
     ],
     "normales": [
       "mlo_1",
@@ -344,7 +366,8 @@
       "wab_boss"
     ],
     "elite": [
-      "wab_elite"
+      "wab_elite",
+      "wab_elite_2"
     ],
     "normales": [
       "wab_1",
@@ -359,7 +382,8 @@
       "tof_boss"
     ],
     "elite": [
-      "tof_elite"
+      "tof_elite",
+      "tof_elite_2"
     ],
     "normales": [
       "tof_1",
@@ -378,7 +402,8 @@
       "egouts_bonta_brakmar_5"
     ],
     "elite": [
-      "egouts_bonta_brakmar_elite"
+      "egouts_bonta_brakmar_elite",
+      "egouts_bonta_brakmar_elite_2"
     ],
     "boss": [
       "egouts_bonta_brakmar_boss_1",
@@ -394,7 +419,8 @@
       "bibliotheque_corbac_5"
     ],
     "elite": [
-      "bibliotheque_corbac_elite"
+      "bibliotheque_corbac_elite",
+      "bibliotheque_corbac_elite_2"
     ],
     "boss": [
       "bibliotheque_corbac_boss"
@@ -409,7 +435,8 @@
       "goulet_rasboul_5"
     ],
     "elite": [
-      "goulet_rasboul_elite"
+      "goulet_rasboul_elite",
+      "goulet_rasboul_elite_2"
     ],
     "boss": [
       "goulet_rasboul_boss"
@@ -424,7 +451,8 @@
       "antre_blop_multicolore_5"
     ],
     "elite": [
-      "antre_blop_multicolore_elite"
+      "antre_blop_multicolore_elite",
+      "antre_blop_multicolore_elite_2"
     ],
     "boss": [
       "antre_blop_multicolore_boss"
@@ -439,7 +467,8 @@
       "antre_crocabulia_5"
     ],
     "elite": [
-      "antre_crocabulia_elite"
+      "antre_crocabulia_elite",
+      "antre_crocabulia_elite_2"
     ],
     "boss": [
       "antre_crocabulia_boss"
@@ -454,7 +483,8 @@
       "labyrinthe_minotoror_5"
     ],
     "elite": [
-      "labyrinthe_minotoror_elite"
+      "labyrinthe_minotoror_elite",
+      "labyrinthe_minotoror_elite_2"
     ],
     "boss": [
       "labyrinthe_minotoror_boss"
@@ -469,7 +499,8 @@
       "vallee_dame_des_eaux_5"
     ],
     "elite": [
-      "vallee_dame_des_eaux_elite"
+      "vallee_dame_des_eaux_elite",
+      "vallee_dame_des_eaux_elite_2"
     ],
     "boss": [
       "vallee_dame_des_eaux_boss"
@@ -484,7 +515,8 @@
       "voliere_haute_truche_5"
     ],
     "elite": [
-      "voliere_haute_truche_elite"
+      "voliere_haute_truche_elite",
+      "voliere_haute_truche_elite_2"
     ],
     "boss": [
       "voliere_haute_truche_boss"
@@ -499,7 +531,8 @@
       "dojo_du_vent_5"
     ],
     "elite": [
-      "dojo_du_vent_elite"
+      "dojo_du_vent_elite",
+      "dojo_du_vent_elite_2"
     ],
     "boss": [
       "dojo_du_vent_boss"
@@ -514,7 +547,8 @@
       "laboratoire_tynril_5"
     ],
     "elite": [
-      "laboratoire_tynril_elite"
+      "laboratoire_tynril_elite",
+      "laboratoire_tynril_elite_2"
     ],
     "boss": [
       "laboratoire_tynril_boss_1",
@@ -532,7 +566,8 @@
       "excavation_mansot_5"
     ],
     "elite": [
-      "excavation_mansot_elite"
+      "excavation_mansot_elite",
+      "excavation_mansot_elite_2"
     ],
     "boss": [
       "excavation_mansot_boss"
@@ -547,7 +582,8 @@
       "epave_grolandais_5"
     ],
     "elite": [
-      "epave_grolandais_elite"
+      "epave_grolandais_elite",
+      "epave_grolandais_elite_2"
     ],
     "boss": [
       "epave_grolandais_boss"
@@ -562,7 +598,8 @@
       "canopee_kimbo_5"
     ],
     "elite": [
-      "canopee_kimbo_elite"
+      "canopee_kimbo_elite",
+      "canopee_kimbo_elite_2"
     ],
     "boss": [
       "canopee_kimbo_boss"
@@ -577,7 +614,8 @@
       "hypogee_obsidiantre_5"
     ],
     "elite": [
-      "hypogee_obsidiantre_elite"
+      "hypogee_obsidiantre_elite",
+      "hypogee_obsidiantre_elite_2"
     ],
     "boss": [
       "hypogee_obsidiantre_boss"
@@ -592,7 +630,8 @@
       "salle_minotot_5"
     ],
     "elite": [
-      "salle_minotot_elite"
+      "salle_minotot_elite",
+      "salle_minotot_elite_2"
     ],
     "boss": [
       "salle_minotot_boss"
@@ -607,7 +646,8 @@
       "tombe_tofugawa_5"
     ],
     "elite": [
-      "tombe_tofugawa_elite"
+      "tombe_tofugawa_elite",
+      "tombe_tofugawa_elite_2"
     ],
     "boss": [
       "tombe_tofugawa_boss_1",
@@ -623,7 +663,8 @@
       "cavernes_givrefoux_5"
     ],
     "elite": [
-      "cavernes_givrefoux_elite"
+      "cavernes_givrefoux_elite",
+      "cavernes_givrefoux_elite_2"
     ],
     "boss": [
       "cavernes_givrefoux_boss_1",
@@ -639,7 +680,8 @@
       "poste_supervizoeuf_5"
     ],
     "elite": [
-      "poste_supervizoeuf_elite"
+      "poste_supervizoeuf_elite",
+      "poste_supervizoeuf_elite_2"
     ],
     "boss": [
       "poste_supervizoeuf_boss"
@@ -654,7 +696,8 @@
       "antre_korriandre_5"
     ],
     "elite": [
-      "antre_korriandre_elite"
+      "antre_korriandre_elite",
+      "antre_korriandre_elite_2"
     ],
     "boss": [
       "antre_korriandre_boss"
@@ -669,7 +712,8 @@
       "antre_kralamoure_5"
     ],
     "elite": [
-      "antre_kralamoure_elite"
+      "antre_kralamoure_elite",
+      "antre_kralamoure_elite_2"
     ],
     "boss": [
       "antre_kralamoure_boss"
@@ -684,7 +728,8 @@
       "grotte_bworker_5"
     ],
     "elite": [
-      "grotte_bworker_elite"
+      "grotte_bworker_elite",
+      "grotte_bworker_elite_2"
     ],
     "boss": [
       "grotte_bworker_boss"
@@ -699,7 +744,8 @@
       "temple_ougah_5"
     ],
     "elite": [
-      "temple_ougah_elite"
+      "temple_ougah_elite",
+      "temple_ougah_elite_2"
     ],
     "boss": [
       "temple_ougah_boss"
@@ -714,7 +760,8 @@
       "antichambre_glourseleste_5"
     ],
     "elite": [
-      "antichambre_glourseleste_elite"
+      "antichambre_glourseleste_elite",
+      "antichambre_glourseleste_elite_2"
     ],
     "boss": [
       "antichambre_glourseleste_boss"
@@ -729,7 +776,8 @@
       "pyramide_ombre_5"
     ],
     "elite": [
-      "pyramide_ombre_elite"
+      "pyramide_ombre_elite",
+      "pyramide_ombre_elite_2"
     ],
     "boss": [
       "pyramide_ombre_boss"
@@ -744,7 +792,8 @@
       "forgefroide_transporteur_5"
     ],
     "elite": [
-      "forgefroide_transporteur_elite"
+      "forgefroide_transporteur_elite",
+      "forgefroide_transporteur_elite_2"
     ],
     "boss": [
       "forgefroide_transporteur_boss_1",
@@ -760,7 +809,8 @@
       "salons_klime_labo_nileza_5"
     ],
     "elite": [
-      "salons_klime_labo_nileza_elite"
+      "salons_klime_labo_nileza_elite",
+      "salons_klime_labo_nileza_elite_2"
     ],
     "boss": [
       "salons_klime_labo_nileza_boss_1",
@@ -776,7 +826,8 @@
       "donjon_harebourg_5"
     ],
     "elite": [
-      "donjon_harebourg_elite"
+      "donjon_harebourg_elite",
+      "donjon_harebourg_elite_2"
     ],
     "boss": [
       "donjon_harebourg_boss"
@@ -791,7 +842,8 @@
       "aquadome_vaisseau_5"
     ],
     "elite": [
-      "aquadome_vaisseau_elite"
+      "aquadome_vaisseau_elite",
+      "aquadome_vaisseau_elite_2"
     ],
     "boss": [
       "aquadome_vaisseau_boss_1",
@@ -807,7 +859,8 @@
       "temple_koutoulou_palais_dantinea_5"
     ],
     "elite": [
-      "temple_koutoulou_palais_dantinea_elite"
+      "temple_koutoulou_palais_dantinea_elite",
+      "temple_koutoulou_palais_dantinea_elite_2"
     ],
     "boss": [
       "temple_koutoulou_palais_dantinea_boss_1",
@@ -823,7 +876,8 @@
       "enutrosor_srambad_5"
     ],
     "elite": [
-      "enutrosor_srambad_elite"
+      "enutrosor_srambad_elite",
+      "enutrosor_srambad_elite_2"
     ],
     "boss": [
       "enutrosor_srambad_boss_1",
@@ -839,7 +893,8 @@
       "xelorium_ecaflipus_5"
     ],
     "elite": [
-      "xelorium_ecaflipus_elite"
+      "xelorium_ecaflipus_elite",
+      "xelorium_ecaflipus_elite_2"
     ],
     "boss": [
       "xelorium_ecaflipus_boss_1",
@@ -855,7 +910,8 @@
       "tours_fratrie_5"
     ],
     "elite": [
-      "tours_fratrie_elite"
+      "tours_fratrie_elite",
+      "tours_fratrie_elite_2"
     ],
     "boss": [
       "tours_fratrie_boss_1",
@@ -871,7 +927,8 @@
       "wukin_wukang_5"
     ],
     "elite": [
-      "wukin_wukang_elite"
+      "wukin_wukang_elite",
+      "wukin_wukang_elite_2"
     ],
     "boss": [
       "wukin_wukang_boss_1",
@@ -887,7 +944,8 @@
       "osavora_ilyzaelle_5"
     ],
     "elite": [
-      "osavora_ilyzaelle_elite"
+      "osavora_ilyzaelle_elite",
+      "osavora_ilyzaelle_elite_2"
     ],
     "boss": [
       "osavora_ilyzaelle_boss_1",
@@ -903,7 +961,8 @@
       "dimensions_cavaliers_5"
     ],
     "elite": [
-      "dimensions_cavaliers_elite"
+      "dimensions_cavaliers_elite",
+      "dimensions_cavaliers_elite_2"
     ],
     "boss": [
       "dimensions_cavaliers_boss_1",
@@ -921,7 +980,8 @@
       "tempete_eliocalypse_5"
     ],
     "elite": [
-      "tempete_eliocalypse_elite"
+      "tempete_eliocalypse_elite",
+      "tempete_eliocalypse_elite_2"
     ],
     "boss": [
       "tempete_eliocalypse_boss"

@@ -1,0 +1,37 @@
+/* ---------- Contenus 1.9.0 : capacités de boss, affixes, sorts avancés ---------- */
+/* frappe préparée par un boss : badge rouge qui pulse, lisible d'un coup d'œil */
+.combat .carte .badge.alerte {
+  border-color: #8a1010;
+  background: linear-gradient(180deg, #ff7a6b, #d4281b);
+  color: #fff;
+  font-weight: 900;
+  font-size: max(11px, 0.72rem);
+  animation: 1.1s ease-in-out infinite alternate badge-alerte;
+}
+@keyframes badge-alerte {
+  from {
+    box-shadow: 0 0 0 0 #d4281b00;
+  }
+  to {
+    box-shadow: 0 0 0 4px #d4281b66;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .combat .carte .badge.alerte {
+    animation: none;
+  }
+}
+.combat .carte .badge.capacite {
+  border-color: #6b3f17;
+  background: #f6e2b8;
+  color: #3b2410;
+}
+/* encyclopédie : sorts à apprendre en run */
+.ency-avances-titre {
+  margin: 14px 0 2px;
+  font-size: 1rem;
+}
+.ency-avances-aide {
+  margin: 0 0 6px;
+  font-size: max(12px, 0.8rem);
+}

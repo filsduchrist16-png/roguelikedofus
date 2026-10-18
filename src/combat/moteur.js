@@ -10,6 +10,7 @@ import {
 import { appliquerSoinsEtBoucliers, debutTourEffets, finTourEffets, soigner } from "./effets.js";
 import { effetRun } from "./ameliorations.js";
 import { lancerSort } from "./sorts.js";
+import { declencherCapaciteBoss, protegerAllie } from "./capacites.js";
 function mueElementaire(combattant, contexte) {
   if (combattant.mueElementaire === undefined) {
     return;
@@ -241,12 +242,25 @@ export async function executerCombat(combattants, options) {
       }
       if (acteur.effets.some((effet) => effet.stat === `assome`)) {
         acteur.effets = acteur.effets.filter((effet) => effet.stat !== `assome`);
+        // un boss assommé perd aussi la frappe qu'il préparait
+        if (acteur.capacite) {
+          declencherCapaciteBoss(acteur, combattants, contexte, { assomme: true });
+        }
         contexte.log(`💫 ${acteur.nom} est assommé et passe son tour !`, { tour: acteur.ref });
         await options.onUpdate?.();
       } else {
         contexte.log(`▶ Tour de ${acteur.nom} (${acteur.paActuels} PA).`, { tour: acteur.ref });
+        // capacité spéciale d'un boss (src/combat/capacites.js) : frappe préparée, renforts,
+        // bouclier de zone, bourrasque ; un boss qui se concentre ne lance aucun sort
+        let passeTour = false;
+        // affixe Protecteurs : bouclier sur l'allié le plus blessé
+        protegerAllie(acteur, combattants, contexte);
+        if (acteur.capacite) {
+          ({ passeTour } = declencherCapaciteBoss(acteur, combattants, contexte));
+          retirerInvocationsOrphelines(combattants, contexte);
+        }
         await options.onUpdate?.();
-        let actions = 0;
+        let actions = passeTour ? 50 : 0;
         while (acteur.pvActuels > 0 && !combatTermine(combattants) && !(++actions > 50)) {
           let action = await options.controllers[acteur.camp](acteur, combattants, contexte);
           if (!action) {
