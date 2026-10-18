@@ -1,5 +1,11 @@
 import { MONDES } from "../../data/index.js";
-import { DIFFICULTES, DIFFICULTE_MAX, reliquesDuMonde } from "../../jeu/config.js";
+import {
+  DIFFICULTES,
+  DIFFICULTE_MAX,
+  getMonde,
+  reliquesDuMonde,
+  zonesDuMonde,
+} from "../../jeu/config.js";
 import { progressionArchisMonde } from "../../jeu/quetes.js";
 import { BENEDICTIONS } from "../../jeu/rencontres.js";
 import { benedictionDuJour, cleRecordJour, dateDuJour } from "../../jeu/runDuJour.js";
@@ -29,6 +35,7 @@ import {
   echapperHtml,
   ecranTactile,
   etoilesDifficulte,
+  fondDuMonde,
   imgMonde,
   parametres,
   racine,
@@ -55,6 +62,11 @@ import { IMG_SONGES } from "./songes.js";
 import { VERSION } from "../../version.js";
 import { htmlAlmanax } from "../almanax.js";
 import { ecranHistorique, noterAbandonEnCours } from "./historique.js";
+import { ecranCarte } from "./carte.js";
+import { chargerRun } from "../../sauvegarde/run.js";
+import { effetsEnCours } from "../../jeu/rencontres.js";
+import { effetAlmanax } from "../../jeu/almanax.js";
+import { numeroZone } from "../../jeu/economie.js";
 const LIEN_DISCORD = `https://discord.gg/jxfWpRB7Rp`;
 const numeroMonde = (id) => MONDES.findIndex((monde) => monde.id === id) + 1;
 // Plus haute difficulté ouverte dans ce monde (une run gagnée débloque la suivante).
@@ -124,6 +136,10 @@ export function ecranAccueil(meta, onReset, reprise = null) {
           <p class="songes-accueil-info">${songesOuverts ? `Combats sans fin, de plus en plus durs.${recordSonge ? ` Record : <b>${recordSonge} étage${recordSonge > 1 ? `s` : ``}</b>` : ``}` : echapperHtml(CONDITION_SONGES)}</p>
         </div>`;
       htmlBoutons += `<p class="jouer-recap${diff.effets.mortDefinitive && !reprise ? ` mort-definitive` : ``}">${echapperHtml(recap)}</p>`;
+      // reprise : regarder la carte (équipe, effets, chemin) avant de reprendre ou d'abandonner
+      if (reprise && !reprise.songes) {
+        htmlBoutons += `<button id="btn-voir-carte" class="secondaire btn-voir-carte">🗺️ Voir la carte avant de reprendre</button>`;
+      }
       let htmlEtoiles = (mondeId) => {
         let palier = palierDebloque(meta, mondeId);
         let actif = mondeId === trancheId;
@@ -499,6 +515,13 @@ Difficulté : ${DIFFICULTES[reprise.ascension]?.nom ?? `Normal`}`
         }
         resolve({ action: `songes` });
       });
+      document.getElementById(`btn-voir-carte`)?.addEventListener(`click`, async () => {
+        if ((await apercuReprise(meta)) === `reprendre`) {
+          resolve({ action: `reprendre`, ascension: 0, trancheId: reprise.trancheId });
+          return;
+        }
+        afficher();
+      });
       document.getElementById(`btn-reprendre`)?.addEventListener(`click`, () =>
         resolve({
           action: `reprendre`,
@@ -526,6 +549,37 @@ Difficulté : ${DIFFICULTES[reprise.ascension]?.nom ?? `Normal`}`
   });
 }
 
+// Carte de la run sauvegardée, en aperçu (rien n'est joué) : résout `reprendre` ou `accueil`.
+// Entre deux zones (carte pas encore tirée), il n'y a rien à montrer : on reprend directement.
+export async function apercuReprise(meta) {
+  const sauvegarde = chargerRun();
+  const run = sauvegarde?.run;
+  const zone = run && zonesDuMonde(getMonde(run.trancheId))[sauvegarde.zoneIdx];
+  if (!run?.carte || !zone) {
+    return `reprendre`;
+  }
+  fondDuMonde(run.trancheId);
+  const choix = await ecranCarte(
+    run.carte,
+    run.persos,
+    meta,
+    zone.nom,
+    run.inventaire,
+    run.kamas,
+    run.ascension,
+    run.philtres,
+    () => {},
+    [...effetsEnCours(run, zone.id), ...effetAlmanax(meta)],
+    {
+      zoneNum: sauvegarde.zoneIdx + 1,
+      nbZones: zonesDuMonde(getMonde(run.trancheId)).length,
+      tierObjets: numeroZone(zone.id),
+      apercu: true,
+    },
+  );
+  fondDuMonde(null);
+  return choix;
+}
 // Bandeau « partie plus récente en ligne » : ce que contient chaque partie, et confirmation avant
 // de remplacer l'une par l'autre.
 function htmlBandeauNuage(info) {

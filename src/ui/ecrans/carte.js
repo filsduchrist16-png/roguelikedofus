@@ -34,6 +34,8 @@ import { ecranDofus } from "./dofus.js";
 import { ecranFormation } from "./formation.js";
 import { ecranCaracteristiques } from "./caracteristiques.js";
 import { noterAbandonEnCours } from "./historique.js";
+import { quetesARappeler } from "../prochainDofus.js";
+import { etatAlmanax } from "../../jeu/almanax.js";
 const ICONES_NOEUDS = {
   combat: `⚔️`,
   combat_dur: `💀`,
@@ -163,6 +165,33 @@ export function ordreRaccourcis(cases) {
   return [...cases]
     .sort((premiere, seconde) => premiere.y - seconde.y || premiere.x - seconde.x)
     .map((noeud) => noeud.id);
+}
+// Rappel discret sous le titre de la carte (sans ouvrir de panneau) : la quête de l'Almanax du
+// jour et les quêtes qui restent pour le prochain Dofus du monde joué.
+// La pastille 📅 des effets en cours passe dans ce rappel (sa description en devient la bulle).
+export const estPastilleAlmanax = (effet) => effet?.icone === `📅` && /^Almanax /.test(effet.nom);
+export function htmlRappelObjectifs(meta, nomZone, effets = []) {
+  const parties = [];
+  const almanax = etatAlmanax(meta);
+  if (!almanax.fait) {
+    const detail =
+      effets.find(estPastilleAlmanax)?.desc ??
+      `Almanax du jour : ${almanax.quete.texte}. Suivi pendant la run.`;
+    parties.push(
+      `<span class="rappel-obj" tabindex="0" data-tip="${echapperHtml(detail)}">📅 ${echapperHtml(almanax.quete.texte)} <b>${almanax.progres}/${almanax.quete.objectif}</b></span>`,
+    );
+  }
+  const zone = ZONES.find((candidate) => candidate.nom === nomZone);
+  const monde = zone && MONDES.find((candidat) => candidat.zones.includes(zone.id));
+  const rappel = quetesARappeler(meta, monde?.id);
+  if (rappel) {
+    parties.push(
+      `<span class="rappel-obj" tabindex="0" data-tip="${echapperHtml(rappel.quetes.map((quete) => `${quete.titre} : ${quete.indice}`).join(`\n`))}">🥚 ${echapperHtml(rappel.dofus)} : ${rappel.quetes.map((quete) => `${echapperHtml(quete.titre)}${quete.compteur ? ` <b>${quete.compteur}</b>` : ``}`).join(` · `)}</span>`,
+    );
+  }
+  return parties.length
+    ? `<p class="carte-rappel" aria-label="Objectifs suivis">${parties.join(``)}</p>`
+    : ``;
 }
 // Niveau maximum du monde qui contient la zone (retrouvée par son nom), ou null.
 export function niveauMaxDeZone(nomZone, zones = ZONES, mondes = MONDES) {
@@ -381,13 +410,28 @@ export function ecranCarte(
         perso.flashNiveau = false;
       });
       masquerElements();
+      // l'Almanax est rappelé en clair sous le titre : pas de pastille en double
+      const almanaxRappele = !etatAlmanax(meta).fait;
+      const effetsPastilles = almanaxRappele
+        ? effets.filter((effet) => !estPastilleAlmanax(effet))
+        : effets;
       racine.innerHTML = `
-        <div class="carte-ecran map-layout">
+        <div class="carte-ecran map-layout${infosZone.apercu ? ` carte-apercu` : ``}">
           <h1 class="sr-only">Carte : ${echapperHtml(nomZone)}</h1>
           <header class="map-topbar">
             <h2 class="zone-titre">${infosZone.zoneNum ? `<span class="zone-num">Zone ${Number(infosZone.zoneNum)}${infosZone.nbZones ? `/${Number(infosZone.nbZones)}` : ``}</span> · ` : ``}${echapperHtml(nomZone)}${infosZone.tierObjets != null ? `<span class="asc-badge zone-tier" data-tip="Tier : numéro de la zone où tombent les objets, compté depuis le Monde 1">objets T${Number(infosZone.tierObjets)}</span>` : ``}${ascension >= 1 ? `<span class="asc-badge" data-tip="${echapperHtml(DIFFICULTES[ascension].desc)}">${etoilesDifficulte(ascension)}</span>` : ``}${philtres >= 1 ? `<span class="asc-badge" data-tip="Philtres d'Otomai bus : les archimonstres apparaissent plus souvent (${CONFIG_ARCHI.philtresMax} au maximum)">🧪 ${Math.min(philtres, CONFIG_ARCHI.philtresMax)}/${CONFIG_ARCHI.philtresMax}</span>` : ``}</h2>
-            ${effets.length ? `<div class="zone-effets${effets.length > 4 ? ` compact` : ``}">${effets.map((effet) => `<span class="zone-effet${effet.reliqueRun ? ` ze-relique` : ``}" aria-label="${echapperHtml(effet.nom)}" data-tip="${echapperHtml(`${effet.nom} : ${effet.desc}`)}"><span aria-hidden="true">${effet.icone}</span><span class="ze-nom"> ${echapperHtml(effet.nom)}</span></span>`).join(``)}</div>` : ``}
-            <div class="topbar-actions">
+            ${htmlRappelObjectifs(meta, nomZone, effets)}
+            ${effetsPastilles.length ? `<div class="zone-effets${effetsPastilles.length > 4 ? ` compact` : ``}">${effetsPastilles.map((effet) => `<span class="zone-effet${effet.reliqueRun ? ` ze-relique` : ``}" aria-label="${echapperHtml(effet.nom)}" data-tip="${echapperHtml(`${effet.nom} : ${effet.desc}`)}"><span aria-hidden="true">${effet.icone}</span><span class="ze-nom"> ${echapperHtml(effet.nom)}</span></span>`).join(``)}</div>` : ``}
+            ${
+              infosZone.apercu
+                ? `<div class="apercu-actions" role="group" aria-label="Aperçu de la run">
+              <p class="apercu-texte">👁 Aperçu : la run reprend ici, rien n'est encore joué.</p>
+              <button id="apercu-retour" class="secondaire">Retour</button>
+              <button id="apercu-reprendre" class="primaire">▶ Reprendre</button>
+            </div>`
+                : ``
+            }
+            <div class="topbar-actions"${infosZone.apercu ? ` hidden` : ``}>
               <button id="carte-persos" class="aside-icone" title="Caractéristiques (S)"><img src="${IMG_CARACTERISTIQUES}" alt="Caractéristiques" onerror="this.remove()" /><span class="aside-lbl">Stats</span></button>
               <button id="carte-formation" class="aside-icone" title="Formation (F)"><img src="${IMG_FORMATION}" alt="Formation" onerror="this.remove()" /><span class="aside-lbl">Formation</span></button>
               <button id="carte-equip" class="aside-icone" title="Équipement (E)${inventaire.length ? ` · ${inventaire.length} objet(s)` : ``}"><img src="${IMG_INVENTAIRE}" alt="Équipement" onerror="this.remove()" />${inventaire.length ? `<span class="aside-compte">${inventaire.length}</span>` : ``}<span class="aside-lbl">Équipement</span></button>
@@ -437,7 +481,8 @@ export function ecranCarte(
       }
       const aller = (id) => {
         let noeud = trouverNoeud(carte, id);
-        if (noeud) {
+        // aperçu avant reprise : on regarde, on ne joue pas
+        if (noeud && !infosZone.apercu) {
           resolve(noeud);
         }
       };
@@ -601,7 +646,7 @@ export function ecranCarte(
             ev.preventDefault();
             aller(id);
           }
-        } else if (LETTRES_OUTILS[touche]) {
+        } else if (LETTRES_OUTILS[touche] && !infosZone.apercu) {
           ev.preventDefault();
           document.getElementById(LETTRES_OUTILS[touche])?.click();
         }
@@ -626,6 +671,10 @@ export function ecranCarte(
       sousEcran(`carte-armurerie`, () => ecranArmurerie(meta));
       sousEcran(`carte-dofus`, () => ecranDofus(meta));
       document.getElementById(`carte-accueil`)?.addEventListener(`click`, () => resolve(`accueil`));
+      document.getElementById(`apercu-retour`)?.addEventListener(`click`, () => resolve(`accueil`));
+      document
+        .getElementById(`apercu-reprendre`)
+        ?.addEventListener(`click`, () => resolve(`reprendre`));
       document.getElementById(`carte-restart`)?.addEventListener(`click`, async () => {
         if (
           await demanderConfirmation(

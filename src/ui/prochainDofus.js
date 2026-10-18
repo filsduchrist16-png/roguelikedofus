@@ -19,6 +19,29 @@ export function dofusAPortee(meta) {
     .map((element) => element.d);
 }
 
+/**
+ * Quêtes à rappeler pendant une run (carte) : celles qui restent à faire pour le Dofus le plus
+ * avancé du monde joué (sinon le plus avancé tout court), `max` au plus.
+ */
+export function quetesARappeler(meta, mondeId, max = 2) {
+  const liste = dofusAPortee(meta);
+  const dofus = liste.find((candidat) => mondeDuDofus(candidat.id)?.id === mondeId) ?? liste[0];
+  if (!dofus) {
+    return null;
+  }
+  const ctx = contexteMeta(meta);
+  const etat = meta.quetes ?? { faites: [], compteurs: {} };
+  const quetes = succesDuDofus(dofus.id)
+    .quetes.map((quete) => ({ quete, avancement: etatQuete(etat, quete, ctx) }))
+    .filter(({ avancement }) => !avancement.faite)
+    .slice(0, max)
+    .map(({ quete, avancement }) => ({
+      titre: decrireQuete(quete).titre,
+      compteur: avancement.compteur ? `${avancement.compteur[0]}/${avancement.compteur[1]}` : ``,
+      indice: indiceQuete(quete),
+    }));
+  return quetes.length ? { dofus: dofus.nom, quetes } : null;
+}
 function htmlUnDofus(meta, dofus) {
   const succes = succesDuDofus(dofus.id);
   const ctx = contexteMeta(meta);

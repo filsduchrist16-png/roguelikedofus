@@ -277,3 +277,73 @@
     line-height: 1.4;
   }
 }
+
+/* Rappel discret des objectifs suivis (1.9.0) : quête de l'Almanax du jour et quêtes du prochain
+   Dofus du monde, en clair sous le titre de la carte, sans ouvrir de panneau */
+.carte-rappel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 12px;
+  margin: 2px 0 4px;
+  padding: 3px 10px;
+  border-radius: 8px;
+  background: #f3e8cce6;
+  font-size: max(12px, 0.78rem);
+  line-height: 1.3;
+  color: var(--muet);
+}
+.carte-rappel .rappel-obj {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.carte-rappel b {
+  color: var(--txt);
+  font-variant-numeric: tabular-nums;
+}
+@media (width<=700px) {
+  .carte-rappel {
+    font-size: 12px;
+  }
+  /* sur téléphone, une ligne par objectif, coupée proprement */
+  .carte-rappel .rappel-obj {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+/* Aperçu de la carte avant de reprendre une run (1.9.0) : on regarde, rien n'est joué */
+.apercu-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 10px;
+  margin: 4px 0;
+}
+.apercu-actions .apercu-texte {
+  flex: 1 1 100%;
+  margin: 0;
+  text-align: center;
+  font-size: max(12px, 0.8rem);
+  font-weight: 700;
+}
+.apercu-actions button {
+  min-height: 44px;
+  min-width: 120px;
+}
+.carte-apercu .cp-aller,
+.carte-apercu .topbar-actions {
+  display: none;
+}
+.btn-voir-carte {
+  min-height: 44px;
+  margin-top: 6px;
+}
+@media (width<=700px) {
+  .ecran-accueil > .boutons-ecran .btn-voir-carte {
+    order: 3;
+    flex-basis: 100%;
+  }
+}
