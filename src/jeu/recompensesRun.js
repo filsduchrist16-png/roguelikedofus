@@ -35,9 +35,10 @@ export const CONFIG_RECOMPENSES = {
   // les taux de victoire de la 1.6.0. Le Monde 1 (héros de bas niveau, sur qui chaque bonus pèse
   // plus) a la sienne, le Monde 3 aussi. Réglé par simulation : npm run sim -- t1,t3,t5 30
   compensation: {
-    t1: { lin: 0.055, quad: 0.008 },
-    t3: { lin: 0, quad: 0.0105 },
-    autres: { lin: 0, quad: 0.009 },
+    // 1.8.0 : relevée pour les camps, coffres, reliques hors combat et élites plus généreuses
+    t1: { lin: 0.063, quad: 0.0095 },
+    t3: { lin: 0, quad: 0.012 },
+    autres: { lin: 0, quad: 0.011 },
   },
 };
 /** Facteur de puissance des monstres d'une zone dû aux récompenses de combat (1 en zone 1). */

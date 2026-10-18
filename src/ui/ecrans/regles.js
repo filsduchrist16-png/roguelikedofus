@@ -1,7 +1,7 @@
 import { afficherEcran, barreRetour, echapperHtml, racine } from "../commun.js";
 import { AIDE_OBTENTION } from "../../jeu/obtention.js";
 import { DIFFICULTES } from "../../jeu/config.js";
-import { RELIQUES_RUN } from "../../data/index.js";
+import { RELIQUES_RUN, SYNERGIES_RUN } from "../../data/index.js";
 import { AMELIORATIONS_SORT } from "../../combat/ameliorations.js";
 const SECTIONS_REGLES = [
   {
@@ -10,7 +10,7 @@ const SECTIONS_REGLES = [
       zone est une carte qu'on traverse jusqu'au donjon. Battre le boss du donjon ouvre la
       zone suivante ; battre le dernier boss gagne la run.</p>
       <p>Tu pars avec deux héros et tu peux en recruter d'autres en taverne, jusqu'à quatre. Dans la
-      première zone d'un monde, la rangée qui suit le premier combat est faite de tavernes.</p>`,
+      première zone d'un monde, une taverne attend juste après le premier combat, quel qu'il soit.</p>`,
   },
   {
     titre: `Les PV`,
@@ -30,10 +30,21 @@ const SECTIONS_REGLES = [
       <li><b>Zaap</b> : la rencontre n'est révélée qu'en arrivant.</li>
       <li><b>Hôtel de vente</b> : acheter et revendre des objets.</li>
       <li><b>Forgemagie</b> : faire monter un objet d'une rareté.</li>
-      <li><b>Rencontre</b> : un événement à choix (sanctuaire, coffre, marchand, idoles, avis de
-        recherche, clé de donjon).</li>
+      <li><b>Rencontre</b> : un événement à choix (sanctuaire, coffre, marchand, colporteur de reliques,
+        autel de sang, idoles, avis de recherche, clé de donjon…).</li>
+      <li><b>Camp de repos</b> (⛺) : au choix, se reposer (30 % des PV max) <i>ou</i> améliorer
+        gratuitement un sort parmi trois proposés.</li>
+      <li><b>Coffre</b> (🧰) : une relique de run ou un objet (rare au moins). Certains sont piégés : des
+        monstres surgissent (combat, puis le trésor) ou des aiguilles blessent l'équipe (−20 % des PV
+        max, coffre vide). Un Sram, un Roublard ou un Ecaflip debout le crochète sans risque.</li>
       <li><b>Donjon</b> : le boss de la zone.</li>
     </ul>
+    <p><b>Choisir son chemin.</b> Depuis une case, les deux cases suivantes sont toujours de types
+      différents : chaque étage est un vrai choix. Le chemin risqué paie : un <b>combat dur</b> donne
+      toujours une relique de run dans son choix de récompense, des cartes plus rares, plus de butin, de
+      kamas et d'XP. Chaque carte a au moins un combat dur, et un camp de repos juste avant le donjon.
+      Touche une case (ou survole-la) pour lire ce qu'elle contient ; sur téléphone, un appui long
+      sur une case atteignable y va directement.</p>
     <p><b>Donjon secret.</b> Chaque monde cache un donjon secret (Château Ensablé, Caverne du Koulosse,
       Repaire de Skeunk, Cavernes du Kolosso, Chambre de Tal Kasha). Sa clé se trouve dans un coffre,
       chez un contrebandier ou sur un monstre de combat dur. Après le boss d'une zone, tu peux l'utiliser :
@@ -79,7 +90,8 @@ const SECTIONS_REGLES = [
     titre: `Récompenses de combat`,
     corps: `<p>Après chaque combat normal ou dur gagné (pas après un boss, qui garde son butin), en plus
       du butin, choisis <b>une carte parmi trois</b>, ou passe contre quelques kamas. Les combats durs et
-      les dernières zones d'un monde proposent plus souvent des cartes rares et épiques, et des reliques.</p>
+      les dernières zones d'un monde proposent plus souvent des cartes rares et épiques ; un combat dur
+      propose toujours une relique de run (un combat normal, une fois sur cinq).</p>
       <ul>
         <li><b>Amélioration de sort</b> (⬆) : pour un héros et un sort, jusqu'à la fin de la run (deux au
           plus par sort). Le sort amélioré porte un ⬆ en combat, et son info détaille l'effet :
@@ -91,11 +103,35 @@ const SECTIONS_REGLES = [
             .join(``)}</ul></li>
         <li><b>Relique de run</b> : un effet passif jusqu'à la fin de la run (${Object.keys(RELIQUES_RUN).length}
           reliques, une seule fois chacune), affiché sur la carte, dans l'équipement et dans le bilan. À ne
-          pas confondre avec les reliques de boss, objets de collection gardés d'une run à l'autre.</li>
+          pas confondre avec les reliques de boss, objets de collection gardés d'une run à l'autre.
+          On en trouve aussi dans les coffres, chez le colporteur (une parmi trois, contre des kamas, prix
+          selon la rareté), à l'autel de sang (une parmi deux, contre 8 % des PV max en combat pour toute
+          la run, 40 % au plus) et au comptoir des tavernes (une seule, un peu plus chère).</li>
         <li><b>Bonus</b> : une bourse de kamas, un repos (35 % des PV max) ou un entraînement (des points
           dans les quatre caractéristiques élémentaires d'un héros, pour la run).</li>
       </ul>
       <p>Le choix proposé est sauvegardé : recharger la page montre les mêmes cartes.</p>`,
+  },
+  {
+    titre: `Synergies de reliques`,
+    corps: `<p>Certaines reliques de run se renforcent deux à deux. La description d'une relique annonce
+      sa synergie ; une fois les deux reliques réunies, la synergie s'affiche (🔗) avec les reliques, sur la
+      carte et dans l'équipement.</p>
+      <ul>${Object.values(SYNERGIES_RUN)
+        .map(
+          (synergie) =>
+            `<li>${synergie.icone} <b>${echapperHtml(synergie.nom)}</b> (${synergie.reliques.map((id) => echapperHtml(RELIQUES_RUN[id]?.nom ?? id)).join(` + `)}) : ${echapperHtml(synergie.desc)}</li>`,
+        )
+        .join(``)}</ul>`,
+  },
+  {
+    titre: `Almanax du jour`,
+    corps: `<p>Chaque jour (à minuit, heure de ton appareil), l'Almanax propose une petite quête, la même
+      pour tout le monde : gagner des combats sans K.O., battre des combats durs ou un boss, toucher
+      souvent dans un élément, ouvrir des coffres… Elle est affichée sur l'accueil et suivie pendant les
+      runs (pas dans les Songes), avec une pastille 📅 sur la carte.</p>
+      <p>Accomplie, elle met de côté une récompense modeste pour ta prochaine run (hors run du jour) :
+      des kamas de départ ou une relique de run commune. Une nouvelle quête arrive le lendemain.</p>`,
   },
   {
     titre: `Ce qui reste après la mort`,

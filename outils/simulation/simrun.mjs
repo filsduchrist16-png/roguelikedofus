@@ -22,6 +22,7 @@ const { mondeDuDofus } = await import(`${R}/jeu/obtention.js`);
 const { creerIaPlus } = await import("./iaplus.mjs");
 const songes = await import(`${R}/jeu/songes.js`);
 const recRun = await import(`${R}/jeu/recompensesRun.js`);
+const cases = await import(`${R}/jeu/cases.js`);
 // SANS_RECOMPENSES=1 : pas de choix de récompense après les combats (comparaison avec la 1.6.0)
 const SANS_RECOMPENSES = !!process.env.SANS_RECOMPENSES;
 if (SANS_RECOMPENSES) {
@@ -239,6 +240,12 @@ function choisirNoeud(run, options) {
         return pv > 0.35 ? 5 : 0;
       case "combat_dur":
         return pv > 0.75 ? 6 : pv > 0.5 ? 2 : -1;
+      // camp : soin si l'équipe est blessée, sinon une amélioration de sort gratuite
+      case "camp":
+        return pv < 0.6 ? 8 : 4;
+      // coffre : relique ou objet, au risque d'un piège
+      case "coffre":
+        return pv > 0.5 ? 5 : 3;
       case "hdv":
         return run.kamas > 250 ? 4 : 2;
       case "zaap":
@@ -361,7 +368,56 @@ async function jouerRun(monde, seed) {
           });
           recRun.resoudreOffreCombat(run, choisirCarte(run, run.offreCombat.choix));
         }
+      } else if (type === "camp") {
+        // règle simple : repos sous 60 % de PV, sinon la première amélioration proposée
+        const { soinPct, ameliorations } = cases.optionsCamp(
+          run,
+          rng,
+          M.zones.length > 1 ? zi / (M.zones.length - 1) : 0,
+        );
+        if (pvFrac(run) < 0.6 || !ameliorations.length) cases.reposCamp(run, soinPct);
+        else recRun.appliquerChoix(run, ameliorations[0]);
+      } else if (type === "coffre") {
+        // le robot ouvre toujours le coffre
+        const { tresor, piege } = cases.contenuCoffre(n.type === "coffre" ? n : null, rng, {
+          crocheteur: cases.peutCrocheterCoffre(run),
+        });
+        let ouvert = true;
+        if (piege === "pv") {
+          cases.piegePv(run);
+          ouvert = false;
+        } else if (piege === "combat") {
+          const id =
+            n.combatId ?? zone.pools.normales[Math.floor(rng() * zone.pools.normales.length)];
+          if (!(await combat(run, meta, id, "combat", zone, rng))) {
+            journal.mort = { zone: zi + 1, type: "combat", combats: journal.combats };
+            return journal;
+          }
+          run_.recupererApresVictoire(run);
+        }
+        if (ouvert) {
+          const relique =
+            tresor === "relique"
+              ? cases.reliqueDeCoffre(run, rng, M.zones.length > 1 ? zi / (M.zones.length - 1) : 0)
+              : null;
+          if (relique) recRun.appliquerChoix(run, relique);
+          else {
+            const butin = cfg.butinDeZone(zone.id);
+            const ids = [...(butin?.normales ?? []), ...(butin?.elites ?? [])];
+            const id = ids[Math.floor(rng() * ids.length)];
+            const obj =
+              id && (run_.tirerObjet(id, rng, ["rare", "epique"]) ?? run_.tirerObjet(id, rng));
+            if (obj) {
+              run.inventaire.push(obj);
+              sEquiper(run);
+            }
+          }
+        }
       } else if (type === "taverne") {
+        // relique au comptoir : achetée si la bourse le permet largement
+        const vente = cases.reliqueTaverne(run, rng, num);
+        if (vente && run.kamas >= vente.prix * 2)
+          cases.acheterReliqueRun(run, vente.id, vente.prix);
         const recrues = run_.tirerRecrues(run, rng);
         // mort définitive : un héros tombé ne revient pas, on le remplace comme un joueur le ferait
         const tombe = mortDefinitive(run) && run.persos.find((p) => p.pvActuels <= 0);
@@ -370,12 +426,25 @@ async function jouerRun(monde, seed) {
         else
           run_.soignerEquipe(run, recRun.soinTaverneRun(run, meta_.pctSoinTaverne(run.ascension)));
       } else if (type === "rencontre") {
-        const r = renc.tirerRencontre(rng);
+        const r = renc.tirerRencontre(
+          rng,
+          renc.rencontresExclues(run, { mortDefinitive: mortDefinitive(run) }),
+        );
         if (r === "sanctuaire") {
           if (pvFrac(run) < 0.6) run_.soignerEquipe(run, 0.3);
           else (run.benedictions ??= []).push(renc.dieuxProposes(run, rng)[0]);
         } else if (r === "coffre") {
           eco.ajouterKamas(run, Math.round(renc.gainBase(num) * 1.5));
+        } else if (r === "colporteur") {
+          // achète la première relique abordable si la bourse reste garnie
+          for (const id of cases.reliquesProposees(run, rng, 3)) {
+            const prix = cases.prixReliqueRun(id, num);
+            if (run.kamas >= prix * 1.5 && cases.acheterReliqueRun(run, id, prix)) break;
+          }
+        } else if (r === "autel_sang") {
+          // pacte accepté tant que le sacrifice reste petit et que l'équipe est en forme
+          const [id] = cases.reliquesProposees(run, rng, 2, { commun: 15, rare: 55, epique: 30 });
+          if (id && (run.sacrificePv ?? 0) < 0.16 && pvFrac(run) > 0.6) cases.pacteAutel(run, id);
         } else if (r === "marchand") {
           const prix = renc.prixMarchand(num);
           if (pvFrac(run) < 0.7 && run.kamas >= prix.potion) {
