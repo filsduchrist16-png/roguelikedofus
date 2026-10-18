@@ -42,7 +42,7 @@ import { jouerRencontre } from "./rencontres.js";
 import { tirerTypeZaap } from "../carte/generation.js";
 import { ecranRencontre } from "../ui/ecrans/rencontre.js";
 import { ecranButin } from "../ui/ecrans/butin.js";
-import { RELIQUES_RUN } from "../data/index.js";
+import { RELIQUES_RUN, SORTS } from "../data/index.js";
 import { butinDeZone } from "../jeu/config.js";
 import { tirerObjet } from "../jeu/run.js";
 import { enregistrerCollection } from "../sauvegarde/meta.js";
@@ -119,7 +119,7 @@ async function jouerCamp(run, zone) {
         ? [
             {
               id: `etudier`,
-              libelle: `📖 Étudier : ${decrireChoix(apprendre, run).titre}`,
+              libelle: `📖 Étudier : ${SORTS[apprendre.sort]?.nom ?? apprendre.sort}`,
               detail: `${decrireChoix(apprendre, run).sousTitre}. ${decrireChoix(apprendre, run).effet}`,
             },
           ]

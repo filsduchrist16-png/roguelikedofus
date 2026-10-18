@@ -39,9 +39,12 @@ export const CONFIG_RECOMPENSES = {
   // plus) a la sienne, le Monde 3 aussi. Réglé par simulation : npm run sim -- t1,t3,t5 30
   compensation: {
     // 1.8.0 : relevée pour les camps, coffres, reliques hors combat et élites plus généreuses
-    t1: { lin: 0.063, quad: 0.0095 },
-    t3: { lin: 0, quad: 0.012 },
-    autres: { lin: 0, quad: 0.011 },
+    // 1.9.0 : abaissée, les capacités de boss, les nouveaux affixes et les rencontres risquées
+    // rendent les combats importants plus durs (avant : t1 0,063 / 0,0095, t3 0 / 0,012,
+    // autres 0 / 0,011)
+    t1: { lin: 0.04, quad: 0.0075 },
+    t3: { lin: 0, quad: 0.0085 },
+    autres: { lin: 0, quad: 0.007 },
   },
 };
 /** Facteur de puissance des monstres d'une zone dû aux récompenses de combat (1 en zone 1). */

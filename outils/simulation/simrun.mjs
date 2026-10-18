@@ -4,10 +4,17 @@
 //         npm run sim -- songes [N]   (Songes infinis : étage moyen atteint par le robot)
 // (N runs par monde ; l'IA joue les héros en essayant chaque sort sur une copie du combat)
 const R = new URL("../../src", import.meta.url).pathname;
-const { CLASSES, EQUIPEMENTS, MONDES, ZONES, SORTS, DOFUS, MONSTRES } = await import(
-  `${R}/data/index.js`
-);
+const { CLASSES, EQUIPEMENTS, MONDES, ZONES, SORTS, DOFUS, MONSTRES, CAPACITES_BOSS, RENCONTRES } =
+  await import(`${R}/data/index.js`);
+// comparaisons 1.9.0 (avant le chargement des règles) : SANS_RENCONTRES_LORE=1 retire les
+// rencontres du Krosmoz du tirage
+if (process.env.SANS_RENCONTRES_LORE)
+  for (const id of Object.keys(RENCONTRES)) delete RENCONTRES[id];
+// SANS_ELITES_190=1 : un seul combat dur par zone, comme avant la 1.9.0
+if (process.env.SANS_ELITES_190) for (const zone of ZONES) zone.pools.elite.splice(1);
 const cfg = await import(`${R}/jeu/config.js`);
+// SANS_AFFIXES_190=1 : seulement les trois affixes d'élite d'avant la 1.9.0
+if (process.env.SANS_AFFIXES_190) cfg.AFFIXES_GROUPE.splice(3);
 const run_ = await import(`${R}/jeu/run.js`);
 const eco = await import(`${R}/jeu/economie.js`);
 const meta_ = await import(`${R}/sauvegarde/meta.js`);
@@ -23,6 +30,7 @@ const { creerIaPlus } = await import("./iaplus.mjs");
 const songes = await import(`${R}/jeu/songes.js`);
 const recRun = await import(`${R}/jeu/recompensesRun.js`);
 const cases = await import(`${R}/jeu/cases.js`);
+const lore = await import(`${R}/jeu/rencontresLore.js`);
 // SANS_RECOMPENSES=1 : pas de choix de récompense après les combats (comparaison avec la 1.6.0)
 const SANS_RECOMPENSES = !!process.env.SANS_RECOMPENSES;
 if (SANS_RECOMPENSES) {
@@ -33,6 +41,11 @@ if (SANS_RECOMPENSES) {
 if (process.env.COMP)
   Object.assign(recRun.CONFIG_RECOMPENSES.compensation, JSON.parse(process.env.COMP));
 const IA_SIMPLE = !!process.env.IA_SIMPLE;
+// comparaisons 1.9.0 : SANS_CAPACITES=1 retire les capacités de boss, SANS_SORTS_AVANCES=1 les
+// sorts avancés des classes (rien à apprendre)
+if (process.env.SANS_CAPACITES)
+  for (const id of Object.keys(CAPACITES_BOSS)) delete CAPACITES_BOSS[id];
+if (process.env.SANS_SORTS_AVANCES) for (const c of Object.values(CLASSES)) c.sortsAvances = [];
 
 const args = process.argv.slice(2).filter((a) => a !== "--");
 const mondes = (args[0] ?? "t1,t2,t3,t4,t5").split(",");
@@ -211,12 +224,13 @@ function remplacer(run, tombe, classeId) {
   sEquiper(run);
 }
 
-// Règle simple du robot : amélioration de sort, sinon relique de run, sinon bonus (repos si
-// l'équipe est blessée, sinon caractéristiques, sinon kamas).
+// Règle simple du robot : amélioration de sort, sinon nouveau sort, sinon relique de run, sinon
+// bonus (repos si l'équipe est blessée, sinon caractéristiques, sinon kamas).
 function choisirCarte(run, choix) {
   const par = (test) => choix.findIndex(test);
   for (const test of [
     (c) => c.type === "sort",
+    (c) => c.type === "apprendre",
     (c) => c.type === "relique",
     (c) => c.bonus === "soin" && pvFrac(run) < 0.5,
     (c) => c.bonus === "stats",
@@ -283,6 +297,25 @@ async function jouerRun(monde, seed) {
     run.carte = genererCarte(rng, zone.pools, run_.noeudsExclus(run, zone), {
       premiereZone: zi === 0 && !process.env.SANS_TAVERNE,
     });
+    console.log(
+      "zone",
+      zi + 1,
+      "pv",
+      pvFrac(run).toFixed(2),
+      "amel",
+      Object.values(run.ameliorations ?? {}).reduce(
+        (a, p) => a + Object.values(p).flat().length,
+        0,
+      ),
+      "rel",
+      (run.reliquesRun ?? []).length,
+      "appris",
+      run.persos.map((p) => (p.sortsAppris ?? []).length).join(""),
+      "bonusStats",
+      JSON.stringify(run.bonusStats),
+      "kamas",
+      run.kamas,
+    );
     journal.niveaux.push(
       Math.round(run.persos.reduce((a, p) => a + p.progression.niveau, 0) / run.persos.length),
     );
@@ -369,14 +402,16 @@ async function jouerRun(monde, seed) {
           recRun.resoudreOffreCombat(run, choisirCarte(run, run.offreCombat.choix));
         }
       } else if (type === "camp") {
-        // règle simple : repos sous 60 % de PV, sinon la première amélioration proposée
-        const { soinPct, ameliorations } = cases.optionsCamp(
+        // règle simple : repos sous 60 % de PV, sinon un nouveau sort, sinon la première
+        // amélioration proposée
+        const { soinPct, ameliorations, apprendre } = cases.optionsCamp(
           run,
           rng,
           M.zones.length > 1 ? zi / (M.zones.length - 1) : 0,
         );
-        if (pvFrac(run) < 0.6 || !ameliorations.length) cases.reposCamp(run, soinPct);
-        else recRun.appliquerChoix(run, ameliorations[0]);
+        if (pvFrac(run) < 0.6 || (!ameliorations.length && !apprendre))
+          cases.reposCamp(run, soinPct);
+        else recRun.appliquerChoix(run, apprendre ?? ameliorations[0]);
       } else if (type === "coffre") {
         // le robot ouvre toujours le coffre
         const { tresor, piege } = cases.contenuCoffre(n.type === "coffre" ? n : null, rng, {
@@ -445,6 +480,31 @@ async function jouerRun(monde, seed) {
           // pacte accepté tant que le sacrifice reste petit et que l'équipe est en forme
           const [id] = cases.reliquesProposees(run, rng, 2, { commun: 15, rare: 55, epique: 30 });
           if (id && (run.sacrificePv ?? 0) < 0.16 && pvFrac(run) > 0.6) cases.pacteAutel(run, id);
+        } else if (lore.estRencontreLore(r)) {
+          // rencontres du Krosmoz, règle simple : repos sous 50 % de PV, pas de risque (perte de PV
+          // ou combat) sous 60 %, sinon le premier choix possible (« partir » en dernier recours)
+          const prep = lore.preparerRencontreLore(run, r, { rng, toile: num });
+          const pv = pvFrac(run);
+          const issuesDe = (id) => RENCONTRES[r].choix.find((c) => c.id === id)?.issues ?? [];
+          const risque = (id) => issuesDe(id).some((i) => i.combat || i.effets?.pertePvPct);
+          const possibles = prep.choix.filter((c) => !c.desactive && issuesDe(c.id).length);
+          const choix =
+            (pv < 0.5 && possibles.find((c) => issuesDe(c.id).some((i) => i.effets?.soinPct))) ||
+            possibles.find((c) => pv >= 0.6 || !risque(c.id));
+          const issue = choix && lore.tirerIssue(r, choix.id, rng);
+          if (issue && lore.payerChoix(run, r, choix.id, num)) {
+            if (issue.combat) {
+              const pool = issue.combat === "elite" ? zone.pools.elite : zone.pools.normales;
+              const type = issue.combat === "elite" ? "combat_dur" : "combat";
+              const id = pool[Math.floor(rng() * pool.length)];
+              if (!(await combat(run, meta, id, type, zone, rng))) {
+                journal.mort = { zone: zi + 1, type, combats: journal.combats };
+                return journal;
+              }
+              run_.recupererApresVictoire(run);
+            }
+            lore.appliquerEffetsLore(run, issue.effets, { rng, toile: num, heros: prep.heros });
+          }
         } else if (r === "marchand") {
           const prix = renc.prixMarchand(num);
           if (pvFrac(run) < 0.7 && run.kamas >= prix.potion) {
@@ -490,6 +550,7 @@ function choisirRecompense(run, offre) {
   // améliorations de sort et reliques de run d'abord (même règle qu'après un combat de run)
   if (!SANS_RECOMPENSES) {
     if (par("sort") >= 0) return par("sort");
+    if (par("apprendre") >= 0) return par("apprendre");
     if (par("relique") >= 0) return par("relique");
   }
   if (iObjet >= 0 && offre[iObjet].objet) {
