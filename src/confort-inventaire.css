@@ -646,3 +646,12 @@
     white-space: normal;
   }
 }
+
+/* HDV, forgemagie et butin : l'image de l'objet (30 px) se perdait dans une grande carte */
+.hdv-achat > img,
+.hdv-vente > img,
+.forge-carte > img,
+.drop-item > img {
+  width: 44px;
+  height: 44px;
+}
