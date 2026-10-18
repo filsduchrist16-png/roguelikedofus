@@ -52,6 +52,72 @@ export const normaliserVuTuto = (valeur) => {
   return null;
 };
 export const tutoVu = (valeur, cle) => normaliserVuTuto(valeur)?.[cle] === true;
+// Confort de jeu (1.8.0). Lecture tolérante : une valeur absente ou étrangère reprend le défaut.
+const booleen = (valeur, defaut) => (typeof valeur === `boolean` ? valeur : defaut);
+// En combat, le dernier sort lancé est re-sélectionné tant que le héros peut le relancer (activé).
+export const normaliserReselectionSort = (valeur) => booleen(valeur, true);
+// Un seul appui sur un sort qui n'a qu'une cible possible le lance tout de suite (désactivé).
+export const normaliserCibleUniqueDirecte = (valeur) => booleen(valeur, false);
+// Bouton 🤖 de la barre de combat : joue le tour du héros (`heros`), tous les tours de l'équipe
+// jusqu'à la fin du combat (`combat`), ou il est masqué (`cache`).
+export const MODES_AUTO = [`heros`, `combat`, `cache`];
+export const normaliserModeAuto = (valeur) => (MODES_AUTO.includes(valeur) ? valeur : `heros`);
+// Écran du butin : « Équiper le meilleur » appliqué dès l'ouverture (annulable) (désactivé).
+export const normaliserButinAutoEquiper = (valeur) => booleen(valeur, false);
+// Tri et filtre de l'inventaire, gardés d'une ouverture (et d'une session) à l'autre.
+export const TRIS_INVENTAIRE = [`toile`, `type`, `rarete`, `interet`];
+export const normaliserTriInventaire = (valeur) =>
+  TRIS_INVENTAIRE.includes(valeur) ? valeur : `toile`;
+// le filtre est un emplacement (vérifié à l'affichage : inconnu ou vide = « Tout »)
+export const normaliserFiltreInventaire = (valeur) =>
+  typeof valeur === `string` && /^[a-z_]{1,24}$/.test(valeur) ? valeur : `tout`;
+// Objets favoris : clés d'objet (identifiant, rareté et jets), jamais vendus par les ventes groupées.
+export const MAX_FAVORIS = 300;
+export const normaliserFavoris = (valeur) =>
+  Array.isArray(valeur)
+    ? [
+        ...new Set(
+          valeur.filter((cle) => typeof cle === `string` && cle.length > 0 && cle.length <= 600),
+        ),
+      ].slice(-MAX_FAVORIS)
+    : [];
+const trie = (objet) =>
+  objet && typeof objet === `object`
+    ? Object.keys(objet)
+        .sort()
+        .filter((cle) => typeof objet[cle] === `number`)
+        .map((cle) => [cle, objet[cle]])
+    : [];
+// Clé stable d'un objet : même résultat avant et après un rechargement (l'ordre des stats change).
+export const cleFavori = (inst) =>
+  JSON.stringify([
+    inst?.id ?? ``,
+    inst?.rarete ?? ``,
+    trie(inst?.stats),
+    inst?.adaptatif ?? 0,
+    trie(inst?.resistances),
+    inst?.pa ?? 0,
+  ]);
+export const estFavori = (favoris, inst) =>
+  Array.isArray(favoris) && favoris.includes(cleFavori(inst));
+// Ajoute ou retire un objet des favoris (nouvelle liste, la plus ancienne clé sort au-delà du max).
+export const basculerFavori = (favoris, inst) => {
+  const liste = normaliserFavoris(favoris);
+  const cle = cleFavori(inst);
+  return liste.includes(cle)
+    ? liste.filter((autre) => autre !== cle)
+    : normaliserFavoris([...liste, cle]);
+};
+// Sections repliées des écrans longs (accueil, succès, HDV…) : { cle: true } seulement.
+export const normaliserReplis = (valeur) =>
+  valeur && typeof valeur === `object` && !Array.isArray(valeur)
+    ? Object.fromEntries(
+        Object.entries(valeur)
+          .filter(([cle, replie]) => replie === true && /^[\w-]{1,40}$/.test(cle))
+          .slice(0, 100),
+      )
+    : {};
+export const sectionRepliee = (reglages, cle) => normaliserReplis(reglages?.replis)[cle] === true;
 // Comportement des défilements : instantané si le joueur a réduit les animations (réglage du jeu ou
 // préférence du système), progressif sinon.
 export const comportementDefilement = (reduire, systemeReduit = false) =>
@@ -87,6 +153,15 @@ const PARAMETRES_DEFAUT = {
   idolesChoisies: [],
   // astuces de première partie déjà vues (null : pas encore décidé, voir main.js)
   vuTuto: null,
+  // confort de jeu (voir les normaliseurs plus haut)
+  reselectionSort: true,
+  cibleUniqueDirecte: false,
+  modeAuto: `heros`,
+  butinAutoEquiper: false,
+  triInventaire: `toile`,
+  filtreInventaire: `tout`,
+  favoris: [],
+  replis: {},
   formation: {
     iop: `avant`,
     feca: `avant`,
@@ -144,6 +219,14 @@ export function chargerParametres() {
       reglages.sons = normaliserSons(reglages.sons);
       reglages.idolesChoisies = normaliserIdolesChoisies(reglages.idolesChoisies);
       reglages.vuTuto = normaliserVuTuto(reglages.vuTuto);
+      reglages.reselectionSort = normaliserReselectionSort(reglages.reselectionSort);
+      reglages.cibleUniqueDirecte = normaliserCibleUniqueDirecte(reglages.cibleUniqueDirecte);
+      reglages.modeAuto = normaliserModeAuto(reglages.modeAuto);
+      reglages.butinAutoEquiper = normaliserButinAutoEquiper(reglages.butinAutoEquiper);
+      reglages.triInventaire = normaliserTriInventaire(reglages.triInventaire);
+      reglages.filtreInventaire = normaliserFiltreInventaire(reglages.filtreInventaire);
+      reglages.favoris = normaliserFavoris(reglages.favoris);
+      reglages.replis = normaliserReplis(reglages.replis);
       let ordre =
         reglages.ordre && typeof reglages.ordre === `object` && !Array.isArray(reglages.ordre)
           ? reglages.ordre
@@ -162,6 +245,8 @@ export function chargerParametres() {
   return {
     ...PARAMETRES_DEFAUT,
     idolesChoisies: [],
+    favoris: [],
+    replis: {},
     formation: {
       ...PARAMETRES_DEFAUT.formation,
     },

@@ -1,6 +1,7 @@
 import { CLASSES } from "../../data/index.js";
 import {
   CLES_TUTO,
+  MODES_AUTO,
   TAILLES_POLICE,
   appliquerAccessibilite,
   nomTouche,
@@ -101,6 +102,35 @@ export function ecranParametres(meta) {
           <div class="setting-ligne">
             <span class="setting-lbl">Tours des monstres rapides<br><small class="muet">les ennemis jouent sans temps mort</small></span>
             <button id="set-rapide" class="secondaire ${parametres.combatRapide ? `on` : ``}" aria-pressed="${!!parametres.combatRapide}">${parametres.combatRapide ? `Activé` : `Désactivé`}</button>
+          </div>
+          ${[
+            [
+              `reselectionSort`,
+              `Re-sélectionner le dernier sort`,
+              `après un lancer, le même sort reste choisi tant que le héros peut le relancer`,
+            ],
+            [
+              `cibleUniqueDirecte`,
+              `Lancer direct sur la seule cible`,
+              `un appui sur un sort qui n'a qu'une cible possible le lance tout de suite`,
+            ],
+          ]
+            .map(
+              ([cle, libelle, aide]) => `<div class="setting-ligne">
+            <span class="setting-lbl">${libelle}<br><small class="muet">${aide}</small></span>
+            <button class="secondaire set-bascule ${parametres[cle] ? `on` : ``}" data-bascule="${cle}" aria-pressed="${!!parametres[cle]}">${parametres[cle] ? `Activé` : `Désactivé`}</button>
+          </div>`,
+            )
+            .join(``)}
+          <div class="setting-ligne">
+            <span class="setting-lbl" id="set-auto-jeu-lbl">Bouton 🤖 de combat<br><small class="muet">joue avec une règle simple (attaque, ou soin si le héros en a un) ; ⏹ reprend la main</small></span>
+            <span class="setting-actions" role="group" aria-labelledby="set-auto-jeu-lbl">
+              ${MODES_AUTO.map((mode) => `<button class="secondaire set-mode-auto ${parametres.modeAuto === mode ? `on` : ``}" data-mode-auto="${mode}" aria-pressed="${parametres.modeAuto === mode}">${{ heros: `Tour du héros`, combat: `Tout le combat`, cache: `Masqué` }[mode]}</button>`).join(``)}
+            </span>
+          </div>
+          <div class="setting-ligne">
+            <span class="setting-lbl">Butin : équiper le meilleur d'office<br><small class="muet">à l'écran du butin, « ⚡ Équiper » est appliqué tout de suite (annulable)</small></span>
+            <button class="secondaire set-bascule ${parametres.butinAutoEquiper ? `on` : ``}" data-bascule="butinAutoEquiper" aria-pressed="${!!parametres.butinAutoEquiper}">${parametres.butinAutoEquiper ? `Activé` : `Désactivé`}</button>
           </div>
           <div class="setting-ligne">
             <span class="setting-lbl" id="set-taille-lbl">Taille du texte<br><small class="muet">agrandit tous les textes du jeu</small></span>
@@ -348,6 +378,21 @@ export function ecranParametres(meta) {
         reinitialiserAstuces();
         afficher();
       });
+      racine.querySelectorAll(`[data-bascule]`).forEach((bouton) =>
+        bouton.addEventListener(`click`, () => {
+          const cle = bouton.dataset.bascule;
+          parametres[cle] = !parametres[cle];
+          sauverParametres(parametres);
+          afficher();
+        }),
+      );
+      racine.querySelectorAll(`[data-mode-auto]`).forEach((bouton) =>
+        bouton.addEventListener(`click`, () => {
+          parametres.modeAuto = bouton.dataset.modeAuto;
+          sauverParametres(parametres);
+          afficher();
+        }),
+      );
       document.getElementById(`set-rapide`)?.addEventListener(`click`, () => {
         parametres.combatRapide = !parametres.combatRapide;
         sauverParametres(parametres);

@@ -683,3 +683,37 @@
 .fin-tour kbd {
   font-size: max(11px, 0.6rem);
 }
+
+/* ---------- Confort 1.8.0 : jeu automatique, PV restants en visée ---------- */
+.auto-tour {
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  border-radius: 9px;
+}
+.auto-tour.on {
+  background: linear-gradient(180deg, #ffd27a, #f5a524);
+  border-color: #7a440c;
+}
+.attente-tour .auto-tour {
+  margin-left: auto;
+}
+.combat .aide-auto {
+  font-weight: 700;
+}
+/* PV restants après le coup : sur la même pastille, à la ligne si la carte est étroite */
+.combat .carte .cc-apercu:has(.cc-apercu-reste) {
+  white-space: normal;
+  text-align: left;
+}
+.cc-apercu-reste {
+  white-space: nowrap;
+  font-size: 0.85em;
+  opacity: 0.95;
+}
+@media (hover: none), (width <= 700px) {
+  .combat .auto-tour {
+    flex: none;
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

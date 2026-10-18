@@ -548,6 +548,11 @@ function ouvrirAuToucher(selecteur, montrer, masquer) {
       if (!ecranTactile()) {
         return;
       }
+      // en visée, un appui sur une carte ciblable lance le sort : pas de bulle par-dessus
+      if (ev.target.closest?.(`.combat.ciblage .carte.ciblable`)) {
+        masquer();
+        return;
+      }
       const cible = ev.target.closest?.(selecteur);
       // Un bouton agit déjà au toucher : on n'ouvre pas sa bulle par-dessus.
       if (cible && !cible.matches(`button:not(.dofus-slot)`)) {

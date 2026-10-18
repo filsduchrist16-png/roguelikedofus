@@ -15,6 +15,7 @@ import {
   calculerDegatsDetail,
 } from "../combat/stats.js";
 import { ordreDeJeu } from "../combat/moteur.js";
+import { choisirActionIA } from "../combat/ia.js";
 import { ETATS_CLASSE, ICONES_MARQUES } from "../combat/classes.js";
 import { nomTouche, sauverParametres } from "../sauvegarde/parametres.js";
 import { replierObjectifsCombat } from "./objectifs.js";
@@ -73,6 +74,13 @@ let infoSort = null;
 let refVisee = null;
 // la boîte des objectifs se replie dès la première action du joueur
 let objectifsReplies = false;
+// tour d'un combattant (compté à chaque « ▶ Tour de … ») : la re-sélection et l'auto n'en sortent pas
+let numeroTour = 0;
+// dernier sort à cible lancé par un héros : { ref, id, tour }, re-sélectionné s'il est encore jouable
+let dernierSort = null;
+// jeu automatique : null, { ref, tour } (le tour de ce héros) ou { combat: true } (jusqu'à la fin)
+let autoJeu = null;
+let minuteurAuto = null;
 const ecranEtroit = () => window.matchMedia?.(`(max-width: 700px)`).matches ?? false;
 const refActive = () => combattantActif?.ref ?? refTourEnCours;
 function replierObjectifs() {
@@ -287,6 +295,7 @@ export function journaliser(msg, meta) {
     return;
   }
   if (meta?.tour) {
+    numeroTour++;
     dejaJoues.add(meta.tour);
     refTourEnCours = meta.tour;
   }
@@ -350,6 +359,10 @@ export function initialiserVueCombat(liste, titre, resolveur = null, options = {
   refTourEnCours = null;
   dejaJoues = new Set();
   numeroRonde = 1;
+  numeroTour = 0;
+  dernierSort = null;
+  autoJeu = null;
+  clearTimeout(minuteurAuto);
   derniereRefRendue = null;
   objectifsReplies = false;
   combatEnCours = false;
@@ -502,6 +515,102 @@ function jouerAnimationsFx() {
 // Écran tactile : pas de survol, donc pas d'infobulle. Un premier appui sur un sort l'affiche
 // (description + bouton « Lancer ») au lieu de le lancer directement.
 const sansCibleAChoisir = (sort) => sort.cible === `soi` || sort.cible === `allie_tous`;
+// Dégâts prévus [min, max] → PV restants [bas, haut] de la cible (le bouclier absorbe d'abord).
+export function pvApresCoup(pv, bouclier, [min, max]) {
+  const reste = (degats) => Math.max(0, Math.round(pv - Math.max(0, degats - (bouclier ?? 0))));
+  return [reste(max), reste(min)];
+}
+const herosASoin = (combattant) =>
+  combattant.sorts?.some((idSort) => SORTS[idSort]?.type === `soin`);
+// Jeu automatique d'un héros, règle simple : l'IA des monstres (soutien si le héros a un soin,
+// attaque sinon), puis l'attaque d'arme sur la première cible valide. null : fin du tour.
+export function actionAuto(acteur, liste, contexte = {}) {
+  const valide = (action) =>
+    !!action?.sort &&
+    !raisonIndisponible(acteur, action.sort, liste) &&
+    (sansCibleAChoisir(action.sort) ||
+      ciblesValides(acteur, action.sort, liste).some((cible) => cible.ref === action.cibleRef));
+  let action;
+  const iaAvant = acteur.ia;
+  try {
+    // lecture seule de l'IA : le mode est posé le temps du choix, puis remis
+    acteur.ia = herosASoin(acteur) ? `soutien` : iaAvant;
+    action = choisirActionIA(acteur, liste, contexte);
+  } catch {
+    action = null;
+  } finally {
+    acteur.ia = iaAvant;
+  }
+  if (valide(action)) {
+    return action;
+  }
+  const arme = acteur.armeSort;
+  if (arme && !raisonIndisponible(acteur, arme, liste)) {
+    const cible = ciblesValides(acteur, arme, liste).find(
+      (candidate) => candidate.camp !== acteur.camp && candidate.pvActuels > 0,
+    );
+    if (cible) {
+      return { sort: arme, cibleRef: cible.ref };
+    }
+  }
+  return null;
+}
+const autoEnCours = (combattant) =>
+  !!autoJeu && (autoJeu.combat || (autoJeu.ref === combattant?.ref && autoJeu.tour === numeroTour));
+function jouerAuto() {
+  const acteur = combattantActif;
+  const resolveur = contexteCombat;
+  if (!acteur || !resolveur) {
+    return;
+  }
+  clearTimeout(minuteurAuto);
+  minuteurAuto = setTimeout(
+    () => {
+      // le joueur a pu reprendre la main (⏹) ou le tour a changé entre-temps
+      if (contexteCombat !== resolveur || !autoEnCours(acteur)) {
+        return;
+      }
+      terminerAction(actionAuto(acteur, combattants, optionsVue));
+    },
+    parametres.combatRapide ? 150 : 450,
+  );
+}
+function basculerAuto() {
+  if (autoJeu) {
+    autoJeu = null;
+    clearTimeout(minuteurAuto);
+    rendreCombat();
+    return;
+  }
+  if (!combattantActif || !contexteCombat) {
+    return;
+  }
+  autoJeu =
+    parametres.modeAuto === `combat`
+      ? { combat: true }
+      : { ref: combattantActif.ref, tour: numeroTour };
+  sortChoisi = null;
+  infoSort = null;
+  rendreCombat();
+  jouerAuto();
+}
+// Re-sélection du dernier sort : même héros, même tour, sort à cible encore jouable.
+function sortAReselectionner(combattant, liste) {
+  if (
+    !parametres.reselectionSort ||
+    !dernierSort ||
+    dernierSort.ref !== combattant.ref ||
+    dernierSort.tour !== numeroTour
+  ) {
+    return null;
+  }
+  const sort =
+    dernierSort.id === combattant.armeSort?.id ? combattant.armeSort : SORTS[dernierSort.id];
+  if (!sort || sansCibleAChoisir(sort) || raisonIndisponible(combattant, sort, liste)) {
+    return null;
+  }
+  return ciblesValides(combattant, sort, liste).some((cible) => cible.pvActuels > 0) ? sort : null;
+}
 export function controleurJoueur(combattant, liste) {
   combattants = liste;
   combattantActif = combattant;
@@ -510,6 +619,15 @@ export function controleurJoueur(combattant, liste) {
   refVisee = null;
   return new Promise((resolve) => {
     contexteCombat = resolve;
+    if (autoEnCours(combattant)) {
+      rendreCombat();
+      jouerAuto();
+      return;
+    }
+    if (autoJeu && !autoJeu.combat) {
+      // l'auto d'un héros s'arrête à la fin de son tour
+      autoJeu = null;
+    }
     if (parametres.autoFinTour && !peutEncoreJouer(combattant, liste)) {
       journaliser(`${combattant.nom} n'a plus rien à jouer, tour passé.`);
       rendreCombat();
@@ -522,6 +640,7 @@ export function controleurJoueur(combattant, liste) {
       }, 350);
       return;
     }
+    sortChoisi = sortAReselectionner(combattant, liste);
     rendreCombat();
     montrerHerosActif();
     afficherAstuce(
@@ -546,6 +665,9 @@ function montrerHerosActif() {
 }
 function terminerAction(action) {
   let resolveur = contexteCombat;
+  if (action?.sort && combattantActif && !sansCibleAChoisir(action.sort)) {
+    dernierSort = { ref: combattantActif.ref, id: action.sort.id, tour: numeroTour };
+  }
   combattantActif = null;
   sortChoisi = null;
   infoSort = null;
@@ -598,6 +720,14 @@ function choisirSort(sort, depuisClavier = false) {
   }
   sortChoisi = sort;
   refVisee = null;
+  // réglage : un sort qui n'a qu'une cible possible part dès le premier appui
+  if (parametres.cibleUniqueDirecte && !sansCibleAChoisir(sort)) {
+    const cibles = ciblesValides(acteur, sort, combattants).filter((cible) => cible.pvActuels > 0);
+    if (cibles.length === 1) {
+      terminerAction({ sort, cibleRef: cibles[0].ref });
+      return;
+    }
+  }
   rendreCombat();
 }
 function badgeArchi(combattant) {
@@ -1092,7 +1222,11 @@ function htmlCarteCombattant(combattant, ciblable) {
           return ``;
         }
         let mortel = ap[0] >= combattant.pvActuels + (combattant.bouclier ?? 0);
-        return `<div class="cc-apercu${mortel ? ` mortel` : ``}" title="Dégâts prévus du sort (hors critique et esquive)${mortel ? ` : la cible tombe` : ``}">${mortel ? `☠` : `💥`} ${ap[0]}${ap[1] !== ap[0] ? `–${ap[1]}` : ``} dégâts</div>`;
+        let [bas, haut] = pvApresCoup(combattant.pvActuels, combattant.bouclier, ap);
+        let reste = mortel
+          ? ``
+          : ` <span class="cc-apercu-reste">→ ❤ ${bas}${haut !== bas ? `–${haut}` : ``}</span>`;
+        return `<div class="cc-apercu${mortel ? ` mortel` : ``}" title="Dégâts prévus du sort (hors critique et esquive)${mortel ? ` : la cible tombe` : ` · PV restants après le coup`}">${mortel ? `☠` : `💥`} ${ap[0]}${ap[1] !== ap[0] ? `–${ap[1]}` : ``} dégâts${reste}</div>`;
       })()}
       ${!ciblable && protegeParLigneAvant(combattant) ? `<span class="cc-protege" data-tip="Protégé par la ligne avant : ce sort vise d'abord un ennemi de devant">🛡 protégé</span>` : ``}
       ${ko ? `<div class="ko-label">K.O.</div>` : ``}
@@ -1271,11 +1405,9 @@ function rendreCombat() {
     marquerVisee();
     degagerCibles();
     racine.querySelectorAll(`.carte.ciblable, .tl-pastille.ciblable`).forEach((carte) => {
-      carte.addEventListener(`click`, (ev) => {
-        // un appui pour lire un badge ou une résistance ne lance pas le sort
-        if (ev.target.closest(`.badge, [data-tip]`)) {
-          return;
-        }
+      // en visée, tout appui sur la carte (résistance, badge compris) lance le sort : les bulles
+      // restent lisibles hors visée
+      carte.addEventListener(`click`, () => {
         terminerAction({
           sort: sortChoisi,
           cibleRef: carte.dataset.ref,
@@ -1474,6 +1606,8 @@ function installerEcouteursBarre() {
       clearTimeout(minuteurFinTour);
       finTourArme = null;
       terminerAction(null);
+    } else if (bouton.id === `auto-tour`) {
+      basculerAuto();
     } else if (bouton.id === `vitesse-combat`) {
       parametres.combatRapide = !parametres.combatRapide;
       sauverParametres(parametres);
@@ -1495,6 +1629,19 @@ function installerEcouteursBarre() {
     }
   });
 }
+// Bouton 🤖 (réglage « Jeu automatique ») : lance l'auto, puis ⏹ l'arrête.
+function htmlBoutonAuto() {
+  if (parametres.modeAuto === `cache` && !autoJeu) {
+    return ``;
+  }
+  const actif = !!autoJeu;
+  const titre = actif
+    ? `Arrêter le jeu automatique`
+    : parametres.modeAuto === `combat`
+      ? `Jeu automatique de toute l'équipe jusqu'à la fin du combat (réglable dans les Paramètres)`
+      : `Jouer ce tour automatiquement (réglable dans les Paramètres)`;
+  return `<button id="auto-tour" class="secondaire auto-tour${actif ? ` on` : ``}" title="${titre}" aria-label="${titre}" aria-pressed="${actif}">${actif ? `⏹` : `🤖`}</button>`;
+}
 function htmlBarreSorts(ciblesRendu) {
   if (!combattantActif) {
     // tour d'un monstre ou d'une créature : on montre qui joue, à la place des sorts
@@ -1507,6 +1654,7 @@ function htmlBarreSorts(ciblesRendu) {
     return `<div class="attente attente-tour ${joueur.camp}">
       ${joueur.img ? `<img class="attente-portrait" src="${cheminAsset(joueur.img)}" alt="" onerror="this.remove()" />` : ``}
       <span>Tour de <b>${echapperHtml(joueur.nom)}</b>…</span>
+      ${autoJeu ? htmlBoutonAuto() : ``}
     </div>`;
   }
   let lanceur = combattantActif;
@@ -1536,7 +1684,9 @@ function htmlBarreSorts(ciblesRendu) {
       )
       .join(``);
   let htmlAide;
-  if (sortChoisi) {
+  if (autoEnCours(lanceur)) {
+    htmlAide = `<div class="aide aide-auto" role="status">🤖 <b>${echapperHtml(lanceur.nom)}</b> joue tout seul${autoJeu?.combat ? ` (toute l'équipe, jusqu'à la fin du combat)` : ` ce tour`} · touche ⏹ pour reprendre la main</div>`;
+  } else if (sortChoisi) {
     const cibles = sansCibleAChoisir(sortChoisi)
       ? []
       : ciblesRendu.filter((cible) => cible.pvActuels > 0);
@@ -1581,7 +1731,7 @@ function htmlBarreSorts(ciblesRendu) {
     <div class="equipe-mini" aria-hidden="true">${equipeMini}</div>
     <div class="sorts-rangee">
       <div class="sorts-zone"><div class="sorts-liste">${htmlSorts}</div></div>
-      <div class="barre-actions-fin"><button id="vitesse-combat" class="secondaire vitesse-combat${parametres.combatRapide ? ` on` : ``}" title="Tours des monstres rapides (aussi dans les Paramètres)" aria-pressed="${!!parametres.combatRapide}">⏩</button><button id="fin-tour" class="fin-tour primaire${finTourConfirme() ? ` confirme` : ``}" title="Terminer le tour"><span class="fin-tour-txt">${finTourConfirme() ? `Encore ${lanceur.paActuels} PA : confirmer` : `Fin du tour`}</span> <kbd>${echapperHtml(nomTouche(parametres.toucheFinTour))}</kbd></button></div>
+      <div class="barre-actions-fin">${htmlBoutonAuto()}<button id="vitesse-combat" class="secondaire vitesse-combat${parametres.combatRapide ? ` on` : ``}" title="Tours des monstres rapides (aussi dans les Paramètres)" aria-pressed="${!!parametres.combatRapide}">⏩</button><button id="fin-tour" class="fin-tour primaire${finTourConfirme() ? ` confirme` : ``}" title="Terminer le tour"><span class="fin-tour-txt">${finTourConfirme() ? `Encore ${lanceur.paActuels} PA : confirmer` : `Fin du tour`}</span> <kbd>${echapperHtml(nomTouche(parametres.toucheFinTour))}</kbd></button></div>
     </div>
     ${htmlAide}`;
 }
