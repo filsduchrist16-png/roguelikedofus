@@ -1,7 +1,8 @@
 import { afficherEcran, barreRetour, echapperHtml, racine } from "../commun.js";
 import { AIDE_OBTENTION } from "../../jeu/obtention.js";
-import { DIFFICULTES } from "../../jeu/config.js";
-import { RELIQUES_RUN, SYNERGIES_RUN } from "../../data/index.js";
+import { AFFIXES_GROUPE, AFFIXES_SONGE, DIFFICULTES } from "../../jeu/config.js";
+import { CAPACITES_BOSS, RELIQUES_RUN, SYNERGIES_RUN } from "../../data/index.js";
+import { QUETES_ALMANAX } from "../../jeu/almanax.js";
 import { AMELIORATIONS_SORT } from "../../combat/ameliorations.js";
 const SECTIONS_REGLES = [
   {
@@ -31,9 +32,12 @@ const SECTIONS_REGLES = [
       <li><b>Hôtel de vente</b> : acheter et revendre des objets.</li>
       <li><b>Forgemagie</b> : faire monter un objet d'une rareté.</li>
       <li><b>Rencontre</b> : un événement à choix (sanctuaire, coffre, marchand, colporteur de reliques,
-        autel de sang, idoles, avis de recherche, clé de donjon…).</li>
-      <li><b>Camp de repos</b> (⛺) : au choix, se reposer (30 % des PV max) <i>ou</i> améliorer
-        gratuitement un sort parmi trois proposés.</li>
+        autel de sang, idoles, avis de recherche, clé de donjon…), ou une <b>rencontre du Krosmoz</b> :
+        l'alchimiste Otomaï, le sablier du Dieu Xélor, un Wabbit chapardeur, les milices de Bonta et de
+        Brâkmar, le Dopeul d'un de tes héros, un marchand d'âmes ou le Shushu Rubilax. Chaque choix
+        annonce son risque et sa récompense ; certains lancent d'abord un combat de la zone.</li>
+      <li><b>Camp de repos</b> (⛺) : au choix, se reposer (30 % des PV max), améliorer gratuitement un
+        sort parmi trois proposés, <i>ou</i> étudier un nouveau sort (📖, s'il en reste à apprendre).</li>
       <li><b>Coffre</b> (🧰) : une relique de run ou un objet (rare au moins). Certains sont piégés : des
         monstres surgissent (combat, puis le trésor) ou des aiguilles blessent l'équipe (−20 % des PV
         max, coffre vide). Un Sram, un Roublard ou un Ecaflip debout le crochète sans risque.</li>
@@ -61,6 +65,33 @@ const SECTIONS_REGLES = [
       dans l'écran Formation.</p>
       <p>L'élément de frappe est choisi tout seul : à chaque coup, le héros frappe dans celui de ses deux
       éléments que la cible résiste le moins.</p>`,
+  },
+  {
+    titre: `Sorts avancés`,
+    corps: `<p>Chaque classe a deux sorts de plus, inspirés de DOFUS, qui ne s'apprennent qu'en cours de run :
+      une carte <b>Nouveau sort</b> (📖) peut remplacer le bonus du choix de récompense (une fois sur cinq
+      après un combat normal, presque une fois sur deux après un combat dur), le camp de repos propose
+      parfois d'en étudier un, le Dopeul en enseigne un et les Songes en offrent aussi. Un héros les
+      garde jusqu'à la fin de la run (huit sorts au plus, plus l'arme) et ils peuvent recevoir des
+      améliorations. L'Encyclopédie des classes les présente ; leur icône est un emoji.</p>`,
+  },
+  {
+    titre: `Boss et affixes`,
+    corps: `<p>Chaque boss de donjon a une <b>capacité spéciale</b> (badge sur sa carte, son effet au toucher),
+      qui revient tous les 3 ou 4 tours :</p>
+      <ul>
+        <li>⚠️ <b>Frappe préparée</b> : le boss se concentre tout un tour (badge rouge « ⚠️ … prochain tour ! »,
+          aucun sort), puis frappe toute l'équipe ou une ligne au début de son tour suivant. Pour
+          l'interrompre, retire-lui 12 à 15 % de ses PV max pendant sa concentration (le badge dit combien
+          il en reste) ou assomme-le ; sinon, protège l'équipe (boucliers, réduction de dégâts).</li>
+        <li>📯 <b>Renforts</b> : il appelle un monstre de son donjon (deux au plus), qui disparaît avec lui.</li>
+        <li>🛡️ <b>Bouclier de zone</b> : tout son camp gagne un bouclier pour deux tours.</li>
+        <li>🌪️ <b>Bourrasque</b> : tes héros changent de ligne, l'arrière passe devant.</li>
+      </ul>
+      <p>${Object.keys(CAPACITES_BOSS).length} boss ont la leur. Les combats durs portent un ou plusieurs
+      <b>affixes</b>, annoncés sur la carte et en pastille sous le titre du combat ; ceux qui agissent en
+      combat ont aussi une pastille sur chaque monstre :</p>
+      <ul>${AFFIXES_GROUPE.map((affixe) => `<li>${affixe.icone ?? ``} <b>${echapperHtml(affixe.nom)}</b> : ${echapperHtml(affixe.desc)}.</li>`).join(``)}</ul>`,
   },
   {
     titre: `Les caractéristiques`,
@@ -127,8 +158,9 @@ const SECTIONS_REGLES = [
   {
     titre: `Almanax du jour`,
     corps: `<p>Chaque jour (à minuit, heure de ton appareil), l'Almanax propose une petite quête, la même
-      pour tout le monde : gagner des combats sans K.O., battre des combats durs ou un boss, toucher
-      souvent dans un élément, ouvrir des coffres… Elle est affichée sur l'accueil et suivie pendant les
+      pour tout le monde, parmi ${QUETES_ALMANAX.length} : gagner des combats sans K.O., battre des combats
+      durs ou un boss, toucher souvent dans un élément, ouvrir des coffres, vivre des rencontres, améliorer
+      des sorts, apprendre un nouveau sort, obtenir des reliques… Elle est affichée sur l'accueil et suivie pendant les
       runs (pas dans les Songes), avec une pastille 📅 sur la carte.</p>
       <p>Accomplie, elle met de côté une récompense modeste pour ta prochaine run (hors run du jour) :
       des kamas de départ ou une relique de run commune. Une nouvelle quête arrive le lendemain.</p>`,
@@ -176,10 +208,12 @@ const SECTIONS_REGLES = [
       <ul>
         <li>Une suite sans fin de combats (étages) de plus en plus durs, avec un boss tous les 5 étages.</li>
         <li>Tous les 3 étages, un <b>affixe de songe</b> s'ajoute pour de bon : il touche tous les ennemis
-          des étages suivants (affiché en combat et entre les étages).</li>
+          des étages suivants (affiché en combat et entre les étages). Ce sont ceux des combats durs, plus
+          deux propres aux Songes : ${AFFIXES_SONGE.map((affixe) => `${affixe.icone} <b>${echapperHtml(affixe.nom)}</b> (${echapperHtml(affixe.desc)})`).join(` et `)}.
+          Une fois tous tirés, ils se cumulent.</li>
         <li>Après chaque étage, choisis une récompense parmi trois : objet du Monde 5 (plus rare en montant),
-          repos (50 % des PV, K.O. relevés à 30 %), kamas, bénédiction, amélioration de sort ou relique de
-          run. Pas de soin automatique.</li>
+          repos (50 % des PV, K.O. relevés à 30 %), kamas, bénédiction, amélioration de sort, nouveau sort ou
+          relique de run. Pas de soin automatique.</li>
         <li>Après chaque boss, un palier : équipe soignée à 100 %, une taverne et un Hôtel de vente.</li>
         <li>Quand toute l'équipe tombe, le score est le dernier étage franchi ; le record est gardé.</li>
       </ul>`,
