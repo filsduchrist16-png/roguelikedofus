@@ -48,6 +48,7 @@ import {
   racine,
 } from "./commun.js";
 import { sortAmeliore } from "../combat/ameliorations.js";
+import { htmlRecapEffets, marqueursEffets } from "./recapEffets.js";
 let combattants = [];
 let journalCombat = [];
 let titreCombat = ``;
@@ -354,7 +355,56 @@ export function resumeDernierCombat() {
       .map((combattant) => combattant.nom),
   };
 }
+// Récapitulatif des effets d'un combattant (appui sur sa carte ou sa pastille) : panneau posé sur
+// la coquille du combat, tenu à jour à chaque rendu tant qu'il est ouvert.
+let refRecap = null;
+function majRecapEffets() {
+  const panneau = racine?.querySelector(`.recap-effets`);
+  const combattant = refRecap && combattants.find((candidat) => candidat.ref === refRecap);
+  if (!combattant) {
+    panneau?.remove();
+    refRecap = null;
+    return;
+  }
+  if (panneau) {
+    panneau.querySelector(`.re-boite`).innerHTML = htmlRecapEffets(
+      combattant,
+      badgesCombattant(combattant),
+    );
+  }
+}
+function ouvrirRecapEffets(ref) {
+  const combat = racine?.querySelector(`.combat`);
+  if (!combat || !combattants.some((candidat) => candidat.ref === ref)) {
+    return;
+  }
+  refRecap = ref;
+  if (!combat.querySelector(`.recap-effets`)) {
+    const panneau = document.createElement(`div`);
+    panneau.className = `recap-effets`;
+    panneau.innerHTML = `<div class="re-fond" data-fermer-recap></div><section class="re-boite" role="dialog" aria-modal="true" aria-labelledby="re-titre"></section>`;
+    panneau.addEventListener(`click`, (ev) => {
+      if (ev.target.closest(`[data-fermer-recap]`)) {
+        fermerRecapEffets();
+      }
+    });
+    panneau.addEventListener(`keydown`, (ev) => {
+      if (ev.key === `Escape`) {
+        ev.stopPropagation();
+        fermerRecapEffets();
+      }
+    });
+    combat.appendChild(panneau);
+  }
+  majRecapEffets();
+  combat.querySelector(`.re-fermer`)?.focus({ preventScroll: true });
+}
+function fermerRecapEffets() {
+  refRecap = null;
+  racine?.querySelector(`.recap-effets`)?.remove();
+}
 export function initialiserVueCombat(liste, titre, resolveur = null, options = {}) {
+  refRecap = null;
   optionsVue = options;
   defiCombat = null;
   etatDefiCombat = null;
@@ -1445,6 +1495,9 @@ function rendreCombat() {
     }
   }
   suivreTourActif();
+  if (refRecap) {
+    majRecapEffets();
+  }
   racine.querySelectorAll(`[data-ref]`).forEach((element) => {
     let ref = element.dataset.ref;
     let lies = () => racine.querySelectorAll(`[data-ref="${ref}"]`);
@@ -1478,6 +1531,33 @@ function installerEcouteursPlateau() {
   });
   // premier clic sur le plateau : la boîte des objectifs laisse la place
   combat?.querySelector(`.plateau`)?.addEventListener(`click`, replierObjectifs);
+  // hors visée, un appui sur une carte (ailleurs que sur une bulle) ou sur la pastille d'un héros
+  // de la barre du bas ouvre le récapitulatif de ses effets (phase de capture : en visée, l'appui
+  // lance le sort et `sortChoisi` est encore là quand on le regarde)
+  combat?.addEventListener(
+    `click`,
+    (ev) => {
+      if (sortChoisi) {
+        return;
+      }
+      const pastille = ev.target.closest?.(`.em-heros[data-heros]`);
+      const carte = ev.target.closest?.(`.carte[data-ref]`);
+      if (pastille) {
+        ouvrirRecapEffets(pastille.dataset.heros);
+      } else if (carte && !ev.target.closest(`[data-tip], button, a`)) {
+        ouvrirRecapEffets(carte.dataset.ref);
+      }
+    },
+    true,
+  );
+  combat?.addEventListener(`keydown`, (ev) => {
+    const pastille = ev.target.closest?.(`.em-heros[data-heros]`);
+    if (pastille && (ev.key === `Enter` || ev.key === ` `)) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      ouvrirRecapEffets(pastille.dataset.heros);
+    }
+  });
 }
 // Au changement de tour : la frise garde la pastille active visible (téléphone), et la carte du
 // héros qui commence son tour n'est plus cachée par la barre des sorts.
@@ -1734,11 +1814,12 @@ function htmlBarreSorts(ciblesRendu) {
         combattant.pvMax > 0
           ? Math.max(0, Math.min(100, Math.round((combattant.pvActuels / combattant.pvMax) * 100)))
           : 0;
-      return `<span class="em-heros${combattant.pvActuels <= 0 ? ` mort` : ` ${niveauPv(pctPvCombattant)}`}${combattant === lanceur ? ` actif` : ``}" data-heros="${combattant.ref}" style="--pv-pct:${pctPvCombattant}%"><b>${echapperHtml(combattant.nom)}</b> <span class="em-pv">${Math.max(0, Math.round(combattant.pvActuels))}/${combattant.pvMax}</span></span>`;
+      const marqueurs = marqueursEffets(combattant, badgesCombattant(combattant));
+      return `<span class="em-heros${combattant.pvActuels <= 0 ? ` mort` : ` ${niveauPv(pctPvCombattant)}`}${combattant === lanceur ? ` actif` : ``}" data-heros="${combattant.ref}" style="--pv-pct:${pctPvCombattant}%" role="button" tabindex="0" aria-label="${echapperHtml(`${combattant.nom} : ${Math.max(0, Math.round(combattant.pvActuels))} / ${combattant.pvMax} PV, voir ses effets`)}"><b>${echapperHtml(combattant.nom)}</b> <span class="em-pv">${Math.max(0, Math.round(combattant.pvActuels))}/${combattant.pvMax}</span>${marqueurs ? `<span class="em-effets">${echapperHtml(marqueurs)}</span>` : ``}</span>`;
     })
     .join(``);
   return `
-    <div class="equipe-mini" aria-hidden="true">${equipeMini}</div>
+    <div class="equipe-mini" aria-label="Équipe : PV et effets">${equipeMini}</div>
     <div class="sorts-rangee">
       <div class="sorts-zone"><div class="sorts-liste">${htmlSorts}</div></div>
       <div class="barre-actions-fin">${htmlBoutonAuto()}<button id="vitesse-combat" class="secondaire vitesse-combat${parametres.combatRapide ? ` on` : ``}" title="Tours des monstres rapides (aussi dans les Paramètres)" aria-pressed="${!!parametres.combatRapide}">⏩</button><button id="fin-tour" class="fin-tour primaire${finTourConfirme() ? ` confirme` : ``}" title="Terminer le tour"><span class="fin-tour-txt">${finTourConfirme() ? `Encore ${lanceur.paActuels} PA : confirmer` : `Fin du tour`}</span> <kbd>${echapperHtml(nomTouche(parametres.toucheFinTour))}</kbd></button></div>
