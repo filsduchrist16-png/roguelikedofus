@@ -326,6 +326,10 @@ export function definirDefiCombat(defi, etat = null) {
   if (hote) {
     hote.innerHTML = htmlDefi();
   }
+  const pastilles = document.getElementById(`cb-pastilles`);
+  if (pastilles) {
+    pastilles.innerHTML = htmlPastilles();
+  }
 }
 export function majEtatDefi(etat) {
   if (etat?.etat === etatDefiCombat?.etat && etat?.detail === etatDefiCombat?.detail) {
@@ -345,6 +349,33 @@ function htmlDefi() {
     <span class="defi-etat">${icone ? `${icone} ` : ``}${libelle}${etat.detail ? ` · ${echapperHtml(etat.detail)}` : ``}</span>
     <small class="defi-bonus">+30 % XP et kamas</small>
   </div>`;
+}
+// Téléphone : défi, affixes et Almanax en petites pastilles sur une seule rangée en haut de
+// l'écran, le détail au toucher (data-tip). Le PC garde le bloc du défi et les pastilles d'affixes.
+function htmlPastilles() {
+  const pastilles = [];
+  if (defiCombat) {
+    const etat = etatDefiCombat ?? { etat: `en_cours` };
+    const [icone, libelle] = ETATS_DEFI[etat.etat] ?? ETATS_DEFI.en_cours;
+    const detail = `${libelle}${etat.detail ? ` · ${etat.detail}` : ``}`;
+    pastilles.push(
+      `<span class="cb-pastille cb-defi defi-${etat.etat}" tabindex="0" data-tip="${echapperHtml(`🎯 Défi ${defiCombat.nom} : ${defiCombat.texte} (${detail}). Réussi : +30 % d'XP et de kamas.`)}">🎯 <span class="cb-pastille-txt">${echapperHtml(defiCombat.nom)}</span>${icone ? ` <b>${icone}</b>` : ``}</span>`,
+    );
+  }
+  const affixes = optionsVue.affixes ?? [];
+  if (affixes.length) {
+    const detail = affixes.map((affixe) => `⚔ ${affixe.nom} : ${affixe.desc}`).join(` · `);
+    pastilles.push(
+      `<span class="cb-pastille cb-affixes" tabindex="0" data-tip="${echapperHtml(detail)}">⚔ <span class="cb-pastille-txt">${affixes.length > 1 ? `${affixes.length} affixes` : echapperHtml(affixes[0].nom)}</span></span>`,
+    );
+  }
+  const almanax = optionsVue.almanax;
+  if (almanax && !almanax.fait) {
+    pastilles.push(
+      `<span class="cb-pastille cb-almanax" tabindex="0" data-tip="${echapperHtml(`📅 Almanax du jour : ${almanax.quete.texte} (${almanax.progres}/${almanax.quete.objectif}).`)}">📅 <span class="cb-pastille-txt">${almanax.progres}/${almanax.quete.objectif}</span></span>`,
+    );
+  }
+  return pastilles.join(``);
 }
 // Combat en cours ou dernier combat joué : son titre et les ennemis restés debout (cause d'une
 // défaite, pour l'historique des runs).
@@ -1208,6 +1239,16 @@ function degagerCibles() {
     window.scrollBy({ top: decalage, behavior: comportementDefilement() });
   }
 }
+// Un badge d'état : l'icône à part, pour que le téléphone n'en garde que l'icône sur une ligne
+// (texte complet dans la bulle et le récapitulatif) ; l'alerte d'un boss reste écrite en entier.
+const ICONE_BADGE = /^(\p{Extended_Pictographic}[\uFE0F\u200D\p{Extended_Pictographic}]*)\s+(.+)$/u;
+function htmlBadge(badge) {
+  const morceaux = ICONE_BADGE.exec(badge.texte);
+  const contenu = morceaux
+    ? `<span class="badge-ic">${echapperHtml(morceaux[1])}</span> <span class="badge-txt">${echapperHtml(morceaux[2])}</span>`
+    : `<span class="badge-txt badge-seul">${echapperHtml(badge.texte)}</span>`;
+  return `<span class="badge${badge.classe ? ` ${badge.classe}` : ``}" data-tip="${echapperHtml(badge.tip)}">${contenu}</span>`;
+}
 function htmlCarteCombattant(combattant, ciblable) {
   let ko = combattant.pvActuels <= 0;
   let pv = Math.max(0, Math.round(combattant.pvActuels));
@@ -1265,7 +1306,7 @@ function htmlCarteCombattant(combattant, ciblable) {
         </span>
       </div>
       <div class="pv-barre${ko ? ` ko` : ``}${ko ? `` : ` ${niveauPv(pctPv)}`}" style="--pv-pct:${pctPv}%" title="${pv} / ${combattant.pvMax} PV">
-        <span class="pv-barre-txt">❤ ${pv} / ${combattant.pvMax}${bouclier > 0 ? ` · 🛡 ${bouclier}` : ``}</span>
+        <span class="pv-barre-txt"><span class="pv-coeur">❤ </span>${pv}<span class="pv-max"><span class="pv-esp"> </span>/<span class="pv-esp"> </span>${combattant.pvMax}</span>${bouclier > 0 ? `<span class="pv-bcl"><span class="pv-esp"> · </span>🛡<span class="pv-esp"> </span>${bouclier}</span>` : ``}</span>
         <span class="pa-txt">★ ${combattant.paActuels} PA</span>
       </div>
       ${(() => {
@@ -1283,7 +1324,7 @@ function htmlCarteCombattant(combattant, ciblable) {
       })()}
       ${combattant.camp === `joueur` && !combattant.estEgide ? `<div class="pp-row" title="Prospection"><img src="${IMG_PP}" alt="" onerror="this.remove()" /><b>${combattant.stats.prospection ?? 0}</b></div>` : ``}
       ${htmlRes && !combattant.estEgide ? `<div class="res-row">${htmlRes}</div>` : ``}
-      <div class="badges">${badges.map((badge) => `<span class="badge${badge.classe ? ` ${badge.classe}` : ``}" data-tip="${echapperHtml(badge.tip)}">${echapperHtml(badge.texte)}</span>`).join(``)}</div>
+      <div class="badges">${badges.map(htmlBadge).join(``)}</div>
       ${(() => {
         let ap = ciblable ? apercuDegats(combattant) : null;
         if (!ap) {
@@ -1294,7 +1335,7 @@ function htmlCarteCombattant(combattant, ciblable) {
         let reste = mortel
           ? ``
           : ` <span class="cc-apercu-reste">→ ❤ ${bas}${haut !== bas ? `–${haut}` : ``}</span>`;
-        return `<div class="cc-apercu${mortel ? ` mortel` : ``}" title="Dégâts prévus du sort (hors critique et esquive)${mortel ? ` : la cible tombe` : ` · PV restants après le coup`}">${mortel ? `☠` : `💥`} ${ap[0]}${ap[1] !== ap[0] ? `–${ap[1]}` : ``} dégâts${reste}</div>`;
+        return `<div class="cc-apercu${mortel ? ` mortel` : ``}" title="Dégâts prévus du sort (hors critique et esquive)${mortel ? ` : la cible tombe` : ` · PV restants après le coup`}">${mortel ? `☠` : `💥`} ${ap[0]}${ap[1] !== ap[0] ? `–${ap[1]}` : ``}<span class="cc-apercu-mot"> dégâts</span>${reste}</div>`;
       })()}
       ${!ciblable && protegeParLigneAvant(combattant) ? `<span class="cc-protege" data-tip="Protégé par la ligne avant : ce sort vise d'abord un ennemi de devant">🛡 protégé</span>` : ``}
       ${ko ? `<div class="ko-label">K.O.</div>` : ``}
@@ -1385,6 +1426,19 @@ function montrerCibles() {
   if (!cartes.length) {
     return;
   }
+  // téléphone : l'écran tient sans défiler, seule la zone des ennemis peut défiler (grand texte)
+  const zone = cartes[0].closest(`.colonne`);
+  if (zone && zone.scrollHeight > zone.clientHeight + 1) {
+    const cadreZone = zone.getBoundingClientRect();
+    const dedans = (carte) => {
+      const cadreCarte = carte.getBoundingClientRect();
+      return cadreCarte.top >= cadreZone.top - 1 && cadreCarte.bottom <= cadreZone.bottom + 1;
+    };
+    if (!cartes.some(dedans)) {
+      cartes[0].scrollIntoView({ block: `nearest` });
+    }
+    return;
+  }
   const barre = document.getElementById(`cb-barre`)?.getBoundingClientRect();
   const bas = barre && barre.top > 0 && barre.top < innerHeight ? barre.top : innerHeight;
   const visible = (carte) => {
@@ -1412,27 +1466,39 @@ function rendreCombat() {
     let membres = combattants
       .filter((combattant) => combattant.camp === camp)
       .sort((premier, second) => premier.position - second.position);
+    // téléphone : lignes côte à côte (peu de combattants) ou l'une sous l'autre, en grille
+    let cote = membres.length <= (camp === `joueur` ? 4 : 3);
     let htmlLigne = (libelle, cartes, avant) => {
       let nbPieges = compterPieges(camp, avant);
-      return `<div class="ligne-col">
+      let n = cartes.length;
+      let colonnes = cote ? n : n <= 3 ? n : n === 4 && camp === `ennemi` ? 2 : n === 4 ? 4 : 3;
+      let dense = cote ? membres.length >= 4 : colonnes >= 4;
+      return `<div class="ligne-col${n ? `` : ` vide`}" style="--n:${Math.max(1, n)};--cols:${Math.max(1, colonnes)}">
          <span class="ligne-label">${libelle}${nbPieges > 0 ? `<span class="piege-indicateur" tabindex="0" data-tip="${echapperHtml(AIDE_PIEGE)}">🪤 ×${nbPieges}</span>` : ``}</span>
-         <div class="ligne-cards">${cartes.map((carte) => htmlCarteCombattant(carte, estCiblable(carte))).join(``) || `<span class="ligne-vide">—</span>`}</div>
+         <div class="ligne-cards${dense ? ` dense` : ``}">${cartes.map((carte) => htmlCarteCombattant(carte, estCiblable(carte))).join(``) || `<span class="ligne-vide">—</span>`}</div>
        </div>`;
     };
-    let htmlAvant = htmlLigne(`Ligne avant`, membres.filter(enLigneAvant), true);
+    let htmlAvant = htmlLigne(
+      `<span class="ligne-mot">Ligne </span>avant`,
+      membres.filter(enLigneAvant),
+      true,
+    );
     let htmlArriere = htmlLigne(
-      `Ligne arrière`,
+      `<span class="ligne-mot">Ligne </span>arrière`,
       membres.filter((carte) => !enLigneAvant(carte)),
       false,
     );
     let separateur = `<img class="ligne-sep" src="${cheminAsset(`/assets/divers/delimiter.png`)}" alt="" onerror="this.remove()" />`;
-    return `<div class="camp-lignes ${camp}">${camp === `joueur` ? htmlArriere + separateur + htmlAvant : htmlAvant + separateur + htmlArriere}</div>`;
+    return `<div class="camp-lignes ${camp} ${cote ? `cote` : `pile`}">${camp === `joueur` ? htmlArriere + separateur + htmlAvant : htmlAvant + separateur + htmlArriere}</div>`;
   };
   combatEnCours ||=
     ((racine.innerHTML = `
       <div class="combat">
         <h1 class="sr-only">Combat : ${echapperHtml(titreCombat)}</h1>
-        <h2 class="titre-combat" aria-hidden="true">${echapperHtml(titreCombat)}</h2>
+        <div class="cb-entete">
+          <h2 class="titre-combat" aria-hidden="true">${echapperHtml(titreCombat)}</h2>
+          <div id="cb-pastilles" class="cb-pastilles"></div>
+        </div>
         <div class="affixes-combat">${(optionsVue.affixes ?? []).map((affixe) => `<span class="affixe-pastille" tabindex="0" data-tip="${echapperHtml(affixe.desc)}">⚔ ${echapperHtml(affixe.nom)}</span>`).join(``)}</div>
         <div id="cb-defi"></div>
         <div id="cb-timeline"></div>
@@ -1461,6 +1527,7 @@ function rendreCombat() {
     }
   };
   injecter(`cb-defi`, htmlDefi());
+  injecter(`cb-pastilles`, htmlPastilles());
   injecter(`cb-timeline`, htmlTimeline(cibles));
   injecter(`cb-joueur`, htmlCamp(`joueur`));
   injecter(`cb-ennemi`, htmlCamp(`ennemi`));

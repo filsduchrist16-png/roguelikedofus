@@ -56,6 +56,7 @@ import { capturerArchis } from "./recompenses.js";
 import { ecranReliques } from "../ui/ecrans/recompenses.js";
 import { verifierQuetesCombat, verifierQuetesMeta } from "../jeu/quetes.js";
 import { noterAlmanax } from "./almanax.js";
+import { etatAlmanax } from "../jeu/almanax.js";
 
 export const controleurEnnemi = async (acteur, combattants, contexte) => {
   // l'action est choisie d'abord : pas d'attente inutile quand le monstre n'a plus rien à faire
@@ -172,6 +173,8 @@ export async function jouerCombat(run, combatId, contexte) {
     enemyDamageBonus: degatsMonstres,
     reliquesActives: dofusPossedes(meta),
     affixes,
+    // quête du jour rappelée en pastille (téléphone), suivie hors Songes
+    almanax: contexte.songe ? null : etatAlmanax(meta),
   });
   afficherObjectifsCombat(
     objectifsDuCombat({
