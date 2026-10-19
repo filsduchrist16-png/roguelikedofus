@@ -1,0 +1,672 @@
+/* ======================================================================
+   Combat sur téléphone (1.10.0) : tout l'écran tient dans la zone visible, sans défiler.
+   En haut une rangée de pastilles (défi, affixes, Almanax, objectifs) et la frise des tours ;
+   au milieu les ennemis puis l'équipe en cartes compactes (portrait, nom, PV, une ligne d'états
+   en icônes, détail au toucher dans le récapitulatif) ; en bas le journal sur deux lignes, la
+   consigne et les sorts sur deux rangées avec « Fin du tour », ⏩ et 🤖. Si le texte est agrandi,
+   seule la zone des ennemis défile. Le PC garde sa mise en page.
+   ====================================================================== */
+.cb-entete {
+  display: contents;
+}
+.cb-pastilles {
+  display: none;
+}
+
+@media (width <= 700px) {
+  body:has(#app > .combat) {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+  #app:has(> .combat) {
+    padding: 0;
+  }
+  #app > .combat {
+    --cb-gap: 4px;
+    --cb-cible: 44px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--cb-gap);
+    height: 100vh;
+    height: 100dvh;
+    padding: 0 4px calc(4px + env(safe-area-inset-bottom, 0px));
+    overflow: hidden;
+  }
+
+  /* ---------- en-tête : titre et pastilles sur une rangée ---------- */
+  #app > .combat .cb-entete {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: 4px;
+    min-height: var(--cb-cible);
+    padding-top: env(safe-area-inset-top, 0px);
+    /* la pastille 🏆 des objectifs est posée à droite de cette rangée */
+    padding-right: 62px;
+    order: 0;
+  }
+  #app > .combat .titre-combat {
+    flex: 1 1 0;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    font-size: 0.78rem;
+    line-height: 1.2;
+    text-align: left;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  #app > .combat .cb-pastilles {
+    display: flex;
+    flex: 0 1 auto;
+    gap: 4px;
+    min-width: 0;
+  }
+  #app > .combat .cb-pastille {
+    display: inline-flex;
+    flex: 0 1 auto;
+    align-items: center;
+    gap: 3px;
+    box-sizing: border-box;
+    min-width: var(--cb-cible);
+    min-height: var(--cb-cible);
+    padding: 0 8px;
+    overflow: hidden;
+    border: 1px solid var(--or, #c99a3b);
+    border-radius: 12px;
+    background: #3a2c1aee;
+    color: #f7e6c0;
+    font-size: 0.72rem;
+    font-weight: 800;
+    white-space: nowrap;
+    justify-content: center;
+    cursor: help;
+  }
+  #app > .combat .cb-pastille-txt {
+    min-width: 0;
+    max-width: 82px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #app > .combat .cb-defi.defi-assure {
+    border-color: #6fbf73;
+  }
+  #app > .combat .cb-defi.defi-rate {
+    border-color: #d9654f;
+    opacity: 0.85;
+  }
+  #app > .combat .affixes-combat,
+  #app > .combat #cb-defi {
+    display: none;
+  }
+  .objectifs-combat {
+    top: 0;
+    right: 4px;
+  }
+  .objectifs-combat:not(.ouvert) .objectifs-pastille {
+    box-sizing: border-box;
+    min-width: 54px;
+    min-height: var(--cb-cible, 44px);
+    padding: 0 10px;
+  }
+
+  /* ---------- frise des tours ---------- */
+  #app > .combat #cb-timeline {
+    flex: none;
+    order: 1;
+  }
+  #app > .combat .timeline {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 2px 4px;
+    overflow: hidden;
+  }
+  #app > .combat .tl-ronde {
+    flex: none;
+    padding: 1px 6px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+  }
+  #app > .combat .tl-liste {
+    display: flex;
+    flex: 1 1 auto;
+    gap: 3px;
+    min-width: 0;
+    overflow: hidden;
+  }
+  #app > .combat .tl-pastille {
+    flex: 0 1 28px;
+    min-width: 18px;
+    width: 28px;
+    height: 28px;
+  }
+
+  /* ---------- plateau : ennemis puis équipe ---------- */
+  #app > .combat .plateau {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: var(--cb-gap);
+    min-height: 0;
+    margin: 0;
+    order: 2;
+    overflow: hidden;
+  }
+  #app > .combat .plateau .colonne {
+    flex: none;
+    min-height: 0;
+    padding: 3px;
+    border-radius: 10px;
+  }
+  /* les ennemis d'abord ; eux seuls défilent si le texte agrandi ne tient pas */
+  #app > .combat .plateau .colonne:nth-child(2) {
+    flex: 0 1 auto;
+    order: -1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  #app > .combat .colonne h3 {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  #app > .combat .camp-lignes {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--cb-gap);
+  }
+  /* plus loin en haut : la ligne arrière des ennemis, puis leur ligne avant, face à la ligne avant
+     de l'équipe, puis sa ligne arrière */
+  #app > .combat .camp-lignes.ennemi.pile {
+    flex-direction: column-reverse;
+  }
+  #app > .combat .camp-lignes.joueur.pile {
+    flex-direction: column-reverse;
+  }
+  #app > .combat .camp-lignes.cote {
+    flex-direction: row;
+  }
+  /* côte à côte : la ligne avant à gauche dans les deux camps */
+  #app > .combat .camp-lignes.joueur.cote {
+    flex-direction: row-reverse;
+  }
+  #app > .combat .camp-lignes .ligne-sep {
+    display: none;
+  }
+  #app > .combat .camp-lignes .ligne-col,
+  #app > .combat .camp-lignes .ligne-col:has(.ligne-vide) {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 2px;
+    width: auto;
+    max-width: none;
+    min-width: 0;
+  }
+  #app > .combat .camp-lignes.cote .ligne-col {
+    flex: var(--n) 1 0;
+  }
+  #app > .combat .camp-lignes .ligne-col.vide:not(:has(.piege-indicateur)) {
+    display: none;
+  }
+  /* bandeau vertical de la ligne : avant en rouge, arrière en bleu (même couleur que le bord des cartes) */
+  #app > .combat .ligne-label {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    width: 15px;
+    margin: 0;
+    padding: 2px 0;
+    border-radius: 6px;
+    background: var(--cb-ligne);
+    color: #fff;
+    font-size: 0.69rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  #app > .combat .ligne-label .ligne-mot {
+    display: none;
+  }
+  #app > .combat .ligne-label .piege-indicateur {
+    writing-mode: horizontal-tb;
+    transform: rotate(180deg);
+    font-size: 0.69rem;
+  }
+  #app > .combat .camp-lignes.ennemi .ligne-col:first-child,
+  #app > .combat .camp-lignes.joueur .ligne-col:last-child {
+    --cb-ligne: #b6553c;
+  }
+  #app > .combat .camp-lignes.ennemi .ligne-col:last-child,
+  #app > .combat .camp-lignes.joueur .ligne-col:first-child {
+    --cb-ligne: #3f6f9f;
+  }
+  #app > .combat .ligne-cards {
+    display: grid;
+    flex: 1 1 auto;
+    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+    gap: var(--cb-gap);
+    min-width: 0;
+  }
+  #app > .combat .ligne-cards .ligne-vide {
+    display: none;
+  }
+
+  /* ---------- carte compacte ---------- */
+  #app > .combat .ligne-cards .carte {
+    display: grid;
+    box-sizing: border-box;
+    grid-template-columns: 30px minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    grid-template-areas:
+      "portrait tete"
+      "portrait pv"
+      "badges badges";
+    align-content: start;
+    column-gap: 4px;
+    row-gap: 2px;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    min-height: var(--cb-cible);
+    margin: 0;
+    padding: 3px 4px 3px 5px;
+    border-left: 3px solid var(--cb-ligne);
+  }
+  #app > .combat .ligne-cards.dense .carte {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "tete"
+      "pv"
+      "badges";
+  }
+  #app > .combat .ligne-cards.dense .carte .portrait-wrap {
+    display: none;
+  }
+  #app > .combat .carte .portrait-wrap,
+  #app > .combat .carte .portrait {
+    width: 30px;
+    height: 30px;
+  }
+  #app > .combat .carte .portrait-wrap {
+    align-self: start;
+  }
+  #app > .combat .carte .archi-badge {
+    width: 16px;
+    height: 16px;
+  }
+  #app > .combat .carte .carte-tete {
+    display: flex;
+    min-width: 0;
+    margin: 0;
+  }
+  #app > .combat .carte .carte-nom {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    font-size: 0.75rem;
+    line-height: 1.25;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  #app > .combat .carte .rang,
+  #app > .combat .carte .mini-stats,
+  #app > .combat .carte .pp-row,
+  #app > .combat .carte .res-row,
+  #app > .combat .carte .pa-txt,
+  #app > .combat .carte .pv-coeur,
+  #app > .combat .carte .pv-esp {
+    display: none;
+  }
+  #app > .combat .carte .pv-barre {
+    min-height: 16px;
+    margin: 0;
+    padding: 0 4px;
+    border-radius: 6px;
+  }
+  #app > .combat .carte .pv-barre-txt {
+    overflow: hidden;
+    font-size: 0.69rem;
+    line-height: 1.2;
+    text-overflow: clip;
+  }
+  #app > .combat .carte .pv-bcl {
+    margin-left: 3px;
+  }
+  /* carte étroite avec bouclier : la barre montre la part des PV, le chiffre et le bouclier */
+  #app > .combat .ligne-cards.dense .carte .pv-barre-txt:has(.pv-bcl) .pv-max {
+    display: none;
+  }
+  /* une seule ligne d'états, en icônes ; tout est dans le récapitulatif (appui sur la carte) */
+  #app > .combat .carte .badges {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 2px;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  #app > .combat .carte .badge {
+    flex: none;
+    margin: 0;
+    padding: 0 1px;
+    border-width: 0;
+    background: none;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+  #app > .combat .carte .badge:has(.badge-seul),
+  #app > .combat .carte .badge.furie,
+  #app > .combat .carte .badge.alerte {
+    padding: 0 3px;
+    border-radius: 6px;
+    background: #8a6d4230;
+    font-size: 0.69rem;
+  }
+  #app > .combat .carte .badge.furie {
+    background: #e8792b55;
+  }
+  #app > .combat .carte .badge .badge-txt {
+    display: none;
+  }
+  #app > .combat .carte .badge .badge-seul {
+    display: inline;
+  }
+  /* la frappe préparée d'un boss reste écrite en entier, en tête */
+  #app > .combat .carte .badge.alerte {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #app > .combat .carte .badge.alerte .badge-txt {
+    display: inline;
+  }
+  #app > .combat .carte .badges:empty {
+    display: none;
+  }
+  /* visée : l'aperçu des dégâts prend la place des états */
+  #app > .combat .carte .cc-apercu {
+    grid-area: badges;
+    margin: 0;
+    padding: 0 3px;
+    overflow: hidden;
+    font-size: 0.69rem;
+    line-height: 1.35;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  #app > .combat .carte .cc-apercu-reste {
+    font-size: 0.69rem;
+  }
+  #app > .combat .carte .cc-apercu-mot {
+    display: none;
+  }
+  #app > .combat .carte:has(.cc-apercu) .badges,
+  #app > .combat .carte:has(.cc-protege) .badges {
+    display: none;
+  }
+  #app > .combat .carte .cc-protege {
+    grid-area: badges;
+    position: static;
+    margin: 0;
+    font-size: 0.69rem;
+    line-height: 1.35;
+  }
+  #app > .combat .carte .ko-label {
+    grid-area: pv;
+    font-size: 0.75rem;
+  }
+
+  /* ---------- bas de l'écran : journal, consigne, sorts ---------- */
+  #app > .combat .zone-bas {
+    --journal-h: 36px;
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    gap: var(--cb-gap);
+    position: relative;
+    margin: 0;
+    padding-top: var(--journal-h);
+    order: 3;
+  }
+  /* deux lignes : les dernières actions ; un appui ouvre tout le journal par-dessus le plateau */
+  #app > .combat .zone-bas .journal {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(100% - var(--journal-h));
+    z-index: 60;
+    box-sizing: border-box;
+    height: var(--journal-h);
+    max-height: none;
+    margin: 0;
+    padding: 2px 8px;
+    overflow: hidden;
+    font-size: 0.69rem;
+    line-height: 1.3;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    cursor: pointer;
+    order: 0;
+  }
+  #app > .combat .zone-bas .journal .log-line {
+    flex: none;
+    /* le journal de PC espace les tours (margin en !important) */
+    margin: 0 !important;
+    padding: 0 2px;
+    font-size: 0.69rem;
+    line-height: 15px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  #app > .combat .zone-bas .journal.deplie {
+    display: block;
+    height: auto;
+    max-height: 55dvh;
+    overflow-y: auto;
+    box-shadow: 0 -8px 24px #0009;
+  }
+  #app > .combat .zone-bas .journal.deplie .log-line {
+    white-space: normal;
+  }
+  #app > .combat .zone-bas .barre-sorts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--cb-gap);
+    position: relative;
+    z-index: 50;
+    box-sizing: border-box;
+    min-height: 0;
+    max-height: none;
+    margin: 0;
+    padding: 4px;
+    overflow: visible;
+    border-radius: 12px;
+  }
+  #app > .combat .barre-sorts .equipe-mini {
+    display: none;
+  }
+  #app > .combat .barre-sorts .sorts-rangee {
+    --cellule: calc((100% - 6 * var(--cb-gap)) / 7);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--cb-gap);
+    margin: 0;
+    order: 2;
+  }
+  #app > .combat .barre-sorts .sorts-zone,
+  #app > .combat .barre-sorts .sorts-liste,
+  #app > .combat .barre-sorts .barre-actions-fin {
+    display: contents;
+  }
+  #app > .combat .barre-sorts .sort,
+  #app > .combat .barre-sorts .auto-tour,
+  #app > .combat .barre-sorts .vitesse-combat {
+    box-sizing: border-box;
+    flex: 0 0 var(--cellule);
+    width: var(--cellule);
+    min-width: var(--cb-cible);
+    height: auto;
+    min-height: var(--cb-cible);
+    aspect-ratio: 1;
+    max-height: 54px;
+    margin: 0;
+    padding: 0;
+  }
+  #app > .combat .barre-sorts .sort .sort-icon-wrap,
+  #app > .combat .barre-sorts .sort .sort-icon {
+    max-width: 100%;
+    max-height: 100%;
+  }
+  #app > .combat .barre-sorts .fin-tour {
+    box-sizing: border-box;
+    flex: 1 1 calc(2 * var(--cellule) + var(--cb-gap));
+    min-width: calc(2 * var(--cellule) + var(--cb-gap));
+    min-height: var(--cb-cible);
+    margin: 0;
+    padding: 0 6px;
+    font-size: 0.82rem;
+    line-height: 1.1;
+  }
+  #app > .combat .barre-sorts .fin-tour kbd {
+    display: none;
+  }
+  /* consigne sur une ligne, au-dessus des sorts ; le détail du sort et le refus par-dessus */
+  #app > .combat .barre-sorts .aide {
+    display: block;
+    box-sizing: border-box;
+    min-height: var(--cb-cible);
+    margin: 0;
+    padding: 13px 4px 0;
+    order: 1;
+    font-size: 0.75rem;
+    line-height: 1.2;
+  }
+  #app > .combat .barre-sorts .aide-sort,
+  #app > .combat .barre-sorts .aide-auto {
+    padding: 0;
+  }
+  #app > .combat .barre-sorts .aide-auto {
+    display: flex;
+    align-items: center;
+  }
+  #app > .combat .barre-sorts .aide-sort-tete {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 4px;
+    min-height: var(--cb-cible);
+  }
+  #app > .combat .barre-sorts .aide-sort-tete .aide-consigne {
+    display: -webkit-box;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    font-size: 0.75rem;
+    line-height: 1.2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  #app > .combat .barre-sorts .aide-sort-tete .primaire {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: var(--cb-cible);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  #app > .combat .barre-sorts .aide-sort-tete .secondaire {
+    flex: none;
+    min-width: var(--cb-cible);
+    min-height: var(--cb-cible);
+    padding: 0 8px;
+  }
+  #app > .combat .barre-sorts .aide-sort-detail,
+  #app > .combat .barre-sorts .aide-refus {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    z-index: 70;
+    box-sizing: border-box;
+    margin: 0 0 4px;
+    padding: 8px 10px;
+    border: 1px solid var(--bord);
+    border-radius: 12px;
+    background: var(--panel-solide);
+    box-shadow: 0 -6px 20px #0009;
+    font-size: 0.8rem;
+  }
+  #app > .combat .barre-sorts .aide-sort-detail {
+    max-height: 45dvh;
+    overflow-y: auto;
+  }
+  #app > .combat .barre-sorts .aide-sort:not(.deplie) .aide-sort-detail,
+  #app > .combat .barre-sorts .aide-refus[hidden] {
+    display: none;
+  }
+  #app > .combat .barre-sorts .aide-sort.deplie .aide-refus {
+    bottom: calc(100% + 4px);
+  }
+  #app > .combat .barre-sorts .aide-clavier {
+    display: none;
+  }
+  /* tour d'un monstre : même hauteur de barre, rien ne bouge sur le plateau */
+  #app > .combat .barre-sorts:has(> .attente) {
+    min-height: calc(var(--cb-cible) * 3 + 2 * var(--cb-gap) + 8px);
+    justify-content: center;
+  }
+  #app > .combat .barre-sorts > .attente {
+    margin: 0;
+    font-size: 0.85rem;
+  }
+}
+
+/* écran bas (iPhone SE, 553 px visibles) : journal sur une ligne, frise et cartes plus serrées */
+@media (width <= 700px) and (height <= 600px) {
+  #app > .combat {
+    --cb-gap: 3px;
+  }
+  #app > .combat .zone-bas {
+    --journal-h: 21px;
+  }
+  #app > .combat .tl-pastille {
+    width: 24px;
+    height: 24px;
+    flex-basis: 24px;
+  }
+  #app > .combat .ligne-cards .carte {
+    row-gap: 1px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+  #app > .combat .timeline {
+    padding: 1px 4px;
+  }
+  #app > .combat .zone-bas .barre-sorts {
+    padding: 3px;
+  }
+}
