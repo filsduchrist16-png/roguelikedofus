@@ -9,7 +9,8 @@ import { htmlBarreEquipe } from "../barreEquipe.js";
  */
 export function ecranRencontre(rencontre) {
   return new Promise((resolve) => {
-    afficherEcran(`
+    afficherEcran(
+      `
       <h1>${echapperHtml(rencontre.titre)}</h1>
       ${rencontre.equipe?.length ? htmlBarreEquipe(rencontre.equipe) : ``}
       ${rencontre.img ? `<img class="rencontre-img" src="${cheminAsset(rencontre.img)}" alt="" onerror="this.remove()" />` : ``}
@@ -28,7 +29,9 @@ export function ecranRencontre(rencontre) {
           )
           .join(``)}
       </div>
-    `);
+    `,
+      `ecran-rencontre`,
+    );
     document
       .querySelectorAll(`[data-choix]`)
       .forEach((bouton) => bouton.addEventListener(`click`, () => resolve(bouton.dataset.choix)));

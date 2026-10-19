@@ -26,6 +26,7 @@ import "./confort-recompenses.css";
 import "./confort-gameplay.css";
 import "./contenu.css";
 import "./confort-ecran-combat.css";
+import "./confort-ecrans-run.css";
 function initialiserInterface(racine) {
   definirRacine(racine);
   fondDuMonde(null);

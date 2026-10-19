@@ -120,7 +120,8 @@ export function ecranTaverne(
         : mortDefinitive && nbTombes > 0
           ? `Héros debout déjà en pleine forme`
           : `Équipe déjà en pleine forme`;
-      afficherEcran(`
+      afficherEcran(
+        `
         <h1>Taverne</h1>
         ${htmlBarreEquipe(persos)}
         <p class="sous-titre">Soigne ton équipe (+${Math.round(pctSoin * 100)} % des PV max), ou recrute un nouveau membre.</p>
@@ -132,7 +133,9 @@ export function ecranTaverne(
           <button id="tav-soin" class="${soin.total && !selection ? `primaire` : `secondaire`}">${echapperHtml(libelleSoin)}</button>
           ${selection ? `<button id="tav-recruter" class="primaire">Recruter ${echapperHtml(nomClasse(selection))}</button>` : ``}
         </div>
-      `);
+      `,
+        `ecran-taverne`,
+      );
       document
         .getElementById(`tav-relique`)
         ?.addEventListener(`click`, () => resolve({ type: `relique` }));

@@ -1,0 +1,360 @@
+/* ======================================================================
+   Écrans d'une run sur téléphone (1.11.0) : comme le combat, ils tiennent sur un écran ou
+   presque. Marges du cadre réduites, carte de la zone à la hauteur de l'écran (la carte défile
+   dedans), après-combat en lignes serrées (butin sur deux colonnes, « Équiper le meilleur » et
+   « Passer » sur la ligne de leur titre), camp, rencontres, taverne et Songes plus serrés.
+   Rien n'est retiré : seul l'espace change. Le PC garde sa mise en page.
+   ====================================================================== */
+@media (width <= 700px) {
+  #app:has(
+    > .ecran-apres-combat,
+    > .ecran-rencontre,
+    > .ecran-taverne,
+    > .ecran-songe,
+    > .carte-ecran
+  ) {
+    --app-pad-t: 4px;
+    --app-pad-b: 4px;
+  }
+  .ecran-apres-combat,
+  .ecran-rencontre,
+  .ecran-taverne,
+  .ecran-songe {
+    --ecran-pad-x: 10px;
+    --ecran-pad-y: 10px;
+    --ecran-mt: 0px;
+  }
+  .ecran-apres-combat > h1,
+  .ecran-rencontre > h1,
+  .ecran-taverne > h1 {
+    margin-bottom: 4px;
+    font-size: 1.3rem;
+    line-height: 1.2;
+  }
+  .ecran-apres-combat .boutons-ecran,
+  .ecran-rencontre .boutons-ecran,
+  .ecran-taverne .boutons-ecran,
+  .ecran-songe .boutons-ecran {
+    margin-top: 8px;
+    padding-top: 8px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* ---------- carte de la zone : tout l'écran, la carte défile dedans ---------- */
+  .carte-ecran.map-layout {
+    box-sizing: border-box;
+    height: calc(100dvh - var(--app-pad-t) - var(--app-pad-b));
+    min-height: 0;
+    gap: 4px;
+  }
+  .carte-ecran .map-topbar {
+    flex: none;
+  }
+  .carte-ecran .map-scroll {
+    flex: 1 1 0;
+    min-height: 160px;
+    max-height: none;
+  }
+  .carte-ecran .map-equipe-bar {
+    flex: none;
+  }
+  .carte-ecran .carte-rappel {
+    margin: 0;
+  }
+  /* effets et reliques sur une rangée : reliques en icônes (nom et effet au toucher) */
+  .carte-ecran .zone-effets {
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .carte-ecran .zone-effets::-webkit-scrollbar {
+    display: none;
+  }
+  .carte-ecran .zone-effet {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    box-sizing: border-box;
+  }
+  .carte-ecran .zone-effet.ze-relique {
+    justify-content: center;
+    min-width: 44px;
+    padding: 0 8px;
+    font-size: 1.15rem;
+  }
+  .carte-ecran .zone-effet.ze-relique .ze-nom {
+    display: none;
+  }
+
+  /* ---------- après-combat : lignes serrées ---------- */
+  .ecran-apres-combat {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: 8px;
+  }
+  .ecran-apres-combat > * {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  .ecran-apres-combat > h1 {
+    order: 1;
+  }
+  .ecran-apres-combat > .drop-bilan {
+    order: 2;
+    margin: 0 auto 2px;
+    font-size: max(12px, 0.8rem);
+    line-height: 1.3;
+  }
+  .ecran-apres-combat > .ac-titre-butin,
+  .ecran-apres-combat > .ac-sans-butin {
+    order: 3;
+  }
+  .ecran-apres-combat > .ac-titre-butin {
+    flex: 1 1 0;
+  }
+  .ecran-apres-combat .ac-titre-butin .ac-titre-detail {
+    display: none;
+  }
+  .ecran-apres-combat > .butin-equiper {
+    flex: none;
+    order: 4;
+    margin: 6px 0 0;
+  }
+  .ecran-apres-combat > .butin-equiper button,
+  .ecran-apres-combat > .ac-passer button {
+    min-height: 44px;
+    padding: 4px 12px;
+    font-size: max(12px, 0.8rem);
+  }
+  .ecran-apres-combat > .drop-liste {
+    order: 5;
+  }
+  .ecran-apres-combat > .ac-cle {
+    order: 6;
+    margin-top: 6px;
+    padding: 6px 10px;
+  }
+  .ecran-apres-combat > #ac-titre-rec {
+    flex: 1 1 0;
+    order: 7;
+  }
+  .ecran-apres-combat > .ac-passer {
+    flex: none;
+    order: 8;
+    margin: 6px 0 0;
+  }
+  .ecran-apres-combat > .choix-rec-liste {
+    order: 9;
+  }
+  .ecran-apres-combat > .ac-aide {
+    order: 10;
+  }
+  .ecran-apres-combat > .boutons-ecran {
+    flex: 0 0 calc(100% + 2 * var(--ecran-pad-x));
+    order: 11;
+  }
+  .ecran-apres-combat .ac-titre {
+    margin: 6px 0 0;
+    font-size: max(14px, 0.9rem);
+    line-height: 1.25;
+  }
+  /* butin : deux objets par rangée, une ligne de détail */
+  .ecran-apres-combat .drop-liste {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    max-width: none;
+    margin: 6px 0 0;
+  }
+  .ecran-apres-combat .drop-item:only-child {
+    grid-column: 1 / -1;
+  }
+  .ecran-apres-combat .drop-item {
+    gap: 6px;
+    min-width: 0;
+    min-height: 44px;
+    padding: 4px 6px;
+  }
+  .ecran-apres-combat .drop-item img {
+    flex: none;
+    width: 34px;
+    height: 34px;
+  }
+  .ecran-apres-combat .drop-nom {
+    min-width: 0;
+    font-size: max(12px, 0.8rem);
+    line-height: 1.25;
+  }
+  .ecran-apres-combat .drop-nom small {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  /* cartes de récompense plus serrées, texte entier */
+  .ecran-apres-combat .choix-rec-liste {
+    gap: 6px;
+    margin: 6px 0 0;
+  }
+  .ecran-apres-combat .choix-rec-carte {
+    gap: 8px;
+    min-height: 56px;
+    padding: 6px 8px;
+  }
+  .ecran-apres-combat .choix-rec-icone,
+  .ecran-apres-combat .choix-rec-icone-sort img {
+    flex-basis: 38px;
+    width: 38px;
+    height: 38px;
+    font-size: 24px;
+  }
+  .ecran-apres-combat .choix-rec-texte {
+    gap: 1px;
+  }
+  .ecran-apres-combat .choix-rec-titre {
+    font-size: max(13px, 0.88rem);
+  }
+  .ecran-apres-combat .choix-rec-effet {
+    font-size: max(12px, 0.8rem);
+    line-height: 1.25;
+  }
+  .ecran-apres-combat .ac-aide {
+    margin: 4px 0 0;
+  }
+
+  /* ---------- camp et rencontres ---------- */
+  .ecran-rencontre .barre-equipe {
+    margin: 2px 0 4px;
+  }
+  .ecran-rencontre .rencontre-img {
+    max-height: 48px;
+    margin-bottom: 2px;
+  }
+  .ecran-rencontre .rencontre-texte {
+    margin: 2px auto 4px;
+    font-size: max(13px, 0.85rem);
+    line-height: 1.3;
+  }
+  .ecran-rencontre .rencontre-bourse {
+    margin: 0 0 4px;
+  }
+  .ecran-rencontre .rencontre-choix {
+    gap: 6px;
+    margin-bottom: 0;
+  }
+  .ecran-rencontre .rencontre-option {
+    padding: 5px 10px;
+  }
+  .ecran-rencontre .rencontre-option small {
+    line-height: 1.25;
+  }
+
+  /* ---------- taverne ---------- */
+  .ecran-taverne .barre-equipe {
+    margin: 2px 0 4px;
+  }
+  .ecran-taverne > .sous-titre {
+    margin: 0 auto 6px;
+    font-size: max(13px, 0.85rem);
+    line-height: 1.3;
+  }
+  .ecran-taverne h3 {
+    margin: 6px 0 2px;
+  }
+  .ecran-taverne .tav-recrue-info {
+    margin: 0;
+    font-size: max(12px, 0.8rem);
+  }
+  .ecran-taverne .choix-grille {
+    gap: 6px;
+    margin: 6px 0;
+  }
+  .ecran-taverne .classe-carte {
+    padding: 6px 6px 8px;
+  }
+  .ecran-taverne .classe-carte .classe-portrait {
+    width: 56px;
+    height: 56px;
+  }
+  .ecran-taverne .tav-boutons button {
+    min-height: 44px;
+  }
+
+  /* ---------- Songes ---------- */
+  .ecran-songe .songe-tete {
+    margin-bottom: 4px;
+  }
+  .ecran-songe .songe-embleme {
+    width: 40px;
+    height: 40px;
+  }
+  .ecran-songe .barre-equipe {
+    margin: 2px 0 4px;
+  }
+  .ecran-songe .songe-bloc {
+    margin: 6px 0;
+    padding: 6px 10px;
+  }
+  .ecran-songe .songe-bloc h2 {
+    margin-bottom: 4px;
+  }
+  .ecran-songe .songe-info {
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .ecran-songe .songe-recompenses {
+    gap: 6px;
+  }
+  /* outils (Équipement, Formation, Stats) sur une rangée */
+  .ecran-songe .songe-outils {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .ecran-songe .songe-outil {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    min-width: 0;
+    min-height: 44px;
+    padding: 3px 2px;
+    font-size: max(12px, 0.75rem);
+    line-height: 1.15;
+  }
+  .ecran-songe .songe-outil img {
+    width: 24px;
+    height: 24px;
+    margin: 0;
+  }
+  /* cartes de récompense des Songes : même gabarit serré qu'après un combat */
+  .ecran-songe .songe-recompense {
+    min-height: 52px;
+    padding: 6px 8px;
+  }
+  .ecran-songe .choix-rec-icone,
+  .ecran-songe .choix-rec-icone-sort img {
+    flex-basis: 38px;
+    width: 38px;
+    height: 38px;
+    font-size: 24px;
+  }
+  .ecran-songe .choix-rec-effet,
+  .ecran-songe .songe-recompense small {
+    font-size: max(12px, 0.8rem);
+    line-height: 1.25;
+  }
+}
+@media (width <= 700px) {
+  .ecran-songe .songe-affixes .affixe-pastille {
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    min-height: 44px;
+  }
+}

@@ -52,13 +52,13 @@ export function ecranApresCombat(butin, offre, run) {
       ${bilan ? `<p class="sous-titre drop-bilan">${echapperHtml(bilan)}</p>` : ``}
       ${
         objets.length
-          ? `<h2 class="ac-titre">🎁 Butin : ${objets.length} pièce${objets.length > 1 ? `s` : ``} d'équipement</h2>
+          ? `<h2 class="ac-titre ac-titre-butin">🎁 Butin : ${objets.length} pièce${objets.length > 1 ? `s` : ``}<span class="ac-titre-detail"> d'équipement</span></h2>
       <div class="drop-liste">${htmlListeButin(objets, run)}</div>
       ${htmlEquiperButin(run)}`
           : `<p class="sous-titre ac-sans-butin">Pas d'équipement cette fois.</p>`
       }
       ${secret ? `<p class="ac-cle" role="status">🗝️ <b>${echapperHtml(nomCle(run.trancheId))}</b> : un des monstres portait une clé. Elle ouvre le donjon secret du monde, ${echapperHtml(secret.nom)}.</p>` : ``}
-      <h2 class="ac-titre" id="ac-titre-rec">${offre.elite ? `🎖️ Récompense d'élite` : `🎁 Récompense`} : choisis-en une</h2>
+      <h2 class="ac-titre" id="ac-titre-rec">${offre.elite ? `🎖️ Récompense d'élite` : `🎁 Récompense`}<span class="ac-titre-detail"> : choisis-en une</span></h2>
       <div class="choix-rec-liste" role="group" aria-labelledby="ac-titre-rec">${cartes}</div>
       <p class="ac-passer"><button id="choix-rec-passer" class="secondaire" aria-pressed="false">Passer <span class="choix-rec-passer-gain">(+${htmlKamas(offre.passer)})</span></button></p>
       <p class="ac-aide" id="ac-aide" hidden>Choisis une récompense (ou passe) avant de continuer.</p>
