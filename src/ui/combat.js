@@ -1244,10 +1244,60 @@ function degagerCibles() {
 const ICONE_BADGE = /^(\p{Extended_Pictographic}[\uFE0F\u200D\p{Extended_Pictographic}]*)\s+(.+)$/u;
 function htmlBadge(badge) {
   const morceaux = ICONE_BADGE.exec(badge.texte);
+  // frappe préparée : sur une carte étroite, le nom de la capacité s'efface devant « prochain tour ! »
+  const separation = badge.classe === `alerte` && morceaux ? morceaux[2].lastIndexOf(` : `) : -1;
+  const texte = morceaux
+    ? separation > 0
+      ? `<span class="alerte-nom">${echapperHtml(morceaux[2].slice(0, separation + 3))}</span>${echapperHtml(morceaux[2].slice(separation + 3))}`
+      : echapperHtml(morceaux[2])
+    : ``;
   const contenu = morceaux
-    ? `<span class="badge-ic">${echapperHtml(morceaux[1])}</span> <span class="badge-txt">${echapperHtml(morceaux[2])}</span>`
+    ? `<span class="badge-ic">${echapperHtml(morceaux[1])}</span> <span class="badge-txt">${texte}</span>`
     : `<span class="badge-txt badge-seul">${echapperHtml(badge.texte)}</span>`;
   return `<span class="badge${badge.classe ? ` ${badge.classe}` : ``}" data-tip="${echapperHtml(badge.tip)}">${contenu}</span>`;
+}
+// Téléphone : une seule ligne d'états par carte. Ce qui ne tient pas est replié en une pastille
+// « +n » (tout reste dans le récapitulatif, d'un appui sur la carte) ; bouclier, frappe préparée
+// d'un boss et furie restent affichés.
+const BADGES_PRIORITAIRES = `.badge-bcl, .alerte`;
+// hauteur libre par rangée de cartes (px) au-delà de laquelle les cartes passent en version aérée
+const HAUTEUR_RANG_AERE = 96;
+function replierBadges() {
+  racine?.querySelectorAll(`.combat .carte .badges`).forEach((ligne) => {
+    if (!ligne.childElementCount || ligne.offsetParent === null) {
+      return;
+    }
+    // la frappe préparée se rétrécit d'elle-même : on la mesure à sa largeur entière
+    ligne.classList.add(`badges-mesure`);
+    const deborde = () => ligne.scrollWidth > ligne.clientWidth + 1;
+    // la furie se replie en dernier
+    const repliables = [...ligne.children]
+      .filter(
+        (badge) =>
+          !badge.matches(BADGES_PRIORITAIRES) && getComputedStyle(badge).display !== `none`,
+      )
+      .sort((a, b) => Number(b.matches(`.furie`)) - Number(a.matches(`.furie`)));
+    if (repliables.length && deborde()) {
+      const plus = document.createElement(`span`);
+      plus.className = `badge badge-plus`;
+      ligne.appendChild(plus);
+      let caches = 0;
+      while (repliables.length && (caches === 0 || deborde())) {
+        repliables.pop().classList.add(`badge-replie`);
+        caches++;
+        plus.textContent = `+${caches}`;
+      }
+      plus.setAttribute(
+        `aria-label`,
+        `${caches} autre${caches > 1 ? `s` : ``} effet${caches > 1 ? `s` : ``}`,
+      );
+      // carte étroite d'un boss qui prépare sa frappe : l'alerte seule, le reste au toucher
+      if (deborde() && ligne.querySelector(`.alerte`)) {
+        plus.remove();
+      }
+    }
+    ligne.classList.remove(`badges-mesure`);
+  });
 }
 function htmlCarteCombattant(combattant, ciblable) {
   let ko = combattant.pvActuels <= 0;
@@ -1285,6 +1335,7 @@ function htmlCarteCombattant(combattant, ciblable) {
       combattant.ref === refActive() ? `actif` : ``,
       ciblable ? `ciblable` : ``,
       combattant.archi ? `archi` : ``,
+      enConcentration(combattant) && !ko ? `concentre` : ``,
     ]
       .filter(Boolean)
       .join(
@@ -1324,7 +1375,7 @@ function htmlCarteCombattant(combattant, ciblable) {
       })()}
       ${combattant.camp === `joueur` && !combattant.estEgide ? `<div class="pp-row" title="Prospection"><img src="${IMG_PP}" alt="" onerror="this.remove()" /><b>${combattant.stats.prospection ?? 0}</b></div>` : ``}
       ${htmlRes && !combattant.estEgide ? `<div class="res-row">${htmlRes}</div>` : ``}
-      <div class="badges">${badges.map(htmlBadge).join(``)}</div>
+      <div class="badges">${bouclier > 0 ? `<span class="badge badge-bcl" data-tip="Bouclier : absorbe ${bouclier} dégâts avant les PV">🛡${bouclier}</span>` : ``}${badges.map(htmlBadge).join(``)}</div>
       ${(() => {
         let ap = ciblable ? apercuDegats(combattant) : null;
         if (!ap) {
@@ -1468,14 +1519,27 @@ function rendreCombat() {
       .sort((premier, second) => premier.position - second.position);
     // téléphone : lignes côte à côte (peu de combattants) ou l'une sous l'autre, en grille
     let cote = membres.length <= (camp === `joueur` ? 4 : 3);
+    let colonnesLigne = (n) =>
+      cote ? n : n <= 3 ? n : n === 4 && camp === `ennemi` ? 2 : n === 4 ? 4 : 3;
+    // rangées de cartes (le téléphone partage la hauteur libre entre elles) et cartes par rangée
+    // (même taille de portrait pour tout le camp)
+    let nbAvant = membres.filter(enLigneAvant).length;
+    let parts = Math.max(
+      1,
+      cote ? membres.length : colonnesLigne(nbAvant),
+      cote ? 1 : colonnesLigne(membres.length - nbAvant),
+    );
+    let rangsCamp = 0;
     let htmlLigne = (libelle, cartes, avant) => {
       let nbPieges = compterPieges(camp, avant);
       let n = cartes.length;
-      let colonnes = cote ? n : n <= 3 ? n : n === 4 && camp === `ennemi` ? 2 : n === 4 ? 4 : 3;
+      let colonnes = colonnesLigne(n);
       let dense = cote ? membres.length >= 4 : colonnes >= 4;
-      return `<div class="ligne-col${n ? `` : ` vide`}" style="--n:${Math.max(1, n)};--cols:${Math.max(1, colonnes)}">
+      let rangs = n ? Math.ceil(n / Math.max(1, colonnes)) : 0;
+      rangsCamp = cote ? Math.max(rangsCamp, rangs) : rangsCamp + rangs;
+      return `<div class="ligne-col${n ? `` : ` vide`}" style="--n:${Math.max(1, n)};--cols:${Math.max(1, colonnes)};--parts:${parts}">
          <span class="ligne-label">${libelle}${nbPieges > 0 ? `<span class="piege-indicateur" tabindex="0" data-tip="${echapperHtml(AIDE_PIEGE)}">🪤 ×${nbPieges}</span>` : ``}</span>
-         <div class="ligne-cards${dense ? ` dense` : ``}">${cartes.map((carte) => htmlCarteCombattant(carte, estCiblable(carte))).join(``) || `<span class="ligne-vide">—</span>`}</div>
+         <div class="ligne-cards${dense ? ` dense` : ``}${parts >= 3 ? ` etroite` : ``}">${cartes.map((carte) => htmlCarteCombattant(carte, estCiblable(carte))).join(``) || `<span class="ligne-vide">—</span>`}</div>
        </div>`;
     };
     let htmlAvant = htmlLigne(
@@ -1489,8 +1553,10 @@ function rendreCombat() {
       false,
     );
     let separateur = `<img class="ligne-sep" src="${cheminAsset(`/assets/divers/delimiter.png`)}" alt="" onerror="this.remove()" />`;
+    rangsPlateau += rangsCamp;
     return `<div class="camp-lignes ${camp} ${cote ? `cote` : `pile`}">${camp === `joueur` ? htmlArriere + separateur + htmlAvant : htmlAvant + separateur + htmlArriere}</div>`;
   };
+  let rangsPlateau = 0;
   combatEnCours ||=
     ((racine.innerHTML = `
       <div class="combat">
@@ -1514,6 +1580,7 @@ function rendreCombat() {
         </div>
         <div class="zone-bas">
           <div id="journal" class="journal" role="log" aria-live="polite" aria-label="Journal de combat"></div>
+          <button type="button" id="journal-toucher" class="journal-toucher" aria-controls="journal" aria-expanded="false" aria-label="Ouvrir ou fermer le journal de combat"></button>
           <div id="cb-barre" class="barre-sorts"></div>
         </div>
       </div>`),
@@ -1532,8 +1599,21 @@ function rendreCombat() {
   injecter(`cb-joueur`, htmlCamp(`joueur`));
   injecter(`cb-ennemi`, htmlCamp(`ennemi`));
   injecter(`cb-barre`, htmlBarreSorts(cibles));
+  const plateau = racine.querySelector(`.combat .plateau`);
+  if (plateau) {
+    plateau.style.setProperty(`--cb-rangs`, String(rangsPlateau || 1));
+    // téléphone, peu de rangées : cartes aérées (nom en entier au-dessus du portrait)
+    plateau.classList.toggle(
+      `aere`,
+      ecranEtroit() && plateau.clientHeight / (rangsPlateau || 1) >= HAUTEUR_RANG_AERE,
+    );
+  }
+  if (ecranEtroit()) {
+    replierBadges();
+  }
   racine.querySelector(`.combat`)?.classList.toggle(`ciblage`, !!(combattantActif && sortChoisi));
   document.getElementById(`journal`)?.classList.toggle(`deplie`, journalDeplie);
+  document.getElementById(`journal-toucher`)?.setAttribute(`aria-expanded`, String(journalDeplie));
   rafraichirJournal();
   if (combattantActif && sortChoisi) {
     montrerCibles();
@@ -1594,8 +1674,15 @@ function installerEcouteursPlateau() {
     const journal = ev.currentTarget;
     journalDeplie = !journalDeplie;
     journal.classList.toggle(`deplie`, journalDeplie);
+    document
+      .getElementById(`journal-toucher`)
+      ?.setAttribute(`aria-expanded`, String(journalDeplie));
     journal.scrollTop = journal.scrollHeight;
   });
+  // téléphone : une zone de 44 px sur la ligne du journal, qui déborde sur le haut de la barre
+  document
+    .getElementById(`journal-toucher`)
+    ?.addEventListener(`click`, () => document.getElementById(`journal`)?.click());
   // clic droit pendant la visée : l'annule
   combat?.addEventListener(`contextmenu`, (ev) => {
     if (sortChoisi && contexteCombat) {

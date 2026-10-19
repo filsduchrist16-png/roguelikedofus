@@ -12,6 +12,11 @@
 .cb-pastilles {
   display: none;
 }
+/* téléphone seulement : bouclier en pastille sur une carte étroite, zone tactile du journal */
+.combat .carte .badge-bcl,
+.combat .journal-toucher {
+  display: none;
+}
 
 @media (width <= 700px) {
   body:has(#app > .combat) {
@@ -147,16 +152,24 @@
   }
 
   /* ---------- plateau : ennemis puis équipe ---------- */
+  /* La hauteur libre est partagée entre les rangées de cartes (--cb-rangs, posé par combat.js) :
+     cartes et portraits grandissent quand il y a de la place ; les ennemis restent en haut,
+     l'équipe en bas, au-dessus des sorts. */
   #app > .combat .plateau {
+    --cb-h: clamp(0px, calc((100cqh - 34px) / var(--cb-rangs, 9) - var(--cb-gap)), 104px);
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: flex-start;
     gap: var(--cb-gap);
     min-height: 0;
     margin: 0;
     order: 2;
     overflow: hidden;
+    container-type: size;
+  }
+  #app > .combat .plateau .colonne:first-child {
+    margin-top: auto;
   }
   #app > .combat .plateau .colonne {
     flex: none;
@@ -272,24 +285,66 @@
 
   /* ---------- carte compacte ---------- */
   #app > .combat .ligne-cards .carte {
+    /* portrait : selon la hauteur partagée et la largeur d'une carte (--parts cartes par rangée) */
+    --cb-p: clamp(
+      30px,
+      min(calc(var(--cb-h, 0px) - 34px), calc(100cqw / var(--parts, 3) * 0.3)),
+      60px
+    );
     display: grid;
     box-sizing: border-box;
-    grid-template-columns: 30px minmax(0, 1fr);
+    grid-template-columns: var(--cb-p) minmax(0, 1fr);
     grid-template-rows: auto auto auto;
     grid-template-areas:
       "portrait tete"
       "portrait pv"
       "badges badges";
-    align-content: start;
+    align-content: center;
+    align-items: center;
     column-gap: 4px;
     row-gap: 2px;
     width: 100%;
     max-width: none;
     min-width: 0;
-    min-height: var(--cb-cible);
+    min-height: max(var(--cb-cible), var(--cb-h, 0px));
     margin: 0;
     padding: 3px 4px 3px 5px;
     border-left: 3px solid var(--cb-ligne);
+  }
+  /* beaucoup de place (peu de combattants) : le nom en entier sur toute la largeur, au-dessus du
+     portrait, des PV et des états ; la carte ne grandit pas au-delà de son contenu */
+  #app > .combat .plateau.aere .ligne-cards .carte {
+    --cb-p: clamp(
+      30px,
+      min(calc(var(--cb-h, 0px) - 50px), calc(100cqw / var(--parts, 3) * 0.3)),
+      60px
+    );
+    grid-template-areas:
+      "tete tete"
+      "portrait pv"
+      "badges badges";
+    grid-template-rows: auto auto auto;
+    align-content: start;
+    min-height: max(var(--cb-cible), min(var(--cb-h, 0px), calc(var(--cb-p) + 52px)));
+    row-gap: 3px;
+    padding: 6px 6px 6px 8px;
+  }
+  #app > .combat .plateau.aere .carte .carte-nom {
+    display: -webkit-box;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  #app > .combat .plateau.aere .carte .badges {
+    align-self: start;
+  }
+  #app > .combat .plateau.aere .ligne-cards.dense .carte {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "tete"
+      "pv"
+      "badges";
   }
   #app > .combat .ligne-cards.dense .carte {
     grid-template-columns: minmax(0, 1fr);
@@ -303,8 +358,8 @@
   }
   #app > .combat .carte .portrait-wrap,
   #app > .combat .carte .portrait {
-    width: 30px;
-    height: 30px;
+    width: var(--cb-p, 30px);
+    height: var(--cb-p, 30px);
   }
   #app > .combat .carte .portrait-wrap {
     align-self: start;
@@ -322,7 +377,7 @@
     display: block;
     min-width: 0;
     overflow: hidden;
-    font-size: 0.75rem;
+    font-size: clamp(0.75rem, calc(var(--cb-p, 30px) * 0.27), 0.9rem);
     line-height: 1.25;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -337,23 +392,33 @@
     display: none;
   }
   #app > .combat .carte .pv-barre {
-    min-height: 16px;
+    min-height: clamp(16px, calc(var(--cb-p, 30px) * 0.38), 22px);
     margin: 0;
     padding: 0 4px;
     border-radius: 6px;
   }
   #app > .combat .carte .pv-barre-txt {
     overflow: hidden;
-    font-size: 0.69rem;
+    font-size: clamp(0.69rem, calc(var(--cb-p, 30px) * 0.23), 0.8rem);
     line-height: 1.2;
     text-overflow: clip;
   }
   #app > .combat .carte .pv-bcl {
     margin-left: 3px;
   }
-  /* carte étroite avec bouclier : la barre montre la part des PV, le chiffre et le bouclier */
-  #app > .combat .ligne-cards.dense .carte .pv-barre-txt:has(.pv-bcl) .pv-max {
+  /* carte étroite avec bouclier : « 38/50 » dans la barre, le bouclier en pastille en tête des
+     états */
+  #app > .combat .ligne-cards.dense .carte .pv-bcl {
     display: none;
+  }
+  #app > .combat .ligne-cards.dense .carte .badge.badge-bcl {
+    display: inline-block;
+    padding: 0 4px;
+    border-radius: 6px;
+    background: #3f6f9f;
+    color: #fff;
+    font-size: 0.69rem;
+    font-weight: 800;
   }
   /* une seule ligne d'états, en icônes ; tout est dans le récapitulatif (appui sur la carte) */
   #app > .combat .carte .badges {
@@ -371,7 +436,7 @@
     padding: 0 1px;
     border-width: 0;
     background: none;
-    font-size: 0.75rem;
+    font-size: clamp(0.75rem, calc(var(--cb-p, 30px) * 0.27), 0.9rem);
     line-height: 1.3;
     white-space: nowrap;
   }
@@ -402,12 +467,56 @@
   #app > .combat .carte .badge.alerte .badge-txt {
     display: inline;
   }
+  #app > .combat .ligne-cards.etroite .carte .badge.alerte .alerte-nom {
+    display: none;
+  }
+  #app > .combat .ligne-cards.etroite .carte .badge.alerte {
+    padding: 0 2px;
+    letter-spacing: -0.03em;
+    word-spacing: -1px;
+  }
+  #app > .combat .carte .badge.alerte {
+    padding: 0 3px;
+    background: linear-gradient(180deg, #ff7a6b, #d4281b);
+    color: #fff;
+    font-size: 0.69rem;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+  }
+  /* boss qui prépare sa frappe : la carte entière est cerclée de rouge */
+  #app > .combat .carte.concentre {
+    box-shadow:
+      0 0 0 2px #c0392b,
+      0 0 12px #c0392bb0;
+  }
+  #app > .combat .carte .badges:not(:has(> :not(.badge-bcl))),
   #app > .combat .carte .badges:empty {
     display: none;
+  }
+  #app > .combat .ligne-cards.dense .carte .badges:has(> .badge-bcl) {
+    display: flex;
+  }
+  /* ce qui ne tient pas sur la ligne : « +n » (replierBadges, combat.js) */
+  #app > .combat .carte .badge.badge-replie {
+    display: none;
+  }
+  #app > .combat .carte .badges-mesure .badge.alerte {
+    flex: none;
+  }
+  #app > .combat .carte .badge.badge-plus {
+    flex: none;
+    margin-left: auto;
+    padding: 0 3px;
+    border-radius: 6px;
+    background: #5a452a;
+    color: #fbe9c2;
+    font-size: 0.69rem;
+    font-weight: 800;
   }
   /* visée : l'aperçu des dégâts prend la place des états */
   #app > .combat .carte .cc-apercu {
     grid-area: badges;
+    min-width: 0;
     margin: 0;
     padding: 0 3px;
     overflow: hidden;
@@ -481,6 +590,33 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+  /* zone tactile de 44 px : la ligne du journal et le haut de la barre, vide à cet endroit ;
+     pendant le choix d'une cible (boutons Lancer, ⓘ, Annuler en haut de la barre), la zone se
+     limite au journal */
+  #app > .combat .zone-bas .journal-toucher {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 61;
+    height: max(var(--journal-h), var(--cb-cible));
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    cursor: pointer;
+  }
+  #app > .combat .zone-bas:has(.aide-sort-tete, .aide-auto) .journal-toucher {
+    top: calc(-2 * var(--cb-gap));
+    height: calc(var(--journal-h) + 2 * var(--cb-gap));
+  }
+  #app > .combat .zone-bas:has(.journal.deplie) .journal-toucher {
+    top: auto;
+    bottom: calc(100% - var(--journal-h));
+    height: var(--journal-h);
   }
   #app > .combat .zone-bas .journal.deplie {
     display: block;
