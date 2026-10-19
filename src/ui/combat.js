@@ -1607,6 +1607,11 @@ function rendreCombat() {
       `aere`,
       ecranEtroit() && plateau.clientHeight / (rangsPlateau || 1) >= HAUTEUR_RANG_AERE,
     );
+    // texte agrandi : la version aérée ne doit jamais faire défiler les ennemis
+    const deborde = (element) => element.scrollHeight > element.clientHeight + 1;
+    if (plateau.classList.contains(`aere`) && [...plateau.children].some(deborde)) {
+      plateau.classList.remove(`aere`);
+    }
   }
   if (ecranEtroit()) {
     replierBadges();
